@@ -1,7 +1,27 @@
 import Image from "next/image";
+import { Router } from "next/router";
+import Script from 'next/script'
+import { useRouter } from "next/navigation";
 
 const MyAirspaceOverview = (props) => {
-    return  <div className="absolute rounded-md bg-white top-5 left-96" style={{width: "339px", height: "817px"}}>
+    const router = useRouter();
+    const verificationCheck = async () => {
+        let reqBody = {
+            "userId": 1
+        };
+        const res = await 
+        fetch('/api/create-verification-session', {
+            method: 'POST',
+            body: JSON.stringify(reqBody),
+        })
+        const redirectUrl = await (res.json());
+        console.log("response received => ", redirectUrl);
+        router.push(redirectUrl.redirectUrl);
+    }
+
+    return  <>
+        <Script src="https://js.stripe.com/v3/" />
+        <div className="absolute rounded-md bg-white top-5 left-96" style={{width: "339px", height: "817px"}}>
         <div className="relative">
             <Image src="/images/airspace-preview.png" alt="icon" className="rounded-t-md" width={339} height={422} />
             <button onClick={props.closeDetails} className="absolute bg-white flex flex-row justify-center items-center top-2 right-2" style={{borderRadius: "50%", width: "24px", height: "24px"}}>
@@ -78,7 +98,7 @@ const MyAirspaceOverview = (props) => {
                     </button>
                     <p className="text-center text-dark-blue text-sm">3D Map</p>
                 </div>
-                <div className="flex flex-col justify-center items-center">
+                <div onClick={verificationCheck} className="flex flex-col justify-center items-center">
                     <button style={{width: "35px", height: "35px", borderRadius: "50%", border: "1px solid blue"}} className="bg-white p-2.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
                             <path d="M7.5 14.2188C3.79375 14.2188 0.78125 11.2063 0.78125 7.5C0.78125 3.79375 3.79375 0.78125 7.5 0.78125C11.2063 0.78125 14.2188 3.79375 14.2188 7.5C14.2188 11.2063 11.2063 14.2188 7.5 14.2188ZM7.5 1.71875C4.3125 1.71875 1.71875 4.3125 1.71875 7.5C1.71875 10.6875 4.3125 13.2813 7.5 13.2813C10.6875 13.2813 13.2813 10.6875 13.2813 7.5C13.2813 4.3125 10.6875 1.71875 7.5 1.71875Z" fill="#0653EA"/>
@@ -107,6 +127,7 @@ const MyAirspaceOverview = (props) => {
             </div>
         </div>
     </div>
+    </>
 }
 
 export default MyAirspaceOverview;
