@@ -1,7 +1,7 @@
 import { useState } from "react";
-import moment from "moment/moment";
+import moment from "moment-timezone";
 
-const TimezoneSelectComponent = () => {
+const TimezoneSelectComponent = (props) => {
     const [timezone, setTimezone] = useState('UTC');
   
     const timezones = moment.tz.names().map(tz => {
@@ -13,11 +13,15 @@ const TimezoneSelectComponent = () => {
         <label htmlFor="timezoneSelect">Select Timezone:</label>
         <select 
           id="timezoneSelect"
-          value={timezone} 
-          onChange={(e) => setTimezone(e.target.value)}
+          value={props.timezone} 
+          // onChange={(e) => setTimezone(e.target.value)}
+          className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm"
+          style={{width: "143px", height: "27px"}}
+          disabled={props.disable}
+          onChange={props.onChange}
         >
           {timezones.map(tz => (
-            <option key={tz.value} value={tz.value}>
+            <option selected={tz.value === props.timeZone} key={tz.value} value={tz.value}>
               {tz.label}
             </option>
           ))}

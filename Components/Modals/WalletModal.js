@@ -1,11 +1,19 @@
 import Image from "next/image";
+import logo from "../../public/images/logo.jpg"
 
 const WalletModal = (props) => {
     return <div className="bg-white rounded px-12 fixed z-20 overflow-y-auto pb-10" style={{width: "500px", height: "90vh", maxHeight: "529px",
             top: "5vh",  // This is for live environment
             left: "calc(50% - 250px)", 
         }}>
-            <div className="mt-24 flex flex-col items-center">
+            <button onClick={props.closeModal} className="absolute right-5 top-5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+                    <path d="M12.7578 12.7285L21.2431 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12.7569 21.2138L21.2422 12.7285" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div className="mt-2 flex flex-col items-center">
+                <Image src={logo} alt="Company's logo" width={164} height={58} className="mb-4 mt-8" />
                 <div className="flex flex-row justify-center items-center mb-6" style={{width: "49px", height: "49px", background: "rgba(0, 0, 0, 0.15)", borderRadius: "50%", border: "1px dotted #0653EA"}}>
                     <div className="flex flex-row justify-center items-center" style={{width: "41px", height: "41px", background: "white", borderRadius: "50%"}}> 
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -25,14 +33,14 @@ const WalletModal = (props) => {
                     <p className="text-sml font-semibold">Direct {props.form} a crypto wallet</p>
                     <p className="text-sm">e.g. Blockchain, Binance, Coinbase  </p>
                 </button>
-                <button className="rounded flex flex-col items-center justify-center transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "328px", height: "50px", border: "0.2px solid #0653EA"}}>
-                    <Image src="/images/Ramp.png" alt="Ramp logo" height={18} width={77} />
-                    <p className="text-sm">e.g Stripe, Paypal, Visa card, Master card...</p>
-                </button>
                 <button onClick={props.stripe} className="rounded flex flex-col items-center justify-center transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "328px", height: "50px", border: "0.2px solid #0653EA"}}>
-                    <Image src="/images/stripe-logo.png" alt="Ramp logo" height={18} width={77} />
+                    <Image src="/images/stripe-logo.png" alt="Stripe logo" height={18} width={77} />
                     <p className="text-sm -mt-2">e.g Stripe, Paypal, Visa card, Master card...</p>
                 </button>
+                {/* <button className="rounded flex flex-col items-center justify-center transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "328px", height: "50px", border: "0.2px solid #0653EA"}}>
+                    <Image src="/images/Ramp.png" alt="Ramp logo" height={18} width={77} />
+                    <p className="text-sm">e.g Stripe, Paypal, Visa card, Master card...</p>
+                </button> */}
             </div>
     </div>
 }

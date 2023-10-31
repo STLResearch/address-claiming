@@ -4,6 +4,7 @@ import { Fragment, useState } from "react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { createPortal } from "react-dom";
+import swal from "sweetalert";
 
 import { useVerification } from "@/hooks/useVerification";
 import { counterActions } from "@/store/store";
@@ -36,16 +37,23 @@ const Sidebar = (props) => {
     };
 
     const airspaceSection = () => {
-        router.push("/homepage/airspace");
-        if(props.users) {
-            verificationCheck(props.users);
+        if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
+            swal({
+                title: "Sorry!",
+                text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
+              })
+            return;
         }
+
+        router.push("/homepage/airspace");
+        verificationCheck(props.users);
     };
 
     const logoutHandler = () => {
         setIsLoading(true);
         localStorage.removeItem("openlogin_store");
         localStorage.removeItem("email");
+        localStorage.removeItem("signature");
         router.replace("/auth/join");
     }
 
@@ -85,7 +93,7 @@ const Sidebar = (props) => {
                                 <span className="text-light-brown text-sml hover:text-dark-blue font-semibold">Claim Airspace</span>
                             </button>
                             <button onClick={() => router.push("/homepage/airspace")} className="hover:text-dark-blue">
-                                <span className="text-light-brown text-sml hover:text-dark-blue font-semibold">Airspace</span>
+                                <span className="text-light-brown text-sml hover:text-dark-blue font-semibold">Airspaces</span>
                             </button>
                             {/* <button className="hover:text-dark-blue">
                                 <span className="text-light-brown text-sml hover:text-dark-blue font-semibold">My Airspace</span>

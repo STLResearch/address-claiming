@@ -5,6 +5,9 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { createPortal } from "react-dom";
 import swal from "sweetalert";
+import logo from "../../../../public/images/logo.jpg";
+import Script from "next/script";
+
 
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
@@ -14,7 +17,6 @@ const CorporateSignup = () => {
     const newsletterRef = useRef();
     const nameRef = useRef();
     const phoneNumberRef = useRef();
-    const countryCodeRef = useRef();
 
     const [newsletter, setnewsletter] = useState(false);
     const [nameValid, setNameValid] = useState(true);
@@ -22,16 +24,6 @@ const CorporateSignup = () => {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [pageLoad, setPageLoad] = useState(true);
-
-    const countryCodes = ["+1", "+44", "+233", "+234", "+93", "+355", "+213", "+1-684", "+376", "+244", "+1-264", 
-                            "+672", "+268", "+54", "+374", "+297", "+61", "+43", "+994", "+1-242", "+973", "+880",
-                            "+1-246", "+375", "+32", "+501", "+229", "+1-441", "+975", "+591", "+387", "+267",  
-                            "+55", "+246", "+1-284", "+673", "+359", "+226", "+257", "+238", "+1-345", "+236",
-                            "+235", "+56", "+86", "+57", "+269", "+682", "+506", "+385", "+53", "+599",
-                            "+357", "+420", "+243", "+45", "+253", "+1-767", "+1-809", "+1-829", "+1-849", "+670",
-                            "+593", "+20", "+503", "+240", "+291", "+372", "+251", "+500", "+298", "+679", "+358",
-                            "+33", "+689", "+241", "+220",
-                        ]
 
     
     useEffect(() => {
@@ -67,7 +59,6 @@ const CorporateSignup = () => {
         e.preventDefault();
 
         const name = nameRef.current.value;
-        const countryCode = countryCodeRef.current.value;
         const phoneNumber = phoneNumberRef.current.value;
         
 
@@ -81,12 +72,12 @@ const CorporateSignup = () => {
             return;
         }
 
-        if(!phoneNumber) {
+        if(!phoneNumber || phoneNumber.charAt(0) !== "+") {
             setPhoneNumberValid(false);
             swal({
-                title: "oops!",
-                text: "Kindly complete all required fields",
-                timer: 2000
+                title: "Oops!",
+                text: "Invalid phone number. Ensure to include country code starting with +",
+                timer: 3000
               });
             return;
         }
@@ -96,7 +87,7 @@ const CorporateSignup = () => {
             ...category,
             categoryId: +category.categoryId,
             name,
-            phoneNumber: `${countryCode}${phoneNumber}`,
+            phoneNumber: phoneNumber,
             newsletter
         }
 
@@ -111,45 +102,62 @@ const CorporateSignup = () => {
                 proxy_to_method: "POST",
             }
         }).then(res => {
-                if(!res.ok) {
-                    return res.json()
-                    .then(errorData => {
-                        swal({
-                            title: "oops!",
-                            text: `${errorData.errorMessage}`,
-                          });
-                        throw new Error(errorData.errorMessage);
-                    });
-                }
-            setError(false)
-            swal({
-                title: "Submitted",
-                text: "User registered successfully. You will now be signed in",
-                icon: "success",
-                button: "Ok"
-              }).then(() => {
-                localStorage.setItem("email", category.email);
-                localStorage.setItem("openlogin_store", JSON.stringify({
-                    sessionId: token.sessionId
-                }));
-                // setIsLoading(false);
-                nameRef.current.value = ""
-                phoneNumberRef.current.value = ""
-                router.replace("/homepage/dashboard");
-              })
-            return res.json();
+            if(!res.ok) {
+                return res.json()
+                .then(errorData => {
+                    console.log("This is the errordata", errorData);
+                    swal({
+                        title: "",
+                        text: `${errorData.errorMessage}`,
+                        });
+                    throw new Error(errorData.errorMessage);
+                });
+            } 
+            return res.json()
+            .then((response) => {
+                if(response.statusCode === 500) {
+                    throw new Error("something went wrong");
+                };
+
+                setError(false);
+                swal({
+                    title: "Submitted",
+                    text: "User registered successfully. You will now be signed in",
+                    icon: "success",
+                    button: "Ok"
+                }).then(() => {
+                    localStorage.setItem("openlogin_store", JSON.stringify({
+                        sessionId: token.sessionId
+                    }));
+                    // setIsLoading(false);
+                    nameRef.current.value = ""
+                    phoneNumberRef.current.value = ""
+                    router.replace("/homepage/dashboard");
+                })
+            })
         })
         .catch(error => {
+            console.log(error);
             setError(error.toString());
             setIsLoading(false)
         });
-    }
+    };
 
     if(pageLoad) {
         return <Spinner />
     }
 
     return <Fragment>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+        <Script id="google-analytics">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+        </Script>
         {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
         {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root"))}
         <form onSubmit={formSubmitHandler} className="bg-white mx-auto px-auto font-sans relative" style={{width: "680px", height: "100vh", maxHeight: "607px", padding: "93px 142px"}}>
@@ -160,7 +168,7 @@ const CorporateSignup = () => {
                 <p>Back</p>
             </button>
             {/* {error && <p className="text-sm mx-auto text-red-600">{error}</p>} */}
-            <Image src="/images/logo.png" alt="Company's logo" width={172} height={61} />
+            <Image src={logo} alt="Company's logo" width={172} height={61} />
             <p className=" text-dark text-2xl font-medium w-full" style={{marginTop: "28px"}}>Corporate Entity Sign Up</p>
             <div className="mt-3.5 relative">
                 <label className="text-sm font-normal text-light-brown">Company Name <span className="text-red-600">*</span></label> <br />
@@ -168,24 +176,10 @@ const CorporateSignup = () => {
                 {!nameValid && <p className="absolute top-1 right-0 text-sm text-red-600">name cannot be empty</p>}
             </div>
             
-            <div className="flex flex-row gap-3 my-3.5" style={{width: "396px",  height: "43px"}}>
-                <div className="relative items-center">
-                    <label className="text-sm font-normal" style={{color: "rgba(0, 0, 0, 0.50)"}} >Country code<span className="text-red-600">*</span></label> <br />
-                    <select ref={countryCodeRef} className="ps-10 appearance-none hover:cursor-pointer bg-light-grey rounded-md font-sans focus:outline-blue-200" style={{width: "118px",  height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}} >
-                        {countryCodes.map(code => {
-                            return <option key={code} className="text-dark font-medium font-sans">
-                                    {code}
-                                </option>
-                        })}
-                    </select>
-                    <Image src="/images/language.png" alt="world icon" width={24} height={24} className="absolute top-8 left-3" />
-                    <Image src="/images/vector.png" alt="dropdown arrow" width={8} height={5} className="absolute top-11 right-4" />
-                </div>
-                <div className="relative">
-                    <label className="text-sm font-normal" style={{color: "rgba(0, 0, 0, 0.50)"}} >Phone Number<span className="text-red-600">*</span></label> <br />
-                    <input ref={phoneNumberRef} onChange={() => setPhoneNumberValid(true)} type="number" min="0" placeholder="Enter your Phone number" className="bg-light-grey rounded-md font-sans placeholder:text-light-brown placeholder:font-medium focus:outline-blue-200" style={{width: "266px",  height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)", paddingLeft: "14px",}} />
-                    {!phoneNumberValid && <p className="absolute top-1 right-0 text-sm text-red-600">invalid phone number</p>}
-                </div>
+            <div className="my-3.5 relative" style={{width: "396px",  height: "43px"}}>
+                <label className="text-sm font-normal" style={{color: "rgba(0, 0, 0, 0.50)"}} >Phone Number<span className="text-red-600">*</span></label> <br />
+                <input ref={phoneNumberRef} onChange={() => setPhoneNumberValid(true)} type="text" min="0" placeholder="Enter your Phone number" className="bg-light-grey rounded-md font-sans placeholder:text-light-brown placeholder:font-medium focus:outline-blue-200" style={{width: "396px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)", paddingLeft: "14px",}} />
+                {!phoneNumberValid && <p className="absolute top-1 right-0 text-sm text-red-600">invalid phone number</p>}
             </div>
             <div className="mt-12 flex flex-row items-center">
                 <input type="checkbox" onChange={newsletterHandler} checked={newsletter} ref={newsletterRef} className="me-1 bg-light-grey rounded-md cursor-pointer" />

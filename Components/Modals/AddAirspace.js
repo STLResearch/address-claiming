@@ -1,7 +1,7 @@
 import { counterActions } from '@/store/store';
 import maplibregl from 'maplibre-gl';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 
 const AddAirspace = (props) => {
@@ -11,57 +11,40 @@ const AddAirspace = (props) => {
     const [addresses, setAddresses] =  useState([]);
     const [showOptions, setShowOptions] = useState(true);
     const [addressData, setAddressData] = useState();
-    const [isLoading, setIsLoading] = useState(false);
+    // const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
     const [addressValid, setAddressValid] = useState(false);
     const [confirmMap, setConfirmMap] = useState(true);
 
     const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
 
-    const airspaceValue = useSelector(state => state.value.airspaceData);
-
-    const addressChangeHandler = (e) => {
-        if(!showOptions) {
-            setShowOptions(true);
-        }
-
-        setAddress(e.target.value)
-    }
-
-    const buttonSelectHandler = (e) => {
-        e.preventDefault(), 
-        setAddress(e.target.value), 
-        setShowOptions(false);
-    }
-
     useEffect(() => {
-            const map = new maplibregl.Map({
-                container: 'map',
-                attributionControl: false, //need this to show a compact attribution icon (i) instead of the whole text
-                style: 'https://tiles.locationiq.com/v3/streets/vector.json?key='+locationiqKey,
-                zoom: 12,
-                center: [-122.42, 37.779]
-            });
+        const map = new maplibregl.Map({
+            container: 'map',
+            attributionControl: false, //need this to show a compact attribution icon (i) instead of the whole text
+            style: 'https://tiles.locationiq.com/v3/streets/vector.json?key='+locationiqKey,
+            zoom: 12,
+            center: [-122.42, 37.779]
+        });
 
-            map.on('load', function () {
-                map.addLayer({
-                    'id': 'maine',
-                    'type': 'fill',
-                    'source': {
-                        'type': 'geojson',
-                        'data': {
-                            'type': 'Feature',
-                            'geometry': {
-                                'type': 'Polygon',
-                                'coordinates': []
-                            }
+        map.on('load', function () {
+            map.addLayer({
+                'id': 'maine',
+                'type': 'fill',
+                'source': {
+                    'type': 'geojson',
+                    'data': {
+                        'type': 'Feature',
+                        'geometry': {
+                            'type': 'Polygon',
+                            'coordinates': []
                         }
-                    },
-                    'layout': {},
-                    'paint': {
-                        'fill-color': '#D20C0C',
                     }
-                });
+                },
+                'layout': {},
+                'paint': {
+                    'fill-color': '#D20C0C',
+                }});
             });
     }, [])
 
@@ -95,10 +78,27 @@ const AddAirspace = (props) => {
         }
     }, [address]);
 
+    
+
+    // const airspaceValue = useSelector(state => state.value.airspaceData);
+
+    const addressChangeHandler = (e) => {
+        if(!showOptions) {
+            setShowOptions(true);
+        }
+
+        setAddress(e.target.value)
+    }
+
+    const buttonSelectHandler = (e) => {
+        e.preventDefault(), 
+        setAddress(e.target.value), 
+        setShowOptions(false);
+    }
 
     const mapLoadHandler = (e) => {
         e.preventDefault(); 
-        setIsLoading(true)
+        // setIsLoading(true)
 
 
         fetch(`https://us1.locationiq.com/v1/search?key=${locationiqKey}&q=${address}&format=json&polygon_geojson=1`)
@@ -113,9 +113,9 @@ const AddAirspace = (props) => {
         })
         .then(resData => {
             if(resData.error) {
-                console.log(resData)
+                console.log(resData.error)
                 setError(resData.error);
-                setIsLoading(false)
+                // setIsLoading(false)
                 return;
             }
             
@@ -149,7 +149,7 @@ const AddAirspace = (props) => {
                     .setLngLat(endPoint)
                     .addTo(map);
                 
-                setIsLoading(false);
+                // setIsLoading(false);
                 setConfirmMap(false);
                 return;    
             }
@@ -175,12 +175,12 @@ const AddAirspace = (props) => {
             
             setConfirmMap(false)
             setError("")
-            setIsLoading(false)
+            // setIsLoading(false)
         })
         .catch((err) => {
             console.log(err);
             setError(`${err.message || ""}${err.message ? "." : ""} kindly check your address and try again`);
-            setIsLoading(false);
+            // setIsLoading(false);
         });     
     }
 
@@ -190,8 +190,6 @@ const AddAirspace = (props) => {
 
     const confirmAddressHandler = (e) => {
         e.preventDefault();
-
-        console.log(addressData)
 
         const vertexes = []
 
@@ -207,8 +205,6 @@ const AddAirspace = (props) => {
                 }
             }
         }
-
-        console.log(vertexes);
 
         const longitude = parseFloat(addressData.lon).toFixed(2);
         const latitude = parseFloat(addressData.lat).toFixed(2);
@@ -228,9 +224,8 @@ const AddAirspace = (props) => {
 
 
     return <div className="bg-white rounded fixed z-20 overflow-y-auto" style={{width: "886px", height: "564px", 
-        top: "7vh",  //This is for live environment
+        top: "7vh",
         left: "calc(50% - 443px)", 
-        // top: "5vh", // This is for test environment
         }}  onClick={() => {setShowOptions(false)}}>
             <div className="relative">
                 <button onClick={closeModalHandler} className="absolute right-9 top-5">
@@ -241,34 +236,25 @@ const AddAirspace = (props) => {
                 </button>
             </div>
              <div className="flex flex-row items-center mt-10 mb-8 gap-4 justify-center">
-                <h2 className="font-bold">Add New AirSpace</h2>
+                <h2 className="font-bold">Add New Airspace</h2>
             </div>
             <form className="relative">
-                <label className="ms-12 text-light-brown font-medium">AirSpace Address<span className="text-red-500">*</span></label> <br />
+                <label className="ms-12 text-light-brown font-medium">Address<span className="text-red-500">*</span></label> <br />
                 
                 <div className="flex flex-row gap-2.5 justify-end items-center me-12">
                     <div className="relative"> 
                         <p className='absolute -top-2 text-red-500 text-sm right-0'>{error}</p>
                         <input placeholder="AirSpace Address" onChange={addressChangeHandler} value={address} className="ms-12 mt-2.5 text-ellipsis rounded placeholder:text-light-brown placeholder:text-sm ps-5 pe-36 py-2.5 focus:outline-blue-200" style={{width: "656px", height: "37px", border: "0.35px solid #0653EA"}} />
-                        {/* <div className="flex flex-row justify-center gap-1 items-center absolute right-3 top-4 z-10">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                <path d="M6 11.375C3.035 11.375 0.625 8.965 0.625 6C0.625 3.035 3.035 0.625 6 0.625C8.965 0.625 11.375 3.035 11.375 6C11.375 8.965 8.965 11.375 6 11.375ZM6 1.375C3.45 1.375 1.375 3.45 1.375 6C1.375 8.55 3.45 10.625 6 10.625C8.55 10.625 10.625 8.55 10.625 6C10.625 3.45 8.55 1.375 6 1.375Z" fill="#FC6681"/>
-                                <path d="M4.58493 7.78969C4.48993 7.78969 4.39493 7.75469 4.31993 7.67969C4.17493 7.53469 4.17493 7.29469 4.31993 7.14969L7.14993 4.31969C7.29493 4.17469 7.53493 4.17469 7.67993 4.31969C7.82493 4.46469 7.82493 4.70469 7.67993 4.84969L4.84993 7.67969C4.77993 7.75469 4.67993 7.78969 4.58493 7.78969Z" fill="#FC6681"/>
-                                <path d="M7.41493 7.78969C7.31993 7.78969 7.22493 7.75469 7.14993 7.67969L4.31993 4.84969C4.17493 4.70469 4.17493 4.46469 4.31993 4.31969C4.46493 4.17469 4.70493 4.17469 4.84993 4.31969L7.67993 7.14969C7.82493 7.29469 7.82493 7.53469 7.67993 7.67969C7.60493 7.75469 7.50993 7.78969 7.41493 7.78969Z" fill="#FC6681"/>
-                            </svg>
-                            <p className="text-xml text-light-red">Invalid</p>
-                        </div> */}
-
 
                         {addressValid && <div className="flex flex-row justify-center gap-1 items-center absolute right-3 top-4 z-10">
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                                 <path d="M6 11.375C3.035 11.375 0.625 8.965 0.625 6C0.625 3.035 3.035 0.625 6 0.625C8.965 0.625 11.375 3.035 11.375 6C11.375 8.965 8.965 11.375 6 11.375ZM6 1.375C3.45 1.375 1.375 3.45 1.375 6C1.375 8.55 3.45 10.625 6 10.625C8.55 10.625 10.625 8.55 10.625 6C10.625 3.45 8.55 1.375 6 1.375Z" fill="#29AE55"/>
                                 <path d="M5.28997 7.79078C5.18997 7.79078 5.09497 7.75078 5.02497 7.68078L3.60997 6.26578C3.46497 6.12078 3.46497 5.88078 3.60997 5.73578C3.75497 5.59078 3.99497 5.59078 4.13997 5.73578L5.28997 6.88578L7.85997 4.31578C8.00497 4.17078 8.24497 4.17078 8.38997 4.31578C8.53497 4.46078 8.53497 4.70078 8.38997 4.84578L5.55497 7.68078C5.48497 7.75078 5.38997 7.79078 5.28997 7.79078Z" fill="#29AE55"/>
                             </svg>
-                            <p className="text-xml text-light-green">Verified</p>
+                            <p className="text-xml text-light-green">Found</p>
                         </div>}
                     </div>
-                    <button disabled={!address} onClick={mapLoadHandler} className="rounded-md bg-dark-blue mt-2.5 text-white text-sm disabled:bg-light-blue disabled:cursor-not-allowed" style={{width: "120px", height: "37px", border: "none"}}>Verify</button>
+                    <button disabled={!address} onClick={mapLoadHandler} className="rounded-md bg-dark-blue mt-2.5 text-white text-sm disabled:bg-light-blue disabled:cursor-not-allowed" style={{width: "120px", height: "37px", border: "none"}}>Search</button>
                 </div>
                 {(addresses.length > 0 && address.length > 0) &&
                 <div style={{width: "656px", height: "259px", border: "0.35px solid #0653EA", marginLeft: "52px"}} className={`${(!showOptions || !addresses.length > 1) && "hidden"} bg-white z-10 overflow-y-auto rounded px-3 py-1 absolute`}>

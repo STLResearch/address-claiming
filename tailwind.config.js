@@ -35,7 +35,9 @@ module.exports = {
         'bleach-red': "rgba(255, 199, 194, 0.5)",
         "light-green": "#29AE55",
         "bleach-green": "#BED9C7",
-        "dark-green": "#1A572E"
+        "dark-green": "#1A572E",
+        "dark-yellow": "#FFC60C",
+        "light-yellow": "#FFF6D8"
       },
       fontFamily: {
         "sans": ['poppins', 'sans-serif'] 

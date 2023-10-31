@@ -8,6 +8,7 @@ import { SolanaPrivateKeyProvider } from "@web3auth/solana-provider";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import { SolanaWallet } from "@web3auth/solana-provider";
+import Script from "next/script";
 
 import { counterActions } from "@/store/store";
 import Backdrop from "@/Components/Backdrop";
@@ -18,7 +19,6 @@ import logo from "../../../public/images/logo.jpg";
 const Signup = (props) => {
     const [emailValid, setEmailValid] = useState(true);
     const [categorySect, setCategorySect] = useState(false);
-    const [initial, setInitial] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const emailRef = useRef();
@@ -38,16 +38,6 @@ const Signup = (props) => {
     
     const router = useRouter();
     const dispatch = useDispatch();
-
-    // const chainConfig = {
-    //     chainNamespace: "solana",
-    //     chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-    //     rpcTarget: "https://api.devnet.solana.com",
-    //     displayName: "Solana Devnet",
-    //     blockExplorer: "https://explorer.solana.com",
-    //     ticker: "SOL",
-    //     tickerName: "Solana",
-    //   }
 
     //   For Live Environment
     
@@ -87,7 +77,7 @@ const Signup = (props) => {
         }
         
         init();
-    }, [initial]);
+    }, []);
 
     const loginHandler = async(provider, e) => {
         e.preventDefault();
@@ -131,7 +121,6 @@ const Signup = (props) => {
                   });
             } catch(err) {
                 localStorage.removeItem("openlogin_store");
-                localStorage.removeItem("email");
                 swal({
                     title: "oops!",
                     text: "Something went wrong. Kindly reload the page",
@@ -146,7 +135,7 @@ const Signup = (props) => {
         } catch(err) {
             swal({
                 title: "oops!",
-                text: "Couldn't get user info Kindly reload the page",
+                text: "Couldn't get user info. Kindly reload the page",
               });
             return;
         }
@@ -161,7 +150,7 @@ const Signup = (props) => {
         } catch(err) {
             swal({
                 title: "oops!",
-                text: "Solana wallet wasn't created Kindly reload the page",
+                text: "Solana wallet wasn't created. Kindly reload the page",
               });
             return;
         }
@@ -185,15 +174,14 @@ const Signup = (props) => {
             }
             return res.json()
             .then(response => {
-                const filteredUser = response.filter(user => user.email === userInformation.email);
-    
+                const filteredUser = response.filter(user => user.blockchainAddress === accounts[0]);
+
                 if(filteredUser.length < 1) {
                     const token = localStorage.getItem("openlogin_store");
                     dispatch(counterActions.web3({
                         token: JSON.parse(token)
                     }));
                     localStorage.removeItem("openlogin_store");
-                    localStorage.removeItem("email");
                     dispatch(counterActions.category({
                         email: userInformation.email,
                         blockchainAddress: accounts[0]
@@ -204,13 +192,12 @@ const Signup = (props) => {
                     return;
                 }
     
-                localStorage.setItem("email", userInformation.email);
                 router.replace("/homepage/dashboard");
             })
         }).catch(err => {
             swal({
-                title: "oops!",
-                text: err.message || "something went wrong. kindly try again",
+                title: "Oops!",
+                text: err.message || "Something went wrong. Kindly try again",
               })
         })     
     }
@@ -227,6 +214,17 @@ const Signup = (props) => {
 
 
     return <Fragment>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+        <Script id="google-analytics">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+        </Script>
+        
         {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
         {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root"))}
         {!categorySect && <div className="bg-white rounded px-12 mx-auto justify-center items-center relative" style={{width: "680px", height: "90vh", maxHeight: "593px", marginTop: "5vh"}}>
@@ -238,7 +236,7 @@ const Signup = (props) => {
             </button>
             <form className="flex flex-col mx-auto pt-20" style={{width: "396px"}}>
                 <Image src={logo} alt="Company's logo" width={164} height={58} className="my-4" />
-                <p className=" text-dark-brown text-xl font-medium mt-12">Sign in/Sign Up</p>
+                <p className=" text-dark-brown text-xl font-medium mt-12">Welcome to SkyTrade</p>
                 <div className="mt-2 relative">
                     <label className="text-sm font-normal" style={{color: "rgba(0, 0, 0, 0.50)"}} >E-mail Address<span className="text-red-600">*</span></label> <br />
                     <input type="email" ref={emailRef} onChange={() => setEmailValid(true)} placeholder="E-mail Address" className="bg-light-grey rounded-md focus:outline-blue-200 placeholder:text-light-brown placeholder:font-medium font-sans" style={{width: "396px",  height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)", paddingLeft: "14px",}} />
@@ -270,8 +268,8 @@ const Signup = (props) => {
                 </svg>
                 <p>Back</p>
             </button>
-            <Image src="/images/logo.png" alt="Company's logo" width={164} height={58} className="mt-4 my-12" />
-            <h2 className="font-bold text-2xl">Welcome to SkyTrades</h2>
+            <Image src={logo} alt="Company's logo" width={164} height={58} className="mt-4 my-12" />
+            <h2 className="font-bold text-2xl">Welcome to SkyTrade</h2>
             <p className="text-light-brown text-center text-sml">
                 Please choose an option that best reflects the account's 
                 intended purpose to enhance your personalized experience.
@@ -286,13 +284,17 @@ const Signup = (props) => {
             </div>
             <div className="absolute bottom-2 flex flex-row justify-between w-full px-5">
                 <div>
-                    <p className="">&copy; Skytrades 2023</p>
+                    <p className="">&copy; SkyTrade 2023</p>
                 </div>
-                <div className="flex flex-row items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none">
-                        <path d="M12.6 0H1.4C0.63 0 0 0.61875 0 1.375V9.625C0 10.3813 0.63 11 1.4 11H12.6C13.37 11 14 10.3813 14 9.625V1.375C14 0.61875 13.37 0 12.6 0ZM12.32 2.92188L7.742 5.73375C7.287 6.01562 6.713 6.01562 6.258 5.73375L1.68 2.92188C1.505 2.81188 1.4 2.62625 1.4 2.42688C1.4 1.96625 1.911 1.69125 2.31 1.93187L7 4.8125L11.69 1.93187C12.089 1.69125 12.6 1.96625 12.6 2.42688C12.6 2.62625 12.495 2.81188 12.32 2.92188Z" fill="black" fillOpacity="0.5"/>
-                    </svg>
-                    <p>help@skytrades.io</p>
+                <div className="flex flex-row items-center gap-1 pe-5">
+                    <a className="flex flex-row items-center gap-1" href="mailto:help@sky.trade">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none">
+                            <path d="M12.6 0H1.4C0.63 0 0 0.61875 0 1.375V9.625C0 10.3813 0.63 11 1.4 11H12.6C13.37 11 14 10.3813 14 9.625V1.375C14 0.61875 13.37 0 12.6 0ZM12.32 2.92188L7.742 5.73375C7.287 6.01562 6.713 6.01562 6.258 5.73375L1.68 2.92188C1.505 2.81188 1.4 2.62625 1.4 2.42688C1.4 1.96625 1.911 1.69125 2.31 1.93187L7 4.8125L11.69 1.93187C12.089 1.69125 12.6 1.96625 12.6 2.42688C12.6 2.62625 12.495 2.81188 12.32 2.92188Z" fill="black" fillOpacity="0.5"/>
+                        </svg>
+                        <span>
+                            help@sky.trade
+                        </span>
+                    </a>
                 </div>
             </div>
         </div>}

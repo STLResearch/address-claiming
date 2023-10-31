@@ -67,26 +67,26 @@ button{
   list-style: none;
   display: flex;
   justify-content: end;
-  margin-top: 3rem;
+  margin: 3rem 0;
 }
 
 .paginationBttns a {
   padding: 5px;
   margin: 8px;
   border-radius: 5px;
-  border: 1px solid #2b2eff;
-  color: #2b2eff;
+  border: 1px solid #0653EA;
+  color: #0653EA;
   cursor: pointer;
 }
 
 .paginationBttns a:hover{
   color: white;
-  background-color: #2b2eff;
+  background-color: #0653EA;
 }
 
 .paginationActive a {
   color: white;
-  background-color: #2b2eff;
+  background-color: #0653EA;
 }
 
 .loader{
@@ -114,14 +114,6 @@ button{
 
 
   
-
-
-
-
-
-
-
-
 
 @media (min-width: 992px){
   /* body{

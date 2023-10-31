@@ -23,7 +23,7 @@ const AddPilotModal = (props) => {
 
 
     return <div className="bg-white rounded px-12 fixed z-20 pb-10 overflow-y-auto" style={{width: "886px", height: "90vh", maxHeight: "860px", 
-            top: "5vh",  // This is for live environment
+            top: "5vh",
             left: "calc(50% - 443px)", 
         }}>
             <div className="flex flex-row items-center mt-20 gap-4 justify-center">

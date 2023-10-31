@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [19.x]
+        node-version: [18.x]
 
     steps:
     - uses: actions/checkout@v3
@@ -21,5 +21,5 @@ jobs:
         cache: 'npm'
     - run: bash ./aws_ps_get_dev_env.sh
     - run: pm2 stop ecosystem.config.js --env dev
-    - run: npm i && npm run build
+    - run: yarn install && yarn build
     - run: pm2 startOrRestart ecosystem.config.js --env dev

@@ -20,10 +20,20 @@ const Navbar = (props) => {
             <Image src="/images/user-icon.png" alt="icon" className="ms-6" width={30} height={30} />
             <div onClick={() => router.push("/homepage/settings")} className="me-5 ms-2">
                 <p className="font-base font-medium">{props.name}</p>
-                <div className={`me-1.5 flex flex-row items-center justify-center font-semibold gap-1 ${props.status === "Approved" ? "bg-bleach-green" : "bg-bleach-red"}`} style={{width: "50%", height: "12px", borderRadius:"3px", }}>
-                    {/* <p className="text-xxs text-light-green">verified</p> */}
-                    <p className={`text-xxs ${props.status === "Approved" ? "text-light-green" : "text-light-red-100"}`}>{props.status}</p>
-                </div>
+                {props.categoryId === 0 &&
+                    <div className={`me-1.5 flex flex-row items-center p-2 justify-center font-semibold gap-1 ${props.status === 2 ? "bg-bleach-green" : props.status === 1 ? "bg-light-yellow" : "bg-bleach-red"}`} style={{width: "70px", height: "12px", borderRadius:"3px", }}>
+                        {/* <p className="text-xxs text-light-green">verified</p> */}
+                        <p className={`text-xxs text-center ${props.status === 2 ? "text-light-green" : props.status === 1 ? "text-dark-yellow" : "text-light-red-100"}`}>
+                            {props.status === 0 ? "NotAttempted" : props.status === 1 ? "Pending" : 
+                                        props.status === 2 ? "Approved" : "rejected"}</p>
+                    </div>
+                }
+                {props.categoryId === 1 &&
+                    <div className={`me-1.5 flex flex-row items-center p-2 justify-center font-semibold gap-1 ${props.status === 2 ? "bg-bleach-green" : "bg-light-yellow"}`} style={{width: "70px", height: "12px", borderRadius:"3px", }}>
+                        {/* <p className="text-xxs text-light-green">verified</p> */}
+                        <p className={`text-xxs text-center ${props.status === 2 ? "text-light-green" : "text-dark-yellow"}`}>{props.status !== 2 ? "Pending" : "Approved"}</p>
+                    </div>
+                }
                 {/* <div className="flex flex-row items-center">
                     <div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="11" height="10" viewBox="0 0 11 10" fill="none">

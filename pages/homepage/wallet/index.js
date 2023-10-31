@@ -4,6 +4,11 @@ import { Fragment } from "react";
 import { createPortal } from "react-dom";
 import ReactPaginate from "react-paginate";
 import swal from "sweetalert";
+import { loadStripeOnramp } from "@stripe/crypto";
+import { CryptoElements, OnrampElement } from "@/hooks/stripe";
+import { Web3Auth } from "@web3auth/modal";
+import Script from "next/script";
+
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -18,11 +23,11 @@ const Wallet = (props) => {
     if(error) {
         swal({
             title: "oops!",
-            text: "something went wrong. kindly try again",
+            text: "Something went wrong. Kindly try again",
           });
     }
 
-    const url = 'https://api.testnet.solana.com';
+    const url = 'https://api.devnet.solana.com';
 
     const router = useRouter();
 
@@ -32,49 +37,121 @@ const Wallet = (props) => {
     const [tokenAccount, setTokenAccount] = useState("");
     const [transactionHistory, setTransactionHistory] = useState();
     const [transactionData, setTransactionData] = useState([]);
+    const [transactionHistories, setTransactionHistories] = useState([]);
     const [completedTrans, setCompletedTrans] = useState();
     const [showDepositModal, setShowDepositModal] = useState(false);
     const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
+    const [showStripeModal, setShowStripeModal] = useState(false);
+    const [clientSecret, setClientSecret] = useState("");
+    const [searchValue, setSearchValue] = useState("");
     const [pageNumber, setPageNumber] = useState(0);
+    const [stripeOnramp, setStripeOnRamp] = useState()
 
-    const transactionsPerPage = 1;
+    const transactionsPerPage = 5;
     const pagesVisited = pageNumber * transactionsPerPage;
     
     const pageCount = transactionHistory && Math.ceil(transactionHistory.length / transactionsPerPage);
     
     useEffect(() => {
-        const fetchedEmail = localStorage.getItem("email");
-        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-
         if(users) {
-            const singleUser = users.filter(user => user.email === fetchedEmail);
+            const authUser = async() => {
+                const chainConfig = {
+                    chainNamespace: "solana",
+                    chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                    rpcTarget: "https://api.testnet.solana.com",
+                    displayName: "Solana Mainnet",
+                    blockExplorer: "https://explorer.solana.com",
+                    ticker: "SOL",
+                    tickerName: "Solana",
+                };
 
-            // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-            if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-                console.log("false")
-                localStorage.removeItem("openlogin_store")
-                router.push("/auth/join");
-                return;
-            };
+                const web3auth = new Web3Auth({
+                        // For Production
+                        clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                
+                        // For Development
+                        // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                        web3AuthNetwork: "cyan",
+                        chainConfig: chainConfig,
+                    });
+            
+                await web3auth.initModal();
 
-            setToken(fetchedToken.sessionId);  
-            setUser(singleUser[0]);
+                // await web3auth.connect();
+                
+                let userInfo;
+
+                try{
+                    userInfo = await web3auth.getUserInfo();
+                } catch(err) {
+                    localStorage.removeItem("openlogin_store")
+                    swal({
+                        title: "oops!",
+                        text: "Something went wrong. Kindly try again",
+                      })
+                    .then(() => router.push("/auth/join"))
+                    return;
+                }
+
+                const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+            
+                const singleUser = users.filter(user => user.email === userInfo.email);
+
+                if(singleUser.length < 1){
+                    localStorage.removeItem("openlogin_store");
+                    router.push("/auth/join");
+                    return;
+                };
+
+                setToken(fetchedToken.sessionId);  
+                setUser(singleUser[0]);
+            } 
+
+            authUser();
         }
     }, []);
 
     useEffect(() => {
+        if(showStripeModal) {        
+            const stripeOnrampPromise = loadStripeOnramp("pk_test_51MRzIzIVelVZN1eRHjwBDzNvOb5lc65TvVoMtYFMUlZiyzXNXZE63TtoPspFu22pGAoSdlEeOgn6VWlu3XmKmMSd00LgkRYTfv");
+            
+            setStripeOnRamp(stripeOnrampPromise);
+
+            fetch(`/api/proxy?${Date.now()}`, {
+                method: "POST",
+                body: JSON.stringify({
+                    blockchainAddress: user.blockchainAddress
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    uri: "/stripe/create"
+                }
+            })
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {    
+                setClientSecret(data.data.client_secret);
+            })
+            .catch(error => {
+                console.error('Error:', error)
+                setClientSecret("");
+            });
+        }
+      }, [showStripeModal]);
+
+    
+
+    useEffect(() => {
         if(user) {
-            console.log("running wallet")
             const data =   {
                 jsonrpc: "2.0",
                 id: 1,
                 method: "getTokenAccountsByOwner",
                 params: [
-                //   user.wallet,
-                "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
-                // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  user.blockchainAddress,
                   {
-                    mint: "CpMah17kQEL2wqyMKt3mZBdTnZbkbfx4nqmQMFDP5vwp"
+                    mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
                   },
                   {
                     encoding: "jsonParsed"
@@ -99,9 +176,14 @@ const Wallet = (props) => {
 
                 return response.json()
             })
-            .then(result => {
-                console.log(result)
-                console.log(result.result.value[0].pubkey)
+            .then(result => {        
+                if(result.result.value.length < 1) {
+                    setTokenBalance("0");
+                    setTokenAccount("");
+                    setTransactionHistory([])
+                    return;
+                }
+
                 setTokenAccount(result.result.value[0].pubkey)
                 setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString)
             })
@@ -112,8 +194,7 @@ const Wallet = (props) => {
     }, [user]);
 
     useEffect(() => {
-        if(tokenAccount) {
-            console.log(tokenAccount)
+        if(tokenAccount && searchValue.length < 1) {
             const data = {
                 jsonrpc: "2.0",
                 id: 1,
@@ -140,37 +221,48 @@ const Wallet = (props) => {
                     return response.json()
                 })
                 .then(result => {
-                    console.log(result.result)
                     setTransactionHistory(result.result);
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
         }
-    }, [tokenAccount]);
+    }, [tokenAccount, searchValue]);
 
     useEffect(() => {
         let userArray = [];
         if(transactionHistory && transactionHistory.length > 0) {
-            transactionHistory.slice(pagesVisited, pagesVisited + transactionsPerPage).map(trans => {
-                console.log(trans)
+            let trans;
+            if(transactionHistory.length > 4) {
+                trans = transactionHistory.slice(pagesVisited, pagesVisited + transactionsPerPage);
+            } else {
+                trans = transactionHistory;
+            }
+
+            trans.map(trans => {
                 userArray.push(trans);
             });   
-            console.log(userArray);
+        
             setCompletedTrans(userArray);  
         }   
   }, [pagesVisited, transactionHistory]);
 
+  
     useEffect(() => {
         if(completedTrans && completedTrans.length > 0) {
             setTransactionData([]);
             for(const transaction of completedTrans) {
-                console.log(transaction);
                 const date = new Date(transaction.blockTime * 1000)
                 const month = date.toLocaleString('default', { month: 'short' })
                 const day = date.getDate();
                 const year = date.getFullYear();
-                transaction.date = `${month} ${day} ${year}` 
+                const hour = date.getHours().toString().padStart(2, '0');
+                const minute = date.getMinutes().toString().padStart(2, '0');
+                const second = date.getSeconds().toString().padStart(2, '0');
+
+
+                transaction.date = `${month} ${day}, ${year} 
+                                        ${hour}:${minute}:${second}` 
                 const data =   {
                     jsonrpc: "2.0",
                     id: 1,
@@ -198,47 +290,46 @@ const Wallet = (props) => {
                     return response.json()
                 })
                 .then((resData) => {
-                    console.log(resData.result.meta)
-
-                    const senderPostBalance = resData.result.meta.postTokenBalances.filter(sender => {
-                        // For live
-                        // return sender.owner === user.wallet
-        
-                        return sender.owner === "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR"
+                    const postBalances = resData.result.meta.postTokenBalances.filter(sender => {
+                        return sender.owner === user.blockchainAddress
                     }) 
 
-                    const senderPreBalance = resData.result.meta.preTokenBalances.filter(sender => {
-                        // For live
-                        // return sender.owner === user.wallet
-
-                        return sender.owner === "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR"
+                    const preBalances = resData.result.meta.preTokenBalances.filter(sender => {
+                        return sender.owner === user.blockchainAddress
                     });
 
-                    let postBalance;
-                    if(senderPostBalance[0].uiTokenAmount) {
-                        postBalance = senderPostBalance[0].uiTokenAmount.uiAmountString
-                    }
-                    
-                    // const postBalance = senderPostBalance[0]
+                    let postBalance;    
                     let preBalance;
-                    if(senderPreBalance[0].uiTokenAmount) {
-                        preBalance = senderPreBalance[0].uiTokenAmount.uiAmountString
+                    let transactionAmount;
+
+                    if(preBalances.length > 0) {
+                        preBalance = preBalances[0].uiTokenAmount.uiAmountString;
+                        postBalance = postBalances[0].uiTokenAmount.uiAmountString;
+
+                        transactionAmount = postBalance - preBalance;
+                    } else {
+                        const senderPreBalances = resData.result.meta.preTokenBalances.filter(sender => {
+                            return sender.owner !== user.blockchainAddress
+                        });
+
+                        const senderPostBalances = resData.result.meta.postTokenBalances.filter(sender => {
+                            return sender.owner !== user.blockchainAddress
+                        }) 
+
+                        const oldBalance = senderPreBalances[0].uiTokenAmount.uiAmountString;
+                        const postBalance = senderPostBalances[0].uiTokenAmount.uiAmountString;
+
+                        transactionAmount = +oldBalance - +postBalance;
                     }
-
-                    // const preBalance = senderPreBalance[0]
-
-                    
-                    
-                    const transactionAmount = postBalance - preBalance;
                     
                     transaction.amount = +transactionAmount.toFixed(4);
+                    // transactionHistoryArray.push(transaction);
                     setTransactionData(prev => {
                         return [
-                            ...prev,
+                            ...prev, 
                             transaction
                         ]
-                    })
-                    console.log(result.result);
+                    });
                 })
                 .catch(error => {
                     console.error(error);
@@ -247,6 +338,29 @@ const Wallet = (props) => {
         }
     }, [completedTrans]);
 
+    useEffect(() => {
+        if(transactionData.length > 0) {
+            const trans = transactionData.sort((a, b) => b.blockTime - a.blockTime);
+            setTransactionHistories(trans);
+        }
+    }, [transactionData]);
+
+    
+
+    const Stripe = (props) => {
+        return  <div style={{width: "400px", height: "70vh", left: "calc(50% - 200px)"}} className="fixed z-50 top-10">
+            <CryptoElements stripeOnramp={stripeOnramp}>
+                <OnrampElement clientSecret={props.clientSecret} />
+            </CryptoElements>
+            <button onClick={props.closeModal} className="absolute right-3 top-8">
+                <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+                    <path d="M12.7578 12.7285L21.2431 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12.7569 21.2138L21.2422 12.7285" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+    }
+
     const changePage = ({selected}) => {
         setPageNumber(selected);
     }
@@ -254,6 +368,8 @@ const Wallet = (props) => {
     const backdropCloseHandler = () => {
         setShowDepositModal(false);
         setShowWithdrawalModal(false);
+        // setShowStripeModal(false)
+        // setClientSecret("")
     }
 
     const depositRouteHandler = () => {
@@ -272,21 +388,42 @@ const Wallet = (props) => {
         setShowDepositModal(true);
     }
 
+    const StripeHandler = () => {
+        setShowStripeModal(true);
+        setShowDepositModal(false);
+    }
+
     if(!user || !token) {
         return <Spinner />
     }     
 
     return <Fragment>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+        <Script id="google-analytics">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+        </Script>
+
         {showWithdrawalModal && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
-        {showWithdrawalModal && createPortal(<WalletModal method="withdrawal" form="to" navigate={withdrawalRouteHandler} />, document.getElementById("modal-root"))}
-        {showDepositModal && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
-        {showDepositModal && createPortal(<WalletModal method="deposit" form="from" navigate={depositRouteHandler} />, document.getElementById("modal-root"))}
+        {showWithdrawalModal && createPortal(<WalletModal method="withdrawal" form="to" closeModal={() => setShowWithdrawalModal(false)} navigate={withdrawalRouteHandler} />, document.getElementById("modal-root"))}
+        {(showDepositModal || showStripeModal) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
+        {showDepositModal && createPortal(<WalletModal method="deposit" closeModal={() => setShowDepositModal(false)} form="from" stripe={StripeHandler} navigate={depositRouteHandler} />, document.getElementById("modal-root"))}
+        {(showStripeModal && clientSecret) && createPortal(<Stripe closeModal={() => 
+                                        {
+                                            setShowStripeModal(false)
+                                            backdropCloseHandler()
+                                            setClientSecret("")
+                                        }
+            } clientSecret={clientSecret} />, document.getElementById("modal-root"))}
         <div className="flex flex-row">
-            <Sidebar />
+            <Sidebar user={user} users={users} />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto overflow-x-hidden">
-                <Navbar name={user.name} status={user.KYCStatusId === 0 ? "Notattempted" : 
-                                                user.KYCStatusId === 1 ? "pending" 
-                                                : user.KYCStatusId === 3 ? "Rejected" : "Approved"}  />
+                <Navbar name={user.name} categoryId={user.categoryId} status={user.KYCStatusId}  />
                 <div className="bg-bleach-green flex flex-col mt-5 mx-auto relative items-center rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
                     <div className="z-10 text-center">
                         <p className="text-light-brown">My Wallet</p>
@@ -295,20 +432,32 @@ const Wallet = (props) => {
                         {tokenBalance && <p className="text-light-brown font-semibold -mt-2 text-sml">US$ {tokenBalance}</p>}
                     </div>
                     <div style={{zIndex: "10"}} className="flex flex-row justify-center items-center gap-4 absolute -bottom-3">
-                        <button onClick={showDepositModalHandler} className="flex flex-row justify-center gap-2 rounded-lg items-center transition-all duration-500 ease-in-out hover:bg-bleach-blue bg-white" style={{width: "151px", height: "52px"}}>
+                        {/* <button onClick={showDepositModalHandler} className="flex flex-row justify-center gap-2 rounded-lg items-center transition-all duration-500 ease-in-out hover:bg-bleach-blue bg-white" style={{width: "151px", height: "52px"}}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M5.75 12C5.75 11.5858 5.41421 11.25 5 11.25C4.58579 11.25 4.25 11.5858 4.25 12L4.25 18C4.25 18.9665 5.0335 19.75 6 19.75L18 19.75C18.9665 19.75 19.75 18.9665 19.75 18L19.75 12C19.75 11.5858 19.4142 11.25 19 11.25C18.5858 11.25 18.25 11.5858 18.25 12L18.25 18C18.25 18.1381 18.1381 18.25 18 18.25L6 18.25C5.86193 18.25 5.75 18.1381 5.75 18L5.75 12Z" fill="black"/>
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M10.8848 3.25C10.1944 3.25 9.63478 3.80964 9.63478 4.5L9.63478 9.1126C9.56136 9.11912 9.48795 9.12595 9.41457 9.13308L8.85869 9.18711C8.01058 9.26954 7.50267 10.1701 7.87093 10.9386C8.65413 12.5728 9.82945 14.1514 11.1382 15.4049C11.6229 15.8691 12.3872 15.8691 12.8719 15.4049L12.9755 15.3057C14.2842 14.0522 15.356 12.5728 16.1392 10.9386C16.5074 10.1701 15.9995 9.26954 15.1514 9.18711L14.5955 9.13308C14.5221 9.12595 14.4487 9.11912 14.3753 9.1126L14.3753 4.5C14.3753 3.80964 13.8157 3.25 13.1253 3.25L10.8848 3.25ZM10.4693 10.5532C10.8463 10.5107 11.1348 10.1913 11.1348 9.80797L11.1348 4.75L12.8753 4.75L12.8753 9.80797C12.8753 10.2041 13.1833 10.5319 13.5786 10.5565C13.8695 10.5747 14.1601 10.5978 14.4504 10.626L14.6118 10.6417C13.9393 11.9466 13.0591 13.1342 12.005 14.1577C11.5649 13.7303 11.1552 13.2744 10.7781 12.7932C10.2522 12.122 9.79002 11.4018 9.39834 10.6417L9.55968 10.626C9.84995 10.5978 10.1406 10.5747 10.4315 10.5565C10.4442 10.5557 10.4568 10.5546 10.4693 10.5532Z" fill="black"/>
                             </svg>
                             <p>Deposit</p>
-                        </button>
-                        <button onClick={showWithdrawalModalHandler} className="flex flex-row justify-center gap-2 rounded-lg  transition-all duration-500 ease-in-out hover:bg-bleach-blue items-center bg-white" style={{width: "151px", height: "52px"}}>
+                        </button> */}
+
+                        {/* <button onClick={showWithdrawalModalHandler} className="flex flex-row justify-center gap-2 rounded-lg  transition-all duration-500 ease-in-out hover:bg-bleach-blue items-center bg-white" style={{width: "151px", height: "52px"}}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M5.75 12C5.75 11.5858 5.41421 11.25 5 11.25C4.58579 11.25 4.25 11.5858 4.25 12L4.25 18C4.25 18.9665 5.0335 19.75 6 19.75L18 19.75C18.9665 19.75 19.75 18.9665 19.75 18L19.75 12C19.75 11.5858 19.4142 11.25 19 11.25C18.5858 11.25 18.25 11.5858 18.25 12L18.25 18C18.25 18.1381 18.1381 18.25 18 18.25L6 18.25C5.86193 18.25 5.75 18.1381 5.75 18L5.75 12Z" fill="black"/>
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.63478 14.5031C9.63478 15.1934 10.1944 15.7531 10.8848 15.7531L13.1253 15.7531C13.8157 15.7531 14.3753 15.1934 14.3753 14.5031L14.3753 9.89048C14.4487 9.88396 14.5221 9.87713 14.5955 9.86999L15.1514 9.81597C15.9995 9.73354 16.5074 8.83294 16.1392 8.06451C15.356 6.43029 14.2842 4.95085 12.9755 3.69735L12.8719 3.59816C12.3872 3.13395 11.6229 3.13395 11.1382 3.59815L11.0346 3.69735C9.72587 4.95085 8.65413 6.43029 7.87093 8.06451C7.50267 8.83293 8.01058 9.73354 8.85869 9.81597L9.41457 9.87C9.48795 9.87713 9.56136 9.88396 9.63478 9.89048L9.63478 14.5031ZM11.1348 9.19511C11.1348 8.92874 10.9955 8.69326 10.784 8.56008C10.681 8.49523 10.5609 8.45464 10.4315 8.44656C10.1406 8.42842 9.84995 8.40524 9.55968 8.37703L9.39834 8.36135C9.93226 7.3253 10.5972 6.36316 11.3761 5.49838C11.5782 5.27402 11.7879 5.05622 12.005 4.84538C13.0591 5.86892 13.9393 7.05651 14.6118 8.36135L14.4504 8.37703C14.1601 8.40524 13.8695 8.42842 13.5786 8.44656C13.1833 8.47122 12.8753 8.79902 12.8753 9.19511L12.8753 14.2531L11.1348 14.2531L11.1348 9.19511Z" fill="black"/>
                             </svg>
                             <p>Withdraw</p>
-                        </button>
+                        </button> */}
+                        
+                        {/* <button className="flex flex-row justify-center gap-2 rounded-lg  transition-all duration-500 ease-in-out items-center cursor-default bg-white" style={{width: "151px", height: "52px"}}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M5.75 12C5.75 11.5858 5.41421 11.25 5 11.25C4.58579 11.25 4.25 11.5858 4.25 12L4.25 18C4.25 18.9665 5.0335 19.75 6 19.75L18 19.75C18.9665 19.75 19.75 18.9665 19.75 18L19.75 12C19.75 11.5858 19.4142 11.25 19 11.25C18.5858 11.25 18.25 11.5858 18.25 12L18.25 18C18.25 18.1381 18.1381 18.25 18 18.25L6 18.25C5.86193 18.25 5.75 18.1381 5.75 18L5.75 12Z" fill="black"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.63478 14.5031C9.63478 15.1934 10.1944 15.7531 10.8848 15.7531L13.1253 15.7531C13.8157 15.7531 14.3753 15.1934 14.3753 14.5031L14.3753 9.89048C14.4487 9.88396 14.5221 9.87713 14.5955 9.86999L15.1514 9.81597C15.9995 9.73354 16.5074 8.83294 16.1392 8.06451C15.356 6.43029 14.2842 4.95085 12.9755 3.69735L12.8719 3.59816C12.3872 3.13395 11.6229 3.13395 11.1382 3.59815L11.0346 3.69735C9.72587 4.95085 8.65413 6.43029 7.87093 8.06451C7.50267 8.83293 8.01058 9.73354 8.85869 9.81597L9.41457 9.87C9.48795 9.87713 9.56136 9.88396 9.63478 9.89048L9.63478 14.5031ZM11.1348 9.19511C11.1348 8.92874 10.9955 8.69326 10.784 8.56008C10.681 8.49523 10.5609 8.45464 10.4315 8.44656C10.1406 8.42842 9.84995 8.40524 9.55968 8.37703L9.39834 8.36135C9.93226 7.3253 10.5972 6.36316 11.3761 5.49838C11.5782 5.27402 11.7879 5.05622 12.005 4.84538C13.0591 5.86892 13.9393 7.05651 14.6118 8.36135L14.4504 8.37703C14.1601 8.40524 13.8695 8.42842 13.5786 8.44656C13.1833 8.47122 12.8753 8.79902 12.8753 9.19511L12.8753 14.2531L11.1348 14.2531L11.1348 9.19511Z" fill="black"/>
+                            </svg>
+                            <div>
+                                <p className="text-xs text-dark-green">Coming Soon</p>
+                                <p>Withdraw</p>
+                            </div>
+                        </button> */}
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" className="absolute top-4 right-6 z-1" width="146" height="121" viewBox="0 0 146 121" fill="none">
                         <path d="M95.5943 60.4999C95.5943 54.5876 100.376 49.7947 106.275 49.7947C112.174 49.7947 116.956 54.5876 116.956 60.4999C116.956 66.4122 112.174 71.2051 106.275 71.2051C100.376 71.2051 95.5943 66.4122 95.5943 60.4999Z" fill="#1A572E" fillOpacity="0.1"/>
@@ -318,40 +467,53 @@ const Wallet = (props) => {
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M130.63 103H10C4.47717 103 0 98.5229 0 93V10.0757C13.4341 3.66759 29.0313 0 45.6673 0C96.1093 0 137.001 33.7183 137.001 75.3118C137.001 85.0882 134.742 94.4294 130.63 103Z" fill="#AECCB8"/>
                     </svg>
                 </div>
-                <div className="bg-white mx-auto ps-6 pe-2.5 rounded-md mt-10 flex flex-row justify-between items-center" style={{width: "calc(100vw - 257px)", maxWidth: "1139px", height: "47px"}}>
+                <div className="bg-white mx-auto px-6 rounded-md mt-10 flex flex-row justify-between items-center" style={{width: "calc(100vw - 257px)", maxWidth: "1139px", height: "47px"}}>
                     <h3>Transaction History</h3>
                     <form className="flex flex-row justify-center gap-2 items-center">
-                        <input type="text" className="bg-light-grey ps-3 rounded placeholder:text-sm placeholder:text-light-brown focus:outline-blue-200" placeholder="Search Transaction" style={{width: "211px", height: "27px"}} />
-                        <button className="bg-dark-blue text-white rounded px-1 text-sm" style={{width: "73px", height: "27px"}}>SEARCH</button>
-                        <select type="text" defaultValue="Last 30 Days" className="bg-light-grey ps-3 text-sm rounded placeholder:text-sm placeholder:text-light-brown focus:outline-blue-200" style={{width: "123px", height: "27px"}}>
-                            <option disabled >Last 30 Days</option>
-                        </select>
+                        <input type="text" 
+                            onChange={(e) => setSearchValue(e.target.value)}
+                            className="bg-light-grey ps-3 rounded placeholder:text-sm placeholder:text-light-brown focus:outline-blue-200" 
+                            placeholder="Search Transaction" 
+                            style={{width: "211px", height: "27px"}} />
+                        <button onClick={(e) => {
+                            e.preventDefault()
+                            changePage({selected: 1})
+                            const filteredTransactions = transactionHistory.filter(history => {
+                                return history.signature.includes(searchValue);
+                            });
+                            
+                            if(filteredTransactions.length > 0) {
+                                setTransactionHistory(filteredTransactions);
+                            } else {
+                                setTransactionHistories([]);
+                                setTransactionHistory([])
+                                setTransactionData([])
+                            }
+                            
+                        }} className="bg-dark-blue text-white rounded px-1 text-sm" style={{width: "73px", height: "27px"}}>SEARCH</button>
                     </form>
                 </div>
                 <div className="mx-auto ps-6 pe-16 gap-x-6 font-semibold rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "calc(100vw - 257px)", maxWidth: "1139px", height: "47px"}}>
-                    <p className="w-2/12">Date</p>
+                    <p className="w-3/12">Date</p>
                     <p className="w-4/12">Transaction ID</p>
-                    <p className="w-2/12">Amount</p>
+                    <p className="w-2/12">Amount (USDC)</p>
                     <p className="w-1/12">Status</p>
                 </div>
                 {!transactionHistory && 
-                        // <div className="text-center">
                             <p className="mt-5 text-center">Loading...</p>
-                        // </div>
-                        // <Spinner />
                         } 
                 {(transactionHistory && transactionHistory.length < 1) && 
                     <div className="flex flex-row justify-center mt-20">
-                        <p>You don't have any transaction at the moment</p>
+                        <p>No transaction for your account at the moment</p>
                     </div>
                 } 
-                {(transactionData && transactionData.length > 0) && transactionData.map(history => {
+                {(transactionHistories && transactionHistories.length > 0) && transactionHistories.map(history => {
                     return <div key={history.signature} className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px", width: "calc(100vw - 257px)", maxWidth: "1139px",}}>
-                    <p className="w-2/12">{history.date}</p>
+                    <p className="w-3/12">{history.date}</p>
                     {/*remove the cluster before going live  */}
-                    <a href={`https://explorer.solana.com/tx/${history.signature}?cluster=testnet`} target="_blank" className="w-4/12 text-ellipsis text-dark-blue overflow-x-clip">{history.signature}</a>
+                    <a href={`https://explorer.solana.com/tx/${history.signature}?cluster=devnet`} target="_blank" className="w-4/12 text-ellipsis text-dark-blue overflow-x-clip">{history.signature}</a>
                     <p className={`w-2/12 ${history.amount > 0 ? "text-green-500" : "text-red-600"}`}><span>{history.amount ? history.amount : ""}</span></p>
-                    <p className="w-1/12 p-0.5 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-2">
+                    <p className="w-1/12 p-0.5 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
                             <circle cx="3" cy="3" r="3" fill="#1A572E"/>
                         </svg>
@@ -359,17 +521,21 @@ const Wallet = (props) => {
                     </p>
                 </div>
                 })}
-                {(transactionData && transactionData.length > 0) && <ReactPaginate
-                            previousLabel={"Previous"}
-                            nextLabel={"Next"}
-                            pageCount={pageCount}
-                            onPageChange={changePage}
-                            containerClassName={"paginationBttns"}
-                            previousLinkClassName={'previousBttn'}
-                            nextLinkClassName={'nextBttn'}
-                            disabledClassName={'pagination-disabled'}
-                            activeClassName={'paginationActive'}
-                        />}
+                {(transactionHistory && transactionHistory.length > 0) && 
+                        <div className="flex flex-row justify-end mx-auto" style={{maxWidth: "1139px"}}>
+                            <ReactPaginate
+                                    previousLabel={"Previous"}
+                                    nextLabel={"Next"}
+                                    pageCount={pageCount}
+                                    onPageChange={changePage}
+                                    containerClassName={"paginationBttns"}
+                                    previousLinkClassName={'previousBttn'}
+                                    nextLinkClassName={'nextBttn'}
+                                    disabledClassName={'pagination-disabled'}
+                                    activeClassName={'paginationActive'}
+                                />
+                        </div>    
+                    }
             </div>
         </div>
     </Fragment>
@@ -378,30 +544,33 @@ const Wallet = (props) => {
 export default Wallet;
 
 export async function getServerSideProps() {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
-        headers: {
-            "Content-Type": "application/json",
-            uri: "/users",
-            proxy_to_method: "GET",
-        }
-    })
+    try{
+        // const response = await fetch("http://localhost:3000/api/proxy", {
+        const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
+            headers: {
+                "Content-Type": "application/json",
+                uri: "/users",
+                // proxy_to_method: "GET",
+            }
+        })
 
-    if(!response.ok) {
+        if(!response.ok) {
+            throw new Error()
+        }
+        
+        const data = await response.json();
+
         return {
-            props: { 
-                error: "oops! something went wrong. Kindly try again."
+            props: {
+                users: JSON.parse(JSON.stringify(data))
             }
         }
     }
-    
-    const data = await response.json();
-   
-    console.log(data)
-
-    return {
-        props: {
-            users: JSON.parse(JSON.stringify(data))
-        }
+    catch(err) {
+        return {
+                props: { 
+                    error: "oops! something went wrong. Kindly try again."
+                }
+            }
     }
 }
