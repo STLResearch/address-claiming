@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import Chart from "chart.js/auto";
 import { Web3Auth } from "@web3auth/modal";
@@ -12,12 +13,14 @@ import { useVerification } from "@/hooks/useVerification";
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 import Spinner from "@/Components/Spinner";
+import { counterActions } from "@/store/store";
 
 
 const Dashboard = (props) => {
     const { users, error } = props;
 
-    const { verificationCheck } = useVerification();
+    // const { verificationCheck } = useVerification();
+    const dispatch = useDispatch();
 
     if(error) {
         swal({
@@ -680,16 +683,17 @@ const Dashboard = (props) => {
     const addAirspaceHandler = (event) => {
         event.stopPropagation();   
         
-        if(user.categoryId === 1 && user.KYCStatusId !== 2) {
-            swal({
-                title: "Sorry!",
-                text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
-              })
-            return;
-        };
+        // if(user.categoryId === 1 && user.KYCStatusId !== 2) {
+        //     swal({
+        //         title: "Sorry!",
+        //         text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+        //       })
+        //     return;
+        // };
 
         router.push("/homepage/airspace");
-        verificationCheck(users);
+        // verificationCheck(users);
+        dispatch(counterActions.confirmOnMapModal());
     }
 
     if(!user || !token) {

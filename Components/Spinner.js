@@ -1,6 +1,6 @@
 const Spinner = () => {
     return <div className="flex flex-col justify-center items-center">
-            <span class="loader"></span>
+            <span className="loader"></span>
         </div>
 }
 

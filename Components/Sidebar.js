@@ -37,16 +37,17 @@ const Sidebar = (props) => {
     };
 
     const airspaceSection = () => {
-        if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
-            swal({
-                title: "Sorry!",
-                text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
-              })
-            return;
-        }
+        // if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
+        //     swal({
+        //         title: "Sorry!",
+        //         text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+        //       })
+        //     return;
+        // }
 
         router.push("/homepage/airspace");
-        verificationCheck(props.users);
+        dispatch(counterActions.confirmOnMapModal());
+        // verificationCheck(props.users);
     };
 
     const logoutHandler = () => {
@@ -84,7 +85,7 @@ const Sidebar = (props) => {
                             <span className={`${asPath == "/homepage/airspace"  ? "text-dark-blue" : "text-light-brown"} font-semibold`}>Airspaces</span>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18" viewBox="0 0 16 18" fill="none" className={`${airspaceOptions && "rotate-180"} transition-all duration-200 ease-in-out`}>
-                            <path d="M2.72027 6.71203L7.06694 11.602C7.58027 12.1795 8.42027 12.1795 8.93361 11.602L13.2803 6.71203" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2.72027 6.71203L7.06694 11.602C7.58027 12.1795 8.42027 12.1795 8.93361 11.602L13.2803 6.71203" stroke="#292D32" strokeWidth="1.5" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                     </button>
                     {airspaceOptions &&
@@ -157,7 +158,7 @@ const Sidebar = (props) => {
 
                 <NavLink href="/homepage/wallet">
                     <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill={`${asPath.includes("/homepage/wallet")  ? "#0653EA" : "#252530"}`}>
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M25.3874 12.2907L25.3906 16.6684C25.3597 17.0854 25.32 17.502 25.2714 17.9177C25.1901 18.613 24.6249 19.1739 23.9151 19.2532C21.6921 19.5016 19.3916 19.5016 17.1686 19.2532C16.4588 19.1739 15.8936 18.613 15.8123 17.9177C15.5467 15.6473 15.5467 13.3536 15.8123 11.0831C15.8936 10.3878 16.4588 9.82699 17.1686 9.74766C19.3916 9.49921 21.6921 9.49921 23.9151 9.74766C24.6249 9.82699 25.1901 10.3878 25.2714 11.0831C25.3184 11.485 25.3571 11.8876 25.3874 12.2907ZM20.5418 12.6879C19.5408 12.6879 18.7293 13.4994 18.7293 14.5004C18.7293 15.5014 19.5408 16.3129 20.5418 16.3129C21.5429 16.3129 22.3543 15.5014 22.3543 14.5004C22.3543 13.4994 21.5429 12.6879 20.5418 12.6879Z" />
+                        <path fillRule="evenodd" clipRule="evenodd" d="M25.3874 12.2907L25.3906 16.6684C25.3597 17.0854 25.32 17.502 25.2714 17.9177C25.1901 18.613 24.6249 19.1739 23.9151 19.2532C21.6921 19.5016 19.3916 19.5016 17.1686 19.2532C16.4588 19.1739 15.8936 18.613 15.8123 17.9177C15.5467 15.6473 15.5467 13.3536 15.8123 11.0831C15.8936 10.3878 16.4588 9.82699 17.1686 9.74766C19.3916 9.49921 21.6921 9.49921 23.9151 9.74766C24.6249 9.82699 25.1901 10.3878 25.2714 11.0831C25.3184 11.485 25.3571 11.8876 25.3874 12.2907ZM20.5418 12.6879C19.5408 12.6879 18.7293 13.4994 18.7293 14.5004C18.7293 15.5014 19.5408 16.3129 20.5418 16.3129C21.5429 16.3129 22.3543 15.5014 22.3543 14.5004C22.3543 13.4994 21.5429 12.6879 20.5418 12.6879Z" />
                         <path d="M24.6545 7.29842C24.8424 7.62378 24.4898 7.98811 24.1164 7.94638C21.7596 7.68297 19.3241 7.68297 16.9673 7.94638C15.4335 8.1178 14.193 9.32558 14.0121 10.8726C13.7301 13.2829 13.7301 15.7179 14.0121 18.1283C14.193 19.6753 15.4335 20.883 16.9673 21.0545C19.3241 21.3179 21.7596 21.3179 24.1164 21.0545C24.4923 21.0125 24.8478 21.3793 24.6581 21.7065C23.7173 23.3291 22.04 24.4615 20.0909 24.6666L19.3032 24.7495C15.3026 25.1705 11.2675 25.1427 7.27302 24.6667L6.75109 24.6046C4.59769 24.3479 2.89146 22.6655 2.60464 20.5159C2.07189 16.5233 2.07189 12.4776 2.60464 8.48492C2.89146 6.33534 4.59769 4.65291 6.75109 4.3963L7.27302 4.33411C11.2675 3.85811 15.3026 3.83035 19.3032 4.25134L20.0909 4.33423C22.0416 4.5395 23.7163 5.67366 24.6545 7.29842Z" />
                     </svg>
                     <span className={`${asPath.includes("/homepage/wallet") ? "text-dark-blue" : "text-light-brown"} font-semibold`}>Wallet</span>

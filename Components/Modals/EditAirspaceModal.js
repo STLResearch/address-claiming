@@ -483,8 +483,8 @@ const EditAispaceModal = (props) => {
             }}>
             <button onClick={props.onClose} className="absolute top-3 right-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-                    <path d="M12.7279 12.7285L21.2132 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12.7279 21.2138L21.2132 12.7285" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12.7279 12.7285L21.2132 21.2138" stroke="#252530" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12.7279 21.2138L21.2132 12.7285" stroke="#252530" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
             </button>
             <h3 className="text-center font-semibold pt-6">AirSpace Details</h3>

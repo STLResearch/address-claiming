@@ -1,5 +1,4 @@
 import { buffer } from "micro";
-const { createHmac, timingSafeEqual } = await import('node:crypto'); 
 
 export const config = {
     api: {
@@ -27,8 +26,7 @@ const handler = async (req, res) => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                // api_key: process.env.FRONTEND_API_KEY,
-                api_key: "XXX",
+                api_key: process.env.FRONTEND_API_KEY,
                 // proxy_to_method: "POST",
               },
               body: JSON.stringify(reqBody)

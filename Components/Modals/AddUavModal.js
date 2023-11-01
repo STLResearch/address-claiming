@@ -85,9 +85,9 @@ const AddUavModal = (props) => {
                         {!file ? 
                         <div onDrop={handleDrop} onDragOver={handleDragOver} className="flex flex-col items-center pt-14">
                             <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
-                                <path d="M28.7698 15.5742C35.0698 16.1167 37.6423 19.3542 37.6423 26.4417V26.6692C37.6423 34.4917 34.5098 37.6242 26.6873 37.6242H15.2948C7.47234 37.6242 4.33984 34.4917 4.33984 26.6692V26.4417C4.33984 19.4067 6.87734 16.1692 13.0723 15.5917" stroke="#0653EA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M21 26.2509V6.33594" stroke="#0653EA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M26.8627 10.2375L21.0002 4.375L15.1377 10.2375" stroke="#0653EA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M28.7698 15.5742C35.0698 16.1167 37.6423 19.3542 37.6423 26.4417V26.6692C37.6423 34.4917 34.5098 37.6242 26.6873 37.6242H15.2948C7.47234 37.6242 4.33984 34.4917 4.33984 26.6692V26.4417C4.33984 19.4067 6.87734 16.1692 13.0723 15.5917" stroke="#0653EA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M21 26.2509V6.33594" stroke="#0653EA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M26.8627 10.2375L21.0002 4.375L15.1377 10.2375" stroke="#0653EA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
                             <p className="text-light-brown font-bold">Drag image here to upload</p>
                             <p className="text-light-brown text-xs">Alternatively, you can select file by </p>

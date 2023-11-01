@@ -2,9 +2,11 @@ import { counterActions } from '@/store/store';
 import maplibregl from 'maplibre-gl';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useVerification } from '@/hooks/useVerification';
 
 
 const AddAirspace = (props) => {
+    const { verificationCheck } = useVerification();
     const dispatch = useDispatch();
 
     const [address, setAddress] =  useState("");
@@ -188,8 +190,16 @@ const AddAirspace = (props) => {
         dispatch(counterActions.closeConfirmOnMapModal());
     }
 
-    const confirmAddressHandler = (e) => {
+    const confirmAddressHandler = async (e) => {
         e.preventDefault();
+
+        if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
+            swal({
+                title: "Sorry!",
+                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+              })
+            return;
+        }
 
         const vertexes = []
 
@@ -218,8 +228,10 @@ const AddAirspace = (props) => {
         }
 
         dispatch(counterActions.airspaceData(addressValue));
+        await verificationCheck(props.users);
+
         dispatch(counterActions.closeConfirmOnMapModal());
-        dispatch(counterActions.additionalInfoModal());
+        // dispatch(counterActions.additionalInfoModal());
     }
 
 
@@ -230,8 +242,8 @@ const AddAirspace = (props) => {
             <div className="relative">
                 <button onClick={closeModalHandler} className="absolute right-9 top-5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-                        <path d="M12.7578 12.7285L21.2431 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M12.7569 21.2138L21.2422 12.7285" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12.7578 12.7285L21.2431 21.2138" stroke="#252530" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M12.7569 21.2138L21.2422 12.7285" stroke="#252530" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                 </button>
             </div>
