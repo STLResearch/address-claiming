@@ -70,7 +70,7 @@ const IndividualSignup = () => {
             swal({
                 title: "Oops!",
                 text: "Invalid phone number. Ensure to include country code starting with +",
-                // timer: 3000
+                timer: 3000
               });
             return;
         }

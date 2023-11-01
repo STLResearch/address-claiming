@@ -19,8 +19,7 @@ import { counterActions } from "@/store/store";
 const Dashboard = (props) => {
     const { users, error } = props;
 
-    // const { verificationCheck } = useVerification();
-    const dispatch = useDispatch();
+    const { verificationCheck } = useVerification();
 
     if(error) {
         swal({
@@ -683,17 +682,16 @@ const Dashboard = (props) => {
     const addAirspaceHandler = (event) => {
         event.stopPropagation();   
         
-        // if(user.categoryId === 1 && user.KYCStatusId !== 2) {
-        //     swal({
-        //         title: "Sorry!",
-        //         text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
-        //       })
-        //     return;
-        // };
+        if(user.categoryId === 1 && user.KYCStatusId !== 2) {
+            swal({
+                title: "Sorry!",
+                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+              })
+            return;
+        };
 
         router.push("/homepage/airspace");
-        // verificationCheck(users);
-        dispatch(counterActions.confirmOnMapModal());
+        verificationCheck(users);
     }
 
     if(!user || !token) {

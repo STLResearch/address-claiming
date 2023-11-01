@@ -6,7 +6,6 @@ import { useVerification } from '@/hooks/useVerification';
 
 
 const AddAirspace = (props) => {
-    const { verificationCheck } = useVerification();
     const dispatch = useDispatch();
 
     const [address, setAddress] =  useState("");
@@ -190,16 +189,8 @@ const AddAirspace = (props) => {
         dispatch(counterActions.closeConfirmOnMapModal());
     }
 
-    const confirmAddressHandler = async (e) => {
+    const confirmAddressHandler = (e) => {
         e.preventDefault();
-
-        if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
-            swal({
-                title: "Sorry!",
-                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
-              })
-            return;
-        }
 
         const vertexes = []
 
@@ -228,10 +219,9 @@ const AddAirspace = (props) => {
         }
 
         dispatch(counterActions.airspaceData(addressValue));
-        await verificationCheck(props.users);
 
         dispatch(counterActions.closeConfirmOnMapModal());
-        // dispatch(counterActions.additionalInfoModal());
+        dispatch(counterActions.additionalInfoModal());
     }
 
 

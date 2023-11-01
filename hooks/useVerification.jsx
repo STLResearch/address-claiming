@@ -43,28 +43,29 @@ export const useVerification = () => {
             return;
         }
     
-        const currentUser = users.find(user => user.email === userInfo.email);
+        const currentUser = users.filter(user => user.email === userInfo.email);
 
-        // let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
-        //     // method: "GET",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         uri: `/users/find-one/${currentUser?.id}`,
-        //         // proxy_to_method: "GET",
-        //     }
-        // })
-        // const resp = await userDetails.json();
-        if(currentUser.KYCStatusId == 2){
+        const currentUserId =  currentUser[0]?.id;
+        let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
+            // method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                uri: `/users/find-one/${currentUserId}`,
+                // proxy_to_method: "GET",
+            }
+        })
+        const resp = await userDetails.json();
+        if(resp.KYCStatusId == 2){
             dispatch(counterActions.confirmOnMapModal());
         }
-        else if(currentUser.categoryId === 0 && currentUser.KYCStatusId == 1) {
+        else if(resp.categoryId === 0 && resp.KYCStatusId == 1) {
             alert("KYC is yet to be approved. It might take some time");
         }
-        else if(currentUser.categoryId === 0 && (currentUser.KYCStatusId == 0 || currentUser.KYCStatusId == 3)) {
+        else if(resp.categoryId === 0 && (resp.KYCStatusId == 0 || resp.KYCStatusId == 3)) {
             // console.log("Please do KYC");
             const client = new Persona.Client({
                 templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
-                referenceId: currentUser?.id,
+                referenceId: currentUserId,
                 environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
                 onReady: () => client.open(),
                 onComplete: ({ inquiryId, status, fields }) => {

@@ -37,17 +37,16 @@ const Sidebar = (props) => {
     };
 
     const airspaceSection = () => {
-        // if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
-        //     swal({
-        //         title: "Sorry!",
-        //         text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
-        //       })
-        //     return;
-        // }
+        if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
+            swal({
+                title: "Sorry!",
+                text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
+              })
+            return;
+        }
 
         router.push("/homepage/airspace");
-        dispatch(counterActions.confirmOnMapModal());
-        // verificationCheck(props.users);
+        verificationCheck(props.users);
     };
 
     const logoutHandler = () => {

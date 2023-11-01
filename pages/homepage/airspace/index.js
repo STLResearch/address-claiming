@@ -377,16 +377,15 @@ const Airspace = (props) => {
     }
 
     const airspaceHandler = () => {
-        // if(user.categoryId === 1 && user.KYCStatusId !== 2) {
-        //     swal({
-        //         title: "Sorry!",
-        //         text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
-        //       })
-        //     return;
-        // }
+        if(user.categoryId === 1 && user.KYCStatusId !== 2) {
+            swal({
+                title: "Sorry!",
+                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+              })
+            return;
+        }
 
-        // verificationCheck(users);
-        dispatch(counterActions.confirmOnMapModal());
+        verificationCheck(users);
     };
   
 
@@ -414,7 +413,7 @@ const Airspace = (props) => {
             <AdditionalAispaceInformation user={user} />
             }
         {confirmOnMap && 
-            createPortal(<AddAirspace users={users} user={user} onClose={backdropCloseHandler} />, document.getElementById("modal-root"))
+            createPortal(<AddAirspace onClose={backdropCloseHandler} />, document.getElementById("modal-root"))
             }
         
         {editAirspace && createPortal(<EditAispaceModal 
