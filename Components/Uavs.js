@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { createPortal } from 'react-dom';
 import { Fragment, useState, useEffect } from 'react';
-
+import { useSelector } from 'react-redux';
 import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
 import AddUavModal from '@/Components/Modals/AddUavModal';
@@ -18,19 +18,18 @@ const UAVs = (props) => {
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
 
+  const selectorUser = useSelector((state) => state.value.user);
+
   useEffect(() => {
-    const fetchedEmail = localStorage.getItem('email');
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
 
-    if (!fetchedEmail || fetchedToken.sessionId.length !== 64) {
+    if (fetchedToken.sessionId.length !== 64) {
       router.push('/auth/join');
       return;
     }
 
     setToken(fetchedToken.sessionId);
-
-    const singleUser = users.filter((user) => user.email === fetchedEmail);
-    setUser(singleUser[0]);
+    setUser(selectorUser);
   }, []);
 
   const uavProfileHandler = () => {

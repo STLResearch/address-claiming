@@ -11,9 +11,9 @@ import Backdrop from '@/Components/Backdrop';
 
 import Spinner from '@/Components/Spinner';
 
-const Wallet = (props) => {
-  const { users, error } = props;
+import { useSelector } from 'react-redux';
 
+const Wallet = () => {
   if (error) {
     swal({
       title: 'oops!',
@@ -30,8 +30,10 @@ const Wallet = (props) => {
 
   const router = useRouter();
 
+  const selectorUser = useSelector((state) => state.value.user);
+
   useEffect(() => {
-    if (users) {
+    if (selectorUser) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -74,18 +76,14 @@ const Wallet = (props) => {
           localStorage.getItem('openlogin_store')
         );
 
-        const singleUser = users.filter(
-          (user) => user.email === userInfo.email
-        );
-
-        if (singleUser.length < 1) {
+        if (!selectorUser) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(singleUser[0]);
+        setUser(selectorUser);
       };
 
       authUser();
@@ -196,7 +194,7 @@ const Wallet = (props) => {
             <Backdrop onClick={closeAddCardHandler} />,
             document.getElementById('backdrop-root')
           )}
-        <Sidebar user={user} users={users} />
+        <Sidebar user={user} />
         <div
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
           className='overflow-y-auto'
@@ -378,32 +376,3 @@ const Wallet = (props) => {
 };
 
 export default Wallet;
-
-export async function getServerSideProps() {
-  try {
-    const response = await fetch('http://localhost:3000/api/proxy', {
-      headers: {
-        'Content-Type': 'application/json',
-        uri: '/users',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        users: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: 'oops! something went wrong. Kindly try again.',
-      },
-    };
-  }
-}

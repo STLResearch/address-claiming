@@ -9,11 +9,9 @@ export default function Home() {
   useEffect(() => {
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
 
-    if (fetchedToken) {
-      if (fetchedToken.sessionId) {
-        router.push('/homepage/dashboard');
-        return;
-      }
+    if (fetchedToken?.sessionId) {
+      router.push('/homepage/dashboard');
+      return;
     }
   }, []);
 

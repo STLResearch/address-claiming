@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { createPortal } from 'react-dom';
 import { Fragment, useState, useEffect } from 'react';
 
+import { useSelector } from 'react-redux';
+
 import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
 import Backdrop from '@/Components/Backdrop';
@@ -10,9 +12,7 @@ import EditUavModal from '@/Components/Modals/EditUavModal';
 import Spinner from '@/Components/Spinner';
 import User from '../../../../models/User';
 
-const UavProfile = (props) => {
-  const { users } = props;
-
+const UavProfile = () => {
   const router = useRouter();
   const [flightHistory, setFlightHistory] = useState(true);
   const [reviews, setReviews] = useState(false);
@@ -20,19 +20,18 @@ const UavProfile = (props) => {
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
 
+  const selectorUser = useSelector((state) => state.value.user);
+
   useEffect(() => {
-    const fetchedEmail = localStorage.getItem('email');
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
 
-    if (!fetchedEmail || fetchedToken.sessionId.length !== 64) {
+    if (fetchedToken.sessionId.length !== 64) {
       router.push('/auth/join');
       return;
     }
 
     setToken(fetchedToken.sessionId);
-
-    const singleUser = users.filter((user) => user.email === fetchedEmail);
-    setUser(singleUser[0]);
+    setUser(selectorUser);
   }, []);
 
   const flightHistoryHandler = () => {
@@ -614,16 +613,3 @@ const UavProfile = (props) => {
 };
 
 export default UavProfile;
-
-export async function getServerSideProps(context) {
-  const { params } = context;
-  const slug = params.slug;
-
-  const users = await User.findAll();
-
-  return {
-    props: {
-      users: JSON.parse(JSON.stringify(users)),
-    },
-  };
-}

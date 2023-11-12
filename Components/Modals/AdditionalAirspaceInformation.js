@@ -227,7 +227,7 @@ const AdditionalAispaceInformation = (props) => {
       body: JSON.stringify(airspaceInformation),
       headers: {
         'Content-Type': 'application/json',
-        URI: '/properties/claim',
+        URI: '/private/properties/claim',
         // proxy_to_method: "POST",
         sign: signatureObj.sign,
         time: signatureObj.sign_issue_at,

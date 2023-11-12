@@ -2,7 +2,7 @@ import Image from 'next/image';
 // import Link from "next/link";
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { createPortal } from 'react-dom';
 import swal from 'sweetalert';
 import logo from '../../../../public/images/logo.jpg';
@@ -36,6 +36,8 @@ const CorporateSignup = () => {
   }, []);
 
   const category = useSelector((state) => state.value.category);
+
+  const dispatch = useDispatch();
 
   const web3 = useSelector((state) => state.value.web3);
   const token = web3.token;
@@ -90,7 +92,7 @@ const CorporateSignup = () => {
       body: JSON.stringify(userInfo),
       headers: {
         'Content-Type': 'application/json',
-        uri: '/users/create',
+        uri: '/public/users/create',
         proxy_to_method: 'POST',
       },
     })
@@ -105,6 +107,7 @@ const CorporateSignup = () => {
             throw new Error(errorData.errorMessage);
           });
         }
+
         return res.json().then((response) => {
           if (response.statusCode === 500) {
             throw new Error('something went wrong');
@@ -123,9 +126,11 @@ const CorporateSignup = () => {
                 sessionId: token.sessionId,
               })
             );
+            console.log({ response });
             // setIsLoading(false);
             nameRef.current.value = '';
             phoneNumberRef.current.value = '';
+            dispatch(counterActions.userAuth(response));
             router.replace('/homepage/dashboard');
           });
         });

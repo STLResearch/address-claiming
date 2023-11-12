@@ -8,6 +8,7 @@ const initialState = {
     airspaceData: {},
     category: {},
     web3: {},
+    user: {},
   },
 };
 
@@ -54,6 +55,13 @@ const airspaceSlice = createSlice({
 
     web3(state, action) {
       state.value.web3 = {
+        ...action.payload,
+      };
+    },
+
+    userAuth(state, action) {
+      state.value.user = {
+        ...state.value.user,
         ...action.payload,
       };
     },

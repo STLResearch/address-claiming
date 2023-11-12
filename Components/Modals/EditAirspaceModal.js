@@ -235,7 +235,7 @@ const EditAispaceModal = (props) => {
       body: JSON.stringify(airspaceInformation),
       headers: {
         'Content-Type': 'application/json',
-        URI: '/properties/update',
+        URI: '/private/properties/update',
         // proxy_to_method: "POST",
         sign: signatureObj.sign,
         time: signatureObj.sign_issue_at,

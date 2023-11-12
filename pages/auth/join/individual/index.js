@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import swal from 'sweetalert';
 import Script from 'next/script';
 
@@ -38,6 +38,8 @@ const IndividualSignup = () => {
   const category = useSelector((state) => state.value.category);
   const web3 = useSelector((state) => state.value.web3);
   const token = web3.token;
+
+  const dispatch = useDispatch();
 
   const newsletterHandler = () => {
     setnewsletter((prev) => !prev);
@@ -89,7 +91,7 @@ const IndividualSignup = () => {
       body: JSON.stringify(userInfo),
       headers: {
         'Content-Type': 'application/json',
-        uri: '/users/create',
+        uri: '/public/users/create',
         proxy_to_method: 'POST',
       },
     })
@@ -124,6 +126,7 @@ const IndividualSignup = () => {
             // setIsLoading(false);
             nameRef.current.value = '';
             phoneNumberRef.current.value = '';
+            dispatch(counterActions.userAuth(response));
             router.replace('/homepage/dashboard');
           });
         });

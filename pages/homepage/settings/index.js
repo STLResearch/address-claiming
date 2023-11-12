@@ -12,17 +12,9 @@ import swal from 'sweetalert';
 import Spinner from '@/Components/Spinner';
 import { useVerification } from '@/hooks/useVerification';
 
-const Settings = (props) => {
-  const { users } = props;
-  const { error } = props;
+import { useSelector } from 'react-redux';
 
-  if (error) {
-    swal({
-      title: 'Oops!',
-      text: 'Something went wrong. Kindly try again',
-    });
-  }
-
+const Settings = () => {
   const { verificationCheck } = useVerification();
   const router = useRouter();
 
@@ -37,8 +29,10 @@ const Settings = (props) => {
   const emailRef = useRef();
   const phoneRef = useRef();
 
+  const selectorUser = useSelector((state) => state.value.user);
+
   useEffect(() => {
-    if (users) {
+    if (selectorUser) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -81,18 +75,14 @@ const Settings = (props) => {
           localStorage.getItem('openlogin_store')
         );
 
-        const singleUser = users.filter(
-          (user) => user.email === userInfo.email
-        );
-
-        if (singleUser.length < 1) {
+        if (!selectorUser) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(singleUser[0]);
+        setUser(selectorUser);
       };
 
       authUser();
@@ -197,7 +187,7 @@ const Settings = (props) => {
       }),
       headers: {
         'Content-Type': 'application/json',
-        uri: '/users/update',
+        uri: '/private/users/update',
         sign: signatureObj.sign,
         time: signatureObj.sign_issue_at,
         nonce: signatureObj.sign_nonce,
@@ -241,7 +231,7 @@ const Settings = (props) => {
     e.preventDefault();
     setVerificationLoading(true);
 
-    await verificationCheck(users);
+    // await verificationCheck(XXX);
 
     setVerificationLoading(false);
   };
@@ -264,7 +254,7 @@ const Settings = (props) => {
       </Script>
 
       <div className='mx-auto flex flex-row'>
-        <Sidebar user={user} users={users} />
+        <Sidebar user={user} />
         <div
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
           className='overflow-y-auto overflow-x-hidden'
@@ -496,36 +486,3 @@ const Settings = (props) => {
 };
 
 export default Settings;
-
-export async function getServerSideProps() {
-  try {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch(
-      `http://localhost:3000/api/proxy?${Date.now()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          uri: '/users',
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        users: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: 'oops! something went wrong. Kindly try again.',
-      },
-    };
-  }
-}

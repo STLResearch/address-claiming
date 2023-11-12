@@ -24,16 +24,7 @@ import EditAispaceModal from '@/Components/Modals/EditAirspaceModal';
 import { useVerification } from '@/hooks/useVerification';
 import CollapseAirspace from '@/Components/CollapseAirspace';
 
-const Airspace = (props) => {
-  const { users, error } = props;
-
-  if (error) {
-    swal({
-      title: 'Oops!',
-      text: 'Something went wrong. Kindly try again',
-    });
-  }
-
+const Airspace = () => {
   const { verificationCheck } = useVerification();
 
   const router = useRouter();
@@ -60,10 +51,12 @@ const Airspace = (props) => {
   const [transition, setTransition] = useState(false);
 
   const [user, setUser] = useState();
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState();
+
+  const selectorUser = useSelector((state) => state.value.user);
 
   useEffect(() => {
-    if (users) {
+    if (selectorUser) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -96,7 +89,7 @@ const Airspace = (props) => {
         } catch (err) {
           localStorage.removeItem('openlogin_store');
           swal({
-            title: 'Oops!',
+            title: 'oops!',
             text: 'Something went wrong. Kindly try again',
           }).then(() => router.push('/auth/join'));
           return;
@@ -106,18 +99,14 @@ const Airspace = (props) => {
           localStorage.getItem('openlogin_store')
         );
 
-        const singleUser = users.filter(
-          (user) => user.email === userInfo.email
-        );
-
-        if (singleUser.length < 1) {
+        if (!selectorUser) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(singleUser[0]);
+        setUser(selectorUser);
       };
 
       authUser();
@@ -318,7 +307,7 @@ const Airspace = (props) => {
         fetch(`/api/proxy?${Date.now()}`, {
           headers: {
             'Content-Type': 'application/json',
-            uri: `/properties/user-properties/${user.id}`,
+            uri: `/private/properties/user-properties/${user.id}`,
             sign: signatureObj.sign,
             time: signatureObj.sign_issue_at,
             nonce: signatureObj.sign_nonce,
@@ -423,6 +412,8 @@ const Airspace = (props) => {
   };
 
   const confirmAddressHandler = (e) => {
+    console.log({ x: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' });
+
     setIsLoading(true);
 
     if (user.categoryId === 1 && user.KYCStatusId !== 2) {
@@ -462,7 +453,7 @@ const Airspace = (props) => {
 
     dispatch(counterActions.airspaceData(addressValue));
 
-    verificationCheck(users);
+    // verificationCheck(users);
 
     setIsLoading(false);
   };
@@ -524,7 +515,7 @@ const Airspace = (props) => {
           document.getElementById('backdrop-root')
         )}
       <div className='mx-auto flex flex-row'>
-        <Sidebar user={user} users={users} />
+        <Sidebar user={user} />
         <div
           className='overflow-y-auto overflow-x-hidden'
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
@@ -626,7 +617,7 @@ const Airspace = (props) => {
               showAllAirspace={showAllAirspace}
               myAirspace={myAirspace}
               onAddAirspace={showAddAirspaceModalHandler}
-              users={users}
+              users={[]} //! CHECK!!!
               transition={transition}
             >
               <div>
@@ -725,36 +716,3 @@ const Airspace = (props) => {
 };
 
 export default Airspace;
-
-export async function getServerSideProps() {
-  try {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch(
-      `http://localhost:3000/api/proxy?${Date.now()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          uri: '/users',
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        users: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: 'oops! something went wrong. Kindly try again.',
-      },
-    };
-  }
-}

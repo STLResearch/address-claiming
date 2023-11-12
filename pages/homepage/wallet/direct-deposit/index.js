@@ -12,8 +12,10 @@ import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
+import { useSelector } from 'react-redux';
+
 const Wallet = (props) => {
-  const { users, error } = props;
+  const { users: XXX, error } = props;
 
   if (error) {
     swal({
@@ -29,8 +31,10 @@ const Wallet = (props) => {
   const [copy, setCopy] = useState(false);
   const [tokenBalance, setTokenBalance] = useState('');
 
+  const selectorUser = useSelector((state) => state.value.user);
+
   useEffect(() => {
-    if (users) {
+    if (selectorUser) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -73,18 +77,14 @@ const Wallet = (props) => {
           localStorage.getItem('openlogin_store')
         );
 
-        const singleUser = users.filter(
-          (user) => user.email === userInfo.email
-        );
-
-        if (singleUser.length < 1) {
+        if (!selectorUser) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(singleUser[0]);
+        setUser(selectorUser);
       };
 
       authUser();
@@ -178,7 +178,7 @@ const Wallet = (props) => {
             <Backdrop onClick={closeAddCardHandler} />,
             document.getElementById('backdrop-root')
           )}
-        <Sidebar user={user} users={users} />
+        <Sidebar user={user} users={XXX} />
         <div
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
           className='overflow-y-auto'

@@ -8,6 +8,8 @@ import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
 import Spinner from '@/Components/Spinner';
 
+import { useSelector } from 'react-redux';
+
 const WithdrawalConfirm = (props) => {
   const { users, error } = props;
 
@@ -24,8 +26,10 @@ const WithdrawalConfirm = (props) => {
   const [token, setToken] = useState('');
   const [tokenBalance, setTokenBalance] = useState('');
 
+  const selectorUser = useSelector((state) => state.value.user);
+
   useEffect(() => {
-    if (users) {
+    if (selectorUser) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -68,18 +72,14 @@ const WithdrawalConfirm = (props) => {
           localStorage.getItem('openlogin_store')
         );
 
-        const singleUser = users.filter(
-          (user) => user.email === userInfo.email
-        );
-
-        if (singleUser.length < 1) {
+        if (!selectorUser) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(singleUser[0]);
+        setUser(selectorUser);
       };
 
       authUser();
