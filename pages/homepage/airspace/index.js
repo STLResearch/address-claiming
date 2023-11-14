@@ -1,14 +1,21 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useRef } from 'react';
+
 import { createPortal } from 'react-dom';
-import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { useRouter } from 'next/router';
+import Script from 'next/script';
+import Image from 'next/image';
+
 import maplibregl from 'maplibre-gl';
+import mapboxgl from 'mapbox-gl';
+
+import { useAuth } from '@/hooks/useAuth';
+
 import { Web3Auth } from '@web3auth/modal';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
-import Script from 'next/script';
-import Image from 'next/image';
 
 import Navbar from '@/Components/Navbar';
 import Sidebar from '@/Components/Sidebar';
@@ -24,14 +31,12 @@ import EditAispaceModal from '@/Components/Modals/EditAirspaceModal';
 import { useVerification } from '@/hooks/useVerification';
 import CollapseAirspace from '@/Components/CollapseAirspace';
 
-import { useAuth } from '@/hooks/useAuth';
-
 const Airspace = () => {
   const { verificationCheck } = useVerification();
 
   const router = useRouter();
   const dispatch = useDispatch();
-  const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
+  // const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
 
   const [allAirspace, setAllAirSpace] = useState(false);
   const [myAirspace, setMyAirSpace] = useState(true);
@@ -117,14 +122,13 @@ const Airspace = () => {
 
   useEffect(() => {
     if (token && user) {
-      const map = new maplibregl.Map({
+      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+
+      const map = new mapboxgl.Map({
         container: 'map',
-        attributionControl: false,
-        style:
-          'https://tiles.locationiq.com/v3/streets/vector.json?key=' +
-          locationiqKey,
-        zoom: 12,
+        style: 'mapbox://styles/mapbox/streets-v12', // Replace with your desired Mapbox style
         center: [-122.42, 37.779],
+        zoom: 12,
       });
 
       map.on('load', function () {
@@ -153,60 +157,48 @@ const Airspace = () => {
   useEffect(() => {
     if (flyToAddress) {
       setIsLoading(true);
-      fetch(
-        `https://us1.locationiq.com/v1/search?key=${locationiqKey}&q=${flyToAddress}&format=json&polygon_geojson=1`
-      )
+
+      const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+
+      fetch(mapboxGeocodingUrl)
         .then((res) => {
           if (!res.ok) {
             return res.json().then((errorData) => {
-              throw new Error(errorData.error);
+              throw new Error(errorData.message);
             });
           }
           return res.json();
         })
         .then((resData) => {
-          if (resData.error) {
-            console.log(resData.error);
-            return;
+          console.log(resData.features);
+
+          if (resData.features && resData.features.length > 0) {
+            const coordinates = resData.features[0].geometry.coordinates;
+            const endPoint = [coordinates[0], coordinates[1]];
+
+            setLongitude(coordinates[0]);
+            setLatitude(coordinates[1]);
+
+            setAddressData(resData.features[0].properties);
+
+            setIsLoading(false);
+
+            map.flyTo({
+              center: endPoint,
+              zoom: 16,
+            });
+
+            new mapboxgl.Marker().setLngLat(endPoint).addTo(map);
+          } else {
+            throw new Error('Address not found');
           }
-          console.log('this is the full address info', resData);
-          const endPoint = [];
-
-          endPoint.push(resData[0].lon);
-          endPoint.push(resData[0].lat);
-
-          setLongitude(resData[0].lon);
-          setLatitude(resData[0].lat);
-          setAddressData(resData[0]);
-
-          setIsLoading(false);
-
-          const map = new maplibregl.Map({
-            container: 'map',
-            attributionControl: false,
-            style:
-              'https://tiles.locationiq.com/v3/streets/vector.json?key=' +
-              locationiqKey,
-            zoom: 16,
-            center: endPoint,
-          });
-
-          let nav = new maplibregl.NavigationControl();
-          map.addControl(nav, 'top-right');
-
-          let el = document.createElement('div');
-          el.id = 'markerWithExternalCss';
-
-          new maplibregl.Marker(el).setLngLat(endPoint).addTo(map);
         })
         .catch((err) => {
-          console.log(err);
-          const error = err.toString().split(':');
-          // console.log(error)
+          console.error(err);
           setIsLoading(false);
           swal({
             title: 'Oops!',
-            text: error[1],
+            text: err.message,
           });
         });
     }
@@ -218,26 +210,30 @@ const Airspace = () => {
       setLatitude('');
 
       const addressHandler = setTimeout(() => {
-        fetch(
-          `https://api.locationiq.com/v1/autocomplete?key=${locationiqKey}&q=${address}`
-        )
+        const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+
+        fetch(mapboxGeocodingUrl)
           .then((res) => {
-            // console.log("This is the result from locationIq API call", res)
             if (!res.ok) {
               return res.json().then((errorData) => {
-                throw new Error(errorData.error);
+                throw new Error(errorData.message);
               });
             }
             return res.json();
           })
           .then((resData) => {
-            setAddresses(resData);
+            if (resData.features && resData.features.length > 0) {
+              setAddresses(resData.features);
+            } else {
+              setAddresses([]);
+            }
           })
           .catch((err) => {
-            console.log(err);
+            console.error(err);
             setAddresses([]);
           });
       }, 500);
+
       return () => {
         clearTimeout(addressHandler);
       };
@@ -410,6 +406,7 @@ const Airspace = () => {
     e.preventDefault(),
       setAddress(e.target.value),
       setFlyToAddress(e.target.value);
+
     setShowOptions(false);
   };
 
@@ -580,16 +577,16 @@ const Airspace = () => {
                   {addresses.map((address) => {
                     return (
                       <button
-                        key={address.osm_id + Math.random()}
-                        value={address.display_name}
+                        key={address.id}
+                        value={address.place_name}
                         onClick={buttonSelectHandler}
-                        className='py-2 text-left'
+                        className='py-2 text-left text-black'
                         style={{
                           borderBottom: '0.2px solid #0653EA',
                           width: '100%',
                         }}
                       >
-                        {address.display_name}
+                        {address.place_name}
                       </button>
                     );
                   })}

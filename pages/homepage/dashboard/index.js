@@ -490,8 +490,6 @@ const Dashboard = () => {
     dispatch(counterActions.confirmOnMapModal());
   };
 
-  console.log({ user, token });
-
   if (!user || !token) {
     return <Spinner />;
   }

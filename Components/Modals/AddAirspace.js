@@ -17,15 +17,13 @@ const AddAirspace = (props) => {
   const [addressValid, setAddressValid] = useState(false);
   const [confirmMap, setConfirmMap] = useState(true);
 
-  const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
   useEffect(() => {
     const map = new maplibregl.Map({
       container: 'map',
-      attributionControl: false, //need this to show a compact attribution icon (i) instead of the whole text
-      style:
-        'https://tiles.locationiq.com/v3/streets/vector.json?key=' +
-        locationiqKey,
+      attributionControl: false,
+      style: 'mapbox://styles/mapbox/streets-v11',
       zoom: 12,
       center: [-122.42, 37.779],
     });
@@ -58,23 +56,23 @@ const AddAirspace = (props) => {
     setError(false);
     if (address) {
       const addressHandler = setTimeout(() => {
-        fetch(
-          `https://api.locationiq.com/v1/autocomplete?key=${locationiqKey}&q=${address}`
-        )
+        const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${mapboxToken}`;
+
+        fetch(mapboxGeocodingUrl)
           .then((res) => {
             if (!res.ok) {
               return res.json().then((errorData) => {
-                throw new Error(errorData.error);
+                throw new Error(errorData.message);
               });
             }
             return res.json();
           })
           .then((resData) => {
-            setAddresses(resData);
+            setAddresses(resData.features);
           })
           .catch((err) => {
             console.log(err);
-            setAddresses('');
+            setAddresses([]);
           });
       }, 500);
       return () => {
@@ -98,38 +96,33 @@ const AddAirspace = (props) => {
   const mapLoadHandler = (e) => {
     e.preventDefault();
 
-    fetch(
-      `https://us1.locationiq.com/v1/search?key=${locationiqKey}&q=${address}&format=json&polygon_geojson=1`
-    )
+    const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${mapboxToken}`;
+
+    fetch(mapboxGeocodingUrl)
       .then((res) => {
         if (!res.ok) {
           return res.json().then((errorData) => {
-            throw new Error(errorData.error);
+            throw new Error(errorData.message);
           });
         }
         return res.json();
       })
       .then((resData) => {
-        if (resData.error) {
-          console.log(resData.error);
-          setError(resData.error);
+        if (resData.features.length === 0) {
+          setError('No location found for the given address.');
           return;
         }
 
         setAddressValid(true);
-        setAddressData(resData[0]);
+        console.log({ addF: resData.features });
+        setAddressData(resData.features[0]);
 
-        const endPoint = [];
-
-        endPoint.push(resData[0].lon);
-        endPoint.push(resData[0].lat);
+        const endPoint = resData.features[0].center;
 
         const map = new maplibregl.Map({
           container: 'map',
           attributionControl: false,
-          style:
-            'https://tiles.locationiq.com/v3/streets/vector.json?key=' +
-            locationiqKey,
+          style: 'mapbox://styles/mapbox/streets-v11',
           zoom: 18,
           center: endPoint,
         });
@@ -137,7 +130,7 @@ const AddAirspace = (props) => {
         var nav = new maplibregl.NavigationControl();
         map.addControl(nav, 'top-right');
 
-        if (!resData[0].geojson || resData[0].geojson.type !== 'Polygon') {
+        if (resData.features[0].geometry.type !== 'Polygon') {
           let el = document.createElement('div');
           el.id = 'markerWithExternalCss';
 
@@ -153,10 +146,7 @@ const AddAirspace = (props) => {
             type: 'fill',
             source: {
               type: 'geojson',
-              data: {
-                type: 'Feature',
-                geometry: resData[0].geojson,
-              },
+              data: resData.features[0].geometry,
             },
             layout: {},
             paint: {
