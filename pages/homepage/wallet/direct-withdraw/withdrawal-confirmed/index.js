@@ -8,25 +8,16 @@ import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
 import Spinner from '@/Components/Spinner';
 
-import { useSelector } from 'react-redux';
+import { useAuth } from '@/hooks/useAuth';
 
-const WithdrawalConfirm = (props) => {
-  const { users, error } = props;
-
-  if (error) {
-    swal({
-      title: 'oops!',
-      text: 'Something went wrong. Kindly try again',
-    });
-  }
-
+const WithdrawalConfirm = () => {
   const router = useRouter();
 
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
   const [tokenBalance, setTokenBalance] = useState('');
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     if (selectorUser) {
@@ -84,7 +75,7 @@ const WithdrawalConfirm = (props) => {
 
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
 
   useEffect(() => {
     if (user) {
@@ -277,32 +268,3 @@ const WithdrawalConfirm = (props) => {
 };
 
 export default WithdrawalConfirm;
-
-export async function getServerSideProps() {
-  try {
-    const response = await fetch('http://localhost:3000/api/proxy', {
-      headers: {
-        'Content-Type': 'application/json',
-        uri: '/users',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        users: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: 'oops! something went wrong. Kindly try again.',
-      },
-    };
-  }
-}

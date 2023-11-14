@@ -11,7 +11,7 @@ import Backdrop from '@/Components/Backdrop';
 
 import Spinner from '@/Components/Spinner';
 
-import { useSelector } from 'react-redux';
+import { useAuth } from '@/hooks/useAuth';
 
 const Wallet = () => {
   if (error) {
@@ -30,7 +30,7 @@ const Wallet = () => {
 
   const router = useRouter();
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     if (selectorUser) {
@@ -88,7 +88,7 @@ const Wallet = () => {
 
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
 
   useEffect(() => {
     if (user) {

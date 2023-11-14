@@ -11,6 +11,8 @@ import Spinner from '@/Components/Spinner';
 import { Fragment } from 'react';
 import logo from '../../../../public/images/logo.jpg';
 
+import { useAuth } from '@/hooks/useAuth';
+
 const IndividualSignup = () => {
   const newsletterRef = useRef();
   const nameRef = useRef();
@@ -36,8 +38,8 @@ const IndividualSignup = () => {
   }, []);
 
   const category = useSelector((state) => state.value.category);
-  const web3 = useSelector((state) => state.value.web3);
-  const token = web3.token;
+
+  const { temporaryToken, signIn } = useAuth();
 
   const dispatch = useDispatch();
 
@@ -105,6 +107,7 @@ const IndividualSignup = () => {
             throw new Error(errorData.errorMessage);
           });
         }
+
         return res.json().then((response) => {
           if (response.statusCode === 500) {
             throw new Error('something went wrong');
@@ -117,16 +120,23 @@ const IndividualSignup = () => {
             icon: 'success',
             button: 'Ok',
           }).then(() => {
-            localStorage.setItem(
-              'openlogin_store',
-              JSON.stringify({
-                sessionId: token.sessionId,
-              })
-            );
+            signIn({
+              token: temporaryToken,
+              user: response,
+            });
+
+            // localStorage.setItem(
+            //   'openlogin_store',
+            //   JSON.stringify({
+            //     sessionId: temporaryToken.sessionId,
+            //   })
+            // );
+
+            // localStorage.setItem('user', JSON.stringify(response));
             // setIsLoading(false);
             nameRef.current.value = '';
             phoneNumberRef.current.value = '';
-            dispatch(counterActions.userAuth(response));
+            // dispatch(counterActions.userAuth(response));
             router.replace('/homepage/dashboard');
           });
         });

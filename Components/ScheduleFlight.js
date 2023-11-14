@@ -2,14 +2,12 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 
-import { useSelector } from 'react-redux';
-
 import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
 import map from '../../../../public/images/map-bg.png';
 import Spinner from '@/Components/Spinner';
-import Backdrop from '@/Components/Backdrop';
-import User from '@/models/User';
+
+import { useAuth } from '@/hooks/useAuth';
 
 const ScheduleFlight = () => {
   const router = useRouter();
@@ -17,7 +15,7 @@ const ScheduleFlight = () => {
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
@@ -28,7 +26,6 @@ const ScheduleFlight = () => {
     }
 
     setToken(fetchedToken.sessionId);
-
     setUser(selectorUser);
   }, []);
 

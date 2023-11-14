@@ -6,7 +6,7 @@ import { Web3Auth } from '@web3auth/modal';
 import swal from 'sweetalert';
 import Script from 'next/script';
 
-import { useSelector } from 'react-redux/es/hooks/useSelector';
+import { useAuth } from '@/hooks/useAuth';
 
 import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
@@ -24,7 +24,7 @@ const UAVs = () => {
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     if (selectorUser) {
@@ -82,7 +82,7 @@ const UAVs = () => {
 
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
 
   const backdropCloseHandler = () => {
     setPilotProfile(false);

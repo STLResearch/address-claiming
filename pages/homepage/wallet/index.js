@@ -16,14 +16,9 @@ import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 import WalletModal from '@/Components/Modals/WalletModal';
 
-const Wallet = () => {
-  if (error) {
-    swal({
-      title: 'oops!',
-      text: 'Something went wrong. Kindly try again',
-    });
-  }
+import { useAuth } from '@/hooks/useAuth';
 
+const Wallet = () => {
   const url = 'https://api.devnet.solana.com';
 
   const router = useRouter();
@@ -51,7 +46,7 @@ const Wallet = () => {
     transactionHistory &&
     Math.ceil(transactionHistory.length / transactionsPerPage);
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     if (selectorUser) {
@@ -102,7 +97,7 @@ const Wallet = () => {
       };
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
 
   useEffect(() => {
     if (showStripeModal) {

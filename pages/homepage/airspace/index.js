@@ -24,6 +24,8 @@ import EditAispaceModal from '@/Components/Modals/EditAirspaceModal';
 import { useVerification } from '@/hooks/useVerification';
 import CollapseAirspace from '@/Components/CollapseAirspace';
 
+import { useAuth } from '@/hooks/useAuth';
+
 const Airspace = () => {
   const { verificationCheck } = useVerification();
 
@@ -53,7 +55,7 @@ const Airspace = () => {
   const [user, setUser] = useState();
   const [token, setToken] = useState();
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     if (selectorUser) {
@@ -111,7 +113,7 @@ const Airspace = () => {
 
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
 
   useEffect(() => {
     if (token && user) {
@@ -412,8 +414,6 @@ const Airspace = () => {
   };
 
   const confirmAddressHandler = (e) => {
-    console.log({ x: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' });
-
     setIsLoading(true);
 
     if (user.categoryId === 1 && user.KYCStatusId !== 2) {
@@ -453,7 +453,7 @@ const Airspace = () => {
 
     dispatch(counterActions.airspaceData(addressValue));
 
-    // verificationCheck(users);
+    verificationCheck([selectorUser]);
 
     setIsLoading(false);
   };

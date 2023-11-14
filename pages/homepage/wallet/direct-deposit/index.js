@@ -12,7 +12,7 @@ import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
-import { useSelector } from 'react-redux';
+import { useAuth } from '@/hooks/useAuth';
 
 const Wallet = (props) => {
   const { users: XXX, error } = props;
@@ -31,7 +31,7 @@ const Wallet = (props) => {
   const [copy, setCopy] = useState(false);
   const [tokenBalance, setTokenBalance] = useState('');
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     if (selectorUser) {
@@ -89,7 +89,7 @@ const Wallet = (props) => {
 
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
 
   useEffect(() => {
     if (user) {

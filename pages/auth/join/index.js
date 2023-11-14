@@ -17,6 +17,8 @@ import { counterActions } from '@/store/store';
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 
+import { useAuth } from '@/hooks/useAuth';
+
 import swal from 'sweetalert';
 
 import logo from '../../../public/images/logo.jpg';
@@ -31,6 +33,8 @@ const Signup = () => {
   const emailRef = useRef();
 
   const { signatureObject } = useSignature();
+
+  const { setTemporaryToken, signIn } = useAuth();
 
   useEffect(() => {
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
@@ -176,19 +180,25 @@ const Signup = () => {
       const user = await userRequest.json();
 
       if (user.id) {
-        dispatch(counterActions.userAuth(user));
+        signIn({ user });
+        // dispatch(counterActions.userAuth(user));
+        // localStorage.setItem('user', JSON.stringify(user));
         router.push('/homepage/dashboard');
         return user;
       }
 
       if (user.errorMessage === 'UNAUTHORIZED') {
-        const token = localStorage.getItem('openlogin_store');
-        dispatch(
-          counterActions.web3({
-            token: JSON.parse(token),
-          })
-        );
+        setTemporaryToken(JSON.parse(localStorage.getItem('openlogin_store')));
+        // const token = localStorage.getItem('openlogin_store');
+
+        // dispatch(
+        //   counterActions.web3({
+        //     token: JSON.parse(token),
+        //   })
+        // );
+
         localStorage.removeItem('openlogin_store');
+
         dispatch(
           counterActions.category({
             email: userInformation.email,

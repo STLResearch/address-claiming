@@ -12,7 +12,7 @@ import swal from 'sweetalert';
 import Spinner from '@/Components/Spinner';
 import { useVerification } from '@/hooks/useVerification';
 
-import { useSelector } from 'react-redux';
+import { useAuth } from '@/hooks/useAuth';
 
 const Settings = () => {
   const { verificationCheck } = useVerification();
@@ -29,7 +29,7 @@ const Settings = () => {
   const emailRef = useRef();
   const phoneRef = useRef();
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     if (selectorUser) {
@@ -87,7 +87,7 @@ const Settings = () => {
 
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
 
   const updateDataHandler = async (e) => {
     e.preventDefault();

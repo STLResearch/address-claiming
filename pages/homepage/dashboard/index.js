@@ -18,7 +18,10 @@ import swal from 'sweetalert';
 import Navbar from '@/Components/Navbar';
 import Sidebar from '@/Components/Sidebar';
 import Spinner from '@/Components/Spinner';
+
 import { counterActions } from '@/store/store';
+
+import { useAuth } from '@/hooks/useAuth';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -165,7 +168,7 @@ const Dashboard = () => {
   const [airspaceLength, setAirspaceLength] = useState();
   const [signature, setSignature] = useState();
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     if (selectorUser) {
@@ -216,10 +219,13 @@ const Dashboard = () => {
       };
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (user) {
+      console.log({ user });
       const data = {
         jsonrpc: '2.0',
         id: 1,
@@ -404,7 +410,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (user) {
-      const ctx = document.getElementById('chart').getContext('2d');
+      const ctx = document?.getElementById('chart')?.getContext('2d');
 
       if (ctx) {
         const existingChart = Chart.getChart(ctx);
@@ -483,6 +489,8 @@ const Dashboard = () => {
     router.push('/homepage/airspace');
     dispatch(counterActions.confirmOnMapModal());
   };
+
+  console.log({ user, token });
 
   if (!user || !token) {
     return <Spinner />;

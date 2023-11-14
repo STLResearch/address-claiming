@@ -10,7 +10,8 @@ import Navbar from '@/Components/Navbar';
 import Backdrop from '@/Components/Backdrop';
 import EditUavModal from '@/Components/Modals/EditUavModal';
 import Spinner from '@/Components/Spinner';
-import User from '../../../../models/User';
+
+import { useAuth } from '@/hooks/useAuth';
 
 const UavProfile = () => {
   const router = useRouter();
@@ -20,7 +21,7 @@ const UavProfile = () => {
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));

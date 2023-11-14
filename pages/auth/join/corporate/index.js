@@ -11,6 +11,8 @@ import Script from 'next/script';
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 
+import { useAuth } from '@/hooks/useAuth';
+
 const CorporateSignup = () => {
   const router = useRouter();
   const newsletterRef = useRef();
@@ -39,8 +41,7 @@ const CorporateSignup = () => {
 
   const dispatch = useDispatch();
 
-  const web3 = useSelector((state) => state.value.web3);
-  const token = web3.token;
+  const { temporaryToken, signIn } = useAuth();
 
   const newsletterHandler = () => {
     setnewsletter((prev) => !prev);
@@ -120,17 +121,25 @@ const CorporateSignup = () => {
             icon: 'success',
             button: 'Ok',
           }).then(() => {
-            localStorage.setItem(
-              'openlogin_store',
-              JSON.stringify({
-                sessionId: token.sessionId,
-              })
-            );
+            signIn({
+              token: temporaryToken,
+              user: response,
+            });
+
+            // localStorage.setItem(
+            //   'openlogin_store',
+            //   JSON.stringify({
+            //     sessionId: temporaryToken.sessionId,
+            //   })
+            // );
+
+            // localStorage.setItem('user', JSON.stringify(response));
+
             console.log({ response });
             // setIsLoading(false);
             nameRef.current.value = '';
             phoneNumberRef.current.value = '';
-            dispatch(counterActions.userAuth(response));
+            // dispatch(counterActions.userAuth(response));
             router.replace('/homepage/dashboard');
           });
         });

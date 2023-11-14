@@ -2,23 +2,22 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { createPortal } from 'react-dom';
 import { Fragment, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+
 import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
 import AddUavModal from '@/Components/Modals/AddUavModal';
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
-import User from '@/models/User';
 
-const UAVs = (props) => {
-  const { users } = props;
+import { useAuth } from '@/hooks/useAuth';
 
+const UAVs = () => {
   const router = useRouter();
   const [addUav, setAddUav] = useState();
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
@@ -258,13 +257,3 @@ const UAVs = (props) => {
 };
 
 export default UAVs;
-
-export async function getServerSideProps() {
-  const users = await User.findAll();
-
-  return {
-    props: {
-      users: JSON.parse(JSON.stringify(users)),
-    },
-  };
-}

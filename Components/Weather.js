@@ -9,13 +9,15 @@ import Spinner from '@/Components/Spinner';
 
 import { useSelector } from 'react-redux';
 
+import { useAuth } from '@/hooks/useAuth';
+
 const Weather = () => {
   const router = useRouter();
 
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
 
-  const selectorUser = useSelector((state) => state.value.user);
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));

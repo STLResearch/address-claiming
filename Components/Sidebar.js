@@ -60,7 +60,7 @@ const Sidebar = (props) => {
   const logoutHandler = () => {
     setIsLoading(true);
     localStorage.removeItem('openlogin_store');
-    localStorage.removeItem('email');
+    localStorage.removeItem('user');
     localStorage.removeItem('signature');
     router.replace('/auth/join');
   };
