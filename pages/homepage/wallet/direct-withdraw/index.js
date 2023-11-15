@@ -14,18 +14,12 @@ import Spinner from '@/Components/Spinner';
 import { useAuth } from '@/hooks/useAuth';
 
 const Wallet = () => {
-  if (error) {
-    swal({
-      title: 'oops!',
-      text: 'Something went wrong. Kindly try again',
-    });
-  }
-
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
   const [addCard, setAddCard] = useState(false);
   const [tokenBalance, setTokenBalance] = useState('');
   const [amount, setAmount] = useState(0);
+  //! TODO CHECK ADDRESS USAGE
   const [address, setAddress] = useState();
 
   const router = useRouter();
@@ -46,11 +40,8 @@ const Wallet = () => {
         };
 
         const web3auth = new Web3Auth({
-          // For Production
           clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -145,22 +136,6 @@ const Wallet = () => {
 
   const addressChangeHandler = (e) => {
     setAddress(e.target.value);
-  };
-
-  const formSubmitHandler = (e) => {
-    e.preventDefault();
-
-    if (!address || !amount) {
-      swal({
-        title: 'oops!',
-        text: 'kindly complete all fields',
-      });
-      return;
-    }
-
-    console.log(amount, address);
-
-    // router.push("/homepage/wallet/direct-withdraw/withdrawal-confirmed");
   };
 
   const closeAddCardHandler = () => {

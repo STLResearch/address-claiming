@@ -10,7 +10,7 @@ export const useSignature = () => {
     const chainConfig: CustomChainConfig = {
       chainNamespace: 'solana',
       chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-      rpcTarget: 'https://api.testnet.solana.com',
+      rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
       displayName: 'Solana Mainnet',
       blockExplorer: 'https://explorer.solana.com',
       ticker: 'SOL',
@@ -18,12 +18,8 @@ export const useSignature = () => {
     };
 
     const web3auth = new Web3Auth({
-      // For Production
       clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-      // For Development
-      // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-      web3AuthNetwork: 'cyan',
+      web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK as any,
       chainConfig: chainConfig,
     });
 
@@ -34,10 +30,8 @@ export const useSignature = () => {
     const solanaWallet = new SolanaWallet(web3authProvider);
 
     const domain = window.location.host;
-    // const domain = 'localhost:3000';
 
     const origin = window.location.origin;
-    // const origin = 'http://localhost:3000';
 
     const payload = new SIWPayload();
     payload.domain = domain;

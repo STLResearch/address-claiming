@@ -1,34 +1,25 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Fragment, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useDispatch, useSelector } from 'react-redux';
-import { createPortal } from 'react-dom';
-import swal from 'sweetalert';
 
-import { useVerification } from '@/hooks/useVerification';
-import { counterActions } from '@/store/store';
+import { Fragment, useState } from 'react';
+import { createPortal } from 'react-dom';
+
 import Spinner from './Spinner';
+
 import Backdrop from './Backdrop';
+
 import logo from '../public/images/logo.jpg';
 
-import { useAuth } from '@/hooks/useAuth';
-
-const Sidebar = (props) => {
-  const { user } = useAuth();
-
-  const dispatch = useDispatch();
+const Sidebar = () => {
   const router = useRouter();
   const { asPath } = router;
-  const { verificationCheck } = useVerification();
 
-  const [airspaceOptions, setAirspaceOption] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   let isActive;
 
   const NavLink = (props) => {
-    // const isActive = asPath === props.href;
     isActive = asPath.includes(props.href);
 
     return (
@@ -42,23 +33,6 @@ const Sidebar = (props) => {
         {props.children}
       </Link>
     );
-  };
-
-  const airspaceOptionsHandler = () => {
-    setAirspaceOption(!airspaceOptions);
-  };
-
-  const airspaceSection = () => {
-    // if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
-    //     swal({
-    //         title: "Sorry!",
-    //         text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
-    //       })
-    //     return;
-    // }
-
-    router.push('/homepage/airspace');
-    verificationCheck(user);
   };
 
   const logoutHandler = () => {

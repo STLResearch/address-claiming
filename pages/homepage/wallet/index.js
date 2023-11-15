@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { Fragment } from 'react';
 import { createPortal } from 'react-dom';
 import ReactPaginate from 'react-paginate';
-import { useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import { loadStripeOnramp } from '@stripe/crypto';
 import { CryptoElements, OnrampElement } from '@/hooks/stripe';
@@ -61,10 +60,8 @@ const Wallet = () => {
           tickerName: 'Solana',
         };
         const web3auth = new Web3Auth({
-          // For Production
           clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -388,14 +385,6 @@ const Wallet = () => {
 
   const withdrawalRouteHandler = () => {
     router.push('/homepage/wallet/direct-withdraw');
-  };
-
-  const showWithdrawalModalHandler = () => {
-    setShowWithdrawalModal(true);
-  };
-
-  const showDepositModalHandler = () => {
-    setShowDepositModal(true);
   };
 
   const StripeHandler = () => {

@@ -5,13 +5,9 @@ const Navbar = (props) => {
   const router = useRouter();
 
   return (
-    <header
-      onClick={props.onClose}
-      style={{ width: 'calc(100vw - 257px)', height: '91px' }}
-      className='bg-white p-0'
-    >
+    <header onClick={props.onClose} className='bg-white p-0'>
       <nav
-        className={`container mx-auto my-0 flex flex-row ${
+        className={`my-0 flex w-full flex-row ${
           props.children ? 'justify-between' : 'justify-end'
         } items-center`}
       >

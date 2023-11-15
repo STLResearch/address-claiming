@@ -10,23 +10,19 @@ import Navbar from '@/Components/Navbar';
 import Sidebar from '@/Components/Sidebar';
 import swal from 'sweetalert';
 import Spinner from '@/Components/Spinner';
-import { useVerification } from '@/hooks/useVerification';
 
 import { useAuth } from '@/hooks/useAuth';
 
 const Settings = () => {
-  const { verificationCheck } = useVerification();
   const router = useRouter();
 
   const [nameValid, setNameValid] = useState(true);
-  const [verificationLoading, setVerificationLoading] = useState(false);
   const [phoneValid, setPhoneValid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState('');
   const [token, setToken] = useState('');
 
   const nameRef = useRef();
-  const emailRef = useRef();
   const phoneRef = useRef();
 
   const { user: selectorUser } = useAuth();
@@ -45,11 +41,8 @@ const Settings = () => {
         };
 
         const web3auth = new Web3Auth({
-          // For Production
           clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -130,11 +123,8 @@ const Settings = () => {
     };
 
     const web3auth = new Web3Auth({
-      // For Production
       clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-      // For Development
-      // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
       web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
       chainConfig: chainConfig,
     });
@@ -225,13 +215,6 @@ const Settings = () => {
           text: `${error[1]}`,
         });
       });
-  };
-
-  const startVerification = async (e) => {
-    e.preventDefault();
-    setVerificationLoading(true);
-
-    setVerificationLoading(false);
   };
 
   if (!user || !token) {

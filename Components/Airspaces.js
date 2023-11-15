@@ -1,13 +1,4 @@
-import Image from 'next/image';
-import { useDispatch, useSelector } from 'react-redux';
-import { useVerification } from '@/hooks/useVerification';
-
-import { counterActions } from '@/store/store';
-
 const Airspaces = (props) => {
-  const dispatch = useDispatch();
-  const { verificationCheck } = useVerification();
-
   return (
     <>
       <div

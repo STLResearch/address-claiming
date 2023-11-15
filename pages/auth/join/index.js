@@ -1,6 +1,6 @@
 import { Fragment, useState, useRef, useEffect } from 'react';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { createPortal } from 'react-dom';
 
 import { useRouter } from 'next/router';
@@ -48,8 +48,6 @@ const Signup = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  //   For Live Environment
-
   const chainConfig = {
     chainNamespace: 'solana',
     chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
@@ -61,11 +59,8 @@ const Signup = () => {
   };
 
   const web3auth = new Web3AuthNoModal({
-    // For Production
     clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-    // For Development
-    // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
     web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
     chainConfig: chainConfig,
   });

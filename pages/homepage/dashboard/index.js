@@ -1,7 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
 
-import { useDispatch, useSelector } from 'react-redux';
-
 import { useRouter } from 'next/router';
 import Script from 'next/script';
 
@@ -19,13 +17,9 @@ import Navbar from '@/Components/Navbar';
 import Sidebar from '@/Components/Sidebar';
 import Spinner from '@/Components/Spinner';
 
-import { counterActions } from '@/store/store';
-
 import { useAuth } from '@/hooks/useAuth';
 
 const Dashboard = () => {
-  const dispatch = useDispatch();
-
   const cData = [
     {
       country: 'United States',
@@ -183,10 +177,8 @@ const Dashboard = () => {
           tickerName: 'Solana',
         };
         const web3auth = new Web3Auth({
-          // For Production
           clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -290,11 +282,8 @@ const Dashboard = () => {
         };
 
         const web3auth = new Web3Auth({
-          // For Production
           clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -381,7 +370,6 @@ const Dashboard = () => {
         headers: {
           'Content-Type': 'application/json',
           uri: '/public/newsletters',
-          // proxy_to_method: "GET",
           sign: signature.sign,
           time: signature.sign_issue_at,
           nonce: signature.sign_nonce,
@@ -481,13 +469,6 @@ const Dashboard = () => {
 
   const navigationHandler = (route) => {
     router.push(route);
-  };
-
-  const addAirspaceHandler = (event) => {
-    event.stopPropagation();
-
-    router.push('/homepage/airspace');
-    dispatch(counterActions.confirmOnMapModal());
   };
 
   if (!user || !token) {

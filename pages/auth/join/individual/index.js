@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import Script from 'next/script';
 
@@ -21,8 +21,7 @@ const IndividualSignup = () => {
 
   const [nameValid, setNameValid] = useState(true);
   const [phoneNumberValid, setPhoneNumberValid] = useState(true);
-  const [newsletter, setnewsletter] = useState(false);
-  const [error, setError] = useState('');
+  const [newsletter, setNewsletter] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [pageLoad, setPageLoad] = useState(true);
 
@@ -41,10 +40,8 @@ const IndividualSignup = () => {
 
   const { temporaryToken, signIn } = useAuth();
 
-  const dispatch = useDispatch();
-
   const newsletterHandler = () => {
-    setnewsletter((prev) => !prev);
+    setNewsletter((prev) => !prev);
   };
 
   const returnHandler = (e) => {
@@ -73,7 +70,6 @@ const IndividualSignup = () => {
       swal({
         title: 'Oops!',
         text: "Invalid phone number. Ensure to include country code starting with '+' (e.g +12124567890).",
-        // timer: 3000
       });
       return;
     }
@@ -113,7 +109,6 @@ const IndividualSignup = () => {
             throw new Error('something went wrong');
           }
 
-          setError(false);
           swal({
             title: 'Submitted',
             text: 'User registered successfully. You will now be signed in',
@@ -125,25 +120,14 @@ const IndividualSignup = () => {
               user: response,
             });
 
-            // localStorage.setItem(
-            //   'openlogin_store',
-            //   JSON.stringify({
-            //     sessionId: temporaryToken.sessionId,
-            //   })
-            // );
-
-            // localStorage.setItem('user', JSON.stringify(response));
-            // setIsLoading(false);
             nameRef.current.value = '';
             phoneNumberRef.current.value = '';
-            // dispatch(counterActions.userAuth(response));
             router.replace('/homepage/dashboard');
           });
         });
       })
       .catch((error) => {
         console.log(error);
-        setError(error);
         setIsLoading(false);
       });
   };

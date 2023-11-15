@@ -22,7 +22,6 @@ import Sidebar from '@/Components/Sidebar';
 import Backdrop from '@/Components/Backdrop';
 import MyAirspaceOverview from '@/Components/MyAirspaces/MyAirspaceOverview';
 import Airspaces from '@/Components/Airspaces';
-import AddAirspace from '@/Components/Modals/AddAirspace';
 import AdditionalAispaceInformation from '@/Components/Modals/AdditionalAirspaceInformation';
 import { counterActions } from '@/store/store';
 import Spinner from '@/Components/Spinner';
@@ -36,7 +35,6 @@ const Airspace = () => {
 
   const router = useRouter();
   const dispatch = useDispatch();
-  // const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
 
   const [allAirspace, setAllAirSpace] = useState(false);
   const [myAirspace, setMyAirSpace] = useState(true);
@@ -79,11 +77,8 @@ const Airspace = () => {
         };
 
         const web3auth = new Web3Auth({
-          // For Production
           clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -269,11 +264,8 @@ const Airspace = () => {
         };
 
         const web3auth = new Web3Auth({
-          // For Production
           clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -348,18 +340,9 @@ const Airspace = () => {
     return state.value.newAirspace;
   });
 
-  const confirmOnMap = useSelector((state) => {
-    return state.value.confirmOnMap;
-  });
-
   const additionalInfo = useSelector(
     (state) => state.value.airspaceAdditionalInfo
   );
-
-  const closeAddReviewModalHandler = (e) => {
-    e.preventDefault();
-    setshowAddReviewModal(false);
-  };
 
   const showAddAirspaceModalHandler = (e) => {
     setShowAddAirspaceModal(true);
@@ -370,7 +353,6 @@ const Airspace = () => {
     setshowAddReviewModal(false);
 
     dispatch(counterActions.closeNewAirspaceModal());
-    dispatch(counterActions.closeConfirmOnMapModal());
   };
 
   const editAirspaceHandler = () => {
@@ -409,10 +391,6 @@ const Airspace = () => {
     }
 
     setAddress(e.target.value);
-  };
-
-  const airspaceHandler = () => {
-    dispatch(counterActions.confirmOnMapModal());
   };
 
   const buttonSelectHandler = (e) => {
@@ -486,12 +464,6 @@ const Airspace = () => {
       </Script>
 
       {additionalInfo && <AdditionalAispaceInformation user={user} />}
-      {confirmOnMap &&
-        createPortal(
-          <AddAirspace onClose={backdropCloseHandler} />,
-          document.getElementById('modal-root')
-        )}
-
       {editAirspace &&
         createPortal(
           <EditAispaceModal
@@ -518,7 +490,6 @@ const Airspace = () => {
         showAddAirspaceModal ||
         newAirspace ||
         additionalInfo ||
-        confirmOnMap ||
         editAirspace) &&
         createPortal(
           <Backdrop onClick={backdropCloseHandler} />,
@@ -721,11 +692,8 @@ const Airspace = () => {
           </div>
         </div>
       </div>
-      <div id='map'></div>
     </Fragment>
   );
 };
 
 export default Airspace;
-
-// "https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/pin-l-embassy+f74e4e(-74.0021,40.7338)/-74.0021,40.7338,16/500x300?access_token=YOUR_MAPBOX_ACCESS_TOKEN"

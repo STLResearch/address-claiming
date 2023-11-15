@@ -1,8 +1,7 @@
 import Image from 'next/image';
-// import Link from "next/link";
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { createPortal } from 'react-dom';
 import swal from 'sweetalert';
 import logo from '../../../../public/images/logo.jpg';
@@ -19,10 +18,9 @@ const CorporateSignup = () => {
   const nameRef = useRef();
   const phoneNumberRef = useRef();
 
-  const [newsletter, setnewsletter] = useState(false);
+  const [newsletter, setNewsletter] = useState(false);
   const [nameValid, setNameValid] = useState(true);
   const [phoneNumberValid, setPhoneNumberValid] = useState(true);
-  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [pageLoad, setPageLoad] = useState(true);
 
@@ -39,12 +37,10 @@ const CorporateSignup = () => {
 
   const category = useSelector((state) => state.value.category);
 
-  const dispatch = useDispatch();
-
   const { temporaryToken, signIn } = useAuth();
 
   const newsletterHandler = () => {
-    setnewsletter((prev) => !prev);
+    setNewsletter((prev) => !prev);
   };
 
   const returnHandler = (e) => {
@@ -114,7 +110,6 @@ const CorporateSignup = () => {
             throw new Error('something went wrong');
           }
 
-          setError(false);
           swal({
             title: 'Submitted',
             text: 'User registered successfully. You will now be signed in',
@@ -146,7 +141,6 @@ const CorporateSignup = () => {
       })
       .catch((error) => {
         console.log(error);
-        setError(error.toString());
         setIsLoading(false);
       });
   };
