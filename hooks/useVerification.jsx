@@ -5,7 +5,7 @@ import swal from 'sweetalert';
 
 export const useVerification = () => {
   const dispatch = useDispatch();
-  const verificationCheck = async (users) => {
+  const verificationCheck = async (user) => {
     const chainConfig = {
       chainNamespace: 'solana',
       chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
@@ -43,9 +43,6 @@ export const useVerification = () => {
       });
       return;
     }
-
-    const currentUser = users.filter((user) => user.email === userInfo.email);
-    const user = currentUser[0];
 
     if (user.KYCStatusId === 2) {
       dispatch(counterActions.additionalInfoModal());

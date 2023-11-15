@@ -5,7 +5,11 @@ import { useDispatch } from 'react-redux';
 import { useVerification } from '@/hooks/useVerification';
 import swal from 'sweetalert';
 
+import { useAuth } from '@/hooks/useAuth';
+
 const AddAirspace = (props) => {
+  const { user } = useAuth();
+
   const dispatch = useDispatch();
 
   const [address, setAddress] = useState('');

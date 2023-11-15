@@ -463,7 +463,7 @@ const Airspace = () => {
 
     dispatch(counterActions.airspaceData(addressValue));
 
-    verificationCheck([selectorUser]);
+    verificationCheck(selectorUser);
 
     setIsLoading(false);
   };

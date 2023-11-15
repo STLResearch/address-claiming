@@ -12,7 +12,11 @@ import Spinner from './Spinner';
 import Backdrop from './Backdrop';
 import logo from '../public/images/logo.jpg';
 
+import { useAuth } from '@/hooks/useAuth';
+
 const Sidebar = (props) => {
+  const { user } = useAuth();
+
   const dispatch = useDispatch();
   const router = useRouter();
   const { asPath } = router;
@@ -54,7 +58,7 @@ const Sidebar = (props) => {
     // }
 
     router.push('/homepage/airspace');
-    // verificationCheck(props.users);
+    verificationCheck(user);
   };
 
   const logoutHandler = () => {
