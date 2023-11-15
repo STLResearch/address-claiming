@@ -19,7 +19,7 @@ import WalletModal from '@/Components/Modals/WalletModal';
 import { useAuth } from '@/hooks/useAuth';
 
 const Wallet = () => {
-  const url = 'https://api.devnet.solana.com';
+  const url = process.env.NEXT_PUBLIC_SOLANA_API;
 
   const router = useRouter();
 

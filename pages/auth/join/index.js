@@ -169,7 +169,6 @@ const Signup = () => {
       const userRequest = await fetch(`/api/proxy?${Date.now()}`, {
         headers: {
           uri: '/private/users/session',
-          api_key: process.env.FRONTEND_API_KEY,
           sign,
           time: sign_issue_at,
           nonce: sign_nonce,

@@ -99,7 +99,7 @@ const Wallet = () => {
         ],
       };
 
-      fetch('https://api.devnet.solana.com', {
+      fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
