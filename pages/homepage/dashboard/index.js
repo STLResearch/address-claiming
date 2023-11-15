@@ -508,7 +508,6 @@ const Dashboard = () => {
       </Script>
 
       <div className='mx-auto flex flex-row'>
-        {/* <Sidebar users={XXX} user={user} /> */}
         <Sidebar user={user} />
 
         <div

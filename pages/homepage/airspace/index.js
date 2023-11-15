@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useRef } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 
 import { createPortal } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,8 +7,8 @@ import { useRouter } from 'next/router';
 import Script from 'next/script';
 import Image from 'next/image';
 
-import maplibregl from 'maplibre-gl';
 import mapboxgl from 'mapbox-gl';
+import maplibregl from 'maplibre-gl';
 
 import { useAuth } from '@/hooks/useAuth';
 
@@ -56,6 +56,9 @@ const Airspace = () => {
   const [addressData, setAddressData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [transition, setTransition] = useState(false);
+
+  const [map, setMap] = useState(null);
+  const [marker, setMarker] = useState(null);
 
   const [user, setUser] = useState();
   const [token, setToken] = useState();
@@ -118,21 +121,21 @@ const Airspace = () => {
 
       authUser();
     }
-  }, [selectorUser]);
+  }, []);
 
   useEffect(() => {
-    if (token && user) {
+    if (token && user && !map) {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
-      const map = new mapboxgl.Map({
+      const newMap = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v12', // Replace with your desired Mapbox style
+        style: 'mapbox://styles/mapbox/streets-v12',
         center: [-122.42, 37.779],
         zoom: 12,
       });
 
-      map.on('load', function () {
-        map.addLayer({
+      newMap.on('load', function () {
+        newMap.addLayer({
           id: 'maine',
           type: 'fill',
           source: {
@@ -151,6 +154,8 @@ const Airspace = () => {
           },
         });
       });
+
+      setMap(newMap);
     }
   }, [token, user]);
 
@@ -158,9 +163,9 @@ const Airspace = () => {
     if (flyToAddress) {
       setIsLoading(true);
 
-      const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+      const mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
 
-      fetch(mapboxGeocodingUrl)
+      fetch(mapBoxGeocodingUrl)
         .then((res) => {
           if (!res.ok) {
             return res.json().then((errorData) => {
@@ -170,15 +175,12 @@ const Airspace = () => {
           return res.json();
         })
         .then((resData) => {
-          console.log(resData.features);
-
           if (resData.features && resData.features.length > 0) {
             const coordinates = resData.features[0].geometry.coordinates;
             const endPoint = [coordinates[0], coordinates[1]];
 
             setLongitude(coordinates[0]);
             setLatitude(coordinates[1]);
-
             setAddressData(resData.features[0].properties);
 
             setIsLoading(false);
@@ -188,7 +190,18 @@ const Airspace = () => {
               zoom: 16,
             });
 
-            new mapboxgl.Marker().setLngLat(endPoint).addTo(map);
+            if (marker) {
+              marker.remove();
+            }
+
+            let el = document.createElement('div');
+            el.id = 'markerWithExternalCss';
+
+            // Add the new marker to the map and update the marker state
+            const newMarker = new maplibregl.Marker(el)
+              .setLngLat(endPoint)
+              .addTo(map);
+            setMarker(newMarker);
           } else {
             throw new Error('Address not found');
           }
@@ -202,7 +215,7 @@ const Airspace = () => {
           });
         });
     }
-  }, [flyToAddress]);
+  }, [flyToAddress, map]);
 
   useEffect(() => {
     if (address) {
@@ -584,6 +597,7 @@ const Airspace = () => {
                         style={{
                           borderBottom: '0.2px solid #0653EA',
                           width: '100%',
+                          // height: 'auto',
                         }}
                       >
                         {address.place_name}
@@ -614,7 +628,6 @@ const Airspace = () => {
               showAllAirspace={showAllAirspace}
               myAirspace={myAirspace}
               onAddAirspace={showAddAirspaceModalHandler}
-              users={[]} //! CHECK!!!
               transition={transition}
             >
               <div>
@@ -708,8 +721,11 @@ const Airspace = () => {
           </div>
         </div>
       </div>
+      <div id='map'></div>
     </Fragment>
   );
 };
 
 export default Airspace;
+
+// "https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/pin-l-embassy+f74e4e(-74.0021,40.7338)/-74.0021,40.7338,16/500x300?access_token=YOUR_MAPBOX_ACCESS_TOKEN"

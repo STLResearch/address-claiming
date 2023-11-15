@@ -14,16 +14,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { useAuth } from '@/hooks/useAuth';
 
-const Wallet = (props) => {
-  const { users: XXX, error } = props;
-
-  if (error) {
-    swal({
-      title: 'oops!',
-      text: 'Something went wrong. Kindly try again',
-    });
-  }
-
+const Wallet = () => {
   const router = useRouter();
   const [addCard, setAddCard] = useState(false);
   const [user, setUser] = useState();
@@ -178,7 +169,7 @@ const Wallet = (props) => {
             <Backdrop onClick={closeAddCardHandler} />,
             document.getElementById('backdrop-root')
           )}
-        <Sidebar user={user} users={XXX} />
+        <Sidebar user={user} />
         <div
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
           className='overflow-y-auto'
@@ -385,35 +376,3 @@ const Wallet = (props) => {
 };
 
 export default Wallet;
-
-export async function getServerSideProps() {
-  try {
-    const response = await fetch(
-      `http://localhost:3000/api/proxy?${Date.now()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          uri: '/users',
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        users: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: 'oops! something went wrong. Kindly try again.',
-      },
-    };
-  }
-}

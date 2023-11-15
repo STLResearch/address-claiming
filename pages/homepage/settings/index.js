@@ -231,8 +231,6 @@ const Settings = () => {
     e.preventDefault();
     setVerificationLoading(true);
 
-    // await verificationCheck(XXX);
-
     setVerificationLoading(false);
   };
 

@@ -47,8 +47,6 @@ const AuthProvider = ({ children }) => {
     const token = JSON.parse(localStorage.getItem('openlogin_store'));
     const user = JSON.parse(localStorage.getItem('user'));
 
-    console.log({ user });
-
     if (!token?.sessionId || !user) {
       router.push('/auth/join');
       return;
