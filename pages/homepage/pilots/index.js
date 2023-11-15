@@ -41,7 +41,7 @@ const UAVs = () => {
 
         const web3auth = new Web3Auth({
           // For Production
-          clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
           // For Development
           // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
