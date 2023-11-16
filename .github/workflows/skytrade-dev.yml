@@ -19,7 +19,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: bash ./aws_ps_get_dev_env.sh
+    - run: bash ./dev_env.sh
     - run: pm2 stop ecosystem.config.js --env dev
     - run: yarn install && yarn build
     - run: pm2 startOrRestart ecosystem.config.js --env dev
