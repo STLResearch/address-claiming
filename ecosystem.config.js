@@ -4,11 +4,12 @@ module.exports = {
     script: 'node_modules/next/dist/bin/next',
     autorestart: true,
     watch: false,
+    args: "start",
     env_dev: {
-      NODE_ENV: "dev"
+      NODE_ENV: "development"
     },
     env_prod: {
-      NODE_ENV: "prod"
+      NODE_ENV: "production"
     }
   }],
 }
