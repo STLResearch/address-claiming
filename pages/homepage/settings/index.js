@@ -71,12 +71,12 @@ const Settings = (props) => {
                 try{
                     userInfo = await web3auth.getUserInfo();
                 } catch(err) {
-                    localStorage.removeItem("openlogin_store")
+                    // localStorage.removeItem("openlogin_store")
                     swal({
                         title: "oops!",
                         text: "Something went wrong. Kindly try again",
                       })
-                    .then(() => router.push("/auth/join"))
+                    .then(() => router.push("/auth/join"));
                     return;
                 }
 

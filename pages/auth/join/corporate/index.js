@@ -1,5 +1,4 @@
 import Image from "next/image";
-// import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -65,7 +64,7 @@ const CorporateSignup = () => {
             setNameValid(false);
             swal({
                 title: "oops!",
-                text: "Kindly complete all required fields",
+                text: "Name cannot be empty. Kindly enter a valid value.",
                 timer: 2000
               });
             return;
@@ -106,7 +105,7 @@ const CorporateSignup = () => {
                 .then(errorData => {
                     console.log("This is the errordata", errorData);
                     swal({
-                        title: "",
+                        title: "Sorry!",
                         text: `${errorData.errorMessage}`,
                         });
                     throw new Error(errorData.errorMessage);

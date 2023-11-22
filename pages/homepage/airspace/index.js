@@ -96,12 +96,12 @@ const Airspace = (props) => {
                 try{
                     userInfo = await web3auth.getUserInfo();
                 } catch(err) {
-                    localStorage.removeItem("openlogin_store")
+                    // localStorage.removeItem("openlogin_store")
                     swal({
                         title: "Oops!",
                         text: "Something went wrong. Kindly try again",
                       })
-                      .then(() => router.push("/auth/join"))
+                      .then(() => router.push("/auth/join"));
                     return;
                 }
 
@@ -110,7 +110,7 @@ const Airspace = (props) => {
                 const singleUser = users.filter(user => user.email === userInfo.email);
 
                 if(singleUser.length < 1){
-                    localStorage.removeItem("openlogin_store")
+                    localStorage.removeItem("openlogin_store");
                     router.push("/auth/join");
                     return;
                 };

@@ -158,7 +158,7 @@ const Dashboard = (props) => {
     ];
 
     const date = new Date()
-    const month = date.toLocaleString('default', { month: 'short' })
+    const month = date.toLocaleString('default', { month: 'short' });
     const day = date.getDate();
     
     const router = useRouter();
@@ -205,12 +205,12 @@ const Dashboard = (props) => {
                 try{
                     userInfo = await web3auth.getUserInfo();
                 } catch(err) {
-                    localStorage.removeItem("openlogin_store")
+                    // localStorage.removeItem("openlogin_store");
                     swal({
                         title: "oops!",
                         text: "Something went wrong. Kindly try again",
                       })
-                      .then(() => router.push("/auth/join"))
+                      .then(() => router.push("/auth/join"));
                     return;
                 }
 

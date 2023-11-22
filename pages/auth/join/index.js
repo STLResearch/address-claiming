@@ -107,11 +107,11 @@ const Signup = (props) => {
             }
             catch(err) {
                 localStorage.removeItem("openlogin_store");
-                localStorage.removeItem("email");
                 swal({
                     title: "oops!",
                     text: "Something went wrong. Kindly reload the page",
                   });
+                // setIsLoading(false);
                 return;
             }
         } else {
@@ -125,6 +125,7 @@ const Signup = (props) => {
                     title: "oops!",
                     text: "Something went wrong. Kindly reload the page",
                   });
+                // setIsLoading(false);
                 return;
             }
         }
@@ -133,10 +134,14 @@ const Signup = (props) => {
         try{
             userInformation = await web3auth.getUserInfo();
         } catch(err) {
+            localStorage.removeItem("openlogin_store");
+
             swal({
                 title: "oops!",
                 text: "Couldn't get user info. Kindly reload the page",
               });
+
+            // setIsLoading(false);
             return;
         }
 
@@ -147,10 +152,13 @@ const Signup = (props) => {
         try{
             accounts = await solanaWallet.requestAccounts();
         } catch(err) {
+            localStorage.removeItem("openlogin_store");
             swal({
                 title: "oops!",
-                text: "Solana wallet wasn't created. Kindly reload the page",
+                text: "A wallet wasn't created for this user. Please try again.",
               });
+
+            // setIsLoading(false);
             return;
         }
 
@@ -194,6 +202,7 @@ const Signup = (props) => {
                 router.replace("/homepage/dashboard");
             })
         }).catch(err => {
+            console.log(err);
             swal({
                 title: "Oops!",
                 text: err.message || "Something went wrong. Kindly try again",

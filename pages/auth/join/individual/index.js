@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Fragment } from "react";
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
 import swal from "sweetalert";
@@ -8,7 +8,7 @@ import Script from "next/script";
 
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
-import { Fragment } from "react";
+
 import logo from "../../../../public/images/logo.jpg"
 
 const IndividualSignup = () => {
@@ -46,7 +46,7 @@ const IndividualSignup = () => {
 
     const returnHandler = (e) => {
         e.preventDefault();
-        router.push("/auth/join")
+        router.push("/auth/join");
     }
 
     const formSubmitHandler = (e) => {
@@ -59,8 +59,8 @@ const IndividualSignup = () => {
         if(!name) {
             setNameValid(false);
             swal({
-                title: "oops!",
-                text: "Kindly complete all required fields",
+                title: "Oops!",
+                text: "Name cannot be empty. Kindly enter a valid value.",
                 timer: 2000
               });
             return;
