@@ -4,31 +4,30 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
-
-*{
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #F0F0FA;
+  background-color: #f0f0fa;
   font-family: 'Poppins', sans-serif;
 }
 
-#map{ 
-    width:90%; 
-    margin: auto;
-    margin-top: 2rem;
-    height: 70vh;
-  }
+#map {
+  width: 90%;
+  margin: auto;
+  margin-top: 2rem;
+  height: 70vh;
+}
 
-button{
+button {
   cursor: pointer;
 }
 
-#markerWithExternalCss{
+#markerWithExternalCss {
   background-image: url('https://maps.locationiq.com/v3/samples/marker50px.png');
   background-size: cover;
   width: 100px;
@@ -36,8 +35,7 @@ button{
   cursor: pointer;
 }
 
-
-.marker{
+.marker {
   display: block;
   border: none;
   cursor: pointer;
@@ -45,16 +43,16 @@ button{
 }
 
 ::-webkit-scrollbar {
-  width: 3px; 
+  width: 3px;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #f1f1f1; 
+  background-color: #f1f1f1;
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: #888;
-  border-radius: 6px; 
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -74,48 +72,45 @@ button{
   padding: 5px;
   margin: 8px;
   border-radius: 5px;
-  border: 1px solid #0653EA;
-  color: #0653EA;
+  border: 1px solid #0653ea;
+  color: #0653ea;
   cursor: pointer;
 }
 
-.paginationBttns a:hover{
+.paginationBttns a:hover {
   color: white;
-  background-color: #0653EA;
+  background-color: #0653ea;
 }
 
 .paginationActive a {
   color: white;
-  background-color: #0653EA;
+  background-color: #0653ea;
 }
 
-.loader{
-      width: 48px;
-      height: 48px;
-      border: 5px solid #FFF;
-      border-bottom-color: #0653EA;
-      border-radius: 50%;
-      display: inline-block;
-      box-sizing: border-box;
-      animation: rotation 1s linear infinite;
-      position: absolute;
-      top: 40vh;
-      z-index: 50;
-    }
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #fff;
+  border-bottom-color: #0653ea;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  position: absolute;
+  top: 40vh;
+  z-index: 50;
+}
 
-    @keyframes rotation {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-  } 
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
-
-  
-
-@media (min-width: 992px){
+@media (min-width: 992px) {
   /* body{
     background-color: ;
   } */

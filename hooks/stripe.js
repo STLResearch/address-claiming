@@ -34,11 +34,7 @@ export const useStripeOnramp = () => {
 };
 
 // React element to render Onramp UI
-export const OnrampElement = ({
-  clientSecret,
-  appearance,
-  ...props
-}) => {
+export const OnrampElement = ({ clientSecret, appearance, ...props }) => {
   const stripeOnramp = useStripeOnramp();
   const onrampElementRef = React.useRef(null);
 
@@ -53,7 +49,7 @@ export const OnrampElement = ({
             clientSecret,
             appearance,
           })
-          .mount(containerRef)
+          .mount(containerRef);
       }
     }
   }, [clientSecret, stripeOnramp]);
