@@ -33,6 +33,9 @@ export const useSignature = () => {
 
     const origin = window.location.origin;
 
+    // console.log("This is the domain", domain);
+    // console.log("This is the origin", origin);
+
     const payload = new SIWPayload();
     payload.domain = domain;
     payload.uri = origin;

@@ -109,24 +109,17 @@ const Signup = () => {
         });
       } catch (err) {
         localStorage.removeItem('openlogin_store');
-        localStorage.removeItem('email');
-        swal({
-          title: 'oops!',
-          text: 'Something went wrong. Kindly reload the page',
-        });
+        router.push("/");
         return;
       }
     } else {
       try {
         web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
           loginProvider: provider,
-        });
+        });        
       } catch (err) {
         localStorage.removeItem('openlogin_store');
-        swal({
-          title: 'oops!',
-          text: 'Something went wrong. Kindly reload the page',
-        });
+        router.push("/");
         return;
       }
     }
@@ -136,150 +129,8 @@ const Signup = () => {
     try {
       userInformation = await web3auth.getUserInfo();
     } catch (err) {
-      swal({
-        title: 'oops!',
-        text: "Couldn't get user info. Kindly reload the page",
-      });
-    
-    // web3auth.configureAdapter(openloginAdapter);
-
-    // useEffect(() => {
-    //     const init = async() => {
-    //           await web3auth.init();
-    //     }
-        
-    //     init();
-    // }, []);
-
-    // const loginHandler = async(provider, e) => {
-    //     e.preventDefault();
-
-    //     const email = emailRef.current.value;
-    //     const regex = /^\S+@\S+\.\S+$/;
-    //     const emailIsValid = regex.test(email);
-        
-    //     if(!provider && !emailIsValid) {
-    //         setEmailValid(false);
-    //         return;
-    //     };
-
-
-    //     setIsLoading(true);
-        
-    //     let web3authProvider;
-
-    //     if(!provider) {
-    //         try{
-    //             web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-    //                 loginProvider: "email_passwordless",
-    //                 extraLoginOptions: {
-    //                   login_hint: email,
-    //                 },
-    //             });
-    //         }
-    //         catch(err) {
-    //             localStorage.removeItem("openlogin_store");
-    //             swal({
-    //                 title: "oops!",
-    //                 text: "Something went wrong. Kindly reload the page",
-    //               });
-    //             // setIsLoading(false);
-    //             return;
-    //         }
-    //     } else {
-    //         try{
-    //             web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-    //                 loginProvider: provider,
-    //               });
-    //         } catch(err) {
-    //             localStorage.removeItem("openlogin_store");
-    //             swal({
-    //                 title: "oops!",
-    //                 text: "Something went wrong. Kindly reload the page",
-    //               });
-    //             // setIsLoading(false);
-    //             return;
-    //         }
-    //     }
-
-    //     let userInformation;
-    //     try{
-    //         userInformation = await web3auth.getUserInfo();
-    //     } catch(err) {
-    //         localStorage.removeItem("openlogin_store");
-
-    //         swal({
-    //             title: "oops!",
-    //             text: "Couldn't get user info. Kindly reload the page",
-    //           });
-
-    //         // setIsLoading(false);
-    //         return;
-    //     }
-
-    //     const solanaWallet = new SolanaWallet(web3authProvider);
-
-    //     let accounts;
-
-    //     try{
-    //         accounts = await solanaWallet.requestAccounts();
-    //     } catch(err) {
-    //         localStorage.removeItem("openlogin_store");
-    //         swal({
-    //             title: "oops!",
-    //             text: "A wallet wasn't created for this user. Please try again.",
-    //           });
-
-    //         // setIsLoading(false);
-    //         return;
-    //     }
-
-    //     const api_key = "XXX"
-
-    //     fetch(`/api/proxy?${Date.now()}`, {
-    //         headers: {
-    //             // "Content-Type": "application/json",
-    //             uri: "/users",
-    //             // api_key: api_key
-    //             // proxy_to_method: "GET",
-    //         }
-    //     }).then(res => {
-    //         if(!res.ok) {
-    //             return res.json()
-    //             .then(err => {
-    //                 localStorage.removeItem("openlogin_store");
-    //                 throw new Error(err.message)
-    //             })
-    //         }
-    //         return res.json()
-    //         .then(response => {
-    //             const filteredUser = response.filter(user => user.blockchainAddress === accounts[0]);
-
-    //             if(filteredUser.length < 1) {
-    //                 const token = localStorage.getItem("openlogin_store");
-    //                 dispatch(counterActions.web3({
-    //                     token: JSON.parse(token)
-    //                 }));
-    //                 localStorage.removeItem("openlogin_store");
-    //                 dispatch(counterActions.category({
-    //                     email: userInformation.email,
-    //                     blockchainAddress: accounts[0]
-    //                 }));
-    
-    //                 setIsLoading(false);
-    //                 setCategorySect(true);
-    //                 return;
-    //             }
-    
-    //             router.replace("/homepage/dashboard");
-    //         })
-    //     }).catch(err => {
-    //         console.log(err);
-    //         swal({
-    //             title: "Oops!",
-    //             text: err.message || "Something went wrong. Kindly try again",
-    //           })
-    //     })     
+      localStorage.removeItem('openlogin_store');
+      router.push("/");
       return;
     }
 
@@ -290,10 +141,8 @@ const Signup = () => {
     try {
       accounts = await solanaWallet.requestAccounts();
     } catch (err) {
-      swal({
-        title: 'oops!',
-        text: "Solana wallet wasn't created. Kindly reload the page",
-      });
+      localStorage.removeItem('openlogin_store');
+      router.push("/");
       return;
     }
 
@@ -312,6 +161,7 @@ const Signup = () => {
       });
 
       const user = await userRequest.json();
+      
 
       if (user.id) {
         signIn({ user });
