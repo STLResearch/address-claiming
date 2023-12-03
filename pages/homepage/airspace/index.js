@@ -63,6 +63,19 @@ const Airspace = () => {
 
   const { user: selectorUser } = useAuth();
 
+  const [mapStyle, setMapStyle] = useState('streets-v12');
+
+  const mapStyles = [
+    {
+      url: 'streets-v12',
+      name: ' Street View',
+    },
+    {
+      url: 'satellite-streets-v12',
+      name: 'Satellite View',
+    },
+  ];
+
   useEffect(() => {
     if (selectorUser) {
       const authUser = async () => {
@@ -124,7 +137,7 @@ const Airspace = () => {
 
       const newMap = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v12',
+        style: `mapbox://styles/mapbox/${mapStyle}`,
         center: [-122.42, 37.779],
         zoom: 12,
       });
@@ -498,6 +511,7 @@ const Airspace = () => {
         )}
       <div className='mx-auto flex flex-row'>
         <Sidebar user={user} />
+
         <div
           className='overflow-y-auto overflow-x-hidden'
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
@@ -544,7 +558,7 @@ const Airspace = () => {
                 }}
               />
 
-              {addresses.length > 0 && address.length > 0 && (
+              {address.length > 0 && (
                 <div
                   style={{
                     width: '340px',
@@ -579,7 +593,23 @@ const Airspace = () => {
                 </div>
               )}
             </div>
+
+            <select
+              value={mapStyle}
+              onChange={(e) => {
+                setMapStyle(e.target.value);
+
+                if (map) {
+                  map.setStyle(`mapbox://styles/mapbox/${e.target.value}`);
+                }
+              }}
+            >
+              {mapStyles.map((each, index) => (
+                <option key={index} value={each.url} label={each.name}></option>
+              ))}
+            </select>
           </Navbar>
+          {/* here */}
           <div
             className='relative mt-0'
             id='map'
@@ -593,6 +623,7 @@ const Airspace = () => {
               transition={transition}
               collapse={() => setTransition(!transition)}
             />
+
             <Airspaces
               showMyAirspace={showMyAirspace}
               airspace={airspace}
@@ -617,7 +648,7 @@ const Airspace = () => {
                   >
                     <div className='flex flex-row gap-5'>
                       <Image
-                        src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${longitude},${latitude},12,0/70x70?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`}
+                        src={`https://api.mapbox.com/styles/v1/mapbox/${mapStyle}/static/${longitude},${latitude},12,0/70x70?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`}
                         alt='a static map'
                         width={70}
                         height={70}
@@ -688,6 +719,7 @@ const Airspace = () => {
                 latitude={myFilteredAirspace.latitude}
                 longitute={myFilteredAirspace.longitude}
                 propertyStatus={myFilteredAirspace.propertyStatus.type}
+                mapStyle={mapStyle}
               />
             )}
           </div>

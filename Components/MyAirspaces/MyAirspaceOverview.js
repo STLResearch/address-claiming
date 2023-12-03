@@ -16,7 +16,7 @@ const MyAirspaceOverview = (props) => {
     >
       <div className='relative rounded-t-md' style={{ height: '230px' }}>
         <Image
-          src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${props.longitute},${props.latitude},14,0/300x200?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`}
+          src={`https://api.mapbox.com/styles/v1/mapbox/${props.mapStyle}/static/${props.longitute},${props.latitude},14,0/300x200?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`}
           alt='a static map'
           className='rounded-t-md'
           width={339}
