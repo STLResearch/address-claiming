@@ -10,6 +10,8 @@ import Image from 'next/image';
 import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 
+import MapboxDraw from '@mapbox/mapbox-gl-draw';
+
 import { useAuth } from '@/hooks/useAuth';
 
 import { Web3Auth } from '@web3auth/modal';
@@ -57,6 +59,7 @@ const Airspace = () => {
 
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
+  const [draw, setDraw] = useState(null);
 
   const [user, setUser] = useState();
   const [token, setToken] = useState();
@@ -75,6 +78,13 @@ const Airspace = () => {
       name: 'Satellite View',
     },
   ];
+
+  // const handleStartDrawing = () => {
+  //   if (draw) {
+  //     // Start drawing mode
+  //     draw.changeMode('draw_polygon');
+  //   }
+  // };
 
   useEffect(() => {
     if (selectorUser) {
@@ -135,6 +145,15 @@ const Airspace = () => {
     if (token && user && !map) {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
+      const newDraw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+          polygon: true,
+          trash: true,
+        },
+        defaultMode: 'draw_polygon',
+      });
+
       const newMap = new mapboxgl.Map({
         container: 'map',
         style: `mapbox://styles/mapbox/${mapStyle}`,
@@ -163,9 +182,17 @@ const Airspace = () => {
         });
       });
 
+      newMap.addControl(newDraw);
+
+      newMap.on('draw.create', (e) => {
+        const feature = e.features[0].geometry.coordinates;
+        console.log({ e });
+        console.log('Drawn Feature:', feature);
+      });
+
       setMap(newMap);
     }
-  }, [token, user]);
+  }, [token, user, map]);
 
   useEffect(() => {
     if (flyToAddress) {
