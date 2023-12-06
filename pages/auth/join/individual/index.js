@@ -39,12 +39,8 @@ const IndividualSignup = () => {
 
       const lsReferralCode = localStorage.getItem('referralCode');
 
-      console.log({ lsReferralCode });
-
       if (lsReferralCode) {
-        const cleanedReferralCode = lsReferralCode?.replace(/"/g, '');
-
-        setRefCode(cleanedReferralCode);
+        setRefCode(lsReferralCode);
       }
     }
 
@@ -91,7 +87,7 @@ const IndividualSignup = () => {
     }
 
     if (
-      (refCode && refCode.length !== 6) |
+      (refCode && refCode.length !== 6) ||
       (!refCode && referralCode && referralCode.length !== 6)
     ) {
       swal({
@@ -154,7 +150,6 @@ const IndividualSignup = () => {
             nameRef.current.value = '';
             phoneNumberRef.current.value = '';
 
-            localStorage.removeItem('referralCode');
             // referralCodeRef.current.value = '';
             router.replace('/homepage/dashboard');
           });
