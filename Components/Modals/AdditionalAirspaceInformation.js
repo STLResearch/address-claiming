@@ -48,10 +48,13 @@ const AdditionalAispaceInformation = (props) => {
   const [timezone, setTimezone] = useState('US/Central');
 
   const airspaceTitleRef = useRef();
+  const airspaceAddressAliasRef = useRef();
 
   const dispatch = useDispatch();
 
   const airspaceData = useSelector((state) => state.value.airspaceData);
+
+  console.log({ airspaceData });
 
   const closeModalHandler = (e) => {
     e.preventDefault();
@@ -94,6 +97,7 @@ const AdditionalAispaceInformation = (props) => {
     e.preventDefault();
     setIsLoading(true);
     const airspaceTitle = airspaceTitleRef.current.value;
+    const airspaceAddressAlias = airspaceAddressAliasRef.current.value;
 
     const weekDayRanges = [
       {
@@ -205,6 +209,11 @@ const AdditionalAispaceInformation = (props) => {
 
     const airspaceInformation = {
       ...airspaceData,
+      address:
+        airspaceData.address && airspaceData.address !== 'CUSTOM POLYGON'
+          ? airspaceData.address
+          : airspaceAddressAlias,
+      addressAlias: airspaceAddressAlias ?? airspaceData.address,
       ownerId: props.user.id,
       title: airspaceTitle,
       transitFee: '$0.01 - $99.00',
@@ -313,6 +322,23 @@ const AdditionalAispaceInformation = (props) => {
             ref={airspaceTitleRef}
             type='text'
             placeholder='AirSpace Title'
+            style={{ width: '383px', height: '27px' }}
+            className='rounded-sm bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown focus:outline-blue-200'
+            name='Address Alias'
+          />
+        </div>
+        <div className='flex flex-row items-center justify-between gap-8 px-14 pb-5'>
+          <div style={{ width: '114px' }} className='mt-9'>
+            <p className='font-medium'>Address Alias</p>
+            <p className='text-xs'>
+              Give a custom address title to the AirSpace for easy
+              identification
+            </p>
+          </div>
+          <input
+            ref={airspaceAddressAliasRef}
+            type='text'
+            placeholder='Address Alias'
             style={{ width: '383px', height: '27px' }}
             className='rounded-sm bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown focus:outline-blue-200'
             name='AirSpace Title'

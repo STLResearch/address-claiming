@@ -24,6 +24,11 @@ const Settings = () => {
   const [user, setUser] = useState('');
   const [token, setToken] = useState('');
 
+  const [properties, setProperties] = useState({
+    registered: 0,
+    nonRegistered: 0,
+  });
+
   const nameRef = useRef();
   const phoneRef = useRef();
   const referralCodeRef = useRef();
@@ -366,8 +371,8 @@ const Settings = () => {
             {/* KYC LOGIC - DO NOT REMOVE */}
 
             <div
-              className='mt-10 flex flex-col justify-center rounded-md border-2 border-light-blue px-6 py-5'
-              style={{ width: '', height: '397px' }}
+              className='mt-10 flex h-auto w-auto flex-col justify-center rounded-md border-2 border-light-blue px-6 py-5'
+              // style={{ width: '', height: '397px' }}
             >
               <div className='mb-5'>
                 <h3 className='text-2xl font-medium'>Personal Information</h3>
@@ -446,28 +451,44 @@ const Settings = () => {
 
                 <div className='mt-6 flex gap-5'>
                   <div
-                    className='relative'
+                    className='relative flex flex-col'
                     style={{ width: '320px', height: '37px' }}
                   >
-                    <p className='text-bleach-brown'>Referral Code</p>
-                    <div className='flex gap-5'>
-                      {user.ownedReferralCode.codeChanged ? (
-                        <p className='text-black'>
-                          {user.ownedReferralCode.code}
-                        </p>
-                      ) : (
-                        <input
-                          type='text'
-                          onChange={() => {}}
-                          ref={referralCodeRef}
-                          name='referral-code'
-                          defaultValue={user.ownedReferralCode.code}
-                          id='referral-code'
-                          className='rounded-md border-2 border-light-blue ps-3 placeholder:font-medium placeholder:text-dark-brown focus:outline-blue-200'
-                          style={{ width: '320px', height: '37px' }}
-                        />
-                      )}
+                    <div>
+                      <p className='text-bleach-brown'>Referral Code</p>
+
+                      <div className='flex gap-5'>
+                        {user.ownedReferralCode.codeChanged ? (
+                          <p className='text-black'>
+                            {user.ownedReferralCode.code}
+                          </p>
+                        ) : (
+                          <input
+                            type='text'
+                            onChange={() => {}}
+                            ref={referralCodeRef}
+                            name='referral-code'
+                            defaultValue={user.ownedReferralCode.code}
+                            id='referral-code'
+                            className='rounded-md border-2 border-light-blue ps-3 placeholder:font-medium placeholder:text-dark-brown focus:outline-blue-200'
+                            style={{ width: '320px', height: '37px' }}
+                          />
+                        )}
+                      </div>
                     </div>
+                  </div>
+                  <div>
+                    <p className='text-bleach-brown'>
+                      Users Referred: {user.ownedReferralCode?.usedBy.length}
+                    </p>
+                    <p className='text-bleach-brown'>
+                      Registered properties referred :{' '}
+                      {user.ownedReferralCode.registeredPropertiesCount}
+                    </p>
+                    <p className='text-bleach-brown'>
+                      Unregistered properties referred:{' '}
+                      {user.ownedReferralCode.unregisteredPropertiesCount}
+                    </p>
                   </div>
                 </div>
               </div>

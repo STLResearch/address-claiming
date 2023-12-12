@@ -54,6 +54,7 @@ const Airspace = () => {
   const [longitude, setLongitude] = useState();
   const [latitude, setLatitude] = useState();
   const [addressData, setAddressData] = useState();
+  const [polygonAddressData, setPolygonAddressData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [transition, setTransition] = useState(false);
 
@@ -64,7 +65,7 @@ const Airspace = () => {
   const [user, setUser] = useState();
   const [token, setToken] = useState();
 
-  const { user: selectorUser } = useAuth();
+  const { user: userLoggedIn } = useAuth();
 
   const [mapStyle, setMapStyle] = useState('streets-v12');
 
@@ -87,7 +88,7 @@ const Airspace = () => {
   // };
 
   useEffect(() => {
-    if (selectorUser) {
+    if (userLoggedIn) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -127,14 +128,15 @@ const Airspace = () => {
           localStorage.getItem('openlogin_store')
         );
 
-        if (!selectorUser) {
+        if (!userLoggedIn) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
+        console.log({ userLoggedIn });
+        setUser(userLoggedIn);
       };
 
       authUser();
@@ -151,7 +153,8 @@ const Airspace = () => {
           polygon: true,
           trash: true,
         },
-        defaultMode: 'draw_polygon',
+
+        // defaultMode: 'draw_polygon',
       });
 
       const newMap = new mapboxgl.Map({
@@ -182,14 +185,39 @@ const Airspace = () => {
         });
       });
 
-      newMap.addControl(newDraw);
+      newMap.addControl(newDraw, 'bottom-right');
 
       newMap.on('draw.create', (e) => {
-        const feature = e.features[0].geometry.coordinates;
-        console.log({ e });
-        console.log('Drawn Feature:', feature);
+        const polygonCoordinates = e.features[0].geometry.coordinates[0];
+
+        const firstCoordinate = polygonCoordinates[0];
+
+        setLongitude(firstCoordinate[0]);
+        setLatitude(firstCoordinate[1]);
+
+        setPolygonAddressData(polygonCoordinates);
+
+        setFlyToAddress((prev) => prev);
+        setAddress('Custom Polygon');
+        setShowOptions(false);
+        setIsLoading(false);
+
+        showAddAirspaceModalHandler();
       });
 
+      newMap.on('draw.update', (e) => {
+        const feature = e.features[0].geometry.coordinates;
+        console.log({ e });
+        console.log('Drawn UPDATE:', feature);
+      });
+
+      newMap.on('draw.delete', (e) => {
+        setLongitude(null);
+        setLatitude(null);
+        setPolygonAddressData([]);
+
+        setAddress('');
+      });
       setMap(newMap);
     }
   }, [token, user, map]);
@@ -384,7 +412,7 @@ const Airspace = () => {
     (state) => state.value.airspaceAdditionalInfo
   );
 
-  const showAddAirspaceModalHandler = (e) => {
+  const showAddAirspaceModalHandler = () => {
     setShowAddAirspaceModal(true);
   };
 
@@ -434,9 +462,9 @@ const Airspace = () => {
   };
 
   const buttonSelectHandler = (e) => {
-    e.preventDefault(),
-      setAddress(e.target.value),
-      setFlyToAddress(e.target.value);
+    e.preventDefault();
+    setAddress(e.target.value);
+    setFlyToAddress(e.target.value);
 
     setShowOptions(false);
   };
@@ -444,6 +472,7 @@ const Airspace = () => {
   const confirmAddressHandler = (e) => {
     setIsLoading(true);
 
+    //! KYC LOGIC - DO NOT REMOVE
     // if (user.categoryId === 1 && user.KYCStatusId !== 2) {
     //   swal({
     //     title: 'Sorry!',
@@ -453,19 +482,45 @@ const Airspace = () => {
     //   setIsLoading(false);
     //   return;
     // }
+    //! KYC LOGIC - DO NOT REMOVE
 
     const vertexes = [];
 
-    if (addressData.geojson && addressData.geojson.type === 'Polygon') {
+    if (
+      !polygonAddressData &&
+      addressData.geojson &&
+      addressData.geojson.type === 'Polygon'
+    ) {
       for (const address of addressData.geojson.coordinates) {
         for (const val of address) {
           const addValue = {};
+
           const long = parseFloat(val[0].toFixed(2));
           const lat = parseFloat(val[1].toFixed(2));
+
           addValue.longitude = +long;
           addValue.latitude = +lat;
+
           vertexes.push(addValue);
         }
+      }
+    }
+
+    console.log(502, { polygonAddressData });
+
+    if (polygonAddressData && polygonAddressData.length > 0) {
+      console.log('FLUXO POLYGON INPUT');
+
+      for (const val of polygonAddressData) {
+        const addValue = {};
+
+        const long = parseFloat(val[0].toFixed(2));
+        const lat = parseFloat(val[1].toFixed(2));
+
+        addValue.longitude = +long;
+        addValue.latitude = +lat;
+
+        vertexes.push(addValue);
       }
     }
 
@@ -473,7 +528,7 @@ const Airspace = () => {
     const lat = parseFloat(latitude).toFixed(2);
 
     const addressValue = {
-      address: address,
+      address,
       longitude: +long,
       latitude: +lat,
       vertexes: vertexes,
@@ -503,6 +558,13 @@ const Airspace = () => {
                 gtag('config', 'G-C0J4J56QW5');
             `}
       </Script>
+
+      {/* <Script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.0/mapbox-gl-draw.js'></Script> */}
+      <link
+        rel='stylesheet'
+        href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.0/mapbox-gl-draw.css'
+        type='text/css'
+      ></link>
 
       {additionalInfo && <AdditionalAispaceInformation user={user} />}
       {editAirspace &&
@@ -661,9 +723,10 @@ const Airspace = () => {
               transition={transition}
             >
               <div>
-                {latitude && longitude && address.length > 0 && (
-                  <p className='mt-3'>Search Result</p>
-                )}
+                {latitude &&
+                  longitude &&
+                  address.length > 0 &&
+                  !polygonAddressData && <p className='mt-3'>Search Result</p>}
                 {latitude && longitude && address.length > 0 && (
                   <div
                     className='mb-5 mt-3 bg-white p-3'
