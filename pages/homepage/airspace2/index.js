@@ -420,39 +420,24 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
           <span className='text-[#E04F64]'>*</span>
         </span>{' '}
       </p>
-      <div className='flex items-center gap-[7px]'>
-        <input
-          className='h-[18px] w-[18px] cursor-pointer'
-          type='checkbox'
-          id='iDontKnow'
-          name='iDontKnow'
-          checked={data.iDontKnow}
-          onChange={() =>
-            setData((prev) => {
-              const newData = { ...prev, iDontKnow: !prev.iDontKnow };
-              newData.rent = false;
-              newData.sell = false;
-              return newData;
-            })
-          }
-        />
-        I dont Know
-      </div>
+
       <div className='flex items-center gap-[7px] text-[14px] text-[#87878D]'>
         <input
           className='relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]'
-          checked={data.hasPlanningPermission}
+          checked={data.hasPlanningPermission === 'false'}
           onChange={() =>
-            setData((prev) => ({ ...prev, hasPlanningPermission: true }))
+            setData((prev) => ({ ...prev, hasPlanningPermission: 'false' }))
           }
           style={{
             appearance: 'none',
-            border: !data.hasPlanningPermission
-              ? '2px solid #222222'
-              : '2px solid #0653EA',
-            backgroundColor: data.hasPlanningPermission
-              ? '#0653EA'
-              : 'transparent',
+            border:
+              data.hasPlanningPermission !== 'false'
+                ? '2px solid #222222'
+                : '2px solid #0653EA',
+            backgroundColor:
+              data.hasPlanningPermission === 'false'
+                ? '#0653EA'
+                : 'transparent',
             borderRadius: '50%',
             backgroundClip: 'content-box',
           }}
@@ -463,9 +448,31 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
         Yes
         <input
           className='relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]'
+          checked={data.hasPlanningPermission === 'true'}
+          onChange={() =>
+            setData((prev) => ({ ...prev, hasPlanningPermission: 'true' }))
+          }
+          style={{
+            appearance: 'none',
+            border:
+              data.hasPlanningPermission !== 'true'
+                ? '2px solid #222222'
+                : '2px solid #0653EA',
+            backgroundColor:
+              data.hasPlanningPermission === 'true' ? '#0653EA' : 'transparent',
+            borderRadius: '50%',
+            backgroundClip: 'content-box',
+          }}
+          type='checkbox'
+          name='individual'
+          id='individual'
+        />
+        No
+        <input
+          className='relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]'
           checked={!data.hasPlanningPermission}
           onChange={() =>
-            setData((prev) => ({ ...prev, hasPlanningPermission: false }))
+            setData((prev) => ({ ...prev, hasPlanningPermission: null }))
           }
           style={{
             appearance: 'none',
@@ -482,7 +489,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
           name='individual'
           id='individual'
         />
-        No
+        I dont Know
       </div>
       <div className='flex items-center justify-center gap-[20px] text-[14px]'>
         <div
@@ -865,8 +872,7 @@ const Airspaces = () => {
     name: '',
     rent: true,
     sell: false,
-    iDontKnow: true,
-    hasPlanningPermission: false,
+    hasPlanningPermission: 'false',
     hasChargingStation: false,
     hasLandingDeck: false,
     hasStorageHub: false,
