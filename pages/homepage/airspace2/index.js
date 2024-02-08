@@ -489,7 +489,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
           name='individual'
           id='individual'
         />
-        I dont Know
+        I don't Know
       </div>
       <div className='flex items-center justify-center gap-[20px] text-[14px]'>
         <div
@@ -872,7 +872,7 @@ const Airspaces = () => {
     name: '',
     rent: true,
     sell: false,
-    hasPlanningPermission: 'false',
+    hasPlanningPermission: null,
     hasChargingStation: false,
     hasLandingDeck: false,
     hasStorageHub: false,
