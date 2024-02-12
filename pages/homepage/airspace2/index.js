@@ -450,8 +450,7 @@ const Airspaces = () => {
                 bounds:[[-73.9876, 40.7661], [-73.9397, 40.8002]]
                 // attributionControl: false
             })
-                  
-    console.log("mapp  = ",newMap.getBounds())
+                
 
             newMap.on('load', function () {
                 newMap.addLayer({

@@ -160,18 +160,18 @@ export const LinkedInIcon = () => {
 export const GoogleIcon = () => {
     return (
         <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0_372_3679)">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M19.6 10.7271C19.6 10.018 19.5364 9.33619 19.4182 8.68164H10V12.5498H15.3818C15.15 13.7998 14.4455 14.8589 13.3864 15.568V18.0771H16.6182C18.5091 16.3362 19.6 13.7725 19.6 10.7271Z" fill="#0000FF" />
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.99984 20.5004C12.6998 20.5004 14.9635 19.6049 16.618 18.0777L13.3862 15.5686C12.4907 16.1686 11.3453 16.5231 9.99984 16.5231C7.39529 16.5231 5.19075 14.764 4.40439 12.4004H1.06348V14.9913C2.70893 18.2595 6.09075 20.5004 9.99984 20.5004Z" fill="#0000FF" />
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.40455 12.3997C4.20455 11.7997 4.09091 11.1588 4.09091 10.4997C4.09091 9.84061 4.20455 9.1997 4.40455 8.5997V6.00879H1.06364C0.386364 7.35879 0 8.88606 0 10.4997C0 12.1133 0.386364 13.6406 1.06364 14.9906L4.40455 12.3997Z" fill="#0000FF" />
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.99984 4.47727C11.468 4.47727 12.7862 4.98182 13.8226 5.97273L16.6907 3.10455C14.9589 1.49091 12.6953 0.5 9.99984 0.5C6.09075 0.5 2.70893 2.74091 1.06348 6.00909L4.40439 8.6C5.19075 6.23636 7.39529 4.47727 9.99984 4.47727Z" fill="#0000FF" />
-            </g>
-            <defs>
-                <clipPath id="clip0_372_3679">
-                    <rect y="0.5" width="20" height="20" rx="6" fill="white" />
-                </clipPath>
-            </defs>
-        </svg>
+        <g clipPath="url(#clip0_372_3679)">
+            <path fillRule="evenodd" clipRule="evenodd" d="M19.6 10.7271C19.6 10.018 19.5364 9.33619 19.4182 8.68164H10V12.5498H15.3818C15.15 13.7998 14.4455 14.8589 13.3864 15.568V18.0771H16.6182C18.5091 16.3362 19.6 13.7725 19.6 10.7271Z" fill="#0000FF" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M9.99984 20.5004C12.6998 20.5004 14.9635 19.6049 16.618 18.0777L13.3862 15.5686C12.4907 16.1686 11.3453 16.5231 9.99984 16.5231C7.39529 16.5231 5.19075 14.764 4.40439 12.4004H1.06348V14.9913C2.70893 18.2595 6.09075 20.5004 9.99984 20.5004Z" fill="#0000FF" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M4.40455 12.3997C4.20455 11.7997 4.09091 11.1588 4.09091 10.4997C4.09091 9.84061 4.20455 9.1997 4.40455 8.5997V6.00879H1.06364C0.386364 7.35879 0 8.88606 0 10.4997C0 12.1133 0.386364 13.6406 1.06364 14.9906L4.40455 12.3997Z" fill="#0000FF" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M9.99984 4.47727C11.468 4.47727 12.7862 4.98182 13.8226 5.97273L16.6907 3.10455C14.9589 1.49091 12.6953 0.5 9.99984 0.5C6.09075 0.5 2.70893 2.74091 1.06348 6.00909L4.40439 8.6C5.19075 6.23636 7.39529 4.47727 9.99984 4.47727Z" fill="#0000FF" />
+        </g>
+        <defs>
+            <clipPath id="clip0_372_3679">
+                <rect y="0.5" width="20" height="20" rx="6" fill="white" />
+            </clipPath>
+        </defs>
+    </svg>
 
     )
 }
@@ -193,7 +193,7 @@ export const XIcon = () => {
 export const FriendsIcon = () => {
     return (
         <svg width="100%" height="100%" viewBox="0 0 28 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1.25 20.9163V19.4997C1.25 16.3701 3.78705 13.833 6.91667 13.833H12.5833C15.7129 13.833 18.25 16.3701 18.25 19.4997V20.9163M18.25 9.58301C20.5972 9.58301 22.5 7.68022 22.5 5.33301C22.5 2.9858 20.5972 1.08301 18.25 1.08301M26.75 20.9163V19.4997C26.75 16.3701 24.2129 13.833 21.0833 13.833H20.375M14 5.33301C14 7.68022 12.0972 9.58301 9.75 9.58301C7.40279 9.58301 5.5 7.68022 5.5 5.33301C5.5 2.9858 7.40279 1.08301 9.75 1.08301C12.0972 1.08301 14 2.9858 14 5.33301Z" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M1.25 20.9163V19.4997C1.25 16.3701 3.78705 13.833 6.91667 13.833H12.5833C15.7129 13.833 18.25 16.3701 18.25 19.4997V20.9163M18.25 9.58301C20.5972 9.58301 22.5 7.68022 22.5 5.33301C22.5 2.9858 20.5972 1.08301 18.25 1.08301M26.75 20.9163V19.4997C26.75 16.3701 24.2129 13.833 21.0833 13.833H20.375M14 5.33301C14 7.68022 12.0972 9.58301 9.75 9.58301C7.40279 9.58301 5.5 7.68022 5.5 5.33301C5.5 2.9858 7.40279 1.08301 9.75 1.08301C12.0972 1.08301 14 2.9858 14 5.33301Z" stroke="#4285F4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
 
     )
@@ -202,7 +202,7 @@ export const FriendsIcon = () => {
 export const PropertyIcon = () => {
     return (
         <svg width="100%" height="100%" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4.18551 9.4818V21.3337C4.18551 22.4382 5.08094 23.3337 6.18551 23.3337H13.0003M4.18551 9.4818L12.2932 1.3741C12.6837 0.983574 13.3169 0.983575 13.7074 1.3741L20.792 8.45866M4.18551 9.4818L1.66699 12.0003M21.8151 9.4818V21.3337C21.8151 22.4382 20.9197 23.3337 19.8151 23.3337H13.0003M21.8151 9.4818L24.3337 12.0003M21.8151 9.4818L20.792 8.45866M20.792 8.45866V3.50032M13.0003 23.3337V16.2503" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M4.18551 9.4818V21.3337C4.18551 22.4382 5.08094 23.3337 6.18551 23.3337H13.0003M4.18551 9.4818L12.2932 1.3741C12.6837 0.983574 13.3169 0.983575 13.7074 1.3741L20.792 8.45866M4.18551 9.4818L1.66699 12.0003M21.8151 9.4818V21.3337C21.8151 22.4382 20.9197 23.3337 19.8151 23.3337H13.0003M21.8151 9.4818L24.3337 12.0003M21.8151 9.4818L20.792 8.45866M20.792 8.45866V3.50032M13.0003 23.3337V16.2503" stroke="#4285F4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
 
     )
@@ -220,7 +220,7 @@ export const MagnifyingGlassIcon = () => {
 export const WarningIcon = () => {
     return (
         <svg width="100%" height="100%" viewBox="0 0 24 25" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 7.5V13.5M21 12.5C21 17.4706 16.9706 21.5 12 21.5C7.02944 21.5 3 17.4706 3 12.5C3 7.52944 7.02944 3.5 12 3.5C16.9706 3.5 21 7.52944 21 12.5Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12 7.5V13.5M21 12.5C21 17.4706 16.9706 21.5 12 21.5C7.02944 21.5 3 17.4706 3 12.5C3 7.52944 7.02944 3.5 12 3.5C16.9706 3.5 21 7.52944 21 12.5Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             <circle cx="12" cy="17" r="1" fill="black" />
         </svg>
     )
@@ -229,8 +229,8 @@ export const WarningIcon = () => {
 export const LocationPointIcon = () => {
     return (
         <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="10" r="3" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M19 9.75C19 15.375 12 21 12 21C12 21 5 15.375 5 9.75C5 6.02208 8.13401 3 12 3C15.866 3 19 6.02208 19 9.75Z" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="12" cy="10" r="3" stroke="#222222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M19 9.75C19 15.375 12 21 12 21C12 21 5 15.375 5 9.75C5 6.02208 8.13401 3 12 3C15.866 3 19 6.02208 19 9.75Z" stroke="#222222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
 
     )
@@ -239,7 +239,7 @@ export const LocationPointIcon = () => {
 export const ChevronRightIcon = () => {
     return (
         <svg width="100%" height="100%" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1.5 1L7.79289 7.29289C8.18342 7.68342 8.18342 8.31658 7.79289 8.70711L1.5 15" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M1.5 1L7.79289 7.29289C8.18342 7.68342 8.18342 8.31658 7.79289 8.70711L1.5 15" stroke="#222222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
 
     )
@@ -257,7 +257,7 @@ export const CloseIcon = () => {
 export const ArrowLeftIcon = () => {
     return (
         <svg width="100%" height="100%" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M17 7H1M1 7L7 1M1 7L7 13" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M17 7H1M1 7L7 1M1 7L7 13" stroke="#222222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
 
     )
@@ -266,16 +266,17 @@ export const ArrowLeftIcon = () => {
 export const ShieldIcon = () => {
     return (
         <svg width="100%" height="100%" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5.34875 9.50002L7.34875 11.5L11.5 7.34878M7.72528 1.07852L1.72528 2.7928C1.29598 2.91546 1 3.30784 1 3.75432L1 8.85384C1 12.0834 2.55966 15.1141 5.18762 16.9912L7.41876 18.5849C7.76646 18.8332 8.23354 18.8332 8.58124 18.5849L10.8124 16.9912C13.4403 15.1141 15 12.0834 15 8.85384V3.75432C15 3.30784 14.704 2.91546 14.2747 2.7928L8.27472 1.07852C8.09517 1.02721 7.90483 1.02721 7.72528 1.07852Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M5.34875 9.50002L7.34875 11.5L11.5 7.34878M7.72528 1.07852L1.72528 2.7928C1.29598 2.91546 1 3.30784 1 3.75432L1 8.85384C1 12.0834 2.55966 15.1141 5.18762 16.9912L7.41876 18.5849C7.76646 18.8332 8.23354 18.8332 8.58124 18.5849L10.8124 16.9912C13.4403 15.1141 15 12.0834 15 8.85384V3.75432C15 3.30784 14.704 2.91546 14.2747 2.7928L8.27472 1.07852C8.09517 1.02721 7.90483 1.02721 7.72528 1.07852Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
 
     )
 }
 
+
 export const InfoIcon = () => {
     return (
         <svg width="100%" height="100%" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 9.16667V13.3333M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M10 9.16667V13.3333M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" stroke="#222222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             <circle cx="10.0003" cy="6.25008" r="0.833333" fill="#222222" />
         </svg>
 

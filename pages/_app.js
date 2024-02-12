@@ -29,7 +29,7 @@ export default function App({ Component, pageProps }) {
         setDoItAgain(prev => !prev)
       }
     }
-  }, [isMobile, global.Tawk_API, doItAgain]);
+  }, [isMobile, global.Tawk_API]);
 
   return (
     <AuthProvider>
@@ -56,4 +56,4 @@ export default function App({ Component, pageProps }) {
       </Provider>
     </AuthProvider>
   );
-} 
+}

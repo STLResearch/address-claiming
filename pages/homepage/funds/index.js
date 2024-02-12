@@ -14,6 +14,7 @@ import base58 from 'bs58';
 import { MagnifyingGlassIcon, WarningIcon, WalletIcon } from "@/Components/Icons";
 import { useRouter } from "next/router";
 import { useQRCode } from 'next-qrcode';
+import getTokeBalance from '../funds/utils'
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -238,22 +239,14 @@ const Funds = () => {
             authUser();
         }
     }, [selectorUser]);
-
+    const loadUserTokenBalance = async () => {
+        const tokenBalance = await getTokeBalance(user.blockchainAddress)
+        setTokenBalance(tokenBalance)
+    }
     // GET TOKEN BALANCE
     useEffect(() => {
-        if (user) {
-            const mintAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS;
-
-            fetch(`https://api.solana.fm/v1/addresses/${user.blockchainAddress}/tokens`)
-                .then(response => response.json())
-                .then(response => {
-                    for (const key in response.tokens) {
-                        if (key === mintAddress) {
-                            setTokenBalance(response.tokens[key].balance)
-                        }
-                    }
-                })
-                .catch(err => console.error(err));
+        if(user){
+            loadUserTokenBalance()
         }
     }, [user]);
 

@@ -14,6 +14,7 @@ import { Web3Auth } from '@web3auth/modal';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
+import getTokeBalance from '../funds/utils'
 import useDatabase from "@/hooks/useDatabase";
 
 let USDollar = new Intl.NumberFormat('en-US', {
@@ -164,55 +165,14 @@ const Dashboard = () => {
         }
     }, [selectorUser]);
 
+    const loadUserTokenBalance = async () => {
+        const tokenBalance = await getTokeBalance(user.blockchainAddress)
+        setTokenBalance(tokenBalance)
+    }
     // GET TOKEN BALANCE
     useEffect(() => {
         if (user) {
-            console.log({ user });
-            const data = {
-                jsonrpc: '2.0',
-                id: 1,
-                method: 'getTokenAccountsByOwner',
-                params: [
-                    user.blockchainAddress,
-                    {
-                        mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
-                    },
-                    {
-                        encoding: 'jsonParsed',
-                    },
-                ],
-            };
-
-            fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        return response.json().then((errorData) => {
-                            throw new Error(errorData.error);
-                        });
-                    }
-
-                    return response.json();
-                })
-                .then((result) => {
-                    if (result.result.value.length < 1) {
-                        setTokenBalance('0');
-                        return;
-                    }
-                    setTokenBalance(
-                        result.result.value[0].account.data.parsed.info.tokenAmount
-                            .uiAmountString
-                    );
-                })
-                .catch((error) => {
-                    setTokenBalance('');
-                    console.error(error);
-                });
+    loadUserTokenBalance()
         }
     }, [user]);
 
