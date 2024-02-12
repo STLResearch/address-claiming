@@ -14,7 +14,7 @@ import base58 from 'bs58';
 import { MagnifyingGlassIcon, WarningIcon, WalletIcon } from "@/Components/Icons";
 import { useRouter } from "next/router";
 import { useQRCode } from 'next-qrcode';
-import getTokeBalance from '../funds/utils'
+import getTokeBalance from '../../../utils/utils'
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
