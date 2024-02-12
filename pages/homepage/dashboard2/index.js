@@ -15,7 +15,7 @@ import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 import useDatabase from "@/hooks/useDatabase";
-import { getTokeBalance } from "../funds/utils";
+import { getTokeBalance } from "../../../utils/utils";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
