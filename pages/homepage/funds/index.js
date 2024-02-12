@@ -126,7 +126,7 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection }) => {
             <div className="flex flex-col gap-[5px] w-full">
                 <div className="flex flex-col gap-[5px]">
                     <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Enter amount you want to {activeSection === 0 ? 'deposit' : 'withdraw'}</label>
-                    <input type="number" name="amount" id="amount" placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
+                    <input type="number" name="amount" id="amount" min={0} placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
                 </div>
                 {activeSection === 0 &&
                     <div className="flex items-end gap-[11px]">
@@ -243,12 +243,12 @@ const Funds = () => {
     useEffect(() => {
         if (user) {
             const mintAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS;
-        
+
             fetch(`https://api.solana.fm/v1/addresses/${user.blockchainAddress}/tokens`)
                 .then(response => response.json())
                 .then(response => {
-                    for(const key in response.tokens) {      
-                        if(key === mintAddress) {
+                    for (const key in response.tokens) {
+                        if (key === mintAddress) {
                             setTokenBalance(response.tokens[key].balance)
                         }
                     }
@@ -260,56 +260,56 @@ const Funds = () => {
     // GET TRANSACTION HISTORY
     useEffect(() => {
         if (user) {
-          fetch(`https://api.solana.fm/v0/accounts/${user.blockchainAddress}/transfers?inflow=true&outflow=true&mint=${process.env.NEXT_PUBLIC_MINT_ADDRESS}&page=1`)
-            .then((response) => {
-              if (!response.ok) {
-                return response.json().then((errorData) => {
-                  throw new Error(errorData.error);
+            fetch(`https://api.solana.fm/v0/accounts/${user.blockchainAddress}/transfers?inflow=true&outflow=true&mint=${process.env.NEXT_PUBLIC_MINT_ADDRESS}&page=1`)
+                .then((response) => {
+                    if (!response.ok) {
+                        return response.json().then((errorData) => {
+                            throw new Error(errorData.error);
+                        });
+                    }
+
+                    return response.json();
+                })
+                .then((result) => {
+                    if (result.results) {
+                        setTransactionHistory(result.results)
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
                 });
-              }
-    
-              return response.json();
-            })
-            .then((result) => {
-              if(result.results) {
-                setTransactionHistory(result.results)
-              }
-            })
-            .catch((error) => {
-              console.error(error);
-            });
         }
-      }, [user]);
-    
-      useEffect(() => {
-        if(transactionHistory) {
-          const collectedTransactions = [];
-    
-          for(const trans of transactionHistory) {
-            for(const key of trans.data) {
-              const date = new Date(key.timestamp * 1000);
-              const month = date.toLocaleString('default', { month: 'short' });
-              const day = date.getDate();
-              const year = date.getFullYear();
-              const hour = date.getHours().toString().padStart(2, '0');
-              const minute = date.getMinutes().toString().padStart(2, '0');
-              const second = date.getSeconds().toString().padStart(2, '0');
-    
-            //   key.date = `${month} ${day}, ${year} ${hour}:${minute}:${second}`;
-              key.date = `${month} ${day}, ${year}`;
-    
-              if(key.token && key.amount >= 10000) {
-                key.hash = trans.transactionHash.substring(0, 15) + '...';
-                key.transHash = trans.transactionHash
-                collectedTransactions.push(key);
-              }
+    }, [user]);
+
+    useEffect(() => {
+        if (transactionHistory) {
+            const collectedTransactions = [];
+
+            for (const trans of transactionHistory) {
+                for (const key of trans.data) {
+                    const date = new Date(key.timestamp * 1000);
+                    const month = date.toLocaleString('default', { month: 'short' });
+                    const day = date.getDate();
+                    const year = date.getFullYear();
+                    const hour = date.getHours().toString().padStart(2, '0');
+                    const minute = date.getMinutes().toString().padStart(2, '0');
+                    const second = date.getSeconds().toString().padStart(2, '0');
+
+                    //   key.date = `${month} ${day}, ${year} ${hour}:${minute}:${second}`;
+                    key.date = `${month} ${day}, ${year}`;
+
+                    if (key.token && key.amount >= 10000) {
+                        key.hash = trans.transactionHash.substring(0, 15) + '...';
+                        key.transHash = trans.transactionHash
+                        collectedTransactions.push(key);
+                    }
+                }
             }
-          }
-    
-          console.log(collectedTransactions);
-          setTransactions(collectedTransactions);
+
+            console.log(collectedTransactions);
+            setTransactions(collectedTransactions);
         }
-      }, [transactionHistory]);
+    }, [transactionHistory]);
 
     // GET SIGNATURE
     useEffect(() => {
@@ -376,7 +376,7 @@ const Funds = () => {
         }
     }, [user]);
 
-    
+
 
     return (
         <Fragment>

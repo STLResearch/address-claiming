@@ -163,7 +163,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
             {data.rent && (
                 <Fragment>
                     <h2 className="text-[#222222] font-normal text-[20px]">Rental Details</h2>
-                    <Link href={"https://skytrade.tawk.help"} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about rentals in our FAQ.</Link>
+                    <Link target="_blank" href={"https://skytrade.tawk.help"} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about rentals in our FAQ.</Link>
                     <div className="flex items-center justify-between gap-[15px]">
                         <div className="flex-1">
                             <VariableFeeRentalRangesSelect fee={data.transitFee} setFee={(fee) => setData(prev => ({ ...prev, transitFee: '' + fee }))} />
@@ -201,8 +201,20 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
                     <Link href={'https://skytrade.tawk.help'} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about selling in our FAQ.</Link>
                     <div className="flex flex-col gap-[5px]">
                         <label className="font-normal text-[#838187] text-[14px]" htmlFor="sellingPrice">Selling Price</label>
-                        <input className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }} autoComplete="off" type="number" name="sellingPrice" id="sellingPrice" />
-                    </div>
+                        <div className='relative'>
+                            <span class='absolute inset-y-0 left-0 flex items-center text-[14px] pl-[22px] text-[#222222] '>
+                                $
+                            </span>
+                            <input
+                                className='rounded-lg pl-[31px] w-full py-[16px] text-[14px] text-[#222222] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+                                style={{ border: '1px solid #87878D' }}
+                                autoComplete='off'
+                                type='number'
+                                name='sellingPrice'
+                                id='sellingPrice'
+                            />
+                        </div>
+                        </div>
                 </Fragment>
             )}
 
