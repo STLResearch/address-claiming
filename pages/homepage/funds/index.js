@@ -238,22 +238,14 @@ const Funds = () => {
             authUser();
         }
     }, [selectorUser]);
-
+    const loadUserTokenBalance = async () => {
+        const tokenBalance = await getTokeBalance()
+        setTokenBalance(tokenBalance)
+    }
     // GET TOKEN BALANCE
     useEffect(() => {
         if (user) {
-            const mintAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS;
-        
-            fetch(`https://api.solana.fm/v1/addresses/${user.blockchainAddress}/tokens`)
-                .then(response => response.json())
-                .then(response => {
-                    for(const key in response.tokens) {      
-                        if(key === mintAddress) {
-                            setTokenBalance(response.tokens[key].balance)
-                        }
-                    }
-                })
-                .catch(err => console.error(err));
+    loadUserTokenBalance()
         }
     }, [user]);
 
