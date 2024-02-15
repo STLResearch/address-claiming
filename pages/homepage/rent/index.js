@@ -16,15 +16,13 @@ import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } f
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 
-const SuccessModal = ({ setShowSuccess,finalAns}) => {
-
-    const [owner,setOwner]=useState({});
+const SuccessModal = ({ setShowSuccess,finalAns, rentData}) => {
        return (
         <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}>
             <div className=" text-xl text-white text-center"> {finalAns?.status} </div>
             <div className=" text-xl text-white text-center"> {finalAns?.message}</div>
 
-           <div className={`${finalAns?.status=='Rent SuccessFull'?'bg-green-600':'bg-red-600'} w-[100%] h-[100%] py-10 z-40 flex flex-col gap-[15px] items-center bg-[#34A853] rounded-3xl`}>
+            <div className={` w-[100%] h-[100%] py-10 z-40 flex flex-col gap-[15px] items-center bg-[#34A853] rounded-3xl`}>
             <div onClick={()=>{setShowSuccess(false)}} className="w-[10px] h-[10px] absolute top-[10px] right-[10px] "><CloseIconWhite/></div>
            <div className="w-[54.56px] h-[54.56px]" >{finalAns?.status!=='Rent SuccessFull'?<SuccessIconwhite />:<CloseIcon/>}</div>
            <div className="w-[70%] h-[10%] ">
@@ -32,7 +30,7 @@ const SuccessModal = ({ setShowSuccess,finalAns}) => {
             </div>
             <div className="w-[80%] h-[10%] ">
                <p className="font-[400] text-[14px] text-center text-[#FFFFFF] font-poppins">
-                You rented <span className="font-[700] text-[#FFFFFF]">Address 17, Houston<br /> </span><span className="font-[700] text-[#FFFFFF]">Texas </span>for <span className="font-[700] text-[#FFFFFF]">$99</span> <br />  the <span className="font-[700] text-[#FFFFFF]">10/01/2024 </span>  from <span className="font-[700] text-[#FFFFFF]">9:00 to 09:30 </span> </p> 
+                You rented <span className="font-[700] text-[#FFFFFF]">{rentData?.address}</span>for <span className="font-[700] text-[#FFFFFF]">{rentData?.price}</span>  the <span className="font-[700] text-[#FFFFFF]">{rentData.date} </span>  from <span className="font-[700] text-[#FFFFFF]">{rentData?.startTime} to {rentData.endTime} </span> </p> 
             </div>
 
             <div  className=" w-[75%] h-[10%]  ">
@@ -399,11 +397,10 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
      }
 
 
-    console.log("am from CLaim modal ,",rentData)
     if(showSuccess){
         return(
             <>
-                {finalAns.status=='Rent SuccessFull'?<SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns}/>:<SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns}/> }
+                {finalAns.status=='Rent SuccessFull'?<SuccessModal setShowSuccess={setShowSuccess} rentData={rentData} finalAns={finalAns}/>:<SuccessModal rentData={rentData} setShowSuccess={setShowSuccess} finalAns={finalAns}/> }
             </>
         )
     }
@@ -605,7 +602,6 @@ const Rent = () => {
     const { user: selectorUser } = useAuth();
     const [user1, setUser1] = useState();
     const [data, setData] = useState({ ...defaultData });
-    console.log(selectorUser)
     // showing
     const [regAdressShow,setregAdressShow]=useState(false)
     const [showOptions, setShowOptions] = useState(false);
@@ -879,7 +875,7 @@ const Rent = () => {
 
                     if (!response.ok) throw new Error("Error while getting addresses");
 
-                    const data = await response.json();
+    
                     if (data.features && data.features.length > 0) {
                         setAddresses(data.features);
                     } else {
