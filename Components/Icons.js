@@ -290,3 +290,20 @@ export const SuccessIcon = () => {
 
     )
 }
+
+export const DeleteIcon = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
+            <path d="M0 2.5a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 .5.5V4H0V2.5zM1 4V15a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+            <path fillRule="evenodd" d="M11.5 1a.5.5 0 0 1 .5.5V2h2a.5.5 0 0 1 0 1h-1v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3H2a.5.5 0 0 1 0-1h2V1.5a.5.5 0 0 1 .5-.5h7zM6 3v10a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V3H6z"/>
+        </svg>
+    )
+}
+
+export const CreateIcon = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-plus" viewBox="0 0 16 16">
+            <path fillRule="evenodd" d="M8 1.5a.5.5 0 0 1 .5.5V7h5.5a.5.5 0 0 1 0 1H8v5.5a.5.5 0 0 1-1 0V8H1.5a.5.5 0 0 1 0-1H7V2a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+    )
+}

@@ -1,13 +1,14 @@
 import { Fragment, useState, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import Script from "next/script";
 import { InfoIcon, MagnifyingGlassIcon } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
-import { HelpQuestionIcon, ArrowLeftIcon, CloseIcon, LocationPointIcon, SuccessIcon, EarthIcon } from "@/Components/Icons";
+import { HelpQuestionIcon, ArrowLeftIcon, CloseIcon, LocationPointIcon, SuccessIcon, EarthIcon,CreateIcon,DeleteIcon } from "@/Components/Icons";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
@@ -434,10 +435,13 @@ const Airspaces = () => {
     // database
     const { createProperty } = useDatabase();
     const { user } = useAuth();
-
+    const [drawTool, setDrawTool] = useState(null)
+    const [postalAddress, setPostalAddress] = useState("")
+    const [showPostal, setShowPostal] = useState(false)
 
     useEffect(() => {
         if (map) return;
+        if(!user) return
 
         const createMap = () => {
             mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
@@ -450,9 +454,20 @@ const Airspaces = () => {
                 bounds:[[-73.9876, 40.7661], [-73.9397, 40.8002]]
                 // attributionControl: false
             })
-                  
-    console.log("mapp  = ",newMap.getBounds())
 
+            const draw = new MapboxDraw({
+                displayControlsDefault: false,
+                controls: {
+                polygon: true,
+                trash: true
+                },
+                defaultMode: 'draw_polygon'
+                });
+                
+                setDrawTool(draw)
+            newMap.addControl(draw)
+
+        
             newMap.on('load', function () {
                 newMap.addLayer({
                     id: 'maine',
@@ -472,15 +487,40 @@ const Airspaces = () => {
                         'fill-color': '#D20C0C',
                     },
                 });
+               
             });
+            
+            const calculateAveragePoints = (coordinates) => {
+                let lat = 0, lng = 0, count = 0
+                coordinates[0].forEach(c => {
+                    lng += c[0]
+                    lat += c[1]
+                    count++
+                })
+                return [lng / count, lat/count]
+            }
+            const handleCoordinates = async (e) => {
+                const d = draw.getAll()
+                if(d.features.length > 0){
+                    const coordinates = calculateAveragePoints(d.features[0].geometry.coordinates)
+                    const longitude = coordinates[0]
+                    const latitude = coordinates[1]
+                    setCoordinates({longitude, latitude})
+                    setShowPostal(true)
+                }
 
 
+            }
 
-            setMap(newMap);
+            newMap.on('draw.create', handleCoordinates);
+            newMap.on('draw.update', handleCoordinates);
+
+                 setMap(newMap);
         }
 
         createMap();
-    }, []);
+    }, [user]);
+
 
     useEffect(() => {
         if (!showOptions) setShowOptions(true);
@@ -590,36 +630,44 @@ const Airspaces = () => {
         setShowOptions(false);
     }
 
+    const getPropertyInformation = () => {
+        const { address, name, hasChargingStation, hasLandingDeck, hasPlanningPermission, hasStorageHub, rent, timezone, transitFee, noFlyZone, isFixedTransitFee, weekDayRanges } = data;
+        let { latitude, longitude } = coordinates;
+        latitude = Number(latitude)
+        longitude = Number(longitude)
+        return {
+            address,
+            ownerId: user.id,
+            propertyStatusId: 0,
+            hasChargingStation,
+            hasLandingDeck,
+            hasStorageHub,
+            isRentableAirspace: rent,
+            title: name,
+            transitFee,
+            noFlyZone,
+            isFixedTransitFee,
+            latitude,
+            longitude,
+            timezone,
+            isActive: hasPlanningPermission,
+            vertexes: [
+                { latitude: latitude + 0.0001, longitude: longitude + 0.0001 },
+                { latitude: latitude + 0.0001, longitude: longitude - 0.0001 },
+                { latitude: latitude - 0.0001, longitude: longitude + 0.0001 },
+                { latitude: latitude - 0.0001, longitude: longitude - 0.0001 },
+            ],
+            weekDayRanges
+        }
+    }
+
     const onClaim = async () => {
         try {
             const { address, name, hasChargingStation, hasLandingDeck, hasPlanningPermission, hasStorageHub, rent, timezone, transitFee, noFlyZone, isFixedTransitFee, weekDayRanges } = data;
             let { latitude, longitude } = coordinates;
             latitude = Number(latitude)
             longitude = Number(longitude)
-            await createProperty(user.blockchainAddress, {
-                address,
-                ownerId: user.id,
-                propertyStatusId: 0,
-                hasChargingStation,
-                hasLandingDeck,
-                hasStorageHub,
-                isRentableAirspace: rent,
-                title: name,
-                transitFee,
-                noFlyZone,
-                isFixedTransitFee,
-                latitude,
-                longitude,
-                timezone,
-                isActive: hasPlanningPermission,
-                vertexes: [
-                    { latitude: latitude + 0.0001, longitude: longitude + 0.0001 },
-                    { latitude: latitude + 0.0001, longitude: longitude - 0.0001 },
-                    { latitude: latitude - 0.0001, longitude: longitude + 0.0001 },
-                    { latitude: latitude - 0.0001, longitude: longitude - 0.0001 },
-                ],
-                weekDayRanges
-            })
+            await createProperty(user.blockchainAddress, getPropertyInformation())
 
             setShowClaimModal(false);
             setData({ ...defaultData });
@@ -628,7 +676,19 @@ const Airspaces = () => {
             console.log(error)
         }
     }
+    
+        const deletePolygon = () => {
+            const selectedFeatures = drawTool.getSelectedIds()
+            if(selectedFeatures.length > 0){
+                drawTool.delete(selectedFeatures)
+            }
+        }
 
+        const createPropertyFromPolygon = () => {
+            if(!postalAddress)return
+            createProperty(user.blockchainAddress, getPropertyInformation() )
+            setShowPostal(false)
+        }
     
 
     return (
@@ -654,10 +714,50 @@ const Airspaces = () => {
                                 {showClaimModal && <ClaimModal onCloseModal={() => setShowClaimModal(false)} data={data} setData={setData} onClaim={onClaim} />}
                             </Fragment>
                         )}
-                        {!isMobile && <div className="flex justify-start items-start">
+                        {!isMobile && <div className="flex justify-start items-start w-full h-full">
+
+
+                        {showPostal && (
+                            <div className="fixed top-1/4 left-1/2 -translate-x-1/1 -translate-y-1/2 bg-white py-4 md:rounded-[30px] px-4 w-[25%] max-h-[40%] h-[40%] md:max-h-[40%] md:h-auto  md:w-[30%] z-50 flex flex-col gap-4">
+                            <div className="relative flex items-center gap-4 md:p-0 py-4 px-4 -mx-4 -mt-4 md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
+                                <div className="flex gap-[5px] justify-center items-center">
+                                    <p className="text-center text-xl font-medium text-[#222222]">Claim Airspace</p>
+                                    <div className="w-5 h-5 items-center justify-center"><InfoIcon /></div>
+                                </div>
+                                <div  onClick={() => setShowPostal(false)} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
+                            </div>
+                            <div className="flex flex-col gap-[5px]">
+                                <label htmlFor="name">Your Zip code<span className="text-[#E04F64]">*</span></label>
+                                <input   value={postalAddress} onChange={(e) => setPostalAddress(e.target.value)} className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }} type="text" name="" id="" autoComplete="off" />
+                            </div>
+                            <div className="flex items-center justify-center gap-[20px] text-[14px]">
+                                <div  onClick={() => setShowPostal(false)} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer" style={{ border: "1px solid #0653EA" }}>Cancel</div>
+                                <div onClick={ () => createPropertyFromPolygon() } className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">Ok</div>
+                            </div>
+                            </div>
+                        )}
+
                             <Explorer flyToAddress={flyToAddress} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} onClaimAirspace={() => setShowClaimModal(true)} />
                             <Slider />
+                            <div className="flex relative w-full h-full justify-end items-end ">
+                            <div className="absolute top-0 right-0  ml-4 hidden md:flex bg-[#FFFFFFCC] py-[20px] px-[19px] rounded-[20px] flex-col items-center gap-[20px] z-20 " style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
+                            <div className="flex items-center justify-center">
+                            <button className="w-18 h-18" onClick={() => {  deletePolygon() }} >
+                                <DeleteIcon />
+                            </button>
+                            </div>
+
+                            <div className="flex items-center justify-center">
+                            <button className="w-18 h-18" onClick={() => {drawTool?.changeMode('draw_polygon') , console.log("Button clicked2"); console.log(drawTool, '2'); }} >
+                                <CreateIcon  /> 
+                            </button>
+                            </div>
+
+                                </div>
+                            </div>
                             <PopUp isVisible={showSuccessPopUp} />
+                           
+                           
                             {showClaimModal && <ClaimModal onCloseModal={() => setShowClaimModal(false)} data={data} setData={setData} onClaim={onClaim} />}
                         </div>}
                         {!showMobileMap && <div className="flex md:hidden flex-col w-full h-full">
