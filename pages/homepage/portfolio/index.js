@@ -92,11 +92,12 @@ const PortfolioItemMobile = ({ airspaceName, tags, selectAirspace }) => {
     )
 }
 const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
+    console.log("all airspacesz ",airspacesList)
     return (
         <div className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <h2 className="font-medium text-xl text-[#222222] text-center">{title}</h2>
             <div className="flex flex-col gap-[15px]">
-                {airspacesList.map(({ title, address, noFlyZone }, index) => (<PortfolioItem airspaceName={title || address} tags={[false, false, noFlyZone, false]} selectAirspace={() => selectAirspace(index)} />))}
+                {airspacesList.map(({address,expirationDate,name}, index) => (<PortfolioItem airspaceName={address} key={index} tags={[true, false,false,  false]} selectAirspace={() => selectAirspace(index)} />))}
             </div>
         </div>
     )
@@ -130,22 +131,41 @@ const PortfolioSectionMobile = ({ title, airspacesList, onGoBack }) => {
 const Portfolio = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedAirspace, setSelectedAirspace] = useState(null);
-    const { getPropertiesByUserId } = useDatabase();
+    const { getPropertiesByUserAddress } = useDatabase();
     const [myAirspaces, setMyAirspaces] = useState([])
     const { user } = useAuth()
 
-    // const myAirspaces = [
-    //     { name: 'My Airspace in Sacramento', address: '4523 14th Avenue, Sacramento, California, USA', id: 'vucnrld,xepH785TUFNRVZUCHQ3', expirationDate: '15 january 2024 at 11:49 AM', currentPrice: null },
-    //     { name: 'My Airspace in Santa Brígida', address: 'Villa de Santa Brígida, Las Palmas, Spain', id: 'vucnrld,xepH785TUFNRVZUCHQ4', expirationDate: '20 february 2024 at 01:00 PM', currentPrice: null },
-    //     { name: 'My Airspace in Las Canteras', address: 'Las Palmas de Gran Canaria, Las Palmas, Spain', id: 'vucnrld,xepH785TUFNRVZUCHQ5', expirationDate: '14 march 2024 at 04:00 AM', currentPrice: null },
-    // ];
+     const myAirspacesTest = {items:[
+        { name: 'My Airspace in Sacramento', address: '4523 14th Avenue, Sacramento, California, USA', id: 'vucnrld,xepH785TUFNRVZUCHQ3', expirationDate: '15 january 2024 at 11:49 AM', currentPrice: null },
+        { name: 'My Airspace in Santa Brígida', address: 'Villa de Santa Brígida, Las Palmas, Spain', id: 'vucnrld,xepH785TUFNRVZUCHQ4', expirationDate: '20 february 2024 at 01:00 PM', currentPrice: null },
+        { name: 'My Airspace in Las Canteras', address: 'Las Palmas de Gran Canaria, Las Palmas, Spain', id: 'vucnrld,xepH785TUFNRVZUCHQ5', expirationDate: '14 march 2024 at 04:00 AM', currentPrice: null },
+    ]};
 
     useEffect(() => {
         if (!user) return;
         (async () => {
             try {
-                const response = await getPropertiesByUserId(user.blockchainAddress, user.id);
-                setMyAirspaces(response)
+                const response = await getPropertiesByUserAddress(user.blockchainAddress,'rentalToken');
+               //test
+                //const response =myAirspacesTest;
+                if(response){
+                    let resp=await response.items;
+
+                    let retrievedAirspaces=await resp.map((item)=>{
+                        return {
+                            address:item.metadata.addresses[0],
+                            name:item.metadata.name,
+                            expirationDate:(new Date(item.metadata.endTime)).toString()
+
+                        }
+                    })
+                    setMyAirspaces(retrievedAirspaces)
+                    
+
+                }
+                
+                
+                console.log("the items from resport=", response.items)
             } catch (error) {
                 console.log(error);
             }
@@ -171,10 +191,10 @@ const Portfolio = () => {
                     {selectedAirspace !== null && <Modal airspace={myAirspaces[selectedAirspace]} onCloseModal={onCloseModal} />}
                     <PageHeader pageTitle={'Portfolio'} username={'John Doe'} />
                     <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
-                        <PortfolioList airspacesList={myAirspaces} title={'My airspaces'} selectAirspace={selectAirspace} />
+                        <PortfolioList airspacesList={myAirspaces} title={'Rented airspaces'} selectAirspace={selectAirspace} />
                     </section>
                     <section className="relative w-full h-full flex flex-wrap gap-6 py-[20px] md:hidden overflow-y-auto mb-[79px]">
-                        <PortfolioListMobile airspacesList={myAirspaces} title={'My airspaces'} selectAirspace={selectAirspace} />
+                        <PortfolioListMobile airspacesList={myAirspaces} title={'Rented airspaces'} selectAirspace={selectAirspace} />
                     </section>
                     {/** TODO: <PortfolioSectionMobile title={'Hola'} airspacesList={myAirspacesToSellAndRent} />*/}
                 </div>
