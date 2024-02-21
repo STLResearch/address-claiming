@@ -120,25 +120,31 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
 const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
     const [isInfoVisible, setIsInfoVisible] = useState(false)
     return (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white  md:rounded-[30px]  w-full max-h-screen h-screen md:max-h-[600px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] short-scrollbar">
-          <div className="z-[100] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px]      md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
+        <div className="px-8  fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white  md:rounded-[30px]  w-full max-h-screen h-screen md:max-h-[600px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] short-scrollbar">
+          <div className=" z-[100] sticky top-0 left-0 right-0 py-[20px] px-[2opx] -mt-[1px] md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #FFFFFF' }}>
             <div className="relative flex items-center gap-[20px] md:p-0">
-                <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}><ArrowLeftIcon /></div>
-                    <h2 className="text-[#222222] text-center font-medium text-xl">Claim Airspace</h2>
-                    <div onClick={onCloseModal} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
+            <div className="  w-[16px] h-[12px] md:hidden" onClick={onCloseModal}><ArrowLeftIcon /></div>
+            <div className="flex gap-[5px] items-center">
+                <p className="text-xl font-medium text-[#222222]">Claim Airspace</p>
+                <div onClick={() => setIsInfoVisible(prev => !prev)} className="relative w-[20px] h-[20px] flex justify-center items-center">
+                    <InfoIcon />
+                    {isInfoVisible && <div className="absolute -top-4 left-6 w-[189px] bg-[#CCE3FC] rounded-[4px] p-[12px] font-normal text-[10px] italic">Note that we store your data securely with advanced encryption and strict authentication measures to ensure utmost privacy and protection.</div>}
                 </div>
+                <div onClick={onCloseModal} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
             </div>
-            <div className="px-[29px]">
+              </div>
+            </div>
+            <div className=" py-2">
 
-            <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
+            <div className="mb-2 flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
                 <div className="w-6 h-6"><LocationPointIcon /></div>
                 <p className="font-normal text-[#222222] text-[14px] flex-1">{data.address}</p>
             </div>
-            <div className="flex flex-col gap-[5px]">
+            <div className=" mb-2 flex flex-col gap-[5px]">
                 <label htmlFor="name">Name of airspace<span className="text-[#E04F64]">*</span></label>
                 <input value={data.name} onChange={(e) => setData(prev => ({ ...prev, name: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }} type="text" name="name" id="name" autoComplete="off" />
             </div>
-            <div className="flex flex-col gap-[10px]">
+            <div className=" mb-2 flex flex-col gap-[10px]">
                 <p className="text-[14px] font-normal text-[#838187]">Are you looking to Rent or Sell your airspace?</p>
                 <div className="flex items-center gap-[7px]">
                     <input className='w-[18px] h-[18px] cursor-pointer' type="checkbox" id="rent" name="rent" checked={data.rent} onChange={() => setData(prev => ({ ...prev, rent: !prev.rent }))} />
@@ -206,14 +212,14 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
                 </Fragment>
             )}
 
-            <p className="text-[14px] font-normal text-[#838187]">Do you currently have zoning or planning permission to develop above your land or property? <span className="italic text-[10px]">(Your answer won't affect your claim)<span className="text-[#E04F64]">*</span></span> </p>
-            <div className="flex items-center gap-[7px] text-[#87878D] text-[14px]">
+            <p className=" mb-2 text-[14px] font-normal text-[#838187]">Do you currently have zoning or planning permission to develop above your land or property? <span className="italic text-[10px]">(Your answer won't affect your claim)<span className="text-[#E04F64]">*</span></span> </p>
+            <div className=" mb-2 flex items-center gap-[7px] text-[#87878D] text-[14px]">
                 <input className='relative w-[16.67px] h-[16.67px] p-[2.5px] cursor-pointer bg-cover' checked={data.hasPlanningPermission} onChange={() => setData(prev => ({ ...prev, hasPlanningPermission: true }))} style={{ appearance: "none", border: !data.hasPlanningPermission ? "2px solid #222222" : "2px solid #0653EA", backgroundColor: data.hasPlanningPermission ? "#0653EA" : "transparent", borderRadius: "50%", backgroundClip: "content-box" }} type="checkbox" name="individual" id="individual" />
                 Yes
                 <input className='relative w-[16.67px] h-[16.67px] p-[2.5px] cursor-pointer' checked={!data.hasPlanningPermission} onChange={() => setData(prev => ({ ...prev, hasPlanningPermission: false }))} style={{ appearance: "none", border: data.hasPlanningPermission ? "2px solid #222222" : "2px solid #0653EA", backgroundColor: !data.hasPlanningPermission ? "#0653EA" : "transparent", borderRadius: "50%", backgroundClip: "content-box" }} type="checkbox" name="individual" id="individual" />
                 No
             </div>
-            <div className="flex items-center justify-center gap-[20px] text-[14px]">
+            <div className=" flex items-center justify-center gap-[20px] text-[14px]">
                 <div onClick={onCloseModal} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer" style={{ border: "1px solid #0653EA" }}>Cancel</div>
                 <div onClick={onClaim} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">Claim Airspace</div>
             </div>
@@ -265,6 +271,7 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
         </div>
     )
 }
+
 
 const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSelectAddress, onClaimAirspace, flyToAddress, onGoBack }) => {
 
