@@ -1,1005 +1,1135 @@
-import { Fragment, useState, useEffect } from "react";
-import mapboxgl, { Map } from "mapbox-gl";
-import maplibregl from "maplibre-gl";
-import { ArrowLeftIcon, CloseIcon, LocationPointIcon, MagnifyingGlassIcon, SuccessIcon } from "@/Components/Icons";
-import Sidebar from "@/Components/Sidebar";
-import PageHeader from "@/Components/PageHeader";
-import Spinner from "@/Components/Spinner";
-import Backdrop from "@/Components/Backdrop";
-import useDatabase from "@/hooks/useDatabase";
-import { useAuth } from "@/hooks/useAuth";
-import { useMobile } from "@/hooks/useMobile";
-import { Web3Auth } from "@web3auth/modal";
-import { SolanaWallet } from "@web3auth/solana-provider";
-import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import { Fragment, useState, useEffect } from 'react';
+import mapboxgl, { Map } from 'mapbox-gl';
+import maplibregl from 'maplibre-gl';
+import {
+  ArrowLeftIcon,
+  CloseIcon,
+  LocationPointIcon,
+  MagnifyingGlassIcon,
+  SuccessIcon,
+} from '@/Components/Icons';
+import Sidebar from '@/Components/Sidebar';
+import PageHeader from '@/Components/PageHeader';
+import Spinner from '@/Components/Spinner';
+import Backdrop from '@/Components/Backdrop';
+import useDatabase from '@/hooks/useDatabase';
+import { useAuth } from '@/hooks/useAuth';
+import { useMobile } from '@/hooks/useMobile';
+import { Web3Auth } from '@web3auth/modal';
+import { SolanaWallet } from '@web3auth/solana-provider';
+import {
+  Connection,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+} from '@solana/web3.js';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 import dayjs from 'dayjs';
-const SuccessModal = ({ setShowSuccess,finalAns}) => {
+import Head from 'next/head';
+const SuccessModal = ({ setShowSuccess, finalAns }) => {
+  const [owner, setOwner] = useState({});
+  return (
+    <div
+      className={`fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ${finalAns.status == 'Rent SuccessFull' ? 'bg-green-600' : 'bg-red-600'} z-40 flex h-screen max-h-screen w-full flex-col items-center gap-[15px] overflow-y-auto px-[29px] py-[30px] md:h-auto md:max-h-[700px] md:w-[689px] md:rounded-[30px]`}
+    >
+      <div className='h-[100px] w-[100px]  '>
+        {finalAns.status == 'Rent SuccessFull' ? (
+          <SuccessIcon />
+        ) : (
+          <CloseIcon />
+        )}
+      </div>
+      <div className=' text-center text-xl text-white'> {finalAns.status} </div>
+      <div className=' text-center text-xl text-white'> {finalAns.message}</div>
+      <div
+        onClick={() => {
+          setShowSuccess(false);
+        }}
+        className='w-1/2 cursor-pointer rounded-[5px] bg-white px-16 py-[10px] text-center text-green-600'
+      >
+        OK
+      </div>
+    </div>
+  );
+};
 
-    const [owner,setOwner]=useState({});
-       return (
-        <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${finalAns.status=='Rent SuccessFull'?'bg-green-600':'bg-red-600'} py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px] items-center`}>
-            
-            <div className="w-[100px] h-[100px]  " >{finalAns.status=='Rent SuccessFull'?<SuccessIcon />:<CloseIcon/>}</div>
-            <div className=" text-xl text-white text-center"> {finalAns.status} </div>
-            <div className=" text-xl text-white text-center"> {finalAns.message}</div>
-                <div onClick={()=>{setShowSuccess(false)}} className="rounded-[5px] py-[10px] px-16 text-green-600 bg-white text-center cursor-pointer w-1/2">OK</div>
-            
-        </div>
-    )
-}
+const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading, user1 }) => {
+  const defaultValueDate = dayjs()
+    .add(1, 'h')
+    .set('minute', 30)
+    .startOf('minute');
+  const maxDate = dayjs().add(29, 'day');
+  const [owner, setOwner] = useState({});
+  const [landAssetIds, setLandAssetIds] = useState([]);
+  const [date, setDate] = useState(defaultValueDate);
 
+  const [showSuccess, setShowSuccess] = useState(false);
 
-const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1}) => {
-    
-    const defaultValueDate =dayjs().add(1,'h').set('minute', 30).startOf('minute');
-    const maxDate=dayjs().add(29,'day')
-    const [owner,setOwner]=useState({});
-    const [landAssetIds,setLandAssetIds]=useState([])
-    const [date,setDate]=useState(defaultValueDate);
-  
-    const [showSuccess,setShowSuccess]=useState(false)
-   
-    const [finalAns,setfinalAns]=useState('');
-    const { user: selectorUser } = useAuth();
+  const [finalAns, setfinalAns] = useState('');
+  const { user: selectorUser } = useAuth();
 
-    console.log("yo selector user",selectorUser)
+  console.log('yo selector user', selectorUser);
 
-    useEffect(() => {
-        const authUser = async () => {
-            const chainConfig = {
-                chainNamespace: 'solana',
-                chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-                rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-                displayName: 'Solana Testnet',
-                blockExplorer: 'https://explorer.solana.com',
-                ticker: 'SOL',
-                tickerName: 'Solana',
-            };
-            const web3auth = new Web3Auth({
-                clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+  useEffect(() => {
+    const authUser = async () => {
+      const chainConfig = {
+        chainNamespace: 'solana',
+        chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+        rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+        displayName: 'Solana Testnet',
+        blockExplorer: 'https://explorer.solana.com',
+        ticker: 'SOL',
+        tickerName: 'Solana',
+      };
+      const web3auth = new Web3Auth({
+        clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-                web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-                chainConfig: chainConfig,
-            });
-            await web3auth.initModal();
-            // await web3auth.connect();
-            const web3authProvider = await web3auth.connect();
+        web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+        chainConfig: chainConfig,
+      });
+      await web3auth.initModal();
+      // await web3auth.connect();
+      const web3authProvider = await web3auth.connect();
 
-const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
-           
-const user = await web3auth.getUserInfo(); // web3auth instance
-// Get user's Solana public address
-const accounts = await solanaWallet.requestAccounts();
-const connectionConfig = await solanaWallet.request({
-    method: "solana_provider_config",
-    params: [],
-  });
-  
-  const connection = new Connection(connectionConfig.rpcTarget);
-  
-  // Fetch the balance for the specified public key
-  const balance = await connection.getBalance(new PublicKey(accounts[0]));
+      const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
 
+      const user = await web3auth.getUserInfo(); // web3auth instance
+      // Get user's Solana public address
+      const accounts = await solanaWallet.requestAccounts();
+      const connectionConfig = await solanaWallet.request({
+        method: 'solana_provider_config',
+        params: [],
+      });
 
+      const connection = new Connection(connectionConfig.rpcTarget);
 
-  //const transaction = Transaction.from(Buffer.from(json.transaction, 'base64'));
-console.log("solanaWallet=",balance)// ui info wrong
-        };
-        authUser();
-    
-      
-    }, [selectorUser])
-    
+      // Fetch the balance for the specified public key
+      const balance = await connection.getBalance(new PublicKey(accounts[0]));
 
+      //const transaction = Transaction.from(Buffer.from(json.transaction, 'base64'));
+      console.log('solanaWallet=', balance); // ui info wrong
+    };
+    authUser();
+  }, [selectorUser]);
 
-
-    useEffect( () => {
-      
-      async function getUsersFromBE(){
-        try {
-           
-            setOwner(rentData.owner)
-            console.log("user if this land",owner)
-          } catch (error) {
-            console.log(error)
-            
-          }
+  useEffect(() => {
+    async function getUsersFromBE() {
+      try {
+        setOwner(rentData.owner);
+        console.log('user if this land', owner);
+      } catch (error) {
+        console.log(error);
       }
-      getUsersFromBE();
-      
-        
-    
-      
-    }, [rentData])
-    
-    const handleRentAirspace=async()=>{
+    }
+    getUsersFromBE();
+  }, [rentData]);
 
-        setIsLoading(true)
-        
- 
+  const handleRentAirspace = async () => {
+    setIsLoading(true);
+
+    const chainConfig = {
+      chainNamespace: 'solana',
+      chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+      rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+      displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME} `,
+      blockExplorer: 'https://explorer.solana.com',
+      ticker: 'SOL',
+      tickerName: 'Solana',
+    };
+    const web3auth = new Web3Auth({
+      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+
+      web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+      chainConfig: chainConfig,
+    });
+    await web3auth.initModal();
+    // await web3auth.connect();
+    const web3authProvider = await web3auth.connect();
+
+    const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
+
+    console.log('date ansd time');
+    console.log('da1', date.toString());
+    //console.log("da2",time.add(30,'minute').toString())
+    let startDate = new Date(date.toString());
+    let endDate = new Date(startDate.getTime());
+    endDate.setMinutes(endDate.getMinutes() + 30);
+    console.log('start date in date fm', startDate);
+    console.log('endtart date in date fm', endDate);
+
+    if (startDate.getMinutes() % 30 != 0) {
+      setfinalAns({
+        status: 'Rent failed',
+        message:
+          'Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on.',
+      });
+      setShowSuccess(true);
+      setIsLoading(false);
+    } else {
+      setLandAssetIds([rentData?.layers[0].tokenId]);
+      console.log('landASSTId==', landAssetIds);
+      console.log('res resll', rentData.layers[0].tokenId);
+
+      let req1Body = {
+        callerAddress: selectorUser.blockchainAddress,
+        startTime: startDate.toISOString(),
+        endTime: endDate.toISOString(),
+        landAssetIds: [rentData.layers[0].tokenId],
+      };
+      console.log('reqbody', JSON.stringify(req1Body));
+      let signatureObj = {};
+      if (user1) {
         const chainConfig = {
+          chainNamespace: 'solana',
+          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+          displayName: 'Solana Mainnet',
+          blockExplorer: 'https://explorer.solana.com',
+          ticker: 'SOL',
+          tickerName: 'Solana',
+        };
+
+        const web3auth = new Web3Auth({
+          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+
+          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+          chainConfig: chainConfig,
+        });
+
+        await web3auth.initModal();
+
+        const web3authProvider = await web3auth.connect();
+
+        const solanaWallet = new SolanaWallet(web3authProvider);
+
+        // const userInfo = await web3auth.getUserInfo();
+
+        const domain = window.location.host;
+        // const domain = 'localhost:3000';
+        const origin = window.location.origin;
+        // const origin = 'http://localhost:3000';
+
+        const payload = new SIWPayload();
+        payload.domain = domain;
+        payload.uri = origin;
+        payload.address = user1.blockchainAddress;
+        payload.statement = 'Sign in to SkyTrade app.';
+        payload.version = '1';
+        payload.chainId = 1;
+
+        const header = { t: 'sip99' };
+        const network = 'solana';
+
+        let message = new SIWWeb3({ header, payload, network });
+
+        const messageText = message.prepareMessage();
+        const msg = new TextEncoder().encode(messageText);
+        const result = await solanaWallet.signMessage(msg);
+
+        const signature = base58.encode(result);
+
+        signatureObj.sign = signature;
+        signatureObj.sign_nonce = message.payload.nonce;
+        signatureObj.sign_issue_at = message.payload.issuedAt;
+        signatureObj.sign_address = user1.blockchainAddress;
+      }
+
+      console.log('signature obj  ', signatureObj);
+
+      let res = await fetch(`/api/proxy?${Date.now()}`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+
+          uri: `/private/airspace-rental/create-mint-rental-token-ix`,
+          sign: signatureObj.sign,
+          time: signatureObj.sign_issue_at,
+          nonce: signatureObj.sign_nonce,
+          address: signatureObj.sign_address,
+        },
+        body: JSON.stringify(req1Body),
+      });
+      res = await res.json();
+      console.log('res body', res);
+      if (res.statusCode == 400) {
+        setShowSuccess(true);
+        setfinalAns({ status: 'Rent failed', message: res.data.message });
+        setIsLoading(false);
+        return;
+      }
+      const transaction = Transaction.from(Buffer.from(res, 'base64'));
+      //let partialsignedTx=transaction.partialSign(solanaWallet);
+      //console.log("is solana wallet partial=",partialsignedTx)
+      const signedTx = await solanaWallet.signTransaction(transaction);
+      console.log(signedTx);
+      let serializedTx = signedTx.serialize({ requireAllSignatures: false });
+      let txToString = serializedTx.toString('base64');
+      if (signedTx) {
+        let req2body = {
+          transaction: txToString,
+          landAssetIds: [rentData?.layers[0].tokenId],
+          startTime: startDate.toISOString(),
+          endTime: endDate.toISOString(),
+        };
+        console.log('final exexution', JSON.stringify(req2body));
+        signatureObj = {};
+        if (user1) {
+          const chainConfig = {
             chainNamespace: 'solana',
             chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
             rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-            displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME} `,
+            displayName: 'Solana Mainnet',
             blockExplorer: 'https://explorer.solana.com',
             ticker: 'SOL',
             tickerName: 'Solana',
-        };
-        const web3auth = new Web3Auth({
+          };
+
+          const web3auth = new Web3Auth({
             clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
             web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
             chainConfig: chainConfig,
-        });
-        await web3auth.initModal();
-        // await web3auth.connect();
-        const web3authProvider = await web3auth.connect();
+          });
 
-const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
+          await web3auth.initModal();
 
+          const web3authProvider = await web3auth.connect();
 
+          const solanaWallet = new SolanaWallet(web3authProvider);
 
-        console.log("date ansd time")
-        console.log("da1",date.toString())
-        //console.log("da2",time.add(30,'minute').toString())
-         let startDate=new Date(date.toString())
-        let endDate = new Date(startDate.getTime()); 
-        endDate.setMinutes(endDate.getMinutes() + 30);
-        console.log("start date in date fm",startDate)
-        console.log('endtart date in date fm',endDate) 
+          // const userInfo = await web3auth.getUserInfo();
 
-         if(startDate.getMinutes()%30!=0){
-            setfinalAns({status:'Rent failed',
-                message:'Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on.'
-        })
-        setShowSuccess(true)
-        setIsLoading(false)
-        }else{
-                    setLandAssetIds([rentData?.layers[0].tokenId]);
-                    console.log("landASSTId==",landAssetIds)
-                    console.log("res resll",rentData.layers[0].tokenId)
-                
-    
-            let req1Body={
-                callerAddress:selectorUser.blockchainAddress,
-                startTime:startDate.toISOString(),
-                endTime:endDate.toISOString(),
-                landAssetIds:[rentData.layers[0].tokenId]
-            }
-            console.log("reqbody",JSON.stringify(req1Body))
-            let signatureObj={}
-            if(user1){
-                const chainConfig = {
-                    chainNamespace: 'solana',
-                    chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-                    displayName: 'Solana Mainnet',
-                    blockExplorer: 'https://explorer.solana.com',
-                    ticker: 'SOL',
-                    tickerName: 'Solana',
-                  };
-          
-                  const web3auth = new Web3Auth({
-                    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-          
-                    web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-                    chainConfig: chainConfig,
-                  });
-          
-                  await web3auth.initModal();
-          
-                  const web3authProvider = await web3auth.connect();
-          
-                  const solanaWallet = new SolanaWallet(web3authProvider);
-          
-                  // const userInfo = await web3auth.getUserInfo();
-          
-                  const domain = window.location.host;
-                  // const domain = 'localhost:3000';
-                  const origin = window.location.origin;
-                  // const origin = 'http://localhost:3000';
-          
-                  const payload = new SIWPayload();
-                  payload.domain = domain;
-                  payload.uri = origin;
-                  payload.address = user1.blockchainAddress;
-                  payload.statement = 'Sign in to SkyTrade app.';
-                  payload.version = '1';
-                  payload.chainId = 1;
-          
-                  const header = { t: 'sip99' };
-                  const network = 'solana';
-          
-                  let message = new SIWWeb3({ header, payload, network });
-          
-                  const messageText = message.prepareMessage();
-                  const msg = new TextEncoder().encode(messageText);
-                  const result = await solanaWallet.signMessage(msg);
-          
-                  const signature = base58.encode(result);
-          
-                  signatureObj.sign = signature;
-                  signatureObj.sign_nonce = message.payload.nonce;
-                  signatureObj.sign_issue_at = message.payload.issuedAt;
-                  signatureObj.sign_address = user1.blockchainAddress;
-  
-  
+          const domain = window.location.host;
+          // const domain = 'localhost:3000';
+          const origin = window.location.origin;
+          // const origin = 'http://localhost:3000';
 
-            } 
+          const payload = new SIWPayload();
+          payload.domain = domain;
+          payload.uri = origin;
+          payload.address = user1.blockchainAddress;
+          payload.statement = 'Sign in to SkyTrade app.';
+          payload.version = '1';
+          payload.chainId = 1;
 
-            console.log("signature obj  ", signatureObj)
+          const header = { t: 'sip99' };
+          const network = 'solana';
 
+          let message = new SIWWeb3({ header, payload, network });
 
+          const messageText = message.prepareMessage();
+          const msg = new TextEncoder().encode(messageText);
+          const result = await solanaWallet.signMessage(msg);
 
-              let res=await  fetch(`/api/proxy?${Date.now()}`,{
-                method: 'POST',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  
-                  uri: `/private/airspace-rental/create-mint-rental-token-ix`,
-                  sign: signatureObj.sign,
-                  time: signatureObj.sign_issue_at,
-                  nonce: signatureObj.sign_nonce,
-                  address: signatureObj.sign_address,
+          const signature = base58.encode(result);
 
-                },
-                body:JSON.stringify(req1Body)
-              })
-              res=await res.json()
-              console.log("res body",res)
-              if(res.statusCode==400){
-                setShowSuccess(true)
-                setfinalAns({status:'Rent failed',
-                message:res.data.message
-                
-        })
-        setIsLoading(false)
-        return
-              }
-              const transaction = Transaction.from(Buffer.from(res, 'base64'));
-              //let partialsignedTx=transaction.partialSign(solanaWallet);
-              //console.log("is solana wallet partial=",partialsignedTx)
-               const signedTx = await solanaWallet.signTransaction(transaction);
-         console.log(signedTx); 
-        let serializedTx=signedTx.serialize({requireAllSignatures:false})
-        let txToString=serializedTx.toString('base64');
-        if(signedTx){
-            let req2body={
-                transaction:txToString,
-                landAssetIds:[rentData?.layers[0].tokenId],
-                startTime:startDate.toISOString(),
-                endTime:endDate.toISOString(),
-            }
-            console.log("final exexution",JSON.stringify(req2body))
-             signatureObj={}
-            if(user1){
-                const chainConfig = {
-                    chainNamespace: 'solana',
-                    chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-                    displayName: 'Solana Mainnet',
-                    blockExplorer: 'https://explorer.solana.com',
-                    ticker: 'SOL',
-                    tickerName: 'Solana',
-                  };
-          
-                  const web3auth = new Web3Auth({
-                    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-          
-                    web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-                    chainConfig: chainConfig,
-                  });
-          
-                  await web3auth.initModal();
-          
-                  const web3authProvider = await web3auth.connect();
-          
-                  const solanaWallet = new SolanaWallet(web3authProvider);
-          
-                  // const userInfo = await web3auth.getUserInfo();
-          
-                  const domain = window.location.host;
-                  // const domain = 'localhost:3000';
-                  const origin = window.location.origin;
-                  // const origin = 'http://localhost:3000';
-          
-                  const payload = new SIWPayload();
-                  payload.domain = domain;
-                  payload.uri = origin;
-                  payload.address = user1.blockchainAddress;
-                  payload.statement = 'Sign in to SkyTrade app.';
-                  payload.version = '1';
-                  payload.chainId = 1;
-          
-                  const header = { t: 'sip99' };
-                  const network = 'solana';
-          
-                  let message = new SIWWeb3({ header, payload, network });
-          
-                  const messageText = message.prepareMessage();
-                  const msg = new TextEncoder().encode(messageText);
-                  const result = await solanaWallet.signMessage(msg);
-          
-                  const signature = base58.encode(result);
-          
-                  signatureObj.sign = signature;
-                  signatureObj.sign_nonce = message.payload.nonce;
-                  signatureObj.sign_issue_at = message.payload.issuedAt;
-                  signatureObj.sign_address = user1.blockchainAddress;
-  
-  
-
-            } 
-            let ans2=await fetch(
-                `/api/proxy?${Date.now()}`,
-                {
-                  method: 'POST',
-                  headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    
-                    uri: `/private/airspace-rental/execute-mint-rental-token-ix`,
-                    sign: signatureObj.sign,
-                    time: signatureObj.sign_issue_at,
-                    nonce: signatureObj.sign_nonce,
-                    address: signatureObj.sign_address,
-                  },
-                  body: JSON.stringify(req2body),
-                }
-              );
-              ans2=await ans2.json();
-        console.log("execute result",ans2)
-        if(ans2) {
-            if(ans2.data.status=='success'){
-                setfinalAns({status:'Rent SuccessFull',
-                    message:ans2.data.message
-            })
-            }else{
-                setfinalAns({status:'Rent failed',
-                    message:ans2.data.message
-            })
-            }
-    
-            setShowSuccess(true)
-    
-    
+          signatureObj.sign = signature;
+          signatureObj.sign_nonce = message.payload.nonce;
+          signatureObj.sign_issue_at = message.payload.issuedAt;
+          signatureObj.sign_address = user1.blockchainAddress;
         }
-        }
-         
-    
-    
-        setIsLoading(false)
-        } 
-       
-     }// handle air space
+        let ans2 = await fetch(`/api/proxy?${Date.now()}`, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
 
-
-    console.log("am from CLaim modal ,",rentData)
-    if(showSuccess){
-        return(
-            <>
-                {finalAns.status=='Rent SuccessFull'?<SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns}/>:<SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns}/> }
-            </>
-        )
-    }
-    const shouldDisableTime = (value, view) =>{
-        if( view === 'minutes' && value.minute() >= 1 && value.minute()<=29){
-            return true;
-        }else if(view === 'minutes' && value.minute() >= 31 && value.minute()<=59){
-            return true
-        }else{
-            return false;
-
-        }
-    }
-   
- 
-    return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px]">
-            <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
-                <div className="w-[16px] h-[12px] md:hidden" onClick={()=>{console.log("ggdgdgdg")}}><ArrowLeftIcon /></div>
-                <h2 className="text-[#222222] text-center font-medium text-xl"> Airspace Details</h2>
-                <div onClick={()=>{setShowClaimModal(false)}} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
-            </div>
-            <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
-                <div className="w-6 h-6"><LocationPointIcon /></div>
-                <p className="font-normal text-[#222222] text-[14px] flex-1">{rentData?rentData.address:''}</p>
-            </div>
-            <div className="gap-[5px]">
-            <span>Owner</span><span>  {owner?owner.name:"grgr"}</span>
-            </div>
-            <div className="flex items-center justify-evenly gap-[20px] text-[14px]">
-            <div className="flex flex-col gap-[5px] w-full">
-                <label htmlFor="rentalDate" >Rental Date and Time<span className="text-[#E04F64]">*</span></label>
-                <DateTimePicker value={date} onChange={(e)=>{setDate(e);}} disablePast maxDate={maxDate}
-            shouldDisableTime={shouldDisableTime} />
-            </div>
-           
-            
-            </div>
-           
-                <div className="flex items-center justify-center gap-[20px] text-[14px]">
-                <div onClick={()=>{setShowClaimModal(false)}} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2" style={{ border: "1px solid #0653EA" }}>Cancel</div>
-                <div onClick={handleRentAirspace} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">rent Airspace</div>
-            </div>
-        </div>
-        </LocalizationProvider>
-    )
-}
-
-
-const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress,regAdressShow,registeredAddress,map,marker,setMarker,showClaimModal ,setShowClaimModal ,rentData, setRentData, user1}) => {
-    const [selectedAddress,setSelectedAddress]=useState()
-    
-    return (
-        <div className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
-            <div className="flex gap-[5px] items-center">
-                <p className="text-xl font-medium text-[#222222]">SkyMarket Hub</p>
-            </div>
-            <p className="text-[15px] font-normal text-[#222222]">Explore and Own Low-Altitude Airspaces, Your Gateway to Aerial Freedom.</p>
-            <div className="relative px-[22px] py-[16px] bg-white rounded-lg w-full" style={{ border: "1px solid #87878D" }}>
-                <input autoComplete="off" value={address} onChange={(e) => setAddress(e.target.value)} type="text" name="searchAirspaces" id="searchAirspaces" placeholder="Search Airspaces" className="outline-none w-full pr-[20px]" />
-                <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
-                    <MagnifyingGlassIcon />
-                </div>
-                 {showOptions && (
-                    <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
-                        {addresses.map((item) => {
-                            return (
-                                <div
-                                    key={item.id}
-                                    value={item.place_name}
-                                    onClick={() => handleSelectAddress(item.place_name)}
-                                    className='p-5 text-left text-[#222222] w-full'
-                                    style={{
-                                        borderTop: '0.2px solid #222222',
-                                    }}
-                                >
-                                    {item.place_name}
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-                {regAdressShow && (
-                    <div className="absolute top-[55px] left-0 mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll">
-                        
-                        {registeredAddress.map((item)=>{
-//add popup to black ones
-const rentCLickHandler=()=>{
-    let el1 = document.createElement('div');
-    
-                console.log("am rrent clickedd",item.id)
-                setSelectedAddress(item.id);
-                
-                
-                el1.id = 'marker2';
-    let lat1=item.latitude;
-    let lng1=item.longitude;
-    let ans2=new mapboxgl.LngLat(lng1,lat1);
-    let newMap=map
-    if(marker){
-        marker.remove()
-    }
-    let marker1=new maplibregl.Marker({ color: '#0653EA' }  )
-                    .setLngLat(ans2)
-                    .addTo(map);
-    setMarker(marker1)
-
-        
-    
-}
-
-const onClickRent=() =>{
-    console.log("hello rent data==",rentData)
-    setRentData(item)
-    setShowClaimModal(true)
-     
-                                    
-} 
-
-                            return (
-                                <div
-                                key={item.id}
-                                    value={item.address}
-                                    onClick={rentCLickHandler}
-                                    
-                                    className={item.id!=selectedAddress?` p-5 text-left text-[#913636] w-full flex justify-between text-[12px]`:`bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[10px]`}
-                                    style={{
-                                        borderTop: '5px solid #FFFFFFCC',
-                                    }}
-                                >
-
-                                    <h3 className="text-black pt-[0.6rem]">{item.address}</h3><h1 className={item.id!=selectedAddress?" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2":" text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"}>$1</h1><span onClick={onClickRent} className={item.id!=selectedAddress?"bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2":"bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2"}>RENT</span>
-                                </div>
-                            )
-                        })}
-                    </div>
-                )} 
-            </div>
-        </div>
-    )
-}
-
-const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSelectAddress }) => {
-
-    return (
-        <div className="flex bg-white items-center gap-[15px] pb-[19px] px-[21px] z-[40]">
-            <div className="relative px-[22px] py-[16px] bg-white rounded-lg w-full" style={{ border: "1px solid #87878D" }}>
-                <input autoComplete="off" value={address} onChange={(e) => setAddress(e.target.value)} type="text" name="searchAirspaces" id="searchAirspaces" placeholder="Search Airspaces" className="outline-none w-full pr-[20px]" />
-                <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
-                    <MagnifyingGlassIcon />
-                </div>
-                {showOptions && (
-                    <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
-                        {addresses.map((item) => {
-                            return (
-                                <div
-                                    key={item.id}
-                                    value={item.place_name}
-                                    onClick={() => handleSelectAddress(item.place_name)}
-                                    className='p-5 text-left text-[#222222] w-full'
-                                    style={{
-                                        borderTop: '0.2px solid #222222',
-                                    }}
-                                >
-                                    {item.place_name}
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
-        </div>
-    )
-}
-
-const Rent = () => {
-    
-    const [isLoading, setIsLoading] = useState(false);
-    // map
-    const [map, setMap] = useState(null);
-    const { isMobile } = useMobile();
-    // variables
-    const [registeredAddress,setRegisteredAddress]=useState([]);
-    const [mapMove,setmapMove]=useState()
-    const [address, setAddress] = useState('');
-    const [addressData, setAddressData] = useState();
-    const [addresses, setAddresses] = useState([]);
-    const [flyToAddress, setFlyToAddress] = useState('');
-    const [coordinates, setCoordinates] = useState({ longitude: '', latitude: '' })
-
-    const [token, setToken] = useState();
-    const [marker, setMarker] = useState();
-    const [rentData,setRentData]=useState()
-    const [showClaimModal,setShowClaimModal]=useState(false)
-    console.log("front")
-    const defaultData = {
-        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 3 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 4 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 5 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 },
-        ]
-    }
-    // showing
-    const { user: selectorUser } = useAuth();
-    const [user1, setUser1] = useState();
-    const [data, setData] = useState({ ...defaultData });
-    console.log(selectorUser)
-    // showing
-    const [regAdressShow,setregAdressShow]=useState(false)
-    const [showOptions, setShowOptions] = useState(false);
-
-//setting user
-    useEffect(() => {
-        if (selectorUser) {
-          const authUser = async () => {
-            const chainConfig = {
-              chainNamespace: 'solana',
-              chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-              rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-              displayName: 'Solana Mainnet',
-              blockExplorer: 'https://explorer.solana.com',
-              ticker: 'SOL',
-              tickerName: 'Solana',
-            };
-    
-            const web3auth = new Web3Auth({
-              clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-    
-              web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-              chainConfig: chainConfig,
-            });
-    
-            await web3auth.initModal();
-    
-            // await web3auth.connect();
-    
-            let userInfo;
-    
-            try {
-              userInfo = await web3auth.getUserInfo();
-            } catch (err) {
-              localStorage.removeItem('openlogin_store');
-              swal({
-                title: 'oops!',
-                text: 'Something went wrong. Kindly try again',
-              }).then(() => router.push('/auth/join'));
-              return;
-            }
-    
-            const fetchedToken = JSON.parse(
-              localStorage.getItem('openlogin_store')
-            );
-    
-            if (!selectorUser) {
-              localStorage.removeItem('openlogin_store');
-              router.push('/auth/join');
-              return;
-            }
-    
-            setToken(fetchedToken.sessionId);
-            setUser1(selectorUser);
-          };
-    
-          authUser();
-        }
-      }, []);
-
-
-    //map creation and adding event listeners
-    useEffect(() => {
-       
-        if (map) return;
-
-        const createMap = () => {
-            mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
-
-            const newMap = new mapboxgl.Map({
-                container: 'map',
-                style: 'mapbox://styles/mapbox/streets-v12',
-                center: [ -104.718243, 40.413869],
-                zoom: 15,
-                // attributionControl: false
-            });
-
-            newMap.on('load', function () {
-                newMap.addLayer({
-                    id: 'maine',
-                    type: 'fill',
-                    source: {
-                        type: 'geojson',
-                        data: {
-                            type: 'Feature',
-                            geometry: {
-                                type: 'Polygon',
-                                coordinates: [],
-                            },
-                        },
-                    },
-                    layout: {},
-                    paint: {
-                        'fill-color': '#D20C0C',
-                    },
-                });
-
-                 
-                
-
-
-            });
-            newMap.on('wheel', async(e) => {
-
-                let el = document.createElement('div');
-                
-                if(el){
-                    
-                  // console.log("el==",el)
-                }
-                
-                el.id = 'markerWithExternalCss';
-                let crds=e.target.getBounds()
-                // todo: make it server side
-
-                const signatureObj = {};
-                
-                if(user1){
-                    const chainConfig = {
-                        chainNamespace: 'solana',
-                        chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-                        rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-                        displayName: 'Solana Mainnet',
-                        blockExplorer: 'https://explorer.solana.com',
-                        ticker: 'SOL',
-                        tickerName: 'Solana',
-                      };
-              
-                      const web3auth = new Web3Auth({
-                        clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-              
-                        web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-                        chainConfig: chainConfig,
-                      });
-              
-                      await web3auth.initModal();
-              
-                      const web3authProvider = await web3auth.connect();
-              
-                      const solanaWallet = new SolanaWallet(web3authProvider);
-              
-                      // const userInfo = await web3auth.getUserInfo();
-              
-                      const domain = window.location.host;
-                      // const domain = 'localhost:3000';
-                      const origin = window.location.origin;
-                      // const origin = 'http://localhost:3000';
-              
-                      const payload = new SIWPayload();
-                      payload.domain = domain;
-                      payload.uri = origin;
-                      payload.address = user1.blockchainAddress;
-                      payload.statement = 'Sign in to SkyTrade app.';
-                      payload.version = '1';
-                      payload.chainId = 1;
-              
-                      const header = { t: 'sip99' };
-                      const network = 'solana';
-              
-                      let message = new SIWWeb3({ header, payload, network });
-              
-                      const messageText = message.prepareMessage();
-                      const msg = new TextEncoder().encode(messageText);
-                      const result = await solanaWallet.signMessage(msg);
-              
-                      const signature = base58.encode(result);
-              
-                      signatureObj.sign = signature;
-                      signatureObj.sign_nonce = message.payload.nonce;
-                      signatureObj.sign_issue_at = message.payload.issuedAt;
-                      signatureObj.sign_address = user1.blockchainAddress;
-      
-      
-
-                }                
-                // Add the new marker to the map and update the marker state
-                let res=await fetch(`/api/proxy?${Date.now()}`,{
-                    method: 'POST',
-                    headers: {
-                      Accept: 'application/json',
-                      'Content-Type': 'application/json',
-                      
-
-                      uri: `/public/properties/`,
+            uri: `/private/airspace-rental/execute-mint-rental-token-ix`,
             sign: signatureObj.sign,
             time: signatureObj.sign_issue_at,
             nonce: signatureObj.sign_nonce,
             address: signatureObj.sign_address,
-                    },
-                    body:JSON.stringify({
-                        minLongitude:crds._sw.lng,
-                        minLatitude:crds._sw.lat,
-                        maxLongitude:crds._ne.lng,
-                        maxLatitude:crds._ne.lat,
+          },
+          body: JSON.stringify(req2body),
+        });
+        ans2 = await ans2.json();
+        console.log('execute result', ans2);
+        if (ans2) {
+          if (ans2.data.status == 'success') {
+            setfinalAns({
+              status: 'Rent SuccessFull',
+              message: ans2.data.message,
+            });
+          } else {
+            setfinalAns({ status: 'Rent failed', message: ans2.data.message });
+          }
 
-                    })
-                })
-                res=await res.json();
-                console.log("returned from the api property",res)
-                //res=res.slice(0,5)
-                let ans,features1=[];
-                 if(res){
-                     ans=res.filter((property1)=>{
-                       //console.log(`p1Lon= ${property1.latitude} crdsswLon= ${crds._sw.lng}   crdsnelng= ${crds._ne.lng}  p1lat= ${property1.longitude} crdsswlat= ${crds._sw.lat}  crdsnelat= ${crds._ne.lat}` );
-                        if(property1.longitude>=crds._sw.lng && property1.longitude<=crds._ne.lng && property1.latitude>=crds._sw.lat && property1.latitude<=crds._ne.lat ){
-                            return property1
-                        }
-                    }) 
-                } 
-                
-                setRegisteredAddress(ans)
-                if(ans.length>0){
-                    for(let i=0;i<ans.length;i++){
-                        let lng1=ans[i].longitude;
-                        let lat1=ans[i].latitude;
-                        //console.log("ansarray==",lng1,lat1)
-                        let ans2=new mapboxgl.LngLat(lng1,lat1);
-                        
-                                
-
-                        let popup1=new maplibregl.Popup().setHTML(`<strong>${ans[i].address}</strong>`)
-                        new maplibregl.Marker(el)
-                    .setLngLat(ans2)
-                    .setPopup(popup1)
-                    .addTo(newMap); 
-                    }
-
-                   
-                }
-
-                
-
-
-                
-
-
-
-
-                  
-               //console.log("new bounds",crds)
-                });
-
-                newMap.on('click',(e)=>{
-                    //console.log(e.point.x,e.point.y)
-                })
-
-              
-
-            setMap(newMap);
+          setShowSuccess(true);
         }
+      }
 
-        createMap();
-    }, []);
-
-
-    useEffect(()=>{
-        //console.log("the registered addressesssss",registeredAddress)
-        if(registeredAddress.length>0){
-            setregAdressShow(true)
-        }else{
-            setregAdressShow(false)
-        }
-    },[registeredAddress])
-
-    useEffect(() => {
-        if (!showOptions) setShowOptions(true);
-        if (!address) return setShowOptions(false);
-
-        let timeoutId;
-
-        const getAddresses = async () => {
-            setCoordinates({ longitude: '', latitude: '' });
-
-            timeoutId = setTimeout(async () => {
-                try {
-                    const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
-
-                    const response = await fetch(mapboxGeocodingUrl);
-
-                    if (!response.ok) throw new Error("Error while getting addresses");
-
-                    const data = await response.json();
-                    if (data.features && data.features.length > 0) {
-                        setAddresses(data.features);
-                    } else {
-                        setAddresses([]);
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
-            }, 500);
-        }
-
-        getAddresses();
-
-        return () => clearTimeout(timeoutId);
-    }, [address])
-
-    useEffect(() => {
-        if (!flyToAddress) return;
-
-        const goToAddress = async () => {
-            try {
-                setIsLoading(true);
-
-                const mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
-
-                const response = await fetch(mapBoxGeocodingUrl)
-
-                if (!response.ok) throw new Error("Error while getting new address location");
-
-                const data = await response.json();
-
-                if (!data.features || data.features.length === 0) {
-                    throw new Error('Address not found');
-                }
-
-                const coordinates = data.features[0].geometry.coordinates;
-                const endPoint = [coordinates[0], coordinates[1]];
-
-                setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
-                setAddressData(data.features[0].properties);
-                setIsLoading(false);
-
-                map.flyTo({
-                    center: endPoint,
-                    zoom: 16,
-
-                });
-
-                if (marker) {
-                    marker.remove();
-                }
-
-                let el = document.createElement('div');
-                el.id = 'markerWithExternalCss';
-
-                // Add the new marker to the map and update the marker state
-                const newMarker = new maplibregl.Marker(el)
-                    .setLngLat(endPoint)
-                    .addTo(map);
-                setMarker(newMarker);
-            } catch (error) {
-                setIsLoading(false);
-                console.error(error);
-            }
-        }
-
-        goToAddress();
-
-    }, [flyToAddress, map]);
-
-   
-
-    useEffect(() => {
-        if (flyToAddress === address) setShowOptions(false);
-        if (flyToAddress) setData(prev => ({ ...prev, address: flyToAddress }))
-    }, [flyToAddress, address]);
-
-    const handleSelectAddress = (placeName) => {
-        setAddress(placeName);
-        setFlyToAddress(placeName);
-        setShowOptions(false);
+      setIsLoading(false);
     }
+  }; // handle air space
 
-   
-
+  console.log('am from CLaim modal ,', rentData);
+  if (showSuccess) {
     return (
-        <Fragment>
-            {isLoading && <Backdrop />}
-            {isLoading && <Spinner />}
-            {/* <div className=" bg-black w-screen h-screen ">
+      <>
+        {finalAns.status == 'Rent SuccessFull' ? (
+          <SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns} />
+        ) : (
+          <SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns} />
+        )}
+      </>
+    );
+  }
+  const shouldDisableTime = (value, view) => {
+    if (view === 'minutes' && value.minute() >= 1 && value.minute() <= 29) {
+      return true;
+    } else if (
+      view === 'minutes' &&
+      value.minute() >= 31 &&
+      value.minute() <= 59
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <div className='fixed left-1/2 top-1/2 z-40 flex h-screen max-h-screen w-full -translate-x-1/2 -translate-y-1/2 flex-col gap-[15px] overflow-y-auto bg-white px-[29px] py-[30px] md:h-auto md:max-h-[700px] md:w-[689px] md:rounded-[30px]'>
+        <div
+          className='relative -mx-[29px] -mt-[30px] flex items-center gap-[20px] px-[29px] py-[20px] md:mx-0 md:my-0 md:p-0 md:shadow-none'
+          style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}
+        >
+          <div
+            className='h-[12px] w-[16px] md:hidden'
+            onClick={() => {
+              console.log('ggdgdgdg');
+            }}
+          >
+            <ArrowLeftIcon />
+          </div>
+          <h2 className='text-center text-xl font-medium text-[#222222]'>
+            {' '}
+            Airspace Details
+          </h2>
+          <div
+            onClick={() => {
+              setShowClaimModal(false);
+            }}
+            className='absolute right-0 top-0 ml-auto hidden h-[15px] w-[15px] cursor-pointer md:block'
+          >
+            <CloseIcon />
+          </div>
+        </div>
+        <div
+          className='flex items-center gap-[10px] rounded-lg px-[22px] py-4'
+          style={{ border: '1px solid #4285F4' }}
+        >
+          <div className='h-6 w-6'>
+            <LocationPointIcon />
+          </div>
+          <p className='flex-1 text-[14px] font-normal text-[#222222]'>
+            {rentData ? rentData.address : ''}
+          </p>
+        </div>
+        <div className='gap-[5px]'>
+          <span>Owner</span>
+          <span> {owner ? owner.name : 'grgr'}</span>
+        </div>
+        <div className='flex items-center justify-evenly gap-[20px] text-[14px]'>
+          <div className='flex w-full flex-col gap-[5px]'>
+            <label htmlFor='rentalDate'>
+              Rental Date and Time<span className='text-[#E04F64]'>*</span>
+            </label>
+            <DateTimePicker
+              value={date}
+              onChange={(e) => {
+                setDate(e);
+              }}
+              disablePast
+              maxDate={maxDate}
+              shouldDisableTime={shouldDisableTime}
+            />
+          </div>
+        </div>
+
+        <div className='flex items-center justify-center gap-[20px] text-[14px]'>
+          <div
+            onClick={() => {
+              setShowClaimModal(false);
+            }}
+            className='w-1/2 cursor-pointer rounded-[5px] px-[22px] py-[10px] text-[#0653EA]'
+            style={{ border: '1px solid #0653EA' }}
+          >
+            Cancel
+          </div>
+          <div
+            onClick={handleRentAirspace}
+            className='w-1/2 cursor-pointer rounded-[5px] bg-[#0653EA] px-[22px] py-[10px] text-white'
+          >
+            rent Airspace
+          </div>
+        </div>
+      </div>
+    </LocalizationProvider>
+  );
+};
+
+const Explorer = ({
+  address,
+  setAddress,
+  addresses,
+  showOptions,
+  handleSelectAddress,
+  regAdressShow,
+  registeredAddress,
+  map,
+  marker,
+  setMarker,
+  showClaimModal,
+  setShowClaimModal,
+  rentData,
+  setRentData,
+  user1,
+}) => {
+  const [selectedAddress, setSelectedAddress] = useState();
+
+  return (
+    <div
+      className='z-20 m-[39px] hidden max-h-full max-w-[362px] flex-col items-center gap-[15px] rounded-[30px] bg-[#FFFFFFCC] px-[29px] py-[43px] md:flex'
+      style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}
+    >
+      <div className='flex items-center gap-[5px]'>
+        <p className='text-xl font-medium text-[#222222]'>SkyMarket Hub</p>
+      </div>
+      <p className='text-[15px] font-normal text-[#222222]'>
+        Explore and Own Low-Altitude Airspaces, Your Gateway to Aerial Freedom.
+      </p>
+      <div
+        className='relative w-full rounded-lg bg-white px-[22px] py-[16px]'
+        style={{ border: '1px solid #87878D' }}
+      >
+        <input
+          autoComplete='off'
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          type='text'
+          name='searchAirspaces'
+          id='searchAirspaces'
+          placeholder='Search Airspaces'
+          className='w-full pr-[20px] outline-none'
+        />
+        <div className='absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2'>
+          <MagnifyingGlassIcon />
+        </div>
+        {showOptions && (
+          <div className='absolute left-0 top-[55px] w-full flex-col bg-white'>
+            {addresses.map((item) => {
+              return (
+                <div
+                  key={item.id}
+                  value={item.place_name}
+                  onClick={() => handleSelectAddress(item.place_name)}
+                  className='w-full p-5 text-left text-[#222222]'
+                  style={{
+                    borderTop: '0.2px solid #222222',
+                  }}
+                >
+                  {item.place_name}
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {regAdressShow && (
+          <div className='absolute left-0 top-[55px] mt-5 h-auto max-h-60 w-full flex-col overflow-y-scroll bg-white'>
+            {registeredAddress.map((item) => {
+              //add popup to black ones
+              const rentCLickHandler = () => {
+                let el1 = document.createElement('div');
+
+                console.log('am rrent clickedd', item.id);
+                setSelectedAddress(item.id);
+
+                el1.id = 'marker2';
+                let lat1 = item.latitude;
+                let lng1 = item.longitude;
+                let ans2 = new mapboxgl.LngLat(lng1, lat1);
+                let newMap = map;
+                if (marker) {
+                  marker.remove();
+                }
+                let marker1 = new maplibregl.Marker({ color: '#0653EA' })
+                  .setLngLat(ans2)
+                  .addTo(map);
+                setMarker(marker1);
+              };
+
+              const onClickRent = () => {
+                console.log('hello rent data==', rentData);
+                setRentData(item);
+                setShowClaimModal(true);
+              };
+
+              return (
+                <div
+                  key={item.id}
+                  value={item.address}
+                  onClick={rentCLickHandler}
+                  className={
+                    item.id != selectedAddress
+                      ? ` flex w-full justify-between p-5 text-left text-[12px] text-[#913636]`
+                      : `flex w-full justify-between bg-[#0653EA] p-5 text-left text-[10px] text-white`
+                  }
+                  style={{
+                    borderTop: '5px solid #FFFFFFCC',
+                  }}
+                >
+                  <h3 className='pt-[0.6rem] text-black'>{item.address}</h3>
+                  <h1
+                    className={
+                      item.id != selectedAddress
+                        ? ' cursor-pointer px-2 py-2 text-center  text-[15px] font-black text-black'
+                        : ' cursor-pointer px-2 py-2 text-center  text-[15px] font-black text-white'
+                    }
+                  >
+                    $1
+                  </h1>
+                  <span
+                    onClick={onClickRent}
+                    className={
+                      item.id != selectedAddress
+                        ? 'cursor-pointer rounded-lg bg-[#0653EA]  px-2 py-2 text-center text-[15px] font-normal text-white'
+                        : 'cursor-pointer rounded-lg bg-[#e8e9eb]  px-2 py-2 text-center text-[15px] font-normal text-[#0653EA]'
+                    }
+                  >
+                    RENT
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const ExplorerMobile = ({
+  address,
+  setAddress,
+  addresses,
+  showOptions,
+  handleSelectAddress,
+}) => {
+  return (
+    <div className='z-[40] flex items-center gap-[15px] bg-white px-[21px] pb-[19px]'>
+      <div
+        className='relative w-full rounded-lg bg-white px-[22px] py-[16px]'
+        style={{ border: '1px solid #87878D' }}
+      >
+        <input
+          autoComplete='off'
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          type='text'
+          name='searchAirspaces'
+          id='searchAirspaces'
+          placeholder='Search Airspaces'
+          className='w-full pr-[20px] outline-none'
+        />
+        <div className='absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2'>
+          <MagnifyingGlassIcon />
+        </div>
+        {showOptions && (
+          <div className='absolute left-0 top-[55px] w-full flex-col bg-white'>
+            {addresses.map((item) => {
+              return (
+                <div
+                  key={item.id}
+                  value={item.place_name}
+                  onClick={() => handleSelectAddress(item.place_name)}
+                  className='w-full p-5 text-left text-[#222222]'
+                  style={{
+                    borderTop: '0.2px solid #222222',
+                  }}
+                >
+                  {item.place_name}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const Rent = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  // map
+  const [map, setMap] = useState(null);
+  const { isMobile } = useMobile();
+  // variables
+  const [registeredAddress, setRegisteredAddress] = useState([]);
+  const [mapMove, setmapMove] = useState();
+  const [address, setAddress] = useState('');
+  const [addressData, setAddressData] = useState();
+  const [addresses, setAddresses] = useState([]);
+  const [flyToAddress, setFlyToAddress] = useState('');
+  const [coordinates, setCoordinates] = useState({
+    longitude: '',
+    latitude: '',
+  });
+
+  const [token, setToken] = useState();
+  const [marker, setMarker] = useState();
+  const [rentData, setRentData] = useState();
+  const [showClaimModal, setShowClaimModal] = useState(false);
+  console.log('front');
+  const defaultData = {
+    address: flyToAddress,
+    name: '',
+    rent: false,
+    sell: false,
+    hasPlanningPermission: false,
+    hasChargingStation: false,
+    hasLandingDeck: false,
+    hasStorageHub: false,
+    sellingPrice: '',
+    timezone: 'UTC+0',
+    transitFee: '1-99',
+    isFixedTransitFee: false,
+    noFlyZone: false,
+    weekDayRanges: [
+      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
+      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
+      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
+      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 3 },
+      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 4 },
+      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 5 },
+      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 },
+    ],
+  };
+  // showing
+  const { user: selectorUser } = useAuth();
+  const [user1, setUser1] = useState();
+  const [data, setData] = useState({ ...defaultData });
+  console.log(selectorUser);
+  // showing
+  const [regAdressShow, setregAdressShow] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+
+  //setting user
+  useEffect(() => {
+    if (selectorUser) {
+      const authUser = async () => {
+        const chainConfig = {
+          chainNamespace: 'solana',
+          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+          displayName: 'Solana Mainnet',
+          blockExplorer: 'https://explorer.solana.com',
+          ticker: 'SOL',
+          tickerName: 'Solana',
+        };
+
+        const web3auth = new Web3Auth({
+          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+
+          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+          chainConfig: chainConfig,
+        });
+
+        await web3auth.initModal();
+
+        // await web3auth.connect();
+
+        let userInfo;
+
+        try {
+          userInfo = await web3auth.getUserInfo();
+        } catch (err) {
+          localStorage.removeItem('openlogin_store');
+          swal({
+            title: 'oops!',
+            text: 'Something went wrong. Kindly try again',
+          }).then(() => router.push('/auth/join'));
+          return;
+        }
+
+        const fetchedToken = JSON.parse(
+          localStorage.getItem('openlogin_store')
+        );
+
+        if (!selectorUser) {
+          localStorage.removeItem('openlogin_store');
+          router.push('/auth/join');
+          return;
+        }
+
+        setToken(fetchedToken.sessionId);
+        setUser1(selectorUser);
+      };
+
+      authUser();
+    }
+  }, []);
+
+  //map creation and adding event listeners
+  useEffect(() => {
+    if (map) return;
+
+    const createMap = () => {
+      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+
+      const newMap = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [-104.718243, 40.413869],
+        zoom: 15,
+        // attributionControl: false
+      });
+
+      newMap.on('load', function () {
+        newMap.addLayer({
+          id: 'maine',
+          type: 'fill',
+          source: {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              geometry: {
+                type: 'Polygon',
+                coordinates: [],
+              },
+            },
+          },
+          layout: {},
+          paint: {
+            'fill-color': '#D20C0C',
+          },
+        });
+      });
+      newMap.on('wheel', async (e) => {
+        let el = document.createElement('div');
+
+        if (el) {
+          // console.log("el==",el)
+        }
+
+        el.id = 'markerWithExternalCss';
+        let crds = e.target.getBounds();
+        // todo: make it server side
+
+        const signatureObj = {};
+
+        if (user1) {
+          const chainConfig = {
+            chainNamespace: 'solana',
+            chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+            displayName: 'Solana Mainnet',
+            blockExplorer: 'https://explorer.solana.com',
+            ticker: 'SOL',
+            tickerName: 'Solana',
+          };
+
+          const web3auth = new Web3Auth({
+            clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+
+            web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+            chainConfig: chainConfig,
+          });
+
+          await web3auth.initModal();
+
+          const web3authProvider = await web3auth.connect();
+
+          const solanaWallet = new SolanaWallet(web3authProvider);
+
+          // const userInfo = await web3auth.getUserInfo();
+
+          const domain = window.location.host;
+          // const domain = 'localhost:3000';
+          const origin = window.location.origin;
+          // const origin = 'http://localhost:3000';
+
+          const payload = new SIWPayload();
+          payload.domain = domain;
+          payload.uri = origin;
+          payload.address = user1.blockchainAddress;
+          payload.statement = 'Sign in to SkyTrade app.';
+          payload.version = '1';
+          payload.chainId = 1;
+
+          const header = { t: 'sip99' };
+          const network = 'solana';
+
+          let message = new SIWWeb3({ header, payload, network });
+
+          const messageText = message.prepareMessage();
+          const msg = new TextEncoder().encode(messageText);
+          const result = await solanaWallet.signMessage(msg);
+
+          const signature = base58.encode(result);
+
+          signatureObj.sign = signature;
+          signatureObj.sign_nonce = message.payload.nonce;
+          signatureObj.sign_issue_at = message.payload.issuedAt;
+          signatureObj.sign_address = user1.blockchainAddress;
+        }
+        // Add the new marker to the map and update the marker state
+        let res = await fetch(`/api/proxy?${Date.now()}`, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+
+            uri: `/public/properties/`,
+            sign: signatureObj.sign,
+            time: signatureObj.sign_issue_at,
+            nonce: signatureObj.sign_nonce,
+            address: signatureObj.sign_address,
+          },
+          body: JSON.stringify({
+            minLongitude: crds._sw.lng,
+            minLatitude: crds._sw.lat,
+            maxLongitude: crds._ne.lng,
+            maxLatitude: crds._ne.lat,
+          }),
+        });
+        res = await res.json();
+        console.log('returned from the api property', res);
+        //res=res.slice(0,5)
+        let ans,
+          features1 = [];
+        if (res) {
+          ans = res.filter((property1) => {
+            //console.log(`p1Lon= ${property1.latitude} crdsswLon= ${crds._sw.lng}   crdsnelng= ${crds._ne.lng}  p1lat= ${property1.longitude} crdsswlat= ${crds._sw.lat}  crdsnelat= ${crds._ne.lat}` );
+            if (
+              property1.longitude >= crds._sw.lng &&
+              property1.longitude <= crds._ne.lng &&
+              property1.latitude >= crds._sw.lat &&
+              property1.latitude <= crds._ne.lat
+            ) {
+              return property1;
+            }
+          });
+        }
+
+        setRegisteredAddress(ans);
+        if (ans.length > 0) {
+          for (let i = 0; i < ans.length; i++) {
+            let lng1 = ans[i].longitude;
+            let lat1 = ans[i].latitude;
+            //console.log("ansarray==",lng1,lat1)
+            let ans2 = new mapboxgl.LngLat(lng1, lat1);
+
+            let popup1 = new maplibregl.Popup().setHTML(
+              `<strong>${ans[i].address}</strong>`
+            );
+            new maplibregl.Marker(el)
+              .setLngLat(ans2)
+              .setPopup(popup1)
+              .addTo(newMap);
+          }
+        }
+
+        //console.log("new bounds",crds)
+      });
+
+      newMap.on('click', (e) => {
+        //console.log(e.point.x,e.point.y)
+      });
+
+      setMap(newMap);
+    };
+
+    createMap();
+  }, []);
+
+  useEffect(() => {
+    //console.log("the registered addressesssss",registeredAddress)
+    if (registeredAddress.length > 0) {
+      setregAdressShow(true);
+    } else {
+      setregAdressShow(false);
+    }
+  }, [registeredAddress]);
+
+  useEffect(() => {
+    if (!showOptions) setShowOptions(true);
+    if (!address) return setShowOptions(false);
+
+    let timeoutId;
+
+    const getAddresses = async () => {
+      setCoordinates({ longitude: '', latitude: '' });
+
+      timeoutId = setTimeout(async () => {
+        try {
+          const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+
+          const response = await fetch(mapboxGeocodingUrl);
+
+          if (!response.ok) throw new Error('Error while getting addresses');
+
+          const data = await response.json();
+          if (data.features && data.features.length > 0) {
+            setAddresses(data.features);
+          } else {
+            setAddresses([]);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }, 500);
+    };
+
+    getAddresses();
+
+    return () => clearTimeout(timeoutId);
+  }, [address]);
+
+  useEffect(() => {
+    if (!flyToAddress) return;
+
+    const goToAddress = async () => {
+      try {
+        setIsLoading(true);
+
+        const mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+
+        const response = await fetch(mapBoxGeocodingUrl);
+
+        if (!response.ok)
+          throw new Error('Error while getting new address location');
+
+        const data = await response.json();
+
+        if (!data.features || data.features.length === 0) {
+          throw new Error('Address not found');
+        }
+
+        const coordinates = data.features[0].geometry.coordinates;
+        const endPoint = [coordinates[0], coordinates[1]];
+
+        setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
+        setAddressData(data.features[0].properties);
+        setIsLoading(false);
+
+        map.flyTo({
+          center: endPoint,
+          zoom: 16,
+        });
+
+        if (marker) {
+          marker.remove();
+        }
+
+        let el = document.createElement('div');
+        el.id = 'markerWithExternalCss';
+
+        // Add the new marker to the map and update the marker state
+        const newMarker = new maplibregl.Marker(el)
+          .setLngLat(endPoint)
+          .addTo(map);
+        setMarker(newMarker);
+      } catch (error) {
+        setIsLoading(false);
+        console.error(error);
+      }
+    };
+
+    goToAddress();
+  }, [flyToAddress, map]);
+
+  useEffect(() => {
+    if (flyToAddress === address) setShowOptions(false);
+    if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
+  }, [flyToAddress, address]);
+
+  const handleSelectAddress = (placeName) => {
+    setAddress(placeName);
+    setFlyToAddress(placeName);
+    setShowOptions(false);
+  };
+
+  return (
+    <Fragment>
+      <Head>
+        <title>Marketplace: Rent</title>
+      </Head>
+      {isLoading && <Backdrop />}
+      {isLoading && <Spinner />}
+      {/* <div className=" bg-black w-screen h-screen ">
 
 
                 </div> */}
-                
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center gap-[15px] overflow-hidden ">
-                <Sidebar />
-                
-                <div className="w-full h-full flex flex-col">
-                
-                    <PageHeader pageTitle={isMobile ? 'Rent' : 'Marketplace: Rent'} />
-                    {isMobile && <ExplorerMobile address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} />}
-                    <section className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px]`}>
-                        <div
-                            className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0`}
-                            //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
-                            
-                            id='map'
-                            style={{ zIndex: '20' }}
-                        />
-                         {!isMobile && <div className="flex justify-start items-start">
-                            <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData} user1={user1}/>
-                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress} user1={user1}/>}
-                        
-                        </div>}
-                    </section>
-                </div>
-            </div>
-        </Fragment>
-    )
-}
+
+      <div className='relative flex h-screen w-screen items-center justify-center gap-[15px] overflow-hidden rounded bg-[#F0F0FA] '>
+        <Sidebar />
+
+        <div className='flex h-full w-full flex-col'>
+          <PageHeader pageTitle={isMobile ? 'Rent' : 'Marketplace: Rent'} />
+          {isMobile && (
+            <ExplorerMobile
+              address={address}
+              setAddress={setAddress}
+              addresses={addresses}
+              showOptions={showOptions}
+              handleSelectAddress={handleSelectAddress}
+            />
+          )}
+          <section
+            className={`relative mb-[79px] flex h-full w-full items-start justify-start md:mb-0`}
+          >
+            <div
+              className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-full`}
+              //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
+
+              id='map'
+              style={{ zIndex: '20' }}
+            />
+            {!isMobile && (
+              <div className='flex items-start justify-start'>
+                <Explorer
+                  address={address}
+                  setAddress={setAddress}
+                  addresses={addresses}
+                  showOptions={showOptions}
+                  handleSelectAddress={handleSelectAddress}
+                  regAdressShow={regAdressShow}
+                  registeredAddress={registeredAddress}
+                  map={map}
+                  marker={marker}
+                  setMarker={setMarker}
+                  showClaimModal={showClaimModal}
+                  setShowClaimModal={setShowClaimModal}
+                  rentData={rentData}
+                  setRentData={setRentData}
+                  user1={user1}
+                />
+                {showClaimModal && (
+                  <ClaimModal
+                    setShowClaimModal={setShowClaimModal}
+                    rentData={rentData}
+                    setIsLoading={setIsLoading}
+                    regAdressShow={regAdressShow}
+                    registeredAddress={registeredAddress}
+                    user1={user1}
+                  />
+                )}
+              </div>
+            )}
+          </section>
+        </div>
+      </div>
+    </Fragment>
+  );
+};
 
 export default Rent;
