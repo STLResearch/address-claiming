@@ -254,7 +254,7 @@ const Referral = () => {
         (async () => {
             try {
                 const response = await getPropertiesByUserId(blockchainAddress, id);
-                console.log('marcin', user, response)
+                console.log('from the reff page', user, response)
                 setData(prev => ({ ...prev, validatedProperties: response.filter(i => i.isActive).length, registeredAirspaces: response.length }));
             } catch (error) {
                 console.log(error);

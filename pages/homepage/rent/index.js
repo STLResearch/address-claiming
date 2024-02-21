@@ -12,9 +12,11 @@ import { useMobile } from "@/hooks/useMobile";
 import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
-
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 const SuccessModal = ({ setShowSuccess,finalAns, rentData}) => {
        return (
@@ -44,16 +46,19 @@ const SuccessModal = ({ setShowSuccess,finalAns, rentData}) => {
 }
 
 
-
 const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1}) => {
+    
+    const defaultValueDate =dayjs().add(1,'h').set('minute', 30).startOf('minute');
+    const maxDate=dayjs().add(29,'day')
     const [owner,setOwner]=useState({});
     const [landAssetIds,setLandAssetIds]=useState([])
-    const [date,setDate]=useState('');
-    const [time,setTime]=useState('');
+    const [date,setDate]=useState(defaultValueDate);
+  
     const [showSuccess,setShowSuccess]=useState(false)
-    //const [solanaWallet,setSolanaWallet]=useState()
+   
     const [finalAns,setfinalAns]=useState('');
     const { user: selectorUser } = useAuth();
+
     console.log("yo selector user",selectorUser)
 
     useEffect(() => {
@@ -128,7 +133,7 @@ console.log("solanaWallet=",balance)// ui info wrong
 
         setIsLoading(true)
         
-
+ 
         const chainConfig = {
             chainNamespace: 'solana',
             chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
@@ -148,39 +153,30 @@ console.log("solanaWallet=",balance)// ui info wrong
         // await web3auth.connect();
         const web3authProvider = await web3auth.connect();
 
-const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
+const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
 
 
 
         console.log("date ansd time")
-        console.log(time)
-        console.log(date)
-        let startDate=new Date(`${date} ${time}`)
+        console.log("da1",date.toString())
+        //console.log("da2",time.add(30,'minute').toString())
+         let startDate=new Date(date.toString())
         let endDate = new Date(startDate.getTime()); 
         endDate.setMinutes(endDate.getMinutes() + 30);
-        console.log("start",startDate)
-        console.log(endDate)
-        if(startDate.getMinutes()%30!=0){
+        console.log("start date in date fm",startDate)
+        console.log('endtart date in date fm',endDate) 
+
+         if(startDate.getMinutes()%30!=0){
             setfinalAns({status:'Rent failed',
                 message:'Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on.'
         })
         setShowSuccess(true)
         setIsLoading(false)
         }else{
-            
-                /* //testing purpose land asset
-                if(rentData?.layers.length==0){
-                    setLandAssetIds([`${process.env.NEXT_PUBLIC_SOLANA_TESTLANDASSETID}`])
-                    console.log("landASSTIdTest==",landAssetIds)
-
-                } */
                     setLandAssetIds([rentData?.layers[0].tokenId]);
                     console.log("landASSTId==",landAssetIds)
                     console.log("res resll",rentData.layers[0].tokenId)
                 
-
-            
-    
     
             let req1Body={
                 callerAddress:selectorUser.blockchainAddress,
@@ -392,9 +388,9 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
     
     
         setIsLoading(false)
-        }
+        } 
        
-     }
+     }// handle air space
 
 
     if(showSuccess){
@@ -404,8 +400,21 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
             </>
         )
     }
+    const shouldDisableTime = (value, view) =>{
+        if( view === 'minutes' && value.minute() >= 1 && value.minute()<=29){
+            return true;
+        }else if(view === 'minutes' && value.minute() >= 31 && value.minute()<=59){
+            return true
+        }else{
+            return false;
+
+        }
+    }
+   
+ 
     return (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px]">
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <div style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px]">
             <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                 <div className="w-[16px] h-[12px] md:hidden" onClick={()=>{console.log("ggdgdgdg")}}><ArrowLeftIcon /></div>
                 <h2 className="text-[#222222] text-center font-medium text-xl"> Airspace Details</h2>
@@ -419,28 +428,21 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
             <span>Owner</span><span>  {owner?owner.name:"grgr"}</span>
             </div>
             <div className="flex items-center justify-evenly gap-[20px] text-[14px]">
-            <div className="flex flex-col gap-[5px] w-1/2">
-                <label htmlFor="rentalDate">Rental Date<span className="text-[#E04F64]">*</span></label>
-                <input type="Date" required value={date} onChange={(e)=>{setDate(e.target.value)
-               
-                }}  className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }}  name="rentalDate" id="rentalDate" autoComplete="off" />
+            <div className="flex flex-col gap-[5px] w-full">
+                <label htmlFor="rentalDate" >Rental Date and Time<span className="text-[#E04F64]">*</span></label>
+                <DateTimePicker value={date} onChange={(e)=>{setDate(e);}} disablePast maxDate={maxDate}
+            shouldDisableTime={shouldDisableTime} />
             </div>
-                
-                
-            <div className="flex flex-col gap-[5px] w-1/2">
-            
-                <label htmlFor="rentalTime">Rental Time<span className="text-[#E04F64]">*</span></label>
-                <input type="time" value={time} onChange={(e)=>{setTime(e.target.value)}} required={true} className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }}  name="rentalTime" id="rentalTime" autoComplete="off" />
-            </div>
-            
+           
             
             </div>
            
                 <div className="flex items-center justify-center gap-[20px] text-[14px]">
                 <div onClick={()=>{setShowClaimModal(false)}} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2" style={{ border: "1px solid #0653EA" }}>Cancel</div>
-                <div onClick={handleRentAirspace} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">rent Airspace</div>
+                <div onClick={handleRentAirspace} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">Rent Airspace</div>
             </div>
         </div>
+        </LocalizationProvider>
     )
 }
 
@@ -459,8 +461,9 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                 <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
                     <MagnifyingGlassIcon />
                 </div>
+                </div>
                  {showOptions && (
-                    <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
+                    <div className="absolute top-[55px] left-0 bg-white z-20 w-full flex-col">
                         {addresses.map((item) => {
                             return (
                                 <div
@@ -479,7 +482,8 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                     </div>
                 )}
                 {regAdressShow && (
-                    <div className="absolute top-[55px] left-0 mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll">
+                    <div  style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className=" mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll">
+                        
                         {registeredAddress.map((item)=>{
             //add popup to black ones
                 const rentCLickHandler=()=>{
@@ -504,7 +508,7 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
 }
 
 const onClickRent=() =>{
-    console.log("hello==",rentData)
+    console.log("hello rent data==",rentData)
     setRentData(item)
     setShowClaimModal(true)
      
@@ -517,19 +521,19 @@ const onClickRent=() =>{
                                     value={item.address}
                                     onClick={rentCLickHandler}
                                     
-                                    className={item.id!=selectedAddress?` p-5 text-left text-[#913636] w-full flex justify-between text-[10px]`:`bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[10px]`}
+                                    className={item.id!=selectedAddress?` p-5 text-left text-[#913636] w-full flex justify-between text-[12px]`:`bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[10px]`}
                                     style={{
                                         borderTop: '5px solid #FFFFFFCC',
                                     }}
                                 >
 
-                                    {item.address}<h1 className={item.id!=selectedAddress?" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2":" text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"}>15</h1><span onClick={onClickRent} className={item.id!=selectedAddress?"bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2":"bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2"}>RENT</span>
+                                    <h3 className="text-black pt-[0.6rem]">{item.address}</h3><h1 className={item.id!=selectedAddress?" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2":" text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"}>$1</h1><span onClick={onClickRent} className={item.id!=selectedAddress?"bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2":"bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2"}>RENT</span>
                                 </div>
                             )
                         })}
                     </div>
                 )} 
-            </div>
+            
         </div>
     )
 }
@@ -588,7 +592,7 @@ const Rent = () => {
     const [showClaimModal,setShowClaimModal]=useState(false)
     console.log("front")
     const defaultData = {
-        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
+        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: null, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
@@ -704,7 +708,7 @@ const Rent = () => {
 
 
             });
-            newMap.on('wheel', async(e) => {
+            newMap.on('move', async(e) => {
 
                 let el = document.createElement('div');
                 
@@ -779,7 +783,7 @@ const Rent = () => {
                 }                
                 // Add the new marker to the map and update the marker state
                 let res=await fetch(`/api/proxy?${Date.now()}`,{
-                    method: 'GET',
+                    method: 'POST',
                     headers: {
                       Accept: 'application/json',
                       'Content-Type': 'application/json',
@@ -790,9 +794,17 @@ const Rent = () => {
             time: signatureObj.sign_issue_at,
             nonce: signatureObj.sign_nonce,
             address: signatureObj.sign_address,
-                    }
+                    },
+                    body:JSON.stringify({
+                        minLongitude:crds._sw.lng,
+                        minLatitude:crds._sw.lat,
+                        maxLongitude:crds._ne.lng,
+                        maxLatitude:crds._ne.lat,
+
+                    })
                 })
                 res=await res.json();
+                console.log("returned from the api property",res)
                 //res=res.slice(0,5)
                 let ans,features1=[];
                  if(res){
@@ -835,10 +847,7 @@ const Rent = () => {
                   
                //console.log("new bounds",crds)
                 });
-
-                newMap.on('click',(e)=>{
-                    //console.log(e.point.x,e.point.y)
-                })
+                               
 
               
 
@@ -970,16 +979,16 @@ const Rent = () => {
 
                 </div> */}
                 
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center gap-[15px] overflow-hidden ">
+            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center  overflow-hidden ">
                 <Sidebar />
                 
                 <div className="w-full h-full flex flex-col">
                 
                     <PageHeader pageTitle={isMobile ? 'Rent' : 'Marketplace: Rent'} />
                     {isMobile && <ExplorerMobile address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} />}
-                    <section className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px]`}>
+                    <section className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}>
                         <div
-                            className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0`}
+                            className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0 `}
                             //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
                             
                             id='map'

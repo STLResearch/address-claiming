@@ -38,10 +38,9 @@ const PartOne = ({ setPart }) => {
 
 const IndividualSignup = () => {
     const [part, setPart] = useState(0);
-
+    const [name,setName] = useState('');
+    const [phoneNumber,setPhoneNumber] = useState('');
     const newsletterRef = useRef();
-    const nameRef = useRef();
-    const phoneNumberRef = useRef();
     const referralCodeRef = useRef();
 
     const router = useRouter();
@@ -55,7 +54,7 @@ const IndividualSignup = () => {
     const [newsletter, setNewsletter] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [pageLoad, setPageLoad] = useState(true);
-
+    const [referralDisabled,setReferralDisabled] = useState(false);
     useEffect(() => {
         console.log(status);
         console.log(typeof status);
@@ -68,6 +67,7 @@ const IndividualSignup = () => {
             if (!codeString) return;
             const { id, code } = JSON.parse(codeString).response;
             setReferralCode({ id, code })
+            setReferralDisabled(true)
         }
     }, [global?.window]);
 
@@ -100,10 +100,11 @@ const IndividualSignup = () => {
         return true;
     }
 
+
     const formSubmitHandler = (e) => {
         e.preventDefault();
 
-        const [name, phoneNumber, referralCode] = [nameRef, phoneNumberRef, referralCodeRef].map(ref => ref.current?.value);
+        const [  referralCode] = [, referralCodeRef].map(ref => ref.current?.value);
 
         if (!checkNameIsValid(name)) {
             setIsNameValid(false);
@@ -157,17 +158,16 @@ const IndividualSignup = () => {
                         token: temporaryToken,
                         user: response,
                     });
-
-                    nameRef.current.value = '';
-                    phoneNumberRef.current.value = '';
+                    setName('');
+                    setPhoneNumber('');
                     referralCodeRef.current.value = '';
+
 
                     router.replace('/homepage/dashboard2');
                 });
             })
             .catch((error) => {
                 console.log(error);
-
                 swal({
                     title: 'Sorry!',
                     text: `Something went wrong, please try again.`,
@@ -218,8 +218,11 @@ const IndividualSignup = () => {
                                     </label>
                                     <input
                                         type='name'
-                                        ref={nameRef}
-                                        onChange={() => setIsNameValid(true)}
+                                        value={name}
+                                        onChange={(e) => {
+                                            setIsNameValid(true); 
+                                            setName(e.target.value);
+                                        }}
                                         placeholder='John Doe'
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isNameValid ? '1px solid #87878D' : '1px solid #E04F64' }}
@@ -239,8 +242,11 @@ const IndividualSignup = () => {
                                     </label>
                                     <input
                                         type='text'
-                                        ref={phoneNumberRef}
-                                        onChange={() => setIsPhoneNumberValid(true)}
+                                        value={phoneNumber}
+                                        onChange={(e) => {
+                                            setIsPhoneNumberValid(true);
+                                            setPhoneNumber(e.target.value);
+                                            }}
                                         placeholder='Enter your phone number'
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isPhoneNumberValid ? '1px solid #87878D' : '1px solid #E04F64' }}
@@ -286,6 +292,8 @@ const IndividualSignup = () => {
                                         ref={referralCodeRef}
                                         value={referralCode.code}
                                         placeholder='Enter referral code'
+                                        onChange={(event)=>setReferralCode({ ...referralCode, code: event.target.value })}
+                                        disabled={referralDisabled}
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isReferralCodeValid ? '1px solid #87878D' : '1px solid #E04F64' }}
                                     />
