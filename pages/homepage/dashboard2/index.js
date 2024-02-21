@@ -480,7 +480,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px]">
-                    Claim Airspace
+                    Claim Airspaces
                   </div>
                 </Link>
               </div>
