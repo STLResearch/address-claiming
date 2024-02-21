@@ -16,20 +16,22 @@ export default function App({ Component, pageProps }) {
   useEffect(() => {
     var Tawk_API = global?.Tawk_API || undefined;
     if (!Tawk_API) return;
+
     if (isMobile) {
-      if (Tawk_API.hideWidget !== undefined) {
-        Tawk_API.hideWidget();
-      } else {
-        setDoItAgain(prev => !prev)
-      }
+        if (Tawk_API.hideWidget !== undefined) {
+            Tawk_API.hideWidget();
+        } else if (!doItAgain) { 
+            setDoItAgain(true);
+        }
     } else {
-      if (Tawk_API.showWidget !== undefined) {
-        Tawk_API.showWidget();
-      } else {
-        setDoItAgain(prev => !prev)
-      }
+        if (Tawk_API.showWidget !== undefined) {
+            Tawk_API.showWidget();
+        } else if (doItAgain) { 
+            setDoItAgain(false);
+        }
     }
-  }, [isMobile, global.Tawk_API, doItAgain]);
+}, [isMobile, global.Tawk_API, doItAgain]);
+
 
   return (
     <AuthProvider>

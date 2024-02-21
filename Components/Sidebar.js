@@ -140,7 +140,8 @@ const Sidebar = () => {
           transition: 'width 0.3s ease',
         }}
       >
-        <Image
+       <a href={'/homepage/dashboard2'}>
+          <Image
           src={logoNoChars}
           alt="Company's logo"
           width={isCollapsed ? 44.62 : 0}
@@ -148,6 +149,7 @@ const Sidebar = () => {
           className={`${isCollapsed ? 'mb-[29.27px] h-[51px] w-[44.62px] opacity-100' : 'mb-0 h-0 w-0 opacity-0'}`}
           style={{ transition: 'all 0.3s ease' }}
         />
+        </a>
         <Image
           src={logo}
           alt="Company's logo"

@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import Script from 'next/script';
+
 
 import { Web3AuthNoModal } from '@web3auth/no-modal';
 import { SolanaPrivateKeyProvider } from '@web3auth/solana-provider';
@@ -390,7 +390,7 @@ const Signup = () => {
       {isLoading &&
         createPortal(<Spinner />, document.getElementById('backdrop-root'))}
       {!categorySect && !isVisitYourInboxVisible && (
-        <div className='relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA] max-sm:bg-[white]'>
+        <div className='relative flex h-screen w-screen items-center justify-center overflow-y-scroll rounded bg-[#F0F0FA] max-sm:bg-[white]'>
           <form
             className='relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]'
             style={{
@@ -421,7 +421,7 @@ const Signup = () => {
               >
                 Email<span className='text-[#E04F64]'>*</span>
               </label>{' '}
-              <br />
+              
               <input
                 type='email'
                 name='email'
