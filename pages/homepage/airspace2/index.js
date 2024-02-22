@@ -315,7 +315,7 @@ const Slider = () => {
 
     return (
         <div onClick={() => setIsFullyVisible(prev => !prev)} className={`cursor-pointer rounded-t-[30px] absolute ${isFullyVisible ? 'bottom-0' : '-bottom-[600px]'} right-6 flex flex-col items-center gap-[34px] py-[43px] px-[23px] bg-white max-w-[362px] duration-5000 z-50`}>
-            <div className="flex items-center gap-[0px]">
+            <div className="flex items-center gap-[4px]">
                 <div className="flex items-center justify-center w-[24px] h-[24px]"><HelpQuestionIcon /></div>
                 <p className="font-medium text-xl text-[#222222] text-center">How to Claim My Airspsace?</p>
             </div>
