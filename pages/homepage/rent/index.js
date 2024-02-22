@@ -18,8 +18,9 @@ import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 import dayjs from 'dayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-
-const SuccessModal = ({ setShowSuccess,finalAns, rentData}) => {
+import dayjs from 'dayjs';
+import Head from "next/head";
+const SuccessModal = ({ setShowSuccess,finalAns}) => {
 
        return (
         <div className={`w-[100%] max-w-[20rem] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}>
@@ -275,147 +276,157 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
 
             console.log("signature obj  ", signatureObj)
 
+try {
+    let res=await  fetch(`/api/proxy?${Date.now()}`,{
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          
+          uri: `/private/airspace-rental/create-mint-rental-token-ix`,
+          sign: signatureObj.sign,
+          time: signatureObj.sign_issue_at,
+          nonce: signatureObj.sign_nonce,
+          address: signatureObj.sign_address,
 
-
-              let res=await  fetch(`/api/proxy?${Date.now()}`,{
-                method: 'POST',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  
-                  uri: `/private/airspace-rental/create-mint-rental-token-ix`,
-                  sign: signatureObj.sign,
-                  time: signatureObj.sign_issue_at,
-                  nonce: signatureObj.sign_nonce,
-                  address: signatureObj.sign_address,
-
-                },
-                body:JSON.stringify(req1Body)
-              })
-              res=await res.json()
-              console.log("res body",res)
-              if(res.statusCode==400){
-                setShowSuccess(true)
-                setfinalAns({status:'Rent failed',
-                message:res.data.message
-                
-        })
-        setIsLoading(false)
-        return
-              }
-              const transaction = Transaction.from(Buffer.from(res, 'base64'));
-              //let partialsignedTx=transaction.partialSign(solanaWallet);
-              //console.log("is solana wallet partial=",partialsignedTx)
-               const signedTx = await solanaWallet.signTransaction(transaction);
-         console.log(signedTx); 
-        let serializedTx=signedTx.serialize({requireAllSignatures:false})
-        let txToString=serializedTx.toString('base64');
-        if(signedTx){
-            let req2body={
-                transaction:txToString,
-                landAssetIds:[rentData?.layers[0].tokenId],
-                startTime:startDate.toISOString(),
-                endTime:endDate.toISOString(),
-            }
-            console.log("final exexution",JSON.stringify(req2body))
-             signatureObj={}
-            if(user1){
-                const chainConfig = {
-                    chainNamespace: 'solana',
-                    chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-                    displayName: 'Solana Mainnet',
-                    blockExplorer: 'https://explorer.solana.com',
-                    ticker: 'SOL',
-                    tickerName: 'Solana',
-                  };
-          
-                  const web3auth = new Web3Auth({
-                    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-          
-                    web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-                    chainConfig: chainConfig,
-                  });
-          
-                  await web3auth.initModal();
-          
-                  const web3authProvider = await web3auth.connect();
-          
-                  const solanaWallet = new SolanaWallet(web3authProvider);
-          
-                  // const userInfo = await web3auth.getUserInfo();
-          
-                  const domain = window.location.host;
-                  // const domain = 'localhost:3000';
-                  const origin = window.location.origin;
-                  // const origin = 'http://localhost:3000';
-          
-                  const payload = new SIWPayload();
-                  payload.domain = domain;
-                  payload.uri = origin;
-                  payload.address = user1.blockchainAddress;
-                  payload.statement = 'Sign in to SkyTrade app.';
-                  payload.version = '1';
-                  payload.chainId = 1;
-          
-                  const header = { t: 'sip99' };
-                  const network = 'solana';
-          
-                  let message = new SIWWeb3({ header, payload, network });
-          
-                  const messageText = message.prepareMessage();
-                  const msg = new TextEncoder().encode(messageText);
-                  const result = await solanaWallet.signMessage(msg);
-          
-                  const signature = base58.encode(result);
-          
-                  signatureObj.sign = signature;
-                  signatureObj.sign_nonce = message.payload.nonce;
-                  signatureObj.sign_issue_at = message.payload.issuedAt;
-                  signatureObj.sign_address = user1.blockchainAddress;
+        },
+        body:JSON.stringify(req1Body)
+      })
+      res=await res.json()
+      console.log("res body",res)
+      if(res.statusCode==400){
+        setShowSuccess(true)
+        setfinalAns({status:'Rent failed',
+        message:res.data.message
+        
+})
+setIsLoading(false)
+return
+      }
+      const transaction = Transaction.from(Buffer.from(res, 'base64'));
+      //let partialsignedTx=transaction.partialSign(solanaWallet);
+      //console.log("is solana wallet partial=",partialsignedTx)
+       const signedTx = await solanaWallet.signTransaction(transaction);
+ console.log(signedTx); 
+let serializedTx=signedTx.serialize({requireAllSignatures:false})
+let txToString=serializedTx.toString('base64');
+if(signedTx){
+    let req2body={
+        transaction:txToString,
+        landAssetIds:[rentData?.layers[0].tokenId],
+        startTime:startDate.toISOString(),
+        endTime:endDate.toISOString(),
+    }
+    console.log("final exexution",JSON.stringify(req2body))
+     signatureObj={}
+    if(user1){
+        const chainConfig = {
+            chainNamespace: 'solana',
+            chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+            displayName: 'Solana Mainnet',
+            blockExplorer: 'https://explorer.solana.com',
+            ticker: 'SOL',
+            tickerName: 'Solana',
+          };
   
+          const web3auth = new Web3Auth({
+            clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
   
+            web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+            chainConfig: chainConfig,
+          });
+  
+          await web3auth.initModal();
+  
+          const web3authProvider = await web3auth.connect();
+  
+          const solanaWallet = new SolanaWallet(web3authProvider);
+  
+          // const userInfo = await web3auth.getUserInfo();
+  
+          const domain = window.location.host;
+          // const domain = 'localhost:3000';
+          const origin = window.location.origin;
+          // const origin = 'http://localhost:3000';
+  
+          const payload = new SIWPayload();
+          payload.domain = domain;
+          payload.uri = origin;
+          payload.address = user1.blockchainAddress;
+          payload.statement = 'Sign in to SkyTrade app.';
+          payload.version = '1';
+          payload.chainId = 1;
+  
+          const header = { t: 'sip99' };
+          const network = 'solana';
+  
+          let message = new SIWWeb3({ header, payload, network });
+  
+          const messageText = message.prepareMessage();
+          const msg = new TextEncoder().encode(messageText);
+          const result = await solanaWallet.signMessage(msg);
+  
+          const signature = base58.encode(result);
+  
+          signatureObj.sign = signature;
+          signatureObj.sign_nonce = message.payload.nonce;
+          signatureObj.sign_issue_at = message.payload.issuedAt;
+          signatureObj.sign_address = user1.blockchainAddress;
 
-            } 
-            let ans2=await fetch(
-                `/api/proxy?${Date.now()}`,
-                {
-                  method: 'POST',
-                  headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    
-                    uri: `/private/airspace-rental/execute-mint-rental-token-ix`,
-                    sign: signatureObj.sign,
-                    time: signatureObj.sign_issue_at,
-                    nonce: signatureObj.sign_nonce,
-                    address: signatureObj.sign_address,
-                  },
-                  body: JSON.stringify(req2body),
-                }
-              );
-              ans2=await ans2.json();
-        console.log("execute result",ans2)
-        if(ans2) {
-            if(ans2.data.status=='success'){
-                setfinalAns({status:'Rent SuccessFull',
-                    message:ans2.data.message
-            })
-            }else{
-                setfinalAns({status:'Rent failed',
-                    message:ans2.data.message
-            })
-            }
-    
-            setShowSuccess(true)
-    
-    
+
+
+    } 
+    let ans2=await fetch(
+        `/api/proxy?${Date.now()}`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            
+            uri: `/private/airspace-rental/execute-mint-rental-token-ix`,
+            sign: signatureObj.sign,
+            time: signatureObj.sign_issue_at,
+            nonce: signatureObj.sign_nonce,
+            address: signatureObj.sign_address,
+          },
+          body: JSON.stringify(req2body),
         }
-        }
-         
+      );
+      ans2=await ans2.json();
+console.log("execute result",ans2)
+if(ans2) {
+    if(ans2.data.status=='success'){
+        setfinalAns({status:'Rent SuccessFull',
+            message:ans2.data.message
+    })
+    }else{
+        setfinalAns({status:'Rent failed',
+            message:ans2.data.message
+    })
+    }
+
+    setShowSuccess(true)
+
+    setIsLoading(false)
+}
+}
+ 
+    
+} catch (error) {
+    setfinalAns({status:'Rent failed',
+    message:error
+})
+
+    setIsLoading(false)
+    
+}
+
+             
     
     
-        setIsLoading(false)
+       
         } 
        
      }
@@ -999,6 +1010,7 @@ const Rent = () => {
 
     return (
         <Fragment>
+            <Head><title>SkyTrade - Marketplace : Rent</title></Head>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
             {/* <div className=" bg-black w-screen h-screen ">

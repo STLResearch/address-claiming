@@ -9,6 +9,7 @@ import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
+import Head from "next/head";
 
 const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress }) => {
     return (
@@ -249,6 +250,11 @@ const Buy = () => {
 
     return (
         <Fragment>
+            <Head>
+                <title>
+                    SkyTrade - Marketplace : Buy
+                </title>
+            </Head>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
 

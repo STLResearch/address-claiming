@@ -12,6 +12,8 @@ import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
 import Link from "next/link";
+import axios from "axios";
+import Head from "next/head";
 
 const Toggle = ({ checked, setChecked }) => {
     return (
@@ -527,56 +529,32 @@ const Airspaces = () => {
                 bounds:[[-73.9876, 40.7661], [-73.9397, 40.8002]]
                 // attributionControl: false
             })
-            
-
-     console.log("mapp  = ",newMap.getBounds())
-
-            newMap.on('load', function () {
-                geolocate.trigger()
-            
-                newMap.addLayer({
-                    id: 'maine',
-                    type: 'fill',
-                    source: {
-                        type: 'geojson',
-                        data: {
-                            type: 'Feature',
-                            geometry: {
-                                type: 'Polygon',
-                                coordinates: [],
-                            },
+           
+             
+    newMap.on('load', function () {
+            newMap.addLayer({
+                id: 'maine',
+                type: 'fill',
+                source: {
+                    type: 'geojson',
+                    data: {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Polygon',
+                            coordinates: [],
                         },
                     },
-                    layout: {},
-                    paint: {
-                        'fill-color': '#D20C0C',
-                    },
-                });
-                newMap.flyTo({
-                    center: [
-                       -74.5 + (Math.random() - 0.5) * 10,
-                       40 + (Math.random() - 0.5) * 10
-                    ],
-                    essential: true
-                 });
+                },
+                layout: {},
+                paint: {
+                    'fill-color': '#D20C0C',
+                },
             });
-
-            
-            // Add geolocate control to the map. it enables access to the browser's Geolocation API to provide the user's current location.
-           
-          const geolocate = new mapboxgl.GeolocateControl({
-                  positionOptions: {
-                    enableHighAccuracy: true
-                  },
-                  trackUserLocation: true
-                })
-                newMap.addControl (geolocate)
-
-
-
-            setMap(newMap);
+        });
+        
+    setMap(newMap);
+    flyToUserIpAddress(newMap)
         }
-
         createMap();
     }, []);
 
@@ -731,11 +709,34 @@ const Airspaces = () => {
             console.log(error)
         }
     }
-
+    const flyToUserIpAddress = async (map) => {
+        if (!map) {
+            return;
+        }
+        try {
+            const ipResponse = await axios.get("https://api.ipify.org/?format=json");
+            const ipAddress = ipResponse.data.ip;
+            const  ipGeolocationApiUrl = await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`);
+            const latitude = parseFloat(ipGeolocationApiUrl.data.latitude);
+            const longitude = parseFloat(ipGeolocationApiUrl.data.longitude);
     
+            if (isNaN(latitude) || isNaN(longitude)) {
+                return;
+            }
+            map.flyTo({
+                center: [longitude, latitude],
+                zoom: 15 
+            });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
     return (
         <Fragment>
+            <Head>
+                <title>SkyTrade - Airspaces</title>
+            </Head>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
 
