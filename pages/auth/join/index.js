@@ -24,6 +24,7 @@ import swal from 'sweetalert';
 import logo from '../../../public/images/logo.jpg';
 
 import { useSignature } from '@/hooks/useSignature';
+import Head from 'next/head';
 
 const chainConfig = {
   chainNamespace: 'solana',
@@ -385,6 +386,9 @@ const Signup = () => {
 
   return (
     <Fragment>
+      <Head>
+        <title>StyTrade - Login</title>
+      </Head>
       {isLoading &&
         createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
       {isLoading &&

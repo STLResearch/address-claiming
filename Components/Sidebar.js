@@ -10,6 +10,7 @@ import logoNoChars from '../public/images/logo-no-chars.png';
 import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon } from './Icons';
 import { useAuth } from '@/hooks/useAuth';
 
+
 const Sidebar = () => {
   const router = useRouter();
   const { asPath } = router;
@@ -67,10 +68,10 @@ const Sidebar = () => {
 
   const logoutHandler = () => {
     setIsLoading(true);
-    localStorage.removeItem('openlogin_store');
-    localStorage.removeItem('user');
-    localStorage.removeItem('signature');
-    router.replace('/auth/join');
+
+    localStorage.clear();
+  
+    router.push('/auth/join');
   };
 
   return (
@@ -83,7 +84,8 @@ const Sidebar = () => {
         className='md:flex hidden relative border-e-2 bg-white px-[21.95px] py-[29.27px] items-center flex-col gap-[14.64px]'
         style={{ width: !isCollapsed ? '297.29px' : "98.2833px", height: '100vh', transition: "width 0.3s ease" }}
       >
-        <Image
+       <a href={'/homepage/dashboard2'}>
+          <Image
           src={logoNoChars}
           alt="Company's logo"
           width={isCollapsed ? 44.62 : 0}
@@ -91,6 +93,7 @@ const Sidebar = () => {
           className={`${isCollapsed ? 'opacity-100 mb-[29.27px] w-[44.62px] h-[51px]' : 'opacity-0 mb-0 w-0 h-0'}`}
           style={{ transition: "all 0.3s ease" }}
         />
+        </a>
         <Image
           src={logo}
           alt="Company's logo"

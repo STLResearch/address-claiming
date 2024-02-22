@@ -9,6 +9,7 @@ import { useMobile } from "@/hooks/useMobile";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import useOrigin from "@/hooks/useOrigin";
+import Head from "next/head";
 
 const Item = ({ icon, title, text }) => {
     return (
@@ -266,6 +267,7 @@ const Referral = () => {
 
     return (
         <Fragment>
+            <Head><title>SkyTrade - Referral Program</title></Head>
             {isLoading && createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
             {isLoading && createPortal(<Spinner />, document.getElementById('backdrop-root'))}
 

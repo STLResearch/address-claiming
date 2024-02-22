@@ -3,6 +3,7 @@ import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Link from "next/link";
+import Head from "next/head";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -23,6 +24,9 @@ const Marketplace = () => {
 
     return (
         <Fragment>
+            <Head>
+                <title>SkyTrade - Marketplace</title>
+            </Head>
             {isLoading && createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
             {isLoading && createPortal(<Spinner />, document.getElementById('backdrop-root'))}
 

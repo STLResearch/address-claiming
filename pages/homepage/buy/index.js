@@ -9,6 +9,7 @@ import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
+import Head from "next/head";
 
 const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress }) => {
     return (
@@ -92,7 +93,7 @@ const Buy = () => {
     const [coordinates, setCoordinates] = useState({ longitude: '', latitude: '' })
     const [marker, setMarker] = useState();
     const defaultData = {
-        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
+        address: flyToAddress, name: '',  rent: true, sell: false, hasPlanningPermission: null, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
@@ -249,6 +250,11 @@ const Buy = () => {
 
     return (
         <Fragment>
+            <Head>
+                <title>
+                    SkyTrade - Marketplace : Buy
+                </title>
+            </Head>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
 
