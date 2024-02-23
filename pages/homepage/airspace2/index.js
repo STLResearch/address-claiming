@@ -7,7 +7,7 @@ import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
-import { HelpQuestionIcon, ArrowLeftIcon, CloseIcon, LocationPointIcon, SuccessIcon, EarthIcon } from "@/Components/Icons";
+import { HelpQuestionIcon, ArrowLeftIcon, CloseIcon, LocationPointIcon, SuccessIcon, EarthIcon,ChevronRightIcon } from "@/Components/Icons";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
@@ -234,8 +234,31 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
     )
 }
 
-const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress, onClaimAirspace, flyToAddress }) => {
+const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress, claimedProperty, onClaimAirspace, flyToAddress }) => {
     const [isInfoVisible, setIsInfoVisible] = useState(false);
+
+    const displayClaimBtn = () => {
+        if (claimedProperty){
+            return (
+                <div className=" max-w-[320px] max-h-full z-20">
+                <div>
+                <h1 className="mt-2 text-[20px] font-medium text-[#222222] text-center">My Airspaces</h1>
+                </div>
+                    <div className="space-x-4 px-4 py-4 w-full mt-2  border flex items-center  bg-[#FFFFFF] rounded-lg  cursor-pointer  ">
+                    
+                      <div className=" w-6 h-6"><LocationPointIcon /></div>
+                        <p className="flex-1 min-w-0 font-normal text-[#222222] text-[15px] overflow-hidden whitespace-nowrap overflow-ellipsis">{claimedProperty.name} </p>
+                       <div  className="w-4 h-4" ><ChevronRightIcon /></div>
+                        
+                    </div>
+            </div>
+            )
+        } else if(flyToAddress){
+            return (
+                <div onClick={onClaimAirspace} className="bg-[#0653EA] text-white rounded-lg py-[16px] text-center text-[15px] font-normal cursor-pointer w-full">Claim Airspace</div>
+            )
+        }
+    }
 
     return (
         <div className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
@@ -272,7 +295,7 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                     </div>
                 )}
             </div>
-            {flyToAddress && <div onClick={onClaimAirspace} className="bg-[#0653EA] text-white rounded-lg py-[16px] text-center text-[15px] font-normal cursor-pointer w-full">Claim Airspace</div>}
+            {displayClaimBtn()}
         </div>
     )
 }
@@ -434,7 +457,7 @@ const Airspaces = () => {
     const [coordinates, setCoordinates] = useState({ longitude: '', latitude: '' })
     const [marker, setMarker] = useState();
     const defaultData = {
-        address: flyToAddress, name: 'My Airspace ', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
+        address: flyToAddress, name: 'My Airspace in ', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
             { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 9 },
             { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 1 },
             { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 2 },
@@ -610,6 +633,8 @@ const Airspaces = () => {
         setShowOptions(false);
     }
 
+    const [claimedProperty, setClaimedProperty] = useState(null)
+
     const onClaim = async () => {
         try {
             const { address, name, hasChargingStation, hasLandingDeck, hasPlanningPermission, hasStorageHub, rent, timezone, transitFee, noFlyZone, isFixedTransitFee, weekDayRanges } = data;
@@ -644,6 +669,7 @@ const Airspaces = () => {
             setShowClaimModal(false);
             setData({ ...defaultData });
             setShowSuccessPopUp(true);
+            setClaimedProperty({name: data.name})
         } catch (error) {
             console.log(error)
         }
@@ -698,7 +724,7 @@ const Airspaces = () => {
                             </Fragment>
                         )}
                         {!isMobile && (<div className="flex justify-start items-start">
-                            <Explorer flyToAddress={flyToAddress} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} onClaimAirspace={() => setShowClaimModal(true)} />
+                            <Explorer flyToAddress={flyToAddress} claimedProperty={claimedProperty} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} onClaimAirspace={() => setShowClaimModal(true)} />
                             <Slider />
                             <PopUp isVisible={showSuccessPopUp} />
                             {showClaimModal && <ClaimModal onCloseModal={() => setShowClaimModal(false)} data={data} setData={setData} onClaim={onClaim} />}
