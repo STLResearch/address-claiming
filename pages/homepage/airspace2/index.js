@@ -624,7 +624,7 @@ const Airspaces = () => {
     }, [flyToAddress, address]);
 
     useEffect(() => {
-        if (!confirmationStatus || confirmationStatus === 'failed') return;
+        if (!confirmationStatus) return;
         const timeoutId = setTimeout(() => {
             setConfirmationStatus(null);
         }, 4000);
@@ -646,7 +646,7 @@ const Airspaces = () => {
             let { latitude, longitude } = coordinates;
             latitude = Number(latitude)
             longitude = Number(longitude)
-            await createProperty(user.blockchainAddress, {
+            const response = await createProperty(user.blockchainAddress, {
                 address,
                 ownerId: user.id,
                 propertyStatusId: 0,
@@ -671,10 +671,17 @@ const Airspaces = () => {
                 weekDayRanges
             })
 
+            if(!response){
+                setConfirmationStatus('failed');
+            } else {
+                setConfirmationStatus('success');
+                setClaimedProperty({name: data.name})
+            }
+
             setShowClaimModal(false);
             setData({ ...defaultData });
-            setConfirmationStatus('success');
-            setClaimedProperty({name: data.name})
+
+
         } catch (error) {
             setConfirmationStatus('failed');
         }
