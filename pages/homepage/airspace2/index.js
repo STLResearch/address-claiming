@@ -393,13 +393,18 @@ const Slider = () => {
     )
 }
 
-const PopUp = ({ isVisible }) => {
+const PopUp = ({ status }) => {
     return (
-        <div className={`absolute top-[14px] ${isVisible ? 'right-0' : '-right-[100%]'} bg-white p-5 flex items-center gap-5 duration-500 z-50`}>
+        <div className={`absolute top-[14px] right-0 bg-white p-5 flex items-center gap-5 duration-500 z-50`}>
             <div className="flex items-center justify-center w-[18px] h-[18px]">
+                {status === 'success' ? (
                 <SuccessIcon />
+                ) : (
+                    <CloseIcon />
+                )}
+
             </div>
-            Congratulations on claiming your piece of the sky successfully!
+            {status === 'failed' ? 'Failed to claim air space' : 'Congratulations on claiming your piece of the sky successfully!'}
         </div>
     );
 }
@@ -469,7 +474,7 @@ const Airspaces = () => {
     }
     // showing
     const [showOptions, setShowOptions] = useState(false);
-    const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
+    const [confirmationStatus, setConfirmationStatus] = useState(null);
     const [showClaimModal, setShowClaimModal] = useState(false);
     const [data, setData] = useState({ ...defaultData });
     // database
@@ -619,13 +624,13 @@ const Airspaces = () => {
     }, [flyToAddress, address]);
 
     useEffect(() => {
-        if (!showSuccessPopUp) return;
+        if (!confirmationStatus || confirmationStatus === 'failed') return;
         const timeoutId = setTimeout(() => {
-            setShowSuccessPopUp(false);
+            setConfirmationStatus(null);
         }, 4000);
 
         return () => clearTimeout(timeoutId)
-    }, [showSuccessPopUp])
+    }, [confirmationStatus])
 
     const handleSelectAddress = (placeName) => {
         setAddress(placeName);
@@ -668,10 +673,10 @@ const Airspaces = () => {
 
             setShowClaimModal(false);
             setData({ ...defaultData });
-            setShowSuccessPopUp(true);
+            setConfirmationStatus('success');
             setClaimedProperty({name: data.name})
         } catch (error) {
-            console.log(error)
+            setConfirmationStatus('failed');
         }
     }
     const flyToUserIpAddress = async (map) => {
@@ -726,7 +731,7 @@ const Airspaces = () => {
                         {!isMobile && (<div className="flex justify-start items-start">
                             <Explorer flyToAddress={flyToAddress} claimedProperty={claimedProperty} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} onClaimAirspace={() => setShowClaimModal(true)} />
                             <Slider />
-                            <PopUp isVisible={showSuccessPopUp} />
+                            {confirmationStatus && <PopUp status={confirmationStatus} />}
                             {showClaimModal && <ClaimModal onCloseModal={() => setShowClaimModal(false)} data={data} setData={setData} onClaim={onClaim} />}
                         </div>)}
                         {!showMobileMap && <div className="flex md:hidden flex-col w-full h-full">
