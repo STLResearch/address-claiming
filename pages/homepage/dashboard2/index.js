@@ -304,12 +304,7 @@ const Dashboard = () => {
                         }
                     })
                     setAirspaces(retrievedAirspaces)
-                    
-
                 }
-                
-                
-               
             } catch (error) {
                 console.log(error);
             }

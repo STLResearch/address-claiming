@@ -12,6 +12,7 @@ import Spinner from '@/Components/Spinner';
 import { Fragment } from 'react';
 import logo from '../../../../public/images/logo.jpg';
 import { useAuth } from '@/hooks/useAuth';
+import Head from 'next/head';
 
 const PartOne = ({ setPart }) => {
     return (
@@ -310,7 +311,12 @@ const IndividualSignup = () => {
                     }
                     <div className='flex items-center justify-center pt-5 gap-[11px]'>
                         {[0, 1].map((_, index) => (
-                            <div onClick={() => setPart(index)} className='cursor-pointer w-[14px] h-[14px]' style={{ background: index !== part ? '#D9D9D9' : 'transparent', border: index === part ? '1px solid #D9D9D9' : 'none', borderRadius: "50%" }} />
+                            <div onClick={() => setPart(index)} className="relative cursor-pointer w-[14px] h-[14px] bg-[#0653EA] rounded-full">
+                            {index === part && <div className="absolute inset-0 m-auto w-[6px] h-[6px] bg-white rounded-full" />}
+                          </div>
+                          
+                            // <div onClick={() => setPart(index)} className='cursor-pointer w-[14px] h-[14px]' style={{ background: index !== part ? '#D9D9D9' : 'transparent', border: index === part ? '1px solid #D9D9D9' : 'none', borderRadius: "50%" }} />
+
                         ))}
                     </div>
                 </div>
