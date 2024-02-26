@@ -434,7 +434,7 @@ const Slider = () => {
 
 const PopUp = ({ isVisible }) => {
     return (
-        <div className={` z-20 absolute top-[14px] ${isVisible ? 'right-0' : '-right-[100%]'} bg-white p-5 flex items-center gap-5 duration-500`}>
+        <div className={` z-20 absolute top-[14px] right-0 bg-white p-5 flex items-center gap-5 duration-500`}>
             <div className="flex items-center justify-center w-[18px] h-[18px]">
                 <SuccessIcon />
             </div>
@@ -753,7 +753,9 @@ const Airspaces = () => {
             setData({ ...defaultData });
             setShowSuccessPopUp(true);
         } catch (error) {
-            console.log(error)
+            setConfirmationStatus('failed');
+        } finally {
+            setShowClaimModal(false)
         }
     }
     
