@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useContext } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -9,13 +9,14 @@ import logo from '../public/images/logo.jpg';
 import logoNoChars from '../public/images/logo-no-chars.png';
 import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon } from './Icons';
 import { useAuth } from '@/hooks/useAuth';
+import { SidebarContext } from '@/hooks/sidebarContext';
 
 
 const Sidebar = () => {
   const router = useRouter();
   const { asPath } = router;
-  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const { isCollapsed, setIsCollapsed } = useContext(SidebarContext)
   const { signOut } = useAuth();
 
   const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications }) => {
@@ -36,7 +37,7 @@ const Sidebar = () => {
     }
 
     return (
-      <Link target={text === 'Help Center' ? "_blank" : "_self"} href={href} className={`${style || ''} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
+      <Link title={text} target={text === 'Help Center' ? "_blank" : "_self"} href={href} className={`${style || ''} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
         <div className='relative w-6 h-6 flex items-center justify-center'>
           {React.cloneElement(children, { isActive })}
           {(numberOfUnseenNotifications >= 1 && isCollapsed) && <div className='absolute bg-[#E04F64] left-[110%] top-1/2 -translate-y-1/2 p-[7px] text-white w-[18px] h-[19px] text-[11.89px] leading-[0px] font-normal flex items-center justify-center rounded-[3px]'>{numberOfUnseenNotifications}</div>}

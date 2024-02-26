@@ -434,7 +434,7 @@ const Slider = () => {
 
 const PopUp = ({ isVisible }) => {
     return (
-        <div className={`absolute top-[14px] ${isVisible ? 'right-0' : '-right-[100%]'} bg-white p-5 flex items-center gap-5 duration-500`}>
+        <div className={` z-20 absolute top-[14px] ${isVisible ? 'right-0' : '-right-[100%]'} bg-white p-5 flex items-center gap-5 duration-500`}>
             <div className="flex items-center justify-center w-[18px] h-[18px]">
                 <SuccessIcon />
             </div>
@@ -746,10 +746,7 @@ const Airspaces = () => {
 
     const onClaim = async () => {
         try {
-            const { address, name, hasChargingStation, hasLandingDeck, hasPlanningPermission, hasStorageHub, rent, timezone, transitFee, noFlyZone, isFixedTransitFee, weekDayRanges } = data;
-            let { latitude, longitude } = coordinates;
-            latitude = Number(latitude)
-            longitude = Number(longitude)
+
             await createProperty(user.blockchainAddress, getPropertyInformation())
 
             setShowClaimModal(false);
