@@ -15,6 +15,7 @@ import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 import useDatabase from "@/hooks/useDatabase";
+import Head from "next/head";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -25,16 +26,16 @@ const Item = ({ children, title, icon, linkText, href, style }) => {
     return (
         <div className={`${style || ''} relative flex flex-col pt-[17px] pb-[21px] pr-[18px] pl-[25px] rounded-[30px] bg-white gap-[15px] md:w-[343px] w-full`} style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex justify-between items-center">
-                <p className="text-xl font-medium text-[#222222]">{title}</p>
-                <div className="rounded-[50%] bg-[#CCE3FC] flex items-center justify-center p-[10px]">
+                <p className="text-xl font-medium text-[#222222]">{title} </p>
+                <Link  href={href} className="rounded-[50%] bg-[#CCE3FC] flex items-center justify-center p-[10px] ">
                     <div className="h-6 w-6">
                         {icon}
                     </div>
-                </div>
+                </Link>
             </div>
             {children}
             <Link href={href}>
-                <p className="font-medium text-base text-[#0653EA] cursor-pointer text-right">{linkText}</p>
+                <p className="font-medium text-base text-[#0653ea] cursor-pointer text-right">{linkText}</p>
             </Link>
         </div>
     )
@@ -51,6 +52,7 @@ const AvailableBalance = ({ balance = 0 }) => {
 }
 
 const MyAirspaces = ({ airspaces = [] }) => {
+
     return (
         <Item title={<Fragment>My Airspaces <span className="text-[15px] font-normal">({airspaces.length})</span></Fragment>} icon={<DroneIcon isActive />} linkText={'View all airspaces'} href={'/homepage/portfolio'}>
             <div className="flex flex-col items-center gap-[29px]">
@@ -82,7 +84,7 @@ const ReferralProgramItem = ({ icon, title, text }) => {
     return (
         <div className="py-[15px] flex-1 text-center md:px-[38px] rounded-[30px] bg-white flex flex-col gap-[7.85px] items-center" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="w-[33px] h-[33px] bg-[#E9F5FE] flex items-center justify-center" style={{ borderRadius: "50%" }}>
-                <div className="w-[19px] h-[19px] flex items-center justify-center">{icon}</div>
+                <Link href={'/homepage/referral'} className="w-[19px] h-[19px] flex items-center justify-center">{icon}</Link>
             </div>
             <p className="text-[#4285F4] font-semibold text-[12px]">{title}</p>
             <p className="text-[#1E1E1E] font-normal text-[10px] text-center hidden md:block">{text}</p>
@@ -115,8 +117,8 @@ const Dashboard = () => {
     const [tokenBalance, setTokenBalance] = useState('');
     const [signature, setSignature] = useState();
     const [airspaces, setAirspaces] = useState([]);
-    const { getPropertiesByUserId } = useDatabase();
-
+    
+    const { getPropertiesByUserAddress } = useDatabase();
     // GET USER AND TOKEN
     useEffect(() => {
         if (selectorUser) {
@@ -282,17 +284,36 @@ const Dashboard = () => {
     // GET AIRSPACE LENGTH
     useEffect(() => {
         if (!user) return;
-
-        const getAirspaces = async () => {
+        (async () => {
             try {
-                const response = await getPropertiesByUserId(user.blockchainAddress, user.id);
-                setAirspaces(response);
-            } catch (error) {
-                console.log(error)
-            }
-        };
+                const response = await getPropertiesByUserAddress(user.blockchainAddress,'landToken');
+               //test
+                //const response =myAirspacesTest;
+                console.log(
+                    "res landrtoken== ",response
+                )
+                if(response){
+                    let resp=await response.items;
 
-        getAirspaces();
+                    let retrievedAirspaces=await resp.map((item)=>{
+                        return {
+                            address:item.address,
+                            
+                           
+
+                        }
+                    })
+                    setAirspaces(retrievedAirspaces)
+                    
+
+                }
+                
+                
+               
+            } catch (error) {
+                console.log(error);
+            }
+        })()
     }, [user])
 
     if (!user || !token) {
@@ -301,30 +322,35 @@ const Dashboard = () => {
 
     return (
         <Fragment>
+            <Head>
+                <title>SkyTrade - Dashboard</title>
+            </Head>
             {isLoading && createPortal(<Backdrop />, document?.getElementById('backdrop-root'))}
             {isLoading && createPortal(<Spinner />, document?.getElementById('backdrop-root'))}
 
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
+            <div className="relative rounded bg-[#f6faff] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
                     <PageHeader pageTitle={'Dashboard'} />
-                    <section className="hidden md:flex relative w-full h-full px-[53px] pt-[52px]">
-                        <div className="flex flex-1 gap-[37px]">
-                            <div className="basis-[58%] flex flex-col gap-[48px] h-full overflow-y-auto my-[-53px] py-[53px]">
-                                <div className="flex flex-col gap-2">
-                                    <h2 className="font-medium text-xl text-black">Welcome on SkyTrade!</h2>
+                    <section className="hidden md:flex relative w-full h-full pl-[53px] ">
+                        <div className="flex justify-center items-align">
+                            <div className="basis-[58%] flex flex-col gap-5 h-screen overflow-y-auto my-[-53px] py-[53px]">
+                            <h2 className="font-medium text-xl text-black pt-10">Welcome on SkyTrade!</h2>
                                     <p className="font-normal text-base text-[#87878D]">Claim your airspace on the dashboard to kickstart your passive income journey. Don't forget to share the love—refer friends using your code or link and watch your earnings grow. Welcome to the community, where the future is yours to seize! 🌟🚀</p>
-                                </div>
-                                <div className="flex flex-wrap gap-[22px]">
+                                    
+                                <div className="flex justify-evenly gap-2">
+                                <div className="flex flex-col gap-2">
                                     <div className="flex flex-col gap-[22px]">
                                         <AvailableBalance balance={tokenBalance} />
                                         <MyAirspaces airspaces={airspaces} />
                                     </div>
-                                    <ReferralProgram />
                                 </div>
-                            </div>
-                            <Link href={'/homepage/airspace2'} className="flex-1 flex flex-col items-center justify-between bg-cover bg-no-repeat bg-center -mt-[53px] -mr-[53px] pt-[42px] px-[18px] pb-[40px]" style={{ backgroundImage: "url('/images/map-bg.png')" }}>
-                                <div className="bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex flex-col items-center gap-[15px] max-w-[362px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
+                                <ReferralProgram />
+                                </div>
+                                </div>
+                             <div className="overflow-y-scroll  h-screen min-h-screen w-1/2 m-0 bg-black"> 
+                            <Link href={'/homepage/airspace2'} className="flex-1 flex flex-col items-center justify-between bg-cover bg-no-repeat bg-center -mt-[53px] -mr-[53px] pt-[42px] px-[18px] pb-[40px] h-full overflow-y-scroll" style={{ backgroundImage: "url('/images/map-bg.png')" }}>
+                                <div className="bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex flex-col items-center gap-[15px] max-w-[362px] mt-10" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                                     <div className="flex gap-[5px] items-center">
                                         <p className="text-xl font-medium text-[#222222]">Claim Airspace</p>
                                         <div className="w-5 h-5 items-center justify-center"><InfoIcon /></div>
@@ -339,20 +365,10 @@ const Dashboard = () => {
                                 </div>
                                 <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px]">Claim Airspace</div>
                             </Link>
-                        </div>
-                    </section>
-                    <section className="flex flex-col gap-[21px] items-center md:hidden relative w-full h-full mb-[78.22px] overflow-y-auto pb-[47px] px-[18px]">
-                        <Link href={'/homepage/airspace2'} className="flex h-[668px] gap-[120px] flex-col items-center justify-between bg-cover bg-no-repeat bg-center py-[23px] px-[16px] -mx-[18px]" style={{ backgroundImage: "url('/images/map-bg.png')" }}>
-                            <div className="flex flex-col rounded-[30px] gap-[5.71px] bg-white pt-[17.29px] pb-[17px] pl-[27px] pr-[16px]">
-                                <h2 className="font-medium text-xl text-[#222222]">Welcome on SkyTrade!</h2>
-                                <p className="font-normal text-base text-[#87878D]">Claim your airspace on the dashboard to kickstart your passive income journey. Don't forget to share the love—refer friends using your code or link and watch your earnings grow. Welcome to the community, where the future is yours to seize! 🌟🚀</p>
                             </div>
-                            <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px]">Claim Airspace</div>
-                        </Link>
-                        <MyAirspaces airspaces={airspaces} />
-                        <ReferralProgram />
-                        <AvailableBalance balance={tokenBalance} />
+                            </div> 
                     </section>
+                    
                 </div>
             </div>
         </ Fragment >

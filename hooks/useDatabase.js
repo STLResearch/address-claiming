@@ -49,6 +49,33 @@ const useDatabase = () => {
         }
 
     }
+    const retrieveReferralData = async (blockchainAddress) => {
+        const { sign, sign_nonce, sign_issue_at, sign_address } =
+        await signatureObject(blockchainAddress);
+        try {
+            const response = await fetch(`/api/proxy?${Date.now()}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    URI: `/private/users/retrieve-referral-data`,
+                    sign,
+                    time: sign_issue_at,
+                    nonce: sign_nonce,
+                    address: sign_address,
+                },
+            })
+
+            if (!response.ok || response.statusCode === 500) {
+                throw new Error("Error when getting referral Data.");
+            }
+
+
+            return response.json();
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
 
     const updateReferral = async (blockchainAddress, code) => {
         try {
@@ -451,7 +478,7 @@ const useDatabase = () => {
         }
     }
 
-    return { getReferralCodeById, getReferralByCode, updateReferral, createUser, getUser, updateUser, deleteUser, createProperty, deleteProperty, getPropertyById, updateProperty, getPropertiesByUserAddress, getRents, getRentById, updateRent, createRent, deleteRent }
+    return { getReferralCodeById,retrieveReferralData,getReferralByCode, updateReferral, createUser, getUser, updateUser, deleteUser, createProperty, deleteProperty, getPropertyById, updateProperty, getPropertiesByUserAddress, getRents, getRentById, updateRent, createRent, deleteRent }
 }
 
 export default useDatabase;

@@ -19,6 +19,7 @@ import base58 from 'bs58';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 import dayjs from 'dayjs';
+import Head from "next/head";
 const SuccessModal = ({ setShowSuccess,finalAns}) => {
 
     const [owner,setOwner]=useState({});
@@ -236,147 +237,157 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
 
             console.log("signature obj  ", signatureObj)
 
+try {
+    let res=await  fetch(`/api/proxy?${Date.now()}`,{
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          
+          uri: `/private/airspace-rental/create-mint-rental-token-ix`,
+          sign: signatureObj.sign,
+          time: signatureObj.sign_issue_at,
+          nonce: signatureObj.sign_nonce,
+          address: signatureObj.sign_address,
 
-
-              let res=await  fetch(`/api/proxy?${Date.now()}`,{
-                method: 'POST',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  
-                  uri: `/private/airspace-rental/create-mint-rental-token-ix`,
-                  sign: signatureObj.sign,
-                  time: signatureObj.sign_issue_at,
-                  nonce: signatureObj.sign_nonce,
-                  address: signatureObj.sign_address,
-
-                },
-                body:JSON.stringify(req1Body)
-              })
-              res=await res.json()
-              console.log("res body",res)
-              if(res.statusCode==400){
-                setShowSuccess(true)
-                setfinalAns({status:'Rent failed',
-                message:res.data.message
-                
-        })
-        setIsLoading(false)
-        return
-              }
-              const transaction = Transaction.from(Buffer.from(res, 'base64'));
-              //let partialsignedTx=transaction.partialSign(solanaWallet);
-              //console.log("is solana wallet partial=",partialsignedTx)
-               const signedTx = await solanaWallet.signTransaction(transaction);
-         console.log(signedTx); 
-        let serializedTx=signedTx.serialize({requireAllSignatures:false})
-        let txToString=serializedTx.toString('base64');
-        if(signedTx){
-            let req2body={
-                transaction:txToString,
-                landAssetIds:[rentData?.layers[0].tokenId],
-                startTime:startDate.toISOString(),
-                endTime:endDate.toISOString(),
-            }
-            console.log("final exexution",JSON.stringify(req2body))
-             signatureObj={}
-            if(user1){
-                const chainConfig = {
-                    chainNamespace: 'solana',
-                    chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-                    displayName: 'Solana Mainnet',
-                    blockExplorer: 'https://explorer.solana.com',
-                    ticker: 'SOL',
-                    tickerName: 'Solana',
-                  };
-          
-                  const web3auth = new Web3Auth({
-                    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-          
-                    web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-                    chainConfig: chainConfig,
-                  });
-          
-                  await web3auth.initModal();
-          
-                  const web3authProvider = await web3auth.connect();
-          
-                  const solanaWallet = new SolanaWallet(web3authProvider);
-          
-                  // const userInfo = await web3auth.getUserInfo();
-          
-                  const domain = window.location.host;
-                  // const domain = 'localhost:3000';
-                  const origin = window.location.origin;
-                  // const origin = 'http://localhost:3000';
-          
-                  const payload = new SIWPayload();
-                  payload.domain = domain;
-                  payload.uri = origin;
-                  payload.address = user1.blockchainAddress;
-                  payload.statement = 'Sign in to SkyTrade app.';
-                  payload.version = '1';
-                  payload.chainId = 1;
-          
-                  const header = { t: 'sip99' };
-                  const network = 'solana';
-          
-                  let message = new SIWWeb3({ header, payload, network });
-          
-                  const messageText = message.prepareMessage();
-                  const msg = new TextEncoder().encode(messageText);
-                  const result = await solanaWallet.signMessage(msg);
-          
-                  const signature = base58.encode(result);
-          
-                  signatureObj.sign = signature;
-                  signatureObj.sign_nonce = message.payload.nonce;
-                  signatureObj.sign_issue_at = message.payload.issuedAt;
-                  signatureObj.sign_address = user1.blockchainAddress;
+        },
+        body:JSON.stringify(req1Body)
+      })
+      res=await res.json()
+      console.log("res body",res)
+      if(res.statusCode==400){
+        setShowSuccess(true)
+        setfinalAns({status:'Rent failed',
+        message:res.data.message
+        
+})
+setIsLoading(false)
+return
+      }
+      const transaction = Transaction.from(Buffer.from(res, 'base64'));
+      //let partialsignedTx=transaction.partialSign(solanaWallet);
+      //console.log("is solana wallet partial=",partialsignedTx)
+       const signedTx = await solanaWallet.signTransaction(transaction);
+ console.log(signedTx); 
+let serializedTx=signedTx.serialize({requireAllSignatures:false})
+let txToString=serializedTx.toString('base64');
+if(signedTx){
+    let req2body={
+        transaction:txToString,
+        landAssetIds:[rentData?.layers[0].tokenId],
+        startTime:startDate.toISOString(),
+        endTime:endDate.toISOString(),
+    }
+    console.log("final exexution",JSON.stringify(req2body))
+     signatureObj={}
+    if(user1){
+        const chainConfig = {
+            chainNamespace: 'solana',
+            chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+            displayName: 'Solana Mainnet',
+            blockExplorer: 'https://explorer.solana.com',
+            ticker: 'SOL',
+            tickerName: 'Solana',
+          };
   
+          const web3auth = new Web3Auth({
+            clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
   
+            web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+            chainConfig: chainConfig,
+          });
+  
+          await web3auth.initModal();
+  
+          const web3authProvider = await web3auth.connect();
+  
+          const solanaWallet = new SolanaWallet(web3authProvider);
+  
+          // const userInfo = await web3auth.getUserInfo();
+  
+          const domain = window.location.host;
+          // const domain = 'localhost:3000';
+          const origin = window.location.origin;
+          // const origin = 'http://localhost:3000';
+  
+          const payload = new SIWPayload();
+          payload.domain = domain;
+          payload.uri = origin;
+          payload.address = user1.blockchainAddress;
+          payload.statement = 'Sign in to SkyTrade app.';
+          payload.version = '1';
+          payload.chainId = 1;
+  
+          const header = { t: 'sip99' };
+          const network = 'solana';
+  
+          let message = new SIWWeb3({ header, payload, network });
+  
+          const messageText = message.prepareMessage();
+          const msg = new TextEncoder().encode(messageText);
+          const result = await solanaWallet.signMessage(msg);
+  
+          const signature = base58.encode(result);
+  
+          signatureObj.sign = signature;
+          signatureObj.sign_nonce = message.payload.nonce;
+          signatureObj.sign_issue_at = message.payload.issuedAt;
+          signatureObj.sign_address = user1.blockchainAddress;
 
-            } 
-            let ans2=await fetch(
-                `/api/proxy?${Date.now()}`,
-                {
-                  method: 'POST',
-                  headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    
-                    uri: `/private/airspace-rental/execute-mint-rental-token-ix`,
-                    sign: signatureObj.sign,
-                    time: signatureObj.sign_issue_at,
-                    nonce: signatureObj.sign_nonce,
-                    address: signatureObj.sign_address,
-                  },
-                  body: JSON.stringify(req2body),
-                }
-              );
-              ans2=await ans2.json();
-        console.log("execute result",ans2)
-        if(ans2) {
-            if(ans2.data.status=='success'){
-                setfinalAns({status:'Rent SuccessFull',
-                    message:ans2.data.message
-            })
-            }else{
-                setfinalAns({status:'Rent failed',
-                    message:ans2.data.message
-            })
-            }
-    
-            setShowSuccess(true)
-    
-    
+
+
+    } 
+    let ans2=await fetch(
+        `/api/proxy?${Date.now()}`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            
+            uri: `/private/airspace-rental/execute-mint-rental-token-ix`,
+            sign: signatureObj.sign,
+            time: signatureObj.sign_issue_at,
+            nonce: signatureObj.sign_nonce,
+            address: signatureObj.sign_address,
+          },
+          body: JSON.stringify(req2body),
         }
-        }
-         
+      );
+      ans2=await ans2.json();
+console.log("execute result",ans2)
+if(ans2) {
+    if(ans2.data.status=='success'){
+        setfinalAns({status:'Rent SuccessFull',
+            message:ans2.data.message
+    })
+    }else{
+        setfinalAns({status:'Rent failed',
+            message:ans2.data.message
+    })
+    }
+
+    setShowSuccess(true)
+
+    setIsLoading(false)
+}
+}
+ 
+    
+} catch (error) {
+    setfinalAns({status:'Rent failed',
+    message:error
+})
+
+    setIsLoading(false)
+    
+}
+
+             
     
     
-        setIsLoading(false)
+       
         } 
        
      }// handle air space
@@ -404,7 +415,7 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
  
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px]">
+        <div style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px]">
             <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                 <div className="w-[16px] h-[12px] md:hidden" onClick={()=>{console.log("ggdgdgdg")}}><ArrowLeftIcon /></div>
                 <h2 className="text-[#222222] text-center font-medium text-xl"> Airspace Details</h2>
@@ -429,7 +440,7 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
            
                 <div className="flex items-center justify-center gap-[20px] text-[14px]">
                 <div onClick={()=>{setShowClaimModal(false)}} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2" style={{ border: "1px solid #0653EA" }}>Cancel</div>
-                <div onClick={handleRentAirspace} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">rent Airspace</div>
+                <div onClick={handleRentAirspace} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">Rent Airspace</div>
             </div>
         </div>
         </LocalizationProvider>
@@ -451,8 +462,9 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                 <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
                     <MagnifyingGlassIcon />
                 </div>
+                </div>
                  {showOptions && (
-                    <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
+                    <div className="absolute top-[55px] left-0 bg-white z-20 w-full flex-col">
                         {addresses.map((item) => {
                             return (
                                 <div
@@ -471,7 +483,7 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                     </div>
                 )}
                 {regAdressShow && (
-                    <div className="absolute top-[55px] left-0 mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll">
+                    <div  style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className=" mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll">
                         
                         {registeredAddress.map((item)=>{
 //add popup to black ones
@@ -525,7 +537,7 @@ const onClickRent=() =>{
                         })}
                     </div>
                 )} 
-            </div>
+            
         </div>
     )
 }
@@ -584,7 +596,7 @@ const Rent = () => {
     const [showClaimModal,setShowClaimModal]=useState(false)
     console.log("front")
     const defaultData = {
-        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
+        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: null, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
@@ -701,7 +713,7 @@ const Rent = () => {
 
 
             });
-            newMap.on('wheel', async(e) => {
+            newMap.on('move', async(e) => {
 
                 let el = document.createElement('div');
                 
@@ -840,10 +852,7 @@ const Rent = () => {
                   
                //console.log("new bounds",crds)
                 });
-
-                newMap.on('click',(e)=>{
-                    //console.log(e.point.x,e.point.y)
-                })
+                               
 
               
 
@@ -968,6 +977,7 @@ const Rent = () => {
 
     return (
         <Fragment>
+            <Head><title>SkyTrade - Marketplace : Rent</title></Head>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
             {/* <div className=" bg-black w-screen h-screen ">
@@ -975,16 +985,16 @@ const Rent = () => {
 
                 </div> */}
                 
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center gap-[15px] overflow-hidden ">
+            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center  overflow-hidden ">
                 <Sidebar />
                 
                 <div className="w-full h-full flex flex-col">
                 
                     <PageHeader pageTitle={isMobile ? 'Rent' : 'Marketplace: Rent'} />
                     {isMobile && <ExplorerMobile address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} />}
-                    <section className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px]`}>
+                    <section className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}>
                         <div
-                            className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0`}
+                            className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0 `}
                             //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
                             
                             id='map'

@@ -38,15 +38,14 @@ const PartOne = ({ setPart }) => {
 
 const IndividualSignup = () => {
     const [part, setPart] = useState(0);
-
+    const [name,setName] = useState('');
+    const [phoneNumber,setPhoneNumber] = useState('');
     const newsletterRef = useRef();
-    const nameRef = useRef();
-    const phoneNumberRef = useRef();
     const referralCodeRef = useRef();
 
     const router = useRouter();
 
-    const [referralCode, setReferralCode] = useState({ id: '', code: '' });
+    const [referralCode1, setReferralCode] = useState({ id: '', code: '' });
 
     const [status, setStatus] = useState(0)
     const [isNameValid, setIsNameValid] = useState(true);
@@ -55,7 +54,7 @@ const IndividualSignup = () => {
     const [newsletter, setNewsletter] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [pageLoad, setPageLoad] = useState(true);
-
+    const [referralDisabled,setReferralDisabled] = useState(false);
     useEffect(() => {
         console.log(status);
         console.log(typeof status);
@@ -68,6 +67,7 @@ const IndividualSignup = () => {
             if (!codeString) return;
             const { id, code } = JSON.parse(codeString).response;
             setReferralCode({ id, code })
+            setReferralDisabled(true)
         }
     }, [global?.window]);
 
@@ -96,14 +96,15 @@ const IndividualSignup = () => {
         return !(!phoneNumber || isNaN(+(phoneNumber.slice(1,))) || phoneNumber.charAt(0) !== '+')
     }
 
-    const checkReferralCodeIsValid = (referralCode) => {
+    const checkReferralCodeIsValid = (referralCode1) => {
         return true;
     }
+
 
     const formSubmitHandler = (e) => {
         e.preventDefault();
 
-        const [name, phoneNumber, referralCode] = [nameRef, phoneNumberRef, referralCodeRef].map(ref => ref.current?.value);
+        const [  referralCode] = [, referralCodeRef].map(ref => ref.current?.value);
 
         if (!checkNameIsValid(name)) {
             setIsNameValid(false);
@@ -115,18 +116,20 @@ const IndividualSignup = () => {
             return;
         }
 
-        if (!checkReferralCodeIsValid(referralCode)) {
+        if (!checkReferralCodeIsValid(referralCode1)) {
             setIsReferralCodeValid(false);
             return;
         }
-
+        console.log("ref code state ",referralCode1)
         const userInfo = {
             ...category,
             name,
             newsletter,
             categoryId: status,
             phoneNumber,
+            referralCode:referralCode1.code
         };
+        console.log("userInfo    ",userInfo)
 
         setIsLoading(true);
 
@@ -157,25 +160,22 @@ const IndividualSignup = () => {
                         token: temporaryToken,
                         user: response,
                     });
-
-                    nameRef.current.value = '';
-                    phoneNumberRef.current.value = '';
+                    setName('');
+                    setPhoneNumber('');
                     referralCodeRef.current.value = '';
+
 
                     router.replace('/homepage/dashboard2');
                 });
             })
             .catch((error) => {
                 console.log(error);
-
                 swal({
                     title: 'Sorry!',
-                    text: `Something went wrong, please try again.`,
+                    text: error.message,
                 });
 
                 setIsLoading(false);
-
-                throw new Error(errorData.errorMessage);
             });
     };
 
@@ -185,6 +185,9 @@ const IndividualSignup = () => {
 
     return (
         <Fragment>
+            <Head>
+                <title>StyTrade - Login</title>
+            </Head>
             {isLoading && createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
             {isLoading &&
                 createPortal(<Spinner />, document.getElementById('backdrop-root'))}
@@ -218,8 +221,11 @@ const IndividualSignup = () => {
                                     </label>
                                     <input
                                         type='name'
-                                        ref={nameRef}
-                                        onChange={() => setIsNameValid(true)}
+                                        value={name}
+                                        onChange={(e) => {
+                                            setIsNameValid(true); 
+                                            setName(e.target.value);
+                                        }}
                                         placeholder='John Doe'
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isNameValid ? '1px solid #87878D' : '1px solid #E04F64' }}
@@ -239,8 +245,11 @@ const IndividualSignup = () => {
                                     </label>
                                     <input
                                         type='text'
-                                        ref={phoneNumberRef}
-                                        onChange={() => setIsPhoneNumberValid(true)}
+                                        value={phoneNumber}
+                                        onChange={(e) => {
+                                            setIsPhoneNumberValid(true);
+                                            setPhoneNumber(e.target.value);
+                                            }}
                                         placeholder='Enter your phone number'
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isPhoneNumberValid ? '1px solid #87878D' : '1px solid #E04F64' }}
@@ -284,8 +293,10 @@ const IndividualSignup = () => {
                                     <input
                                         type='referralCode'
                                         ref={referralCodeRef}
-                                        value={referralCode.code}
+                                        value={referralCode1.code}
                                         placeholder='Enter referral code'
+                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value });console.log("on change ref code val",referralCode1.code)}}
+                                        disabled={referralDisabled}
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isReferralCodeValid ? '1px solid #87878D' : '1px solid #E04F64' }}
                                     />
