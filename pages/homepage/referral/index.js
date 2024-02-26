@@ -9,7 +9,9 @@ import { useMobile } from "@/hooks/useMobile";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import useOrigin from "@/hooks/useOrigin";
+
 import Head from "next/head";
+
 
 const Item = ({ icon, title, text }) => {
     return (
@@ -67,6 +69,7 @@ const Share = ({ activeSection, section, isMobile, referralCode, blockchainAddre
     const { updateProfile } = useAuth();
     const origin = useOrigin();
 
+
     useEffect(() => {
         if (!isCopied.code) return;
         let timeoutId;
@@ -121,6 +124,7 @@ const Share = ({ activeSection, section, isMobile, referralCode, blockchainAddre
     };
 
     const shareOnFacebook = (textToShare) => {
+        console.log(encodeURIComponent(textToShare))
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(textToShare)}`, '_blank');
     };
 
@@ -131,6 +135,7 @@ const Share = ({ activeSection, section, isMobile, referralCode, blockchainAddre
     const shareOnLinkedIn = (textToShare) => {
         window.open(`https://www.linkedin.com/shareArticle?url=${encodeURIComponent(textToShare)}`, '_blank');
     };
+    
 
     const canCopy = referralCode === temporalReferralCode;
     const canChangeCode = !canCopy && temporalReferralCode.length === 6;
@@ -141,24 +146,14 @@ const Share = ({ activeSection, section, isMobile, referralCode, blockchainAddre
                 <p className="text-[#222222] text-xl font-normal">Share the referral link or code</p>
                 <p className="text-[#87878D] text-[15px] font-normal">You can also share your referral link or code by copying and sending it or sharing it on your social media. You can define your code once by entering your prefered value and press enter.</p>
                 <div className="flex flex-wrap gap-[21px]">
-                    <div className="flex gap-[9px] flex-wrap justify-between">
+                    <div className="flex gap-[9px] flex-wrap justify-evenly">
                         <div className="relative w-full md:w-[300px]">
                             <input value={temporalReferralCode} disabled={user?.ownedReferralCode?.codeChanged} onChange={handleOnChange} maxLength={6} className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="myReferralCode" id="myReferralCode" />
                             {canCopy && <p onClick={(e) => handleCopy(e, referralCode, true)} className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">{isCopied.code ? 'Copied ✓' : 'Copy code'}</p>}
                             {canChangeCode && <p onClick={handleUpdateReferralCode} className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">{'Update code'}</p>}
                         </div>
-                        <div onClick={() => shareOnFacebook(referralCode)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
-                            <div className="w-5 h-5 flex items-center justify-center"><FacebookIcon /></div>
-                        </div>
-                        <div onClick={() => shareOnLinkedIn(referralCode)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
-                            <div className="w-5 h-5 flex items-center justify-center"><LinkedInIcon /></div>
-                        </div>
-                        <div onClick={() => shareOnGoogle(referralCode)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
-                            <div className="w-5 h-5 flex items-center justify-center"><GoogleIcon /></div>
-                        </div>
-                        <div onClick={() => shareOnTwitter(referralCode)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
-                            <div className="w-5 h-5 flex items-center justify-center"><XIcon /></div>
-                        </div>
+                        
+                       
                     </div>
                     <div className="flex gap-[9px] flex-wrap justify-between">
                         <div className="relative w-full md:w-[300px]">
@@ -180,7 +175,7 @@ const Share = ({ activeSection, section, isMobile, referralCode, blockchainAddre
                     </div>
                 </div>
             </div>
-            <InviteYourFriends />
+            
         </div>
     )
 }
@@ -196,6 +191,7 @@ const YourReferralsItem = ({ icon, number, text }) => {
 }
 
 const YourReferrals = ({ activeSection, section, isMobile, registeredFriends, registeredAirspaces, validatedProperties }) => {
+  
     if (activeSection !== section && isMobile) return;
 
     return (
@@ -212,16 +208,19 @@ const YourReferrals = ({ activeSection, section, isMobile, registeredFriends, re
 }
 
 const InviteYourFriends = () => {
+    const [friendEmail,setFriendEmail]=useState('')
     return (
         <div className="flex flex-col gap-[15px] px-[51px]">
             <p className="text-[#222222] text-xl font-normal">Invite your friends</p>
             <p className="text-[#87878D] text-[15px] font-normal">Insert your friend's email address and send them invitations to join us.</p>
             <div className="relative max-w-[522px]">
-                <input className="w-full rounded-lg py-[16px] pr-[45px] pl-[22px] outline-none" style={{ border: '1px solid #87878D' }} type="email" name="friendEmail" id="friendEmail" placeholder="email address" />
+                <input value={friendEmail} onChange={(e)=>{setFriendEmail(e.target.value);console.log(friendEmail);}} className="w-full rounded-lg py-[16px] pr-[45px] pl-[22px] outline-none" style={{ border: '1px solid #87878D' }} type="email" name="friendEmail" id="friendEmail" placeholder="email address" />
                 <div className="absolute right-[5px] top-1/2 -translate-y-1/2 w-[38px] h-[41px] bg-[#0653EA] flex items-center justify-center cursor-pointer rounded-lg">
-                    <div className="w-[15px] h-[15px]">
+                    <a href={`mailto:${friendEmail}`} target="_blank">
+                    <div className="w-[15px] h-[15px] ">
                         <ShareIcon color={'white'} />
                     </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -244,9 +243,9 @@ const Referral = () => {
     const [data, setData] = useState({ referralCode: '', registeredFriends: 0, registeredAirspaces: 0, validatedProperties: 0 })
     const { isMobile } = useMobile();
     const { user } = useAuth()
-    const { getPropertiesByUserId, } = useDatabase();
+    const { retrieveReferralData } = useDatabase();
     const sections = ['The Program', 'Share', 'My Referrals'];
-
+    console.log("userss ",user)
     useEffect(() => {
         if (!user) return;
 
@@ -254,15 +253,16 @@ const Referral = () => {
 
         (async () => {
             try {
-                const response = await getPropertiesByUserId(blockchainAddress, id);
+                const response = await retrieveReferralData(blockchainAddress);
                 console.log('from the reff page', user, response)
-                setData(prev => ({ ...prev, validatedProperties: response.filter(i => i.isActive).length, registeredAirspaces: response.length }));
+                setData(response);
+                console.log("the data  ",data)
             } catch (error) {
                 console.log(error);
             }
         })();
 
-        setData(prev => ({ ...prev, referralCode: code }))
+       
     }, [user])
 
     return (
@@ -276,10 +276,11 @@ const Referral = () => {
                 <div className="w-full h-full flex flex-col">
                     <PageHeader pageTitle={'Referral Program'} />
                     <section className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll">
-                        <Switcher sections={sections} activeSection={activeSection} setActiveSection={setActiveSection} />
+                         <Switcher sections={sections} activeSection={activeSection} setActiveSection={setActiveSection} /> 
                         <AlertMessage />
                         <TheProgram activeSection={activeSection} isMobile={isMobile} section={0} />
                         <Share activeSection={activeSection} isMobile={isMobile} section={1} referralCode={data.referralCode} blockchainAddress={user?.blockchainAddress} user={user} />
+                        <InviteYourFriends />
                         <YourReferrals activeSection={activeSection} isMobile={isMobile} section={2} registeredFriends={data.registeredFriends} registeredAirspaces={data.registeredAirspaces} validatedProperties={data.validatedProperties} />
                     </section>
                 </div>

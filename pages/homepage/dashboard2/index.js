@@ -27,7 +27,7 @@ const Item = ({ children, title, icon, linkText, href, style }) => {
         <div className={`${style || ''} relative flex flex-col pt-[17px] pb-[21px] pr-[18px] pl-[25px] rounded-[30px] bg-white gap-[15px] md:w-[343px] w-full`} style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex justify-between items-center">
                 <p className="text-xl font-medium text-[#222222]">{title} </p>
-                <Link  href={'/homepage/referral'} className="rounded-[50%] bg-[#CCE3FC] flex items-center justify-center p-[10px] ">
+                <Link  href={href} className="rounded-[50%] bg-[#CCE3FC] flex items-center justify-center p-[10px] ">
                     <div className="h-6 w-6">
                         {icon}
                     </div>
@@ -297,7 +297,7 @@ const Dashboard = () => {
 
                     let retrievedAirspaces=await resp.map((item)=>{
                         return {
-                            address:item.metadata.addresses[0],
+                            address:item.address,
                             
                            
 

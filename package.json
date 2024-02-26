@@ -28,7 +28,7 @@
     "@web3auth/sign-in-with-web3": "^3.0.0",
     "@web3auth/solana-provider": "^7.0.2",
     "autoprefixer": "10.4.14",
-    "axios": "^0.28.0",
+    "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
     "bs58": "^5.0.0",
     "chart.js": "^4.3.3",

@@ -155,3 +155,6 @@ button {
   margin-top: 20px;
   margin-bottom: 20px;
 }
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}

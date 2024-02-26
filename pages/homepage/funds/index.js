@@ -1,5 +1,5 @@
 'use client';
-import { CloseIcon,  SuccessIcon } from "@/Components/Icons";
+import { CloseIcon, SuccessIcon } from "@/Components/Icons";
 import { Fragment, useState, useEffect } from "react";
 import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
@@ -117,192 +117,200 @@ const TransactionHistory = ({ transactions, user }) => {
     )
 }
 
-const SuccessModal = ({ setShowSuccess,finalAns}) => {
+const SuccessModal = ({ setShowSuccess, finalAns }) => {
 
-    const [owner,setOwner]=useState({});
-       return (
-        <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${finalAns.status=='Transaction SuccessFull'?'bg-green-600':'bg-red-600'} py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px] items-center`}>
-            
-            <div className="w-[100px] h-[100px]  " >{finalAns.status=='Transaction SuccessFull'?<SuccessIcon />:<CloseIcon/>}</div>
+    const [owner, setOwner] = useState({});
+    return (
+        <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${finalAns.status == 'Transaction SuccessFull' ? 'bg-green-600' : 'bg-red-600'} py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px] items-center`}>
+
+            <div className="w-[100px] h-[100px]  " >{finalAns.status == 'Transaction SuccessFull' ? <SuccessIcon /> : <CloseIcon />}</div>
             <div className=" text-xl text-white text-center"> {finalAns.status} </div>
             <div className=" text-xl text-white text-center"> {finalAns.message}</div>
-                <div onClick={()=>{setShowSuccess(false)}} className="rounded-[5px] py-[10px] px-16 text-green-600 bg-white text-center cursor-pointer w-1/2">OK</div>
-            
+            <div onClick={() => { setShowSuccess(false) }} className="rounded-[5px] py-[10px] px-16 text-green-600 bg-white text-center cursor-pointer w-1/2">OK</div>
+
         </div>
     )
 }
 
-const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLoading ,setreFetchBal, refetchBal,setTokenBalance, tokenBalance }) => {
-    const [amount,setAmount]=useState()
-  const [showSuccess,setShowSuccess] =useState(false)
-  const [finalAns,setFinalAns] =useState({
-    status:"Transaction SuccessFull"
-  })
+const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance }) => {
+    const [amount, setAmount] = useState('')
+    const [showSuccess, setShowSuccess] = useState(false)
+    const [finalAns, setFinalAns] = useState({
+        status: "Transaction SuccessFull"
+    })
 
 
-    const [recipientWalletAddress,setRecipientWalletAddress]=useState('')
+    const [recipientWalletAddress, setRecipientWalletAddress] = useState('')
 
     const { user } = useAuth();
- 
-    const handleWithdraw=async()=>{
-          try {
 
-            if(activeSection==1 && parseInt(tokenBalance)<=parseInt(amount)){
-                console.log('amts=', parseInt(tokenBalance),parseInt(amount))
+    const handleWithdraw = async () => {
+        try {
+
+            if (activeSection == 1 && parseInt(tokenBalance) <= parseInt(amount)) {
+                console.log('amts=', parseInt(tokenBalance), parseInt(amount))
                 setFinalAns({
-                    status:"Transaction failed",
-                    message:`invalid transafer amount`
+                    status: "Transaction failed",
+                    message: `invalid transafer amount`
                 })
                 setShowSuccess(true)
                 throw new Error('invalid transafer amount')
             }
             //new PublicKey('fgdf')
-          
-        setIsLoading(true);
 
-        const chainConfig = {
-            chainNamespace: 'solana',
-            chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-            displayName: 'Solana ',
-            blockExplorer: 'https://explorer.solana.com',
-            ticker: 'SOL',
-            tickerName: 'Solana',
-        };
+            setIsLoading(true);
 
-        const web3auth = new Web3Auth({
-            clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-            web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-            chainConfig: chainConfig,
-        });
+            const chainConfig = {
+                chainNamespace: 'solana',
+                chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+                rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+                displayName: 'Solana ',
+                blockExplorer: 'https://explorer.solana.com',
+                ticker: 'SOL',
+                tickerName: 'Solana',
+            };
 
-        await web3auth.initModal();
+            const web3auth = new Web3Auth({
+                clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+                web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+                chainConfig: chainConfig,
+            });
 
-        const web3authProvider = await web3auth.connect();
+            await web3auth.initModal();
 
-        const solanaWallet = new SolanaWallet(web3authProvider);
+            const web3authProvider = await web3auth.connect();
 
-        console.log("solana wallet ",solanaWallet)
+            const solanaWallet = new SolanaWallet(web3authProvider);
+
+            console.log("solana wallet ", solanaWallet)
 
 
-        const connectionConfig = await solanaWallet.request({
-            method: "solana_provider_config",
-            params: [],
-          });
-          
-          const connection = new Connection(connectionConfig.rpcTarget);
+            const connectionConfig = await solanaWallet.request({
+                method: "solana_provider_config",
+                params: [],
+            });
 
-          console.log("connection ",connection)
-        let mintAccount=process.env.NEXT_PUBLIC_MINT_ADDRESS;
-        let tx=new Transaction();
-        console.log("sender ",user.blockchainAddress)
-        console.log("reciever ",recipientWalletAddress)
-        console.log(mintAccount)
-        let recipientUSDCAddr = await getAssociatedTokenAddress(
-            new PublicKey(mintAccount),
-            new PublicKey(recipientWalletAddress)
-          );
+            const connection = new Connection(connectionConfig.rpcTarget);
 
-          let senderUSDCAddr = await getAssociatedTokenAddress(
-            new PublicKey(mintAccount),
-           new PublicKey(user.blockchainAddress)
-          );
-          let ix = []
-          try {
-            await getAccount(connection, recipientUSDCAddr);
-            
-          } catch (error) {
-            if (error.name == TokenAccountNotFoundError.name) {
-            let createIx = createAssociatedTokenAccountInstruction(
-                new PublicKey(user.blockchainAddress),
+            console.log("connection ", connection)
+            let mintAccount = process.env.NEXT_PUBLIC_MINT_ADDRESS;
+            let tx = new Transaction();
+            console.log("sender ", user.blockchainAddress)
+            console.log("reciever ", recipientWalletAddress)
+            console.log(mintAccount)
+            let recipientUSDCAddr = await getAssociatedTokenAddress(
+                new PublicKey(mintAccount),
+                new PublicKey(recipientWalletAddress)
+            );
+
+            let senderUSDCAddr = await getAssociatedTokenAddress(
+                new PublicKey(mintAccount),
+                new PublicKey(user.blockchainAddress)
+            );
+            let ix = []
+            try {
+                await getAccount(connection, recipientUSDCAddr);
+
+            } catch (error) {
+                if (error.name == TokenAccountNotFoundError.name) {
+                    let createIx = createAssociatedTokenAccountInstruction(
+                        new PublicKey(user.blockchainAddress),
+                        recipientUSDCAddr,
+                        new PublicKey(recipientWalletAddress),
+                        new PublicKey(mintAccount)
+                    );
+
+                    ix.push(createIx);
+
+                }
+            }
+            console.log("amount = ", amount)
+            let transferIx = createTransferInstruction(
+                senderUSDCAddr,
                 recipientUSDCAddr,
-                new PublicKey(recipientWalletAddress),
-                new PublicKey(mintAccount)
-              );
-        
-              ix.push(createIx);
-            
-          }
-        }
-        console.log("amount = ",amount)
-           let transferIx = createTransferInstruction(
-            senderUSDCAddr,
-            recipientUSDCAddr,
-            new PublicKey(user.blockchainAddress),
-            parseInt(amount) * Math.pow(10, 6)
-          );
-      
-          ix.push(transferIx); 
-      
-          tx.add(...ix);
+                new PublicKey(user.blockchainAddress),
+                parseInt(amount) * Math.pow(10, 6)
+            );
 
-          let blockhash = (await connection.getLatestBlockhash("finalized"))
-          .blockhash;
-    
-        tx.recentBlockhash = blockhash;
-        tx.feePayer =new PublicKey(user.blockchainAddress) ;
-        
+            ix.push(transferIx);
 
-        console.log("transaction obj ",tx)
-        try{
-            const signature = await solanaWallet.signAndSendTransaction(tx);
-         
-        console.log("sig =",signature)
-        setFinalAns({
-            status:"Transaction SuccessFull",
-            message:'signature ' +`${signature.signature}`.slice(0,30) + '.........'
-        })
-        setShowSuccess(true)
-        setTokenBalance(tokenBalance-amount);console.log("new token bal=",amount); 
-        setTimeout(()=>{setIsLoading(false);console.log('timeout over');setreFetchBal(!refetchBal) }, 10000)
+            tx.add(...ix);
 
-       
+            let blockhash = (await connection.getLatestBlockhash("finalized"))
+                .blockhash;
 
-        
-        }catch(err){
+            tx.recentBlockhash = blockhash;
+            tx.feePayer = new PublicKey(user.blockchainAddress);
+
+
+            console.log("transaction obj ", tx)
+            try {
+                const signature = await solanaWallet.signAndSendTransaction(tx);
+
+                console.log("sig =", signature)
+                setFinalAns({
+                    status: "Transaction SuccessFull",
+                    message: 'signature ' + `${signature.signature}`.slice(0, 30) + '.........'
+                })
+                setShowSuccess(true)
+                setTokenBalance(tokenBalance - amount); console.log("new token bal=", amount);
+                setTimeout(() => { setIsLoading(false); console.log('timeout over'); setreFetchBal(!refetchBal) }, 10000)
+
+
+
+
+            } catch (err) {
+                setFinalAns({
+                    status: "Transaction Failed",
+                    message: `transaction failed ${err}`
+                })
+                setShowSuccess(true)
+
+
+
+
+
+            }
+        } catch (error) {
+            console.log("pub key ", error)
             setFinalAns({
-                status:"Transaction Failed",
-                message:`transaction failed ${err}`
+                status: "Transaction failed",
+                message: ` ${error}`
             })
             setShowSuccess(true)
-            
-            
-            
-           
-            
+            setIsLoading(false);
         }
-    } catch (error) {
-        console.log("pub key ",error)
-        setFinalAns({
-            status:"Transaction failed",
-            message:` ${error}`
-        })
-        setShowSuccess(true)
-        setIsLoading(false);
-    }
-    
 
-       
-         
+
+
+
     }
 
 
     const { SVG } = useQRCode();
+
+    const handleAmountInputChanged = (e) => {
+        const inputValue = e.target.value;
+        if (isAmountCorrect(inputValue) || inputValue === '') setAmount(inputValue);
+    }
+
+    const isAmountCorrect = (number) => /^\d*\.?\d*$/.test(number) && number !== '-';
+
     return (
-        
+
         <div className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]" style={{
             boxShadow: "0px 12px 34px -10px #3A4DE926"
         }}>
             <div>
-            {showSuccess && <SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns}/>}
-        </div>
+                {showSuccess && <SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns} />}
+            </div>
             <div className="flex gap-[5px] w-full">
                 {['Deposit', 'Withdraw'].map((text, index) => (<div onClick={() => setActiveSection(index)} className={`${activeSection === index ? 'bg-[#222222] text-base text-white' : 'bg-[#2222221A] text-[15px] text-[#222222]'} rounded-[30px] p-[10px] text-center cursor-pointer w-full`}>{text}</div>))}
             </div>
             <div className="flex flex-col gap-[5px] w-full">
                 <div className="flex flex-col gap-[5px]">
                     <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Enter amount you want to {activeSection === 0 ? 'deposit' : 'withdraw'}</label>
-                    <input type="number" name="amount" id="amount" value={amount} onChange={(e)=>{setAmount(e.target.value)}} placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
+                    <input type="text" name="amount" id="amount" value={amount} onChange={handleAmountInputChanged} placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
                 </div>
                 {activeSection === 0 &&
                     <div className="flex items-end gap-[11px]">
@@ -331,7 +339,7 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
                 {activeSection === 1 &&
                     <div className="flex flex-col gap-[5px]">
                         <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Your Wallet ID</label>
-                        <input type="text" name="walletId" id="walletId" placeholder="Wallet" value={recipientWalletAddress} onChange={(e)=>{setRecipientWalletAddress(e.target.value)}} className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }}  />
+                        <input type="text" name="walletId" id="walletId" placeholder="Wallet" value={recipientWalletAddress} onChange={(e) => { setRecipientWalletAddress(e.target.value) }} className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
                     </div>
                 }
             </div>
@@ -361,7 +369,7 @@ const Funds = () => {
     const [activeSection, setActiveSection] = useState(0);
     const [transactions, setTransactions] = useState([]);
     const [transactionHistory, setTransactionHistory] = useState();
-    const [refetchBal,setreFetchBal]=useState(true)
+    const [refetchBal, setreFetchBal] = useState(true)
     const { user: selectorUser } = useAuth();
     const [user, setUser] = useState();
     const [token, setToken] = useState('');
@@ -455,8 +463,8 @@ const Funds = () => {
                         setTokenBalance('0');
                         return;
                     }
-                    console.log("tokenBalance  ==  ",result.result.value[0].account.data.parsed.info.tokenAmount
-                    .uiAmountString)
+                    console.log("tokenBalance  ==  ", result.result.value[0].account.data.parsed.info.tokenAmount
+                        .uiAmountString)
                     setTokenBalance(
                         result.result.value[0].account.data.parsed.info.tokenAmount
                             .uiAmountString
@@ -467,7 +475,7 @@ const Funds = () => {
                     console.error(error);
                 });
         }
-    }, [user,refetchBal]);
+    }, [user, refetchBal]);
 
     // GET SIGNATURE
     useEffect(() => {
@@ -587,7 +595,7 @@ const Funds = () => {
         }
     }, [transactionHistory]);
 
-    
+
 
 
 
@@ -599,7 +607,7 @@ const Funds = () => {
                 <title>SkyTrade - Wallet</title>
             </Head>
            {isLoading && <Backdrop />}
-            {isLoading && <Spinner />}
+           {isLoading && <Spinner />}
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
@@ -608,7 +616,7 @@ const Funds = () => {
                         <div className="flex gap-[50px] flex-wrap">
                             <div className="flex flex-col gap-5">
                                 <AvailableBalance balance={tokenBalance} />
-                                <DepositAndWithdraw walletId={user?.blockchainAddress} activeSection={activeSection} setActiveSection={setActiveSection} setIsLoading={setIsLoading} setreFetchBal={setreFetchBal} refetchBal={refetchBal} setTokenBalance={setTokenBalance}  tokenBalance={tokenBalance}/>
+                                <DepositAndWithdraw walletId={user?.blockchainAddress} activeSection={activeSection} setActiveSection={setActiveSection} setIsLoading={setIsLoading} setreFetchBal={setreFetchBal} refetchBal={refetchBal} setTokenBalance={setTokenBalance} tokenBalance={tokenBalance} />
                             </div>
                             <TransactionHistory transactions={transactions} user={user} />
                         </div>

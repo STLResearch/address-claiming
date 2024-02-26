@@ -155,8 +155,8 @@ const Portfolio = () => {
 
                     let retrievedAirspaces=await resp.map((item)=>{
                         return {
-                            address:item.metadata.addresses[0],
-                            name:item.metadata.name,
+                            address:item.address,
+                            name:item.id,
                             expirationDate:(new Date(item.metadata.endTime)).toString()
 
                         }
@@ -165,7 +165,7 @@ const Portfolio = () => {
                     
 
                 }
-                
+               
                 
                 console.log("the items from resport=", response.items)
                 setIsLoading(false)

@@ -6,7 +6,7 @@ import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useSelector } from 'react-redux';
 import swal from 'sweetalert';
-import Script from 'next/script';
+import Head from "next/head";
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 import { Fragment } from 'react';
@@ -45,7 +45,7 @@ const IndividualSignup = () => {
 
     const router = useRouter();
 
-    const [referralCode, setReferralCode] = useState({ id: '', code: '' });
+    const [referralCode1, setReferralCode] = useState({ id: '', code: '' });
 
     const [status, setStatus] = useState(0)
     const [isNameValid, setIsNameValid] = useState(true);
@@ -96,7 +96,7 @@ const IndividualSignup = () => {
         return !(!phoneNumber || isNaN(+(phoneNumber.slice(1,))) || phoneNumber.charAt(0) !== '+')
     }
 
-    const checkReferralCodeIsValid = (referralCode) => {
+    const checkReferralCodeIsValid = (referralCode1) => {
         return true;
     }
 
@@ -116,18 +116,20 @@ const IndividualSignup = () => {
             return;
         }
 
-        if (!checkReferralCodeIsValid(referralCode)) {
+        if (!checkReferralCodeIsValid(referralCode1)) {
             setIsReferralCodeValid(false);
             return;
         }
-
+        console.log("ref code state ",referralCode1)
         const userInfo = {
             ...category,
             name,
             newsletter,
             categoryId: status,
             phoneNumber,
+            referralCode:referralCode1.code
         };
+        console.log("userInfo    ",userInfo)
 
         setIsLoading(true);
 
@@ -291,9 +293,9 @@ const IndividualSignup = () => {
                                     <input
                                         type='referralCode'
                                         ref={referralCodeRef}
-                                        value={referralCode.code}
+                                        value={referralCode1.code}
                                         placeholder='Enter referral code'
-                                        onChange={(event)=>setReferralCode({ ...referralCode, code: event.target.value })}
+                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value });console.log("on change ref code val",referralCode1.code)}}
                                         disabled={referralDisabled}
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isReferralCodeValid ? '1px solid #87878D' : '1px solid #E04F64' }}
@@ -310,7 +312,7 @@ const IndividualSignup = () => {
                     }
                     <div className='flex items-center justify-center pt-5 gap-[11px]'>
                         {[0, 1].map((_, index) => (
-                            <div onClick={() => setPart(index)} className='cursor-pointer w-[14px] h-[14px]' style={{ background: index !== part ? '#D9D9D9' : 'transparent', border: index === part ? '1px solid #D9D9D9' : 'none', borderRadius: "50%" }} />
+                            <div onClick={() => setPart(index)} className='cursor-pointer w-[14px] h-[14px]' style={{ background: index !== part ? '#D9D9D9' : '#0653EA', border: index === part ? '1px solid #D9D9D9' : '#0653EA', borderRadius: "50%" }} />
                         ))}
                     </div>
                 </div>
