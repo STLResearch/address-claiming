@@ -253,11 +253,16 @@ export const CloseIcon = () => {
 
     )
 }
-export const CloseIconWhite = () => {
+export const CloseIconWhitesm = () => {
     return (
         <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M14.3767 0.358305C13.9425 -0.0759428 13.241 -0.0759428 12.8067 0.358305L7.36195 5.79197L1.91714 0.34717C1.4829 -0.0870776 0.781418 -0.0870776 0.34717 0.34717C-0.0870776 0.781418 -0.0870776 1.4829 0.34717 1.91714L5.79197 7.36195L0.34717 12.8067C-0.0870776 13.241 -0.0870776 13.9425 0.34717 14.3767C0.781418 14.811 1.4829 14.811 1.91714 14.3767L7.36195 8.93192L12.8067 14.3767C13.241 14.811 13.9425 14.811 14.3767 14.3767C14.811 13.9425 14.811 13.241 14.3767 12.8067L8.93192 7.36195L14.3767 1.91714C14.7998 1.49403 14.7998 0.781419 14.3767 0.358305Z" fill="white" />
         </svg>
+    )
+}
+export const CloseIconWhite = () => {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="12" cy="12" r="10" stroke="white" stroke-width="1.5"></circle> <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="white" stroke-width="1.5" stroke-linecap="round" ></path> </g></svg>
     )
 }
 export const ArrowLeftIcon = () => {

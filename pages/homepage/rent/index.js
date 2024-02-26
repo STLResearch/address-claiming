@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 import mapboxgl, { Map } from "mapbox-gl";
 import maplibregl from "maplibre-gl";
-import { ArrowLeftIcon, CloseIcon, CloseIconWhite, LocationPointIcon, MagnifyingGlassIcon,SuccessIcon, SuccessIconwhite,} from "@/Components/Icons";
+import { ArrowLeftIcon, CloseIcon, CloseIconWhite, LocationPointIcon, MagnifyingGlassIcon,SuccessIcon, SuccessIconwhite,CloseIconWhitesm} from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
@@ -18,7 +18,6 @@ import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 import dayjs from 'dayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import dayjs from 'dayjs';
 import Head from "next/head";
 const SuccessModal = ({ setShowSuccess,finalAns}) => {
 
@@ -27,10 +26,10 @@ const SuccessModal = ({ setShowSuccess,finalAns}) => {
             <div className=" text-xl text-white text-center"> {finalAns?.status} </div>
             <div className=" text-xl text-white text-center"> {finalAns?.message}</div>
 
-            <div className={` w-[100%] h-[100%] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status ==='Rent SuccessFull'? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}>
-            <div onClick={()=>{setShowSuccess(false)}} className="w-[10px] h-[10px] absolute top-[10px] right-[10px] "><CloseIconWhite/></div>
+            <div className={` w-[100%] h-[500px] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status ==='Rent SuccessFull'? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}>
+            <div onClick={() => setShowSuccess(false)} className="w-[10px] h-[10px] absolute top-[10px] right-[10px] "><CloseIconWhitesm/></div>
            <div className="w-[54.56px] h-[54.56px]" >{finalAns?.status ==='Rent SuccessFull'?<SuccessIconwhite />:<CloseIconWhite/>}</div>
-            {finalAns ==='Rent SuccessFull' ? (
+            {finalAns?.status ==='Rent SuccessFull' ? (
                 <>
                 <div className="w-[70%] h-[10%] ">
                 <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">Your rental order is complete</h1>
@@ -45,26 +44,26 @@ const SuccessModal = ({ setShowSuccess,finalAns}) => {
             )}
 
 
-                  <div className="w-[80%] h-[10%] ">
-               <p className="font-[400] text-[14px] text-center text-[#FFFFFF] font-poppins">
+                  <div className="w-[80%] h-[108px] mt-[2rem] ">
+               <p className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
                 {finalAns?.message} </p> 
             </div>
 
            
-             {finalAns === "Rent SuccessFull" && (
+             {finalAns?.status === "Rent SuccessFull" && (
                  <div  className=" w-[75%] h-[10%]  ">
                  <p className="font-[400] text-[10px] text-center text-[#FFFFFF]">A copy of your transaction is availble inside your funds </p>
               </div>
              )}
            
-            {finalAns ==='Rent SuccessFull' ? (
+            {finalAns?.status ==='Rent SuccessFull' ? (
                 <>
-                            <button className="py-2 w-[50%] h-[100%]  border rounded-md gap-10 bg-white text-center text-[#34A853] text-[14px]">Marketplace</button>
-            <button className=" py-2 w-[50%] h-[100%]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-[14px]">Funds</button>
+                            <button className="py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-white text-center text-[#34A853] text-[14px]">Marketplace</button>
+            <button className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-[14px]">Funds</button>
                 </>
             ) : (
                 <>
-                  <button className=" py-2 w-[50%] h-[100%]  border rounded-md gap-10 text-center text-[#FFFFFF] text-[14px]">Close</button>
+                  <button  className=" mt-[2.5rem] py-2 w-[50%] h-[41px]  border rounded-md gap-10 text-center text-[#FFFFFF] text-[14px]">Close</button>
                 </>
             )}
 
@@ -430,9 +429,6 @@ if(ans2) {
         } 
        
      }
-
-
-
     if(showSuccess){
         return(
             <SuccessModal setShowSuccess={setShowSuccess} rentData={rentData} finalAns={finalAns} />
@@ -1013,10 +1009,6 @@ const Rent = () => {
             <Head><title>SkyTrade - Marketplace : Rent</title></Head>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
-            {/* <div className=" bg-black w-screen h-screen ">
-
-
-                </div> */}
                 
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center  overflow-hidden ">
                 <Sidebar />
@@ -1033,6 +1025,7 @@ const Rent = () => {
                             id='map'
                             style={{ zIndex: '20' }}
                         />
+                         
                          {!isMobile && <div className="flex justify-start items-start">
                             <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData} user1={user1}/>
                             {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress} user1={user1}/>}
