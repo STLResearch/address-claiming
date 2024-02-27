@@ -17,6 +17,7 @@ import { useQRCode } from 'next-qrcode';
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { TokenAccountNotFoundError, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
 import Head from "next/head";
+import { toast } from "react-hot-toast";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -139,6 +140,8 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
         status: "Transaction SuccessFull"
     })
 
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [depositAmount, setDepositAmount] = useState('');
 
     const [recipientWalletAddress, setRecipientWalletAddress] = useState('')
 
@@ -149,12 +152,16 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
             if (activeSection == 1 && parseInt(tokenBalance) <= parseInt(amount)) {
                 console.log('amts=', parseInt(tokenBalance), parseInt(amount))
-                setFinalAns({
-                    status: "Transaction failed",
-                    message: `invalid transafer amount`
-                })
-                setShowSuccess(true)
-                throw new Error('invalid transafer amount')
+                toast.error(`Transaction Failed! - Invalid transfer amount`, {
+                    style: {
+                      padding: '16px',
+                      color: '#F5AA5E',
+                    },
+                    iconTheme: {
+                      primary: '#F5AA5E',
+                      secondary: '#FFFAEE',
+                    },
+                  });
             }
             //new PublicKey('fgdf')
 
@@ -260,11 +267,16 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
 
             } catch (err) {
-                setFinalAns({
-                    status: "Transaction Failed",
-                    message: `transaction failed ${err}`
-                })
-                setShowSuccess(true)
+                toast.error(`Transaction Failed - ${err}`, {
+                    style: {
+                      padding: '16px',
+                      color: '#F5AA5E',
+                    },
+                    iconTheme: {
+                      primary: '#F5AA5E',
+                      secondary: '#FFFAEE',
+                    },
+                  });
 
 
 
@@ -272,12 +284,18 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
             }
         } catch (error) {
-            console.log("pub key ", error)
-            setFinalAns({
-                status: "Transaction failed",
-                message: ` ${error}`
-            })
-            setShowSuccess(true)
+
+
+            toast.error('Transaction Failed', {
+                style: {
+                  padding: '16px',
+                  color: '#F5AA5E',
+                },
+                iconTheme: {
+                  primary: '#F5AA5E',
+                  secondary: '#FFFAEE',
+                },
+              });
             setIsLoading(false);
         }
 
@@ -305,12 +323,16 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
                 {showSuccess && <SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns} />}
             </div>
             <div className="flex gap-[5px] w-full">
-                {['Deposit', 'Withdraw'].map((text, index) => (<div onClick={() => setActiveSection(index)} className={`${activeSection === index ? 'bg-[#222222] text-base text-white' : 'bg-[#2222221A] text-[15px] text-[#222222]'} rounded-[30px] p-[10px] text-center cursor-pointer w-full`}>{text}</div>))}
+                {['Deposit', 'Withdraw'].map((text, index) => (<div onClick={() => {setDepositAmount(""); setActiveSection(index); setWithdrawAmount("")}} className={`${activeSection === index ? 'bg-[#222222] text-base text-white' : 'bg-[#2222221A] text-[15px] text-[#222222]'} rounded-[30px] p-[10px] text-center cursor-pointer w-full`}>{text}</div>))}
             </div>
             <div className="flex flex-col gap-[5px] w-full">
-                <div className="flex flex-col gap-[5px]">
+            <div className="flex flex-col gap-[5px]">
                     <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Enter amount you want to {activeSection === 0 ? 'deposit' : 'withdraw'}</label>
-                    <input type="text" name="amount" id="amount" value={amount} onChange={handleAmountInputChanged} placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
+                    <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-[#87878D]">
+                    <label htmlFor="usdc" className="block text-[14px] font-normal text-[#838187]">USDC</label>
+                    <input type="number" name="amount" id="amount" value={activeSection === 0 ? (depositAmount === '' ? 'USDC' : depositAmount) : (withdrawAmount === '' ? 'USDC' : withdrawAmount)}
+                        onChange={(e) => { const value = e.target.value; activeSection === 0 ? setDepositAmount(value === 'USDC' ? '' : value) : setWithdrawAmount(value === 'USDC' ? '' : value); }} className="appearance-none outline-none border-none flex-1 pl-[0.5rem]" />
+                    </div>     
                 </div>
                 {activeSection === 0 &&
                     <div className="flex items-end gap-[11px]">
