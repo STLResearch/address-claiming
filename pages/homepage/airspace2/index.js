@@ -775,14 +775,7 @@ const Airspaces = () => {
     if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
   }, [flyToAddress, address]);
 
-  useEffect(() => {
-    if (!showSuccessPopUp) return;
-    const timeoutId = setTimeout(() => {
-      setShowSuccessPopUp(false);
-    }, 4000);
 
-    return () => clearTimeout(timeoutId);
-  }, [showSuccessPopUp]);
 
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
