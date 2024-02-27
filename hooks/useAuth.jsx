@@ -55,8 +55,12 @@ const AuthProvider = ({ children }) => {
       return;
     }
 
-    if (token && user) {
-      setData({ user, token });
+    if (token ) {
+      setData( {token :token});
+      
+    }
+    if(user){
+      setData({user:user})
     }
   }, []);
 

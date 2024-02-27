@@ -9,26 +9,38 @@ import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
-
+import EditAddAirspaceModal from "@/Components/Modals/EditAddAirspaceModal";
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
 });
 
-const Modal = ({ airspace: { title, address, id, expirationDate, currentPrice }, onCloseModal, isOffer }) => {
+const Modal = ({ airspace, onCloseModal, isOffer }) => {
+    const { user } = useAuth()
+    console.log(user,"user here haha")
+    const [showClaimModal, setShowClaimModal] = useState(false);
+    const [data,setData]=useState(airspace)
+    const { updateProperty } = useDatabase();
+    const onClaim = async () =>{
+        console.log('hello edit')
+        console.log(data,"the datas")
+        const update = await updateProperty(user,data)
+        console.log(update,"the update")
+        setShowClaimModal(false);
+    }
     return (
         <Fragment>
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
                 <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                     <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}><ArrowLeftIcon /></div>
-                    <h2 className="text-[#222222] text-center font-medium text-xl">{title || address}</h2>
+                    <h2 className="text-[#222222] text-center font-medium text-xl">{airspace?.title || airspace?.address}</h2>
                     <div onClick={onCloseModal} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
                 </div>
                 <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
                     <div className="w-6 h-6"><LocationPointIcon /></div>
-                    <p className="font-normal text-[#222222] text-[14px] flex-1">{address}</p>
+                    <p className="font-normal text-[#222222] text-[14px] flex-1">{airspace?.address}</p>
                 </div>
-                {Object.entries({ 'ID': id, 'Expiration Date': expirationDate, 'Current Price': currentPrice }).map(([key, value]) => {
+                {Object.entries({ 'ID': airspace?.id, 'Expiration Date': airspace?.expirationDate, 'Current Price': airspace?.currentPrice }).map(([key, value]) => {
                     if (!value) return;
                     return (
                         <div className="flex gap-[15px]">
@@ -49,7 +61,8 @@ const Modal = ({ airspace: { title, address, id, expirationDate, currentPrice },
                     :
                     <div className="flex gap-[20px] md:mt-[15px] mt-auto -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 py-[16px] md:py-0">
                         <div onClick={onCloseModal} className="flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center" style={{ border: '1px solid #0653EA' }}>Cancel</div>
-                        <div className="flex-1 text-white rounded-[5px] bg-[#0653EA] text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center" style={{ border: '1px solid #0653EA' }}>Edit</div>
+                        <div onClick={()=>{setShowClaimModal(true)}} className="flex-1 text-white rounded-[5px] bg-[#0653EA] text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center" style={{ border: '1px solid #0653EA' }}>Edit</div>
+                        {showClaimModal && <EditAddAirspaceModal onCloseModal={() => setShowClaimModal(false)} data={data} setData={setData} onClaim={onClaim} />}
                     </div>
                 }
             </div>
@@ -135,39 +148,27 @@ const Portfolio = () => {
     const { getPropertiesByUserAddress } = useDatabase();
     const [myAirspaces, setMyAirspaces] = useState([])
     const { user } = useAuth()
+    useEffect(()=>{
 
-     const myAirspacesTest = {items:[
-        { name: 'My Airspace in Sacramento', address: '4523 14th Avenue, Sacramento, California, USA', id: 'vucnrld,xepH785TUFNRVZUCHQ3', expirationDate: '15 january 2024 at 11:49 AM', currentPrice: null },
-        { name: 'My Airspace in Santa Brígida', address: 'Villa de Santa Brígida, Las Palmas, Spain', id: 'vucnrld,xepH785TUFNRVZUCHQ4', expirationDate: '20 february 2024 at 01:00 PM', currentPrice: null },
-        { name: 'My Airspace in Las Canteras', address: 'Las Palmas de Gran Canaria, Las Palmas, Spain', id: 'vucnrld,xepH785TUFNRVZUCHQ5', expirationDate: '14 march 2024 at 04:00 AM', currentPrice: null },
-    ]};
-
+        console.log(user,"he")
+    },[user])
+    
     useEffect(() => {
         if (!user) return;
         (async () => {
             try {
                 setIsLoading(true)
-                const response = await getPropertiesByUserAddress(user.blockchainAddress,'rentalToken');
-               //test
-                //const response =myAirspacesTest;
+                const blockchain = user.blockchainAddress
+                const response = await getPropertiesByUserAddress(blockchain);
+               
                 if(response){
-                    let resp=await response.items;
-
-                    let retrievedAirspaces=await resp.map((item)=>{
-                        return {
-                            address:item.address,
-                            name:item.id,
-                            expirationDate:(new Date(item.metadata.endTime)).toString()
-
-                        }
-                    })
-                    setMyAirspaces(retrievedAirspaces)
+                    let resp= response.items;
                     
+                    setMyAirspaces(resp)
+                    console.log(resp,"airspace1")
 
                 }
                
-                
-                console.log("the items from resport=", response.items)
                 setIsLoading(false)
             } catch (error) {
                 console.log(error);
@@ -176,13 +177,15 @@ const Portfolio = () => {
         })()
     }, [user])
 
-
     const onCloseModal = () => {
         setSelectedAirspace(null);
     }
 
-    const selectAirspace = (x) => { setSelectedAirspace(x) }
-
+    const selectAirspace = (x) => { 
+        setSelectedAirspace(x) 
+    
+    }
+    console.log(selectedAirspace,"the selected")
     return (
         <Fragment>
             <Head>
