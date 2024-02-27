@@ -223,8 +223,8 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
                         <label htmlFor="no">No</label>
                     </div>
                     <div className=" flex items-center justify-center gap-[20px] text-[14px]">
-                        <div onClick={onCloseModal} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer" style={{ border: "1px solid #0653EA" }}>Cancel</div>
-                        <div onClick={onClaim} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">Claim Airspace</div>
+                        <button onClick={onCloseModal} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer" style={{ border: "1px solid #0653EA" }}>Cancel</button>
+                       <button onClick={onClaim} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">Claim Airspace</button>
                     </div>
                     </div>
 
@@ -463,7 +463,7 @@ const Airspaces = () => {
     const [marker, setMarker] = useState();
     const defaultData = {
         address: flyToAddress, name: 'My Airspace', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
-
+            { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 0 },
             { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 1 },
             { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 2 },
             { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 3 },
@@ -678,13 +678,13 @@ const Airspaces = () => {
                 setConfirmationStatus('success');
                 setClaimedProperty({name: data.name})
             }
-
-            setShowClaimModal(false);
             setData({ ...defaultData });
 
 
         } catch (error) {
             setConfirmationStatus('failed');
+        } finally {
+            setShowClaimModal(false);
         }
     }
     const flyToUserIpAddress = async (map) => {
