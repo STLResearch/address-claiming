@@ -23,7 +23,6 @@ const Modal = ({ airspace, onCloseModal, isOffer }) => {
     const { updateProperty } = useDatabase();
     const onClaim = async () =>{
         console.log('hello edit')
-        console.log(data,"the datas")
         const update = await updateProperty(user,data)
         console.log(update,"the update")
         setShowClaimModal(false);
@@ -148,11 +147,11 @@ const Portfolio = () => {
     const { getPropertiesByUserAddress } = useDatabase();
     const [myAirspaces, setMyAirspaces] = useState([])
     const { user } = useAuth()
-    useEffect(()=>{
+    // useEffect(()=>{
 
-        console.log(user,"he")
-    },[user])
-    
+        // },[user])
+        
+            console.log(user,"he")
     useEffect(() => {
         if (!user) return;
         (async () => {

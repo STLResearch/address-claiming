@@ -290,14 +290,15 @@ const useDatabase = () => {
             // const { user } = useAuth()
             console.log(user,"the user backend test")
             // console.log(kproperty,"the properties")
-            const updatedData = { propertyId: id, ...kproperty };
+            const updatedData = { propertyId: kproperty?.id, ...kproperty };
+            delete updatedData.id;
             console.log(updatedData,"updated")
             // console.log(user?.blockchainAddress,"the blockchain address")
             const { sign, sign_nonce, sign_issue_at, sign_address } =
                 await signatureObject(user?.blockchainAddress);
             const response = await fetch(`/api/proxy?${Date.now()}`, {
                 method: 'PATCH',
-                body: JSON.stringify( kproperty , user),
+                body: JSON.stringify( updatedData , user),
                 headers: {
                     'Content-Type': 'application/json',
                     URI: `/private/properties/update`,
