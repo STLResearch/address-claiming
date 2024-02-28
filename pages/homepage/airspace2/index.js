@@ -1,102 +1,177 @@
-import { Fragment, useState, useEffect } from "react";
-import mapboxgl from "mapbox-gl";
-import maplibregl from "maplibre-gl";
-import Script from "next/script";
-import { InfoIcon, MagnifyingGlassIcon } from "@/Components/Icons";
-import Sidebar from "@/Components/Sidebar";
-import PageHeader from "@/Components/PageHeader";
-import Spinner from "@/Components/Spinner";
-import Backdrop from "@/Components/Backdrop";
-import { HelpQuestionIcon, ArrowLeftIcon, CloseIcon, LocationPointIcon, SuccessIcon, EarthIcon } from "@/Components/Icons";
-import useDatabase from "@/hooks/useDatabase";
-import { useAuth } from "@/hooks/useAuth";
-import { useMobile } from "@/hooks/useMobile";
-import Link from "next/link";
+import { Fragment, useState, useEffect } from 'react';
+import mapboxgl from 'mapbox-gl';
+import maplibregl from 'maplibre-gl';
+import Script from 'next/script';
+import { InfoIcon, MagnifyingGlassIcon } from '@/Components/Icons';
+import Sidebar from '@/Components/Sidebar';
+import PageHeader from '@/Components/PageHeader';
+import Spinner from '@/Components/Spinner';
+import Backdrop from '@/Components/Backdrop';
+import {
+  HelpQuestionIcon,
+  ArrowLeftIcon,
+  CloseIcon,
+  LocationPointIcon,
+  SuccessIcon,
+  EarthIcon,
+} from '@/Components/Icons';
+import useDatabase from '@/hooks/useDatabase';
+import { useAuth } from '@/hooks/useAuth';
+import { useMobile } from '@/hooks/useMobile';
+import Link from 'next/link';
+import { useTimezoneSelect, allTimezones } from 'react-timezone-select';
 import axios from "axios";
 import Head from "next/head";
 import EditAddAirspaceModal from '@/Components/Modals/EditAddAirspaceModal'
 import PopUp from '@/Components/PopUp/PopUp'
 
 
-const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress, onClaimAirspace, flyToAddress }) => {
-    const [isInfoVisible, setIsInfoVisible] = useState(false);
+const Explorer = ({
+  address,
+  setAddress,
+  addresses,
+  showOptions,
+  handleSelectAddress,
+  onClaimAirspace,
+  flyToAddress,
+}) => {
+  const [isInfoVisible, setIsInfoVisible] = useState(false);
 
-    return (
-        <div className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
-            <div className="flex gap-[5px] items-center">
-                <p className="text-xl font-medium text-[#222222]">Claim Airspace</p>
-                <div onClick={() => setIsInfoVisible(prev => !prev)} className="relative w-[20px] h-[20px] flex justify-center items-center">
-                    <InfoIcon />
-                    {isInfoVisible && <div className="absolute -top-4 left-6 w-[189px] bg-[#CCE3FC] rounded-[4px] p-[12px] font-normal text-[10px] italic">Note that we store your data securely with advanced encryption and strict authentication measures to ensure utmost privacy and protection.</div>}
-                </div>
+  return (
+    <div
+      className='z-20 m-[39px] hidden max-h-full max-w-[362px] flex-col items-center gap-[15px] rounded-[30px] bg-[#FFFFFFCC] px-[29px] py-[43px] md:flex'
+      style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}
+    >
+      <div className='flex items-center gap-[5px]'>
+        <p className='text-xl font-medium text-[#222222]'>Claim Airspace</p>
+        <div
+          onClick={() => setIsInfoVisible((prev) => !prev)}
+          className='relative flex h-[20px] w-[20px] items-center justify-center'
+        >
+          <InfoIcon />
+          {isInfoVisible && (
+            <div className='absolute -top-4 left-6 w-[189px] rounded-[4px] bg-[#CCE3FC] p-[12px] text-[10px] font-normal italic'>
+              Note that we store your data securely with advanced encryption and
+              strict authentication measures to ensure utmost privacy and
+              protection.
             </div>
-            <p className="text-[15px] font-normal text-[#222222]">Ready to claim your airspace? No registered airspace yet, but exciting times ahead!</p>
-            <div className="relative px-[22px] py-[16px] bg-white rounded-lg w-full" style={{ border: "1px solid #87878D" }}>
-                <input autoComplete="off" value={address} onChange={(e) => setAddress(e.target.value)} type="text" name="searchAirspaces" id="searchAirspaces" placeholder="Search Airspaces" className="outline-none w-full pr-[20px]" />
-                <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
-                    <MagnifyingGlassIcon />
-                </div>
-                {showOptions && (
-                    <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
-                        {addresses.map((item) => {
-                            return (
-                                <div
-                                    key={item.id}
-                                    value={item.place_name}
-                                    onClick={() => handleSelectAddress(item.place_name)}
-                                    className='p-5 text-left text-[#222222] w-full'
-                                    style={{
-                                        borderTop: '0.2px solid #222222',
-                                    }}
-                                >
-                                    {item.place_name}
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
-            {flyToAddress && <div onClick={onClaimAirspace} className="bg-[#0653EA] text-white rounded-lg py-[16px] text-center text-[15px] font-normal cursor-pointer w-full">Claim Airspace</div>}
+          )}
         </div>
-    )
-}
-
-const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSelectAddress, onClaimAirspace, flyToAddress, onGoBack }) => {
-
-    return (
-        <div className="flex bg-white items-center gap-[15px] py-[19px] px-[21px] z-[40]">
-            <div onClick={onGoBack} className="flex items-center justify-center w-6 h-6"><ArrowLeftIcon /></div>
-            <div className="relative px-[22px] py-[16px] bg-white rounded-lg w-full" style={{ border: "1px solid #87878D" }}>
-                <input autoComplete="off" value={address} onChange={(e) => setAddress(e.target.value)} type="text" name="searchAirspaces" id="searchAirspaces" placeholder="Search Airspaces" className="outline-none w-full pr-[20px]" />
-                <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
-                    <MagnifyingGlassIcon />
-                </div>
-                {showOptions && (
-                    <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
-                        {addresses.map((item) => {
-                            return (
-                                <div
-                                    key={item.id}
-                                    value={item.place_name}
-                                    onClick={() => handleSelectAddress(item.place_name)}
-                                    className='p-5 text-left text-[#222222] w-full'
-                                    style={{
-                                        borderTop: '0.2px solid #222222',
-                                    }}
-                                >
-                                    {item.place_name}
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
+      </div>
+      <p className='text-[15px] font-normal text-[#222222]'>
+        Ready to claim your airspace? No registered airspace yet, but exciting
+        times ahead!
+      </p>
+      <div
+        className='relative w-full rounded-lg bg-white px-[22px] py-[16px]'
+        style={{ border: '1px solid #87878D' }}
+      >
+        <input
+          autoComplete='off'
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          type='text'
+          name='searchAirspaces'
+          id='searchAirspaces'
+          placeholder='Search Airspaces'
+          className='w-full pr-[20px] outline-none'
+        />
+        <div className='absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2'>
+          <MagnifyingGlassIcon />
         </div>
-    )
-}
+        {showOptions && (
+          <div className='absolute left-0 top-[55px] w-full flex-col bg-white'>
+            {addresses.map((item) => {
+              return (
+                <div
+                  key={item.id}
+                  value={item.place_name}
+                  onClick={() => handleSelectAddress(item.place_name)}
+                  className='w-full p-5 text-left text-[#222222]'
+                  style={{
+                    borderTop: '0.2px solid #222222',
+                  }}
+                >
+                  {item.place_name}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      {flyToAddress && (
+        <div
+          onClick={onClaimAirspace}
+          className='w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white'
+        >
+          Claim Airspace
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ExplorerMobile = ({
+  address,
+  setAddress,
+  addresses,
+  showOptions,
+  handleSelectAddress,
+  onClaimAirspace,
+  flyToAddress,
+  onGoBack,
+}) => {
+  return (
+    <div className='z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]'>
+      <div
+        onClick={onGoBack}
+        className='flex h-6 w-6 items-center justify-center'
+      >
+        <ArrowLeftIcon />
+      </div>
+      <div
+        className='relative w-full rounded-lg bg-white px-[22px] py-[16px]'
+        style={{ border: '1px solid #87878D' }}
+      >
+        <input
+          autoComplete='off'
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          type='text'
+          name='searchAirspaces'
+          id='searchAirspaces'
+          placeholder='Search Airspaces'
+          className='w-full pr-[20px] outline-none'
+        />
+        <div className='absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2'>
+          <MagnifyingGlassIcon />
+        </div>
+        {showOptions && (
+          <div className='absolute left-0 top-[55px] w-full flex-col bg-white'>
+            {addresses.map((item) => {
+              return (
+                <div
+                  key={item.id}
+                  value={item.place_name}
+                  onClick={() => handleSelectAddress(item.place_name)}
+                  className='w-full p-5 text-left text-[#222222]'
+                  style={{
+                    borderTop: '0.2px solid #222222',
+                  }}
+                >
+                  {item.place_name}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const Slider = () => {
-    const [isFullyVisible, setIsFullyVisible] = useState(false);
+  const [isFullyVisible, setIsFullyVisible] = useState(false);
 
     return (
         <div onClick={() => setIsFullyVisible(prev => !prev)} className={`cursor-pointer rounded-t-[30px] absolute ${isFullyVisible ? 'bottom-0' : '-bottom-[600px]'} right-6 flex flex-col items-center gap-[34px] py-[43px] px-[23px] bg-white max-w-[362px] duration-1000`}>
@@ -156,42 +231,95 @@ const Slider = () => {
 
 
 const HowToModal = ({ goBack }) => {
-    const [section, setSection] = useState(0);
-    return (
-        <div className="absolute w-screen h-screen bg-white flex flex-col justify-center items-center z-50">
-            <div onClick={goBack} className="w-[14px] h-[14px] absolute top-[26px] right-[18px]"><CloseIcon /></div>
-            {section === 0 && (
-                <div className="flex flex-col gap-[15px] items-center justify-center px-[30px]">
-                    <div className="w-[72px] h-[72px]">
-                        <EarthIcon isActive={true} />
-                    </div>
-                    <p className="px-[30px] text-[15px] text-center text-[#222222]">Ready to claim your airspace? No registered airspace yet, but exciting times ahead!  🚀✨</p>
-                    <div onClick={() => setSection(1)} className="bg-[#0653EA] rounded-[8px] py-[16px] w-full text-center text-white cursor-pointer">Next</div>
-                </div>
-            )}
-            {section === 1 && (
-                <div className="flex flex-col gap-[15px] items-center justify-center px-[60px] text-[#222222] text-center">
-                    <p className="text-[20px] font-medium">How to Claim My Airspace?</p>
-                    <div className="flex flex-col items-center justify-center text-center py-[30px]">
-                        <p className="text-[15px]"><span className="font-bold">1. Discover Your Address</span><br />Enter your address using the map for accuracy.</p>
-                        <p className="text-[15px]"><span className="font-bold">2. Discover Your Address</span><br />Enter your address using the map for accuracy.</p>
-                        <p className="text-[15px]"><span className="font-bold">3. Discover Your Address</span><br />Enter your address using the map for accuracy.</p>
-                        <p className="text-[15px]"><span className="font-bold">4. Discover Your Address</span><br />Enter your address using the map for accuracy.</p>
-                        <p className="text-[15px]"><span className="font-bold">5. Discover Your Address</span><br />Enter your address using the map for accuracy.</p>
-                        <p className="text-[15px]"><span className="font-bold">6. Discover Your Address</span><br />Enter your address using the map for accuracy.</p>
-                    </div>
-                    <p className="text-[15px]">Let's get started on creating the future and receiving passive income from your skies. 🚀✨</p>
-                    <div onClick={goBack} className="bg-[#0653EA] rounded-[8px] py-[16px] w-full text-center text-white cursor-pointer">Claim Airspace</div>
-                </div>
-            )}
-            <div className='flex items-center justify-center pt-5 gap-[11px] mt-[15px]'>
-                {[0, 1].map((_, index) => (
-                    <div onClick={() => setSection(index)} className='cursor-pointer w-[14px] h-[14px]' style={{ background: index !== section ? '#D9D9D9' : 'transparent', border: index === section ? '1px solid #D9D9D9' : 'none', borderRadius: "50%" }} />
-                ))}
-            </div>
+  const [section, setSection] = useState(0);
+  return (
+    <div className='absolute z-50 flex h-screen w-screen flex-col items-center justify-center bg-white'>
+      <div
+        onClick={goBack}
+        className='absolute right-[18px] top-[26px] h-[14px] w-[14px]'
+      >
+        <CloseIcon />
+      </div>
+      {section === 0 && (
+        <div className='flex flex-col items-center justify-center gap-[15px] px-[30px]'>
+          <div className='h-[72px] w-[72px]'>
+            <EarthIcon isActive={true} />
+          </div>
+          <p className='px-[30px] text-center text-[15px] text-[#222222]'>
+            Ready to claim your airspace? No registered airspace yet, but
+            exciting times ahead! 🚀✨
+          </p>
+          <div
+            onClick={() => setSection(1)}
+            className='w-full cursor-pointer rounded-[8px] bg-[#0653EA] py-[16px] text-center text-white'
+          >
+            Next
+          </div>
         </div>
-    )
-}
+      )}
+      {section === 1 && (
+        <div className='flex flex-col items-center justify-center gap-[15px] px-[60px] text-center text-[#222222]'>
+          <p className='text-[20px] font-medium'>How to Claim My Airspace?</p>
+          <div className='flex flex-col items-center justify-center py-[30px] text-center'>
+            <p className='text-[15px]'>
+              <span className='font-bold'>1. Discover Your Address</span>
+              <br />
+              Enter your address using the map for accuracy.
+            </p>
+            <p className='text-[15px]'>
+              <span className='font-bold'>2. Discover Your Address</span>
+              <br />
+              Enter your address using the map for accuracy.
+            </p>
+            <p className='text-[15px]'>
+              <span className='font-bold'>3. Discover Your Address</span>
+              <br />
+              Enter your address using the map for accuracy.
+            </p>
+            <p className='text-[15px]'>
+              <span className='font-bold'>4. Discover Your Address</span>
+              <br />
+              Enter your address using the map for accuracy.
+            </p>
+            <p className='text-[15px]'>
+              <span className='font-bold'>5. Discover Your Address</span>
+              <br />
+              Enter your address using the map for accuracy.
+            </p>
+            <p className='text-[15px]'>
+              <span className='font-bold'>6. Discover Your Address</span>
+              <br />
+              Enter your address using the map for accuracy.
+            </p>
+          </div>
+          <p className='text-[15px]'>
+            Let's get started on creating the future and receiving passive
+            income from your skies. 🚀✨
+          </p>
+          <div
+            onClick={goBack}
+            className='w-full cursor-pointer rounded-[8px] bg-[#0653EA] py-[16px] text-center text-white'
+          >
+            Claim Airspace
+          </div>
+        </div>
+      )}
+      <div className='mt-[15px] flex items-center justify-center gap-[11px] pt-5'>
+        {[0, 1].map((_, index) => (
+          <div
+            onClick={() => setSection(index)}
+            className='h-[14px] w-[14px] cursor-pointer'
+            style={{
+              background: index !== section ? '#D9D9D9' : 'transparent',
+              border: index === section ? '1px solid #D9D9D9' : 'none',
+              borderRadius: '50%',
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const Airspaces = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -228,11 +356,11 @@ const Airspaces = () => {
     const { user } = useAuth();
 
 
-    useEffect(() => {
-        if (map) return;
+  useEffect(() => {
+    if (map) return;
 
-        const createMap = () => {
-            mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+    const createMap = () => {
+      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
             const newMap = new mapboxgl.Map({
                 container: 'map',
@@ -276,113 +404,112 @@ const Airspaces = () => {
     
 
 
-    useEffect(() => {
-        if (!showOptions) setShowOptions(true);
-        if (!address) return setShowOptions(false);
+  useEffect(() => {
+    if (!showOptions) setShowOptions(true);
+    if (!address) return setShowOptions(false);
 
-        let timeoutId;
+    let timeoutId;
 
-        const getAddresses = async () => {
-            setCoordinates({ longitude: '', latitude: '' });
+    const getAddresses = async () => {
+      setCoordinates({ longitude: '', latitude: '' });
 
-            timeoutId = setTimeout(async () => {
-                try {
-                    const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+      timeoutId = setTimeout(async () => {
+        try {
+          const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
 
-                    const response = await fetch(mapboxGeocodingUrl);
+          const response = await fetch(mapboxGeocodingUrl);
 
-                    if (!response.ok) throw new Error("Error while getting addresses");
+          if (!response.ok) throw new Error('Error while getting addresses');
 
-                    const data = await response.json();
-                    if (data.features && data.features.length > 0) {
-                        setAddresses(data.features);
-                    } else {
-                        setAddresses([]);
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
-            }, 500);
+          const data = await response.json();
+          if (data.features && data.features.length > 0) {
+            setAddresses(data.features);
+          } else {
+            setAddresses([]);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }, 500);
+    };
+
+    getAddresses();
+
+    return () => clearTimeout(timeoutId);
+  }, [address]);
+
+  useEffect(() => {
+    if (!flyToAddress) return;
+
+    const goToAddress = async () => {
+      try {
+        setIsLoading(true);
+
+        const mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+
+        const response = await fetch(mapBoxGeocodingUrl);
+
+        if (!response.ok)
+          throw new Error('Error while getting new address location');
+
+        const data = await response.json();
+
+        if (!data.features || data.features.length === 0) {
+          throw new Error('Address not found');
         }
 
-        getAddresses();
+        const coordinates = data.features[0].geometry.coordinates;
+        const endPoint = [coordinates[0], coordinates[1]];
 
-        return () => clearTimeout(timeoutId);
-    }, [address])
+        setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
+        setAddressData(data.features[0].properties);
+        setIsLoading(false);
 
-    useEffect(() => {
-        if (!flyToAddress) return;
+        map.flyTo({
+          center: endPoint,
+          zoom: 16,
+        });
 
-        const goToAddress = async () => {
-            try {
-                setIsLoading(true);
-
-                const mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
-
-                const response = await fetch(mapBoxGeocodingUrl)
-
-                if (!response.ok) throw new Error("Error while getting new address location");
-
-                const data = await response.json();
-
-                if (!data.features || data.features.length === 0) {
-                    throw new Error('Address not found');
-                }
-
-                const coordinates = data.features[0].geometry.coordinates;
-                const endPoint = [coordinates[0], coordinates[1]];
-
-                setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
-                setAddressData(data.features[0].properties);
-                setIsLoading(false);
-
-                map.flyTo({
-                    center: endPoint,
-                    zoom: 16,
-
-                });
-
-                if (marker) {
-                    marker.remove();
-                }
-
-                let el = document.createElement('div');
-                el.id = 'markerWithExternalCss';
-
-                // Add the new marker to the map and update the marker state
-                const newMarker = new maplibregl.Marker(el)
-                    .setLngLat(endPoint)
-                    .addTo(map);
-                setMarker(newMarker);
-            } catch (error) {
-                setIsLoading(false);
-                console.error(err);
-            }
+        if (marker) {
+          marker.remove();
         }
 
-        goToAddress();
+        let el = document.createElement('div');
+        el.id = 'markerWithExternalCss';
 
-    }, [flyToAddress, map]);
+        // Add the new marker to the map and update the marker state
+        const newMarker = new maplibregl.Marker(el)
+          .setLngLat(endPoint)
+          .addTo(map);
+        setMarker(newMarker);
+      } catch (error) {
+        setIsLoading(false);
+        console.error(err);
+      }
+    };
 
-    useEffect(() => {
-        if (flyToAddress === address) setShowOptions(false);
-        if (flyToAddress) setData(prev => ({ ...prev, address: flyToAddress }))
-    }, [flyToAddress, address]);
+    goToAddress();
+  }, [flyToAddress, map]);
 
-    useEffect(() => {
-        if (!showSuccessPopUp) return;
-        const timeoutId = setTimeout(() => {
-            setShowSuccessPopUp(false);
-        }, 4000);
+  useEffect(() => {
+    if (flyToAddress === address) setShowOptions(false);
+    if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
+  }, [flyToAddress, address]);
 
-        return () => clearTimeout(timeoutId)
-    }, [showSuccessPopUp])
+  useEffect(() => {
+    if (!showSuccessPopUp) return;
+    const timeoutId = setTimeout(() => {
+      setShowSuccessPopUp(false);
+    }, 4000);
 
-    const handleSelectAddress = (placeName) => {
-        setAddress(placeName);
-        setFlyToAddress(placeName);
-        setShowOptions(false);
-    }
+    return () => clearTimeout(timeoutId);
+  }, [showSuccessPopUp]);
+
+  const handleSelectAddress = (placeName) => {
+    setAddress(placeName);
+    setFlyToAddress(placeName);
+    setShowOptions(false);
+  };
 
     const onClaim = async () => {
         try {

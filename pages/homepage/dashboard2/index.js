@@ -52,6 +52,7 @@ const AvailableBalance = ({ balance = 0 }) => {
 }
 
 const MyAirspaces = ({ airspaces = [] }) => {
+    console.log({airspaces})
 
     return (
         <Item title={<Fragment>My Airspaces <span className="text-[15px] font-normal">({airspaces.length})</span></Fragment>} icon={<DroneIcon isActive />} linkText={'View all airspaces'} href={'/homepage/portfolio'}>
@@ -286,6 +287,7 @@ const Dashboard = () => {
         if (!user) return;
         (async () => {
             try {
+                console.log({user})
                 const response = await getPropertiesByUserAddress(user.blockchainAddress,'landToken');
                //test
                 //const response =myAirspacesTest;
@@ -293,11 +295,9 @@ const Dashboard = () => {
                     "res landrtoken== ",response
                 )
                 if(response){
-                    let resp=await response.items;
-
-                    let retrievedAirspaces=await resp.map((item)=>{
+                    let retrievedAirspaces= response.items.map((item)=>{
                         return {
-                            address:item.address,
+                            address:item.metadata.addresses[0],
                             
                            
 

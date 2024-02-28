@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 import mapboxgl, { Map } from "mapbox-gl";
 import maplibregl from "maplibre-gl";
-import { ArrowLeftIcon, CloseIcon, LocationPointIcon, MagnifyingGlassIcon, SuccessIcon } from "@/Components/Icons";
+import { ArrowLeftIcon, CloseIcon, CloseIconWhite, LocationPointIcon, MagnifyingGlassIcon,SuccessIcon, SuccessIconwhite,CloseIconWhitesm} from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
@@ -16,24 +16,62 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-
 import dayjs from 'dayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import Head from "next/head";
 const SuccessModal = ({ setShowSuccess,finalAns}) => {
 
-    const [owner,setOwner]=useState({});
        return (
-        <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${finalAns.status=='Rent SuccessFull'?'bg-green-600':'bg-red-600'} py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px] items-center`}>
-            
-            <div className="w-[100px] h-[100px]  " >{finalAns.status=='Rent SuccessFull'?<SuccessIcon />:<CloseIcon/>}</div>
-            <div className=" text-xl text-white text-center"> {finalAns.status} </div>
-            <div className=" text-xl text-white text-center"> {finalAns.message}</div>
-                <div onClick={()=>{setShowSuccess(false)}} className="rounded-[5px] py-[10px] px-16 text-green-600 bg-white text-center cursor-pointer w-1/2">OK</div>
-            
+        <div className={`w-[100%] max-w-[20rem] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}>
+            <div className=" text-xl text-white text-center"> {finalAns?.status} </div>
+            <div className=" text-xl text-white text-center"> {finalAns?.message}</div>
+
+            <div className={` w-[100%] h-[500px] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status ==='Rent SuccessFull'? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}>
+            <div onClick={() => setShowSuccess(false)} className="w-[10px] h-[10px] absolute top-[10px] right-[10px] "><CloseIconWhitesm/></div>
+           <div className="w-[54.56px] h-[54.56px]" >{finalAns?.status ==='Rent SuccessFull'?<SuccessIconwhite />:<CloseIconWhite/>}</div>
+            {finalAns?.status ==='Rent SuccessFull' ? (
+                <>
+                <div className="w-[70%] h-[10%] ">
+                <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">Your rental order is complete</h1>
+            </div>
+                </>
+            ) : (
+                <>
+                 <div className="w-[70%] h-[10%] ">
+                <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">Rent failed</h1>
+            </div>
+                </>
+            )}
+
+
+                  <div className="w-[80%] h-[108px] mt-[2rem] ">
+               <p className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
+                {finalAns?.message} </p> 
+            </div>
+
+           
+             {finalAns?.status === "Rent SuccessFull" && (
+                 <div  className=" w-[75%] h-[10%]  ">
+                 <p className="font-[400] text-[10px] text-center text-[#FFFFFF]">A copy of your transaction is availble inside your funds </p>
+              </div>
+             )}
+           
+            {finalAns?.status ==='Rent SuccessFull' ? (
+                <>
+                            <button className="py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-white text-center text-[#34A853] text-[14px]">Marketplace</button>
+            <button className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-[14px]">Funds</button>
+                </>
+            ) : (
+                <>
+                  <button  className=" mt-[2.5rem] py-2 w-[50%] h-[41px]  border rounded-md gap-10 text-center text-[#FFFFFF] text-[14px]">Close</button>
+                </>
+            )}
+
+           </div>
         </div>
     )
-}
+}    
+
 
 
 const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1}) => {
@@ -390,15 +428,11 @@ if(ans2) {
        
         } 
        
-     }// handle air space
-
-
-    console.log("am from CLaim modal ,",rentData)
+     }
     if(showSuccess){
         return(
-            <>
-                {finalAns.status=='Rent SuccessFull'?<SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns}/>:<SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns}/> }
-            </>
+            <SuccessModal setShowSuccess={setShowSuccess} rentData={rentData} finalAns={finalAns} />
+
         )
     }
     const shouldDisableTime = (value, view) =>{
@@ -486,29 +520,26 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                     <div  style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className=" mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll">
                         
                         {registeredAddress.map((item)=>{
-//add popup to black ones
-const rentCLickHandler=()=>{
-    let el1 = document.createElement('div');
-    
-                console.log("am rrent clickedd",item.id)
-                setSelectedAddress(item.id);
-                
-                
-                el1.id = 'marker2';
-    let lat1=item.latitude;
-    let lng1=item.longitude;
-    let ans2=new mapboxgl.LngLat(lng1,lat1);
-    let newMap=map
-    if(marker){
-        marker.remove()
-    }
-    let marker1=new maplibregl.Marker({ color: '#0653EA' }  )
-                    .setLngLat(ans2)
-                    .addTo(map);
-    setMarker(marker1)
-
-        
-    
+            //add popup to black ones
+                const rentCLickHandler=()=>{
+                    let el1 = document.createElement('div');
+                    
+                                console.log("am rrent clickedd",item.id)
+                                setSelectedAddress(item.id);
+                                
+                            
+                            el1.id = 'marker2';
+                let lat1=item.latitude;
+                let lng1=item.longitude;
+                let ans2=new mapboxgl.LngLat(lng1,lat1);
+                let newMap=map
+                if(marker){
+                    marker.remove()
+                }
+                let marker1=new maplibregl.Marker({ color: '#0653EA' }  )
+                                .setLngLat(ans2)
+                                .addTo(map);
+                setMarker(marker1)   
 }
 
 const onClickRent=() =>{
@@ -610,7 +641,6 @@ const Rent = () => {
     const { user: selectorUser } = useAuth();
     const [user1, setUser1] = useState();
     const [data, setData] = useState({ ...defaultData });
-    console.log(selectorUser)
     // showing
     const [regAdressShow,setregAdressShow]=useState(false)
     const [showOptions, setShowOptions] = useState(false);
@@ -889,7 +919,7 @@ const Rent = () => {
 
                     if (!response.ok) throw new Error("Error while getting addresses");
 
-                    const data = await response.json();
+    
                     if (data.features && data.features.length > 0) {
                         setAddresses(data.features);
                     } else {
@@ -973,17 +1003,12 @@ const Rent = () => {
         setShowOptions(false);
     }
 
-   
 
     return (
         <Fragment>
             <Head><title>SkyTrade - Marketplace : Rent</title></Head>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
-            {/* <div className=" bg-black w-screen h-screen ">
-
-
-                </div> */}
                 
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center  overflow-hidden ">
                 <Sidebar />
@@ -1000,6 +1025,7 @@ const Rent = () => {
                             id='map'
                             style={{ zIndex: '20' }}
                         />
+                         
                          {!isMobile && <div className="flex justify-start items-start">
                             <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData} user1={user1}/>
                             {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress} user1={user1}/>}
