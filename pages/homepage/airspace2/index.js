@@ -15,11 +15,7 @@ import Link from "next/link";
 import axios from "axios";
 import Head from "next/head";
 import EditAddAirspaceModal from '@/Components/Modals/EditAddAirspaceModal'
-
-
-
-
-
+import PopUp from '@/Components/PopUp/PopUp'
 
 
 const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress, onClaimAirspace, flyToAddress }) => {
@@ -157,16 +153,7 @@ const Slider = () => {
     )
 }
 
-const PopUp = ({ isVisible }) => {
-    return (
-        <div className={` z-20 absolute top-[14px] ${isVisible ? 'right-0' : '-right-[100%]'} bg-white p-5 flex items-center gap-5 duration-500`}>
-            <div className="flex items-center justify-center w-[18px] h-[18px]">
-                <SuccessIcon />
-            </div>
-            Congratulations on claiming your piece of the sky successfully!
-        </div>
-    );
-}
+
 
 const HowToModal = ({ goBack }) => {
     const [section, setSection] = useState(0);
@@ -487,7 +474,7 @@ const Airspaces = () => {
                         {!isMobile && <div className="flex justify-start items-start">
                             <Explorer flyToAddress={flyToAddress} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} onClaimAirspace={() => setShowClaimModal(true)} />
                             <Slider />
-                            <PopUp isVisible={showSuccessPopUp} />
+                            <PopUp isVisible={showSuccessPopUp} type='success' message='Congratulations on claiming your piece of the sky successfully!'/>
                             {showClaimModal && <EditAddAirspaceModal onCloseModal={() => setShowClaimModal(false)} data={data} setData={setData} onClaim={onClaim} />}
                         </div>}
                         {!showMobileMap && <div className="flex md:hidden flex-col w-full h-full">

@@ -287,13 +287,8 @@ const useDatabase = () => {
 
     const updateProperty = async (user, kproperty) => {
         try {
-            // const { user } = useAuth()
-            console.log(user,"the user backend test")
-            // console.log(kproperty,"the properties")
             const updatedData = { propertyId: kproperty?.id, ...kproperty };
             delete updatedData.id;
-            console.log(updatedData,"updated")
-            // console.log(user?.blockchainAddress,"the blockchain address")
             const { sign, sign_nonce, sign_issue_at, sign_address } =
                 await signatureObject(user?.blockchainAddress);
             const response = await fetch(`/api/proxy?${Date.now()}`, {
@@ -312,7 +307,6 @@ const useDatabase = () => {
             if (!response.ok || response.statusCode === 500) {
                 throw new Error("Error when updating property.");
             }
-            console.log(await response.json,"the response response")
             return response.json();
         } catch (error) {
             console.log(error);

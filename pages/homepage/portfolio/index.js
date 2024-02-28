@@ -10,22 +10,35 @@ import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
 import EditAddAirspaceModal from "@/Components/Modals/EditAddAirspaceModal";
+import PopUp from "@/Components/PopUp/PopUp";
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
 });
 
-const Modal = ({ airspace, onCloseModal, isOffer }) => {
+const Modal = ({ setShowPopUp,airspace, onCloseModal, isOffer }) => {
     const { user } = useAuth()
-    console.log(user,"user here haha")
     const [showClaimModal, setShowClaimModal] = useState(false);
     const [data,setData]=useState(airspace)
     const { updateProperty } = useDatabase();
     const onClaim = async () =>{
-        console.log('hello edit')
-        const update = await updateProperty(user,data)
-        console.log(update,"the update")
-        setShowClaimModal(false);
+        try {
+            const update = await updateProperty(user, data);
+            setShowClaimModal(false);
+            setShowPopUp({
+                isVisible: true,
+                type: 'success',
+                message: 'Successfully edited/claimed!'
+            });
+            
+        } catch (error) {
+            console.error("Error updating property:", error);
+            setShowPopUp({
+                isVisible: true,
+                type: 'error',
+                message: 'error while updating please try again later!'
+            });
+        }
     }
     return (
         <Fragment>
@@ -105,7 +118,6 @@ const PortfolioItemMobile = ({ airspaceName, tags, selectAirspace }) => {
     )
 }
 const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
-    console.log("all airspacesz ",airspacesList)
     return (
         <div className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <h2 className="font-medium text-xl text-[#222222] text-center">{title}</h2>
@@ -145,36 +157,43 @@ const Portfolio = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedAirspace, setSelectedAirspace] = useState(null);
     const { getPropertiesByUserAddress } = useDatabase();
-    const [myAirspaces, setMyAirspaces] = useState([])
+    const [myAirspaces, setMyAirspaces] = useState([]);
     const { user } = useAuth()
-    // useEffect(()=>{
+    const [showPopUp, setShowPopUp] = useState({isVisible:false,type:'',message:''});
 
-        // },[user])
-        
-            console.log(user,"he")
+
     useEffect(() => {
-        if (!user) return;
-        (async () => {
-            try {
-                setIsLoading(true)
-                const blockchain = user.blockchainAddress
-                const response = await getPropertiesByUserAddress(blockchain);
-               
-                if(response){
-                    let resp= response.items;
-                    
-                    setMyAirspaces(resp)
-                    console.log(resp,"airspace1")
+        if (!showPopUp) return;
+        const timeoutId = setTimeout(() => {
+            setShowPopUp({
+                isVisible: false,
+                type: '',
+                message: ''
+            });
+        }, 4000);
 
-                }
-               
-                setIsLoading(false)
-            } catch (error) {
-                console.log(error);
-                setIsLoading(false)
+        return () => clearTimeout(timeoutId)
+    }, [showPopUp])
+    const fetchPortfolioData = async () => {
+        if (!user) return;
+        try {
+            setIsLoading(true);
+            const blockchain = user?.blockchainAddress;
+            const response = await getPropertiesByUserAddress(blockchain);
+            if (response) {
+                let resp = response.items;
+                setMyAirspaces(resp);
             }
-        })()
-    }, [user])
+            setIsLoading(false);
+        } catch (error) {
+            console.log(error);
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchPortfolioData();
+    }, [user]);
 
     const onCloseModal = () => {
         setSelectedAirspace(null);
@@ -184,7 +203,6 @@ const Portfolio = () => {
         setSelectedAirspace(x) 
     
     }
-    console.log(selectedAirspace,"the selected")
     return (
         <Fragment>
             <Head>
@@ -197,7 +215,8 @@ const Portfolio = () => {
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
-                    {selectedAirspace !== null && <Modal airspace={myAirspaces[selectedAirspace]} onCloseModal={onCloseModal} />}
+                    {selectedAirspace !== null && <Modal setShowPopUp={setShowPopUp} airspace={myAirspaces[selectedAirspace]} onCloseModal={onCloseModal} />}
+                    <PopUp isVisible={showPopUp?.isVisible} type={showPopUp?.type} message={showPopUp?.message}/>
                     <PageHeader pageTitle={'Portfolio'} username={'John Doe'} />
                     <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
                         <PortfolioList airspacesList={myAirspaces} title={'Rented airspaces'} selectAirspace={selectAirspace} />
@@ -205,6 +224,7 @@ const Portfolio = () => {
                     <section className="relative w-full h-full flex flex-wrap gap-6 py-[20px] md:hidden overflow-y-auto mb-[79px]">
                         <PortfolioListMobile airspacesList={myAirspaces} title={'Rented airspaces'} selectAirspace={selectAirspace} />
                     </section>
+
                     {/** TODO: <PortfolioSectionMobile title={'Hola'} airspacesList={myAirspacesToSellAndRent} />*/}
                 </div>
             </div>

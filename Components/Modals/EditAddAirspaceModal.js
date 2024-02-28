@@ -278,7 +278,7 @@ const EditAddAirspaceModal = ({ onCloseModal, data, setData, onClaim }) => {
             </div>
             <div className="flex items-center justify-center gap-[20px] text-[14px]">
                 <div onClick={onCloseModal} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer" style={{ border: "1px solid #0653EA" }}>Cancel</div>
-                <div onClick={onClaim} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">Claim Airspace</div>
+                <div onClick={onClaim} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">{data?.id ? 'Edit' : 'Claim Airspace' } </div>
             </div>
             </div>
 
