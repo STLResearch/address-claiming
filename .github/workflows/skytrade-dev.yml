@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.11.1]
 
     steps:
     - uses: actions/checkout@v3
@@ -22,5 +22,5 @@ jobs:
     - run: bash ./dev_env.sh
     - run: pm2 stop ecosystem.config.js --env dev
     - run: yarn install
-    - run: NODE_OPTIONS="--max-old-space-size=2048" npm run build
+    - run: NODE_OPTIONS="--max-old-space-size=2048" yarn build
     - run: pm2 startOrRestart ecosystem.config.js --env dev
