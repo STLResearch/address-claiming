@@ -1,5 +1,5 @@
 'use client';
-import { CloseIcon, SuccessIcon } from "@/Components/Icons";
+import { CloseIcon, SuccessIcon,chevronDownIcon,chevronUpIcon} from "@/Components/Icons";
 import { Fragment, useState, useEffect } from "react";
 import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
@@ -17,9 +17,13 @@ import { useQRCode } from 'next-qrcode';
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { TokenAccountNotFoundError, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
 import Head from "next/head";
+import Image from 'next/image';
 
 import React from 'react';
+import { createPortal } from "react-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import { CryptoElements, OnrampElement } from "@/hooks/stripe";
+import { loadStripeOnramp } from "@stripe/crypto";
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -122,16 +126,122 @@ const TransactionHistory = ({ transactions, user }) => {
     )
 }
 
+// Stripe component
+
+const Stripe = (props) => {
+    return (
+      <div
+        style={{ width: '350px', height: '90%', left: 'calc(50% - 175px)', zIndex: "10000"}}
+        className='fixed top-10'
+      >
+        <CryptoElements stripeOnramp={props.stripeOnramp}>
+          <OnrampElement clientSecret={props.clientSecret} />
+        </CryptoElements>
+        <button onClick={props.closeModal} className='absolute right-3 top-6'>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            width='34'
+            height='34'
+            viewBox='0 0 34 34'
+            fill='none'
+          >
+            <path
+              d='M12.7578 12.7285L21.2431 21.2138'
+              stroke='#252530'
+              strokeWidth='1.5'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            />
+            <path
+              d='M12.7569 21.2138L21.2422 12.7285'
+              stroke='#252530'
+              strokeWidth='1.5'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            />
+          </svg>
+        </button>
+      </div>
+    );
+  };
 
 
 const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance }) => {
     const [amount, setAmount] = useState('')
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showStripeModal, setShowStripeModal] = useState(false);
+    const [stripeOnramp, setStripeOnRamp] = useState();
+    const [clientSecret, setClientSecret] = useState('');
+    const [finalAns, setFinalAns] = useState({
+        status: "Transaction SuccessFull"
+    });
+
+
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedMethod, setSelectedMethod] = useState(null);
+
+    const handleSelection = (method) => {
+        setSelectedMethod(method)
+        setIsOpen(false)
+    };
+    
+    const toggleAccordion = () => {
+        setIsOpen(!isOpen);
+    };
+    
+
+    const supportedMethods = [
+        {
+            icon: '/images/Stripe-img.png',
+            name: 'stripe'
+        },
+        {
+            icon:  '/images/Binance-img.png',
+            name: 'native'
+        }
+    ];
+
+    // Stripe integration 
+
+    const stripeHandler = () => {
+        setShowStripeModal(true);
+    };
+
+     useEffect(() => {
+        if (showStripeModal) {
+          const stripeOnrampPromise = loadStripeOnramp(
+            `${process.env.NEXT_PUBLIC_STRIPEONRAMP_APIKEY}`
+          );
+    
+          setStripeOnRamp(stripeOnrampPromise);
+    
+          fetch(`/api/proxy?${Date.now()}`, {
+            method: 'POST',
+            body: JSON.stringify({
+              blockchainAddress: user.blockchainAddress,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+              uri: '/public/stripe/create',
+            },
+          })
+            .then((response) => {
+              return response.json();
+            })
+            .then((data) => {
+              setClientSecret(data.data.client_secret);
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+              setClientSecret('');
+            });
+        }
+      }, [showStripeModal]);
   
     
     const notifySuccess= () => toast.success("Success !. Your funds have been withdrawn successfully");
     const notifyFail= () => toast.error("Withdrawal unsuccessful. plz try again or contact support at support@sky.trade");
-  const [withdrawAmount, setWithdrawAmount] = useState('');
-  const [depositAmount, setDepositAmount] = useState('');
 
     const [recipientWalletAddress, setRecipientWalletAddress] = useState('')
 
@@ -142,10 +252,10 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
             if (activeSection == 1 && parseInt(tokenBalance) <= parseInt(amount)) {
                 console.log('amts=', parseInt(tokenBalance), parseInt(amount))
-               
+                notifyFail()
                
                 throw new Error('invalid transafer amount')
-                notifyFail()
+
             }
             //new PublicKey('fgdf')
 
@@ -250,21 +360,10 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
 
             } catch (err) {
-                
-                
-                notifyFail()
-            
-
-
-
-
-
+                notifyFail();
             }
         } catch (error) {
-          
-            console.log("pub key ", error)
-          
-           
+            console.log("pub key ", error) 
             setIsLoading(false);
             notifyFail()
         }
@@ -284,79 +383,129 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
     const isAmountCorrect = (number) => /^\d*\.?\d*$/.test(number) && number !== '-';
 
-    return (
+    
 
-        <div className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]" style={{
-            boxShadow: "0px 12px 34px -10px #3A4DE926"
-        }}>
-            <ToastContainer style={{ width: "500px" }} />
-            <div>
-              
-            </div>
-            <div className="flex gap-[5px] w-full">
-                {['Deposit', 'Withdraw'].map((text, index) => (<div onClick={() => {setDepositAmount(""); setActiveSection(index); setWithdrawAmount("")}} className={`${activeSection === index ? 'bg-[#222222] text-base text-white' : 'bg-[#2222221A] text-[15px] text-[#222222]'} rounded-[30px] p-[10px] text-center cursor-pointer w-full`}>{text}</div>))}
-            </div>
-            <div className="flex flex-col gap-[5px] w-full">
-            <div className="flex flex-col gap-[5px]">
-                    <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Enter amount you want to {activeSection === 0 ? 'deposit' : 'withdraw'}</label>
-                    <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-[#87878D]">
-                    <label htmlFor="usdc" className="block text-[14px] font-normal text-[#838187]">USDC</label>
-                    <input type="number" name="amount" id="amount" value={activeSection === 0 ? (depositAmount === '' ? 'USDC' : depositAmount) : (withdrawAmount === '' ? 'USDC' : withdrawAmount)}
-                        onChange={(e) => { const value = e.target.value; activeSection === 0 ? setDepositAmount(value === 'USDC' ? '' : value) : setWithdrawAmount(value === 'USDC' ? '' : value); }} className="appearance-none outline-none border-none flex-1 pl-[0.5rem]" />
-                    </div>     
+    return (
+        <Fragment>
+            {showStripeModal &&
+                createPortal(
+                <Backdrop zIndex='10000' />,
+                document.getElementById('backdrop-root')
+                )}
+            {showStripeModal &&
+                clientSecret &&
+                createPortal(
+                <Stripe
+                    closeModal={() => {
+                    setShowStripeModal(false);
+                    // backdropCloseHandler();
+                    // setClientSecret('');
+                    }}
+                    clientSecret={clientSecret}
+                    stripeOnramp={stripeOnramp}
+                />,
+                document.getElementById('modal-root')
+                )}
+            <div className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]" style={{
+                boxShadow: "0px 12px 34px -10px #3A4DE926"
+            }}>
+                <ToastContainer style={{ width: "500px" }} />
+                <div>
+                
                 </div>
-                {activeSection === 0 &&
-                    <div className="flex items-end gap-[11px]">
-                        <div className="flex flex-col items-start gap-[5px] flex-1">
-                            <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Wallet ID</label>
-                            <div className="relative w-full">
-                                <input className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="walletId" id="walletId" value={walletId} disabled />
-                                <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">Copy</p>
+                <div className="flex gap-[5px] w-full">
+                    {['Deposit', 'Withdraw'].map((text, index) => (<div onClick={() => {setActiveSection(index); setAmount('')}} className={`${activeSection === index ? 'bg-[#222222] text-base text-white' : 'bg-[#2222221A] text-[15px] text-[#222222]'} rounded-[30px] p-[10px] text-center cursor-pointer w-full`}>{text}</div>))}
+                </div>
+                <div className="flex flex-col gap-[5px] w-full">
+                    <Accordion 
+                        selectedMethod={selectedMethod} 
+                        toggleAccordion={toggleAccordion}
+                        isOpen={isOpen}
+                        supportedMethods={supportedMethods}
+                        handleSelection={handleSelection}
+                        />  
+                </div>
+                {activeSection === 0 && selectedMethod && selectedMethod.name == 'native' &&
+                        <div className="flex items-end gap-[11px]">
+                            <div className="flex flex-col items-start gap-[5px] flex-1">
+                                <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Wallet ID</label>
+                                <div className="relative w-full">
+                                    <input className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="walletId" id="walletId" value={walletId} disabled />
+                                    <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">Copy</p>
+                                </div>
+                            </div>
+                            <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center">
+                                {walletId && <SVG
+                                    text={walletId}
+                                    options={{
+                                        margin: 2,
+                                        width: 72,
+                                        color: {
+                                            dark: '#000000',
+                                            light: '#FFFFFF',
+                                        },
+                                    }}
+                                />}
                             </div>
                         </div>
-                        <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center">
-                            {walletId && <SVG
-                                text={walletId}
-                                options={{
-                                    margin: 2,
-                                    width: 72,
-                                    color: {
-                                        dark: '#000000',
-                                        light: '#FFFFFF',
-                                    },
-                                }}
-                            />}
-                        </div>
-                    </div>
-                }
-                {activeSection === 1 &&
-                    <div className="flex flex-col gap-[5px]">
-                        <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Your Wallet ID</label>
-                        <input type="text" name="walletId" id="walletId" placeholder="Wallet" value={recipientWalletAddress} onChange={(e) => { setRecipientWalletAddress(e.target.value) }} className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
-                    </div>
-                }
+                    }
+                
+                {activeSection === 0 && selectedMethod && selectedMethod.name != 'native' && <div onClick={stripeHandler} className="mt-2 w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg">Deposit</div>}
+                {activeSection === 1 && <div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" onClick={handleWithdraw}>withdraw</div>}
+                <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
+                    <div className="w-6 h-6"><WarningIcon /></div>
+                    <div className="text-[#222222] text-[14px] font-normal w-full">Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of the provided ID to avoid any loss.</div>
+                </div>
             </div>
-            <div className="flex items-center gap-[15px] w-full">
-                <div className="w-full h-0" style={{ border: "1px solid #00000033" }} />
-                <div className="text-sm text-[#CCCCCC] font-normal">or</div>
-                <div className="w-full h-0" style={{ border: "1px solid #00000033" }} />
-            </div>
-            <div className="flex flex-col gap-[5px] w-full">
-                <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Choose your payment source</label>
-                <select name="paymentMethod" id="amount" placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal appearance-none focus:outline-none" style={{ border: "1px solid #87878D" }}>
-                    <option value="stripe">native</option>
-                    <option value="stripe">stripe</option>
-                </select>
-            </div>
-            {activeSection === 1 && <div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" onClick={handleWithdraw}>withdraw</div>}
-            <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
-                <div className="w-6 h-6"><WarningIcon /></div>
-                <div className="text-[#222222] text-[14px] font-normal w-full">Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of the provided ID to avoid any loss.</div>
-            </div>
-        </div>
+        </Fragment>
     )
 }
 
+
+const Accordion = (props) => {
+    return (
+        <div className="border rounded-lg ">
+            <div className="flex justify-between items-center p-4 cursor-pointer" onClick={props.toggleAccordion}>
+            <div className="flex items-center cursor-pointer hover:bg-gray-100 p-2">
+                {props.selectedMethod && 
+                    <Image
+                    src={props.selectedMethod && props.selectedMethod.icon}
+                    alt="Placeholder"
+                    className="w-8 h-8 mr-2"
+                    width={12}
+                    height={12}
+                    />
+                }
+                <p>{props.selectedMethod ? props.selectedMethod.name : 'Select method'}</p>
+            </div>
+
+
+            <div className="transform transition-transform duration-300">
+            {props.isOpen ? chevronDownIcon() : chevronUpIcon()}
+            </div>
+        </div>
+        {props.isOpen && (
+            <div className=" p-4">
+            <ul>
+            {props.supportedMethods.map((method, index) => (
+                <li key={index} onClick={() => props.handleSelection(method)} className="flex items-center cursor-pointer hover:bg-gray-100 p-2">
+                    <Image
+                    src={method.icon}
+                    alt="Placeholder"
+                    className="w-8 h-8 mr-2"
+                    width={12}
+                    height={12}
+                    />
+                    <p>{method.name}</p>
+                </li>
+            ))}
+                
+            </ul>
+            </div>
+        )}
+        </div>
+    );
+}
 const Funds = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [activeSection, setActiveSection] = useState(0);

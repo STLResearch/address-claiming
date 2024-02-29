@@ -27,7 +27,7 @@ const handler = async (req, res) => {
 
     // todo: somehow prevent the user to call unexistent routes or w/ the wrong method
     if (method !== 'GET' && method !== 'HEAD') {
-      console.log('-----------------------------------------------------------------------------------------------------------------------------------')
+      console.log('-------------------');
       console.log("reqq bodyy",req.body)
       const requestBody = JSON.stringify(req.body);
       fetchOptions.body = requestBody;

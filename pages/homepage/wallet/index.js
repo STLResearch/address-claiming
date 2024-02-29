@@ -100,6 +100,7 @@ const Wallet = () => {
     }
   }, [selectorUser]);
 
+
   useEffect(() => {
     if (showStripeModal) {
       const stripeOnrampPromise = loadStripeOnramp(
@@ -130,6 +131,7 @@ const Wallet = () => {
         });
     }
   }, [showStripeModal]);
+  
 
   useEffect(() => {
     if (user) {

@@ -10,6 +10,7 @@ import { msclaritConfig } from '@/hooks/msclaritConfig';
 import { useMobile } from '@/hooks/useMobile';
 import { useEffect, useState } from 'react';
 import { SidebarProvider } from '@/hooks/sidebarContext';
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function App({ Component, pageProps }) {
   const { isMobile } = useMobile();
