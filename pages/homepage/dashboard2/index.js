@@ -16,6 +16,7 @@ import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 import useDatabase from "@/hooks/useDatabase";
 import Head from "next/head";
+import { createUSDCBalStore } from "@/zustand/store";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -42,10 +43,14 @@ const Item = ({ children, title, icon, linkText, href, style }) => {
 }
 
 const AvailableBalance = ({ balance = 0 }) => {
+    let {USDCBal,setUSDCBal}=createUSDCBalStore()
+    useEffect(()=>{
+        setUSDCBal(balance)
+    },[balance])
     return (
         <Item title={'Available Balance'} icon={<WalletIcon isActive />} linkText={'View funds'} href={'/homepage/funds'} style='h-fit'>
             <div className="flex items-center justify-between">
-                <p className="absolute bottom-[12px] left-[26px] text-3xl text-[#4285F4] font-medium">{USDollar.format(balance)}</p>
+                <p className="absolute bottom-[12px] left-[26px] text-3xl text-[#4285F4] font-medium">{USDollar.format(USDCBal)}</p>
             </div>
         </Item>
     )
@@ -169,8 +174,10 @@ const Dashboard = () => {
 
     // GET TOKEN BALANCE
     useEffect(() => {
-        if (user) {
-            console.log({ user });
+        if (user){
+            setInterval(()=>{
+                console.log("set interval function called")
+                console.log({ user });
             const data = {
                 jsonrpc: '2.0',
                 id: 1,
@@ -203,19 +210,24 @@ const Dashboard = () => {
                     return response.json();
                 })
                 .then((result) => {
+                    console.log(result, " this is result")
                     if (result.result.value.length < 1) {
                         setTokenBalance('0');
                         return;
                     }
+                    console.log("tokenBalance  ==  ", result.result.value[0].account.data.parsed.info.tokenAmount
+                        .uiAmountString)
                     setTokenBalance(
                         result.result.value[0].account.data.parsed.info.tokenAmount
                             .uiAmountString
                     );
+                    
                 })
                 .catch((error) => {
                     setTokenBalance('');
                     console.error(error);
                 });
+            },5000)
         }
     }, [user]);
 
@@ -328,7 +340,7 @@ const Dashboard = () => {
             {isLoading && createPortal(<Backdrop />, document?.getElementById('backdrop-root'))}
             {isLoading && createPortal(<Spinner />, document?.getElementById('backdrop-root'))}
 
-            <div className="relative rounded bg-[#f6faff] h-screen w-screen flex items-center justify-center overflow-hidden">
+            <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
                     <PageHeader pageTitle={'Dashboard'} />

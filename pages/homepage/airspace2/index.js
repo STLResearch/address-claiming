@@ -497,6 +497,7 @@ const PopUp = ({ status }) => {
                 )}
 
             </div>
+        
             {status === 'failed' ? 'Failed to claim air space' : 'Congratulations on claiming your piece of the sky successfully!'}
         </div>
     );
@@ -913,7 +914,7 @@ const Airspaces = () => {
                     </section>
                 </div>
 
-      </div>
+            </div>
     </Fragment>
   );
 };
