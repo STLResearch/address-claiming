@@ -1,3 +1,5 @@
+'use client'
+
 import React, { Fragment, useState, useContext } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,6 +12,7 @@ import logoNoChars from '../public/images/logo-no-chars.png';
 import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon } from './Icons';
 import { useAuth } from '@/hooks/useAuth';
 import { SidebarContext } from '@/hooks/sidebarContext';
+import useLocalSorage from '@/hooks/useLocalStorage';
 
 
 const Sidebar = () => {
@@ -18,13 +21,14 @@ const Sidebar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { isCollapsed, setIsCollapsed } = useContext(SidebarContext)
   const { signOut } = useAuth();
+  const   { removeListOfItems , clearStorage } = useLocalSorage();
 
   const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications }) => {
     const isActive = asPath.includes(href);
 
     if (onClick !== undefined) {
       return (
-        <div onClick={onClick} className={`${style || ''} cursor-pointer py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
+        <div onClick={()=>onClick()} className={`${style || ''} cursor-pointer py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
           <div className='w-6 h-6 flex items-center justify-center'>
             {React.cloneElement(children, { isActive })}
           </div>
@@ -69,10 +73,8 @@ const Sidebar = () => {
 
   const logoutHandler = () => {
     setIsLoading(true);
-
-    localStorage.clear();
-  
-    router.push('/auth/join');
+    clearStorage();
+    router.push("/auth/join");
   };
 
   return (
