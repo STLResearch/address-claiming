@@ -24,6 +24,7 @@ const Modal = ({ selectedAirspace,setMyAirspaces,setShowPopUp,airspace, onCloseM
     const onClaim = async (e) =>{
         e.preventDefault();
         try {
+            if(data?.type !== 'rental'){
             const update = await updateProperty(user, data);
             setShowClaimModal(false);
             setShowPopUp({
@@ -37,6 +38,13 @@ const Modal = ({ selectedAirspace,setMyAirspaces,setShowPopUp,airspace, onCloseM
                 return updatedItems
             })
             
+        }else{
+            setShowPopUp({
+                isVisible: true,
+                type: 'error',
+                message: 'can not update rental token!'
+            });
+        }
             
         } catch (error) {
             console.error("Error updating property:", error);
@@ -129,7 +137,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
         <div className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <h2 className="font-medium text-xl text-[#222222] text-center">{title}</h2>
             <div className="flex flex-col gap-[15px]">
-                {airspacesList.map(({address,expirationDate,name}, index) => (<PortfolioItem airspaceName={address} key={index} tags={[true, false,false,  false]} selectAirspace={() => selectAirspace(index)} />))}
+                {airspacesList.map(({address,expirationDate,name}, index) => (<PortfolioItem key={index} airspaceName={address} key={index} tags={[true, false,false,  false]} selectAirspace={() => selectAirspace(index)} />))}
             </div>
         </div>
     )
@@ -138,7 +146,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
 const PortfolioListMobile = ({ airspacesList, selectAirspace }) => {
     return (
         <div className="flex flex-col gap-[11px] w-full">
-            {airspacesList.map(({ title, address, noFlyZone }, index) => (<PortfolioItemMobile airspaceName={title || address} tags={[false, false, noFlyZone, false]} selectAirspace={() => selectAirspace(index)} />))}
+            {airspacesList.map(({ title, address, noFlyZone }, index) => (<PortfolioItemMobile key={index} airspaceName={title || address} tags={[false, false, noFlyZone, false]} selectAirspace={() => selectAirspace(index)} />))}
         </div>
     )
 }
@@ -152,7 +160,7 @@ const PortfolioSectionMobile = ({ title, airspacesList, onGoBack }) => {
                     <p className="text-xl font-normal md:font-medium mx-auto md:m-0">{title}</p>
                 </div>
                 <div className="relative w-full flex flex-wrap gap-6 py-[20px]">
-                    {airspacesList.map(({ name }, index) => (<PortfolioItem airspaceName={name || address} tags={[1, 1, 1, 1]} selectAirspace={() => selectAirspace(index)} />))}
+                    {airspacesList.map(({ name }, index) => (<PortfolioItem key={index} airspaceName={name || address} tags={[1, 1, 1, 1]} selectAirspace={() => selectAirspace(index)} />))}
                 </div>
             </div>
         </div>
