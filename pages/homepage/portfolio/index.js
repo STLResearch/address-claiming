@@ -16,12 +16,13 @@ let USDollar = new Intl.NumberFormat('en-US', {
     currency: 'USD',
 });
 
-const Modal = ({ setShowPopUp,airspace, onCloseModal, isOffer }) => {
+const Modal = ({ selectedAirspace,setMyAirspaces,setShowPopUp,airspace, onCloseModal, isOffer }) => {
     const { user } = useAuth()
     const [showClaimModal, setShowClaimModal] = useState(false);
     const [data,setData]=useState(airspace)
     const { updateProperty } = useDatabase();
-    const onClaim = async () =>{
+    const onClaim = async (e) =>{
+        e.preventDefault();
         try {
             const update = await updateProperty(user, data);
             setShowClaimModal(false);
@@ -30,6 +31,12 @@ const Modal = ({ setShowPopUp,airspace, onCloseModal, isOffer }) => {
                 type: 'success',
                 message: 'Successfully edited/claimed!'
             });
+            setMyAirspaces(prevItems=>{
+                const updatedItems = [...prevItems];
+                updatedItems[selectedAirspace] = {...updatedItems[selectedAirspace],...update};
+                return updatedItems
+            })
+            
             
         } catch (error) {
             console.error("Error updating property:", error);
@@ -215,7 +222,7 @@ const Portfolio = () => {
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
-                    {selectedAirspace !== null && <Modal setShowPopUp={setShowPopUp} airspace={myAirspaces[selectedAirspace]} onCloseModal={onCloseModal} />}
+                    {selectedAirspace !== null && <Modal setShowPopUp={setShowPopUp} selectedAirspace={selectedAirspace} setMyAirspaces={setMyAirspaces} airspace={myAirspaces?.[selectedAirspace]} onCloseModal={onCloseModal} />}
                     <PopUp isVisible={showPopUp?.isVisible} type={showPopUp?.type} message={showPopUp?.message}/>
                     <PageHeader pageTitle={'Portfolio'} username={'John Doe'} />
                     <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
