@@ -226,9 +226,8 @@ const Portfolio = () => {
             {isLoading && createPortal(<Backdrop />, document?.getElementById('backdrop-root'))}
             {isLoading && createPortal(<Spinner />, document?.getElementById('backdrop-root'))}
             {selectedAirspace !== null && <Backdrop onClick={onCloseModal} />}
-
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
-                <Sidebar />
+            <div className='relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F6FAFF]'>
+            <Sidebar />
                 <div className="w-full h-full flex flex-col">
                     {selectedAirspace !== null && <Modal setShowPopUp={setShowPopUp} selectedAirspace={selectedAirspace} setMyAirspaces={setMyAirspaces} airspace={myAirspaces?.[selectedAirspace]} onCloseModal={onCloseModal} />}
                     <PopUp isVisible={showPopUp?.isVisible} type={showPopUp?.type} message={showPopUp?.message}/>

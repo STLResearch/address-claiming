@@ -193,7 +193,7 @@ const IndividualSignup = () => {
                 createPortal(<Spinner />, document.getElementById('backdrop-root'))}
 
             <div
-                className='relative rounded bg-[#F0F0FA] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden'
+                className='relative rounded bg-[#F6FAFF] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden'
             >
                 <div
                     className='mx-auto flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] rounded relative justify-center'

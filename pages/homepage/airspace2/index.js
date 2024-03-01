@@ -579,9 +579,8 @@ const Airspaces = () => {
             </Head>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
-
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
-                {!showMobileMap && <Sidebar />}
+            <div className='relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F6FAFF]'>
+            {!showMobileMap && <Sidebar />}
                 <div className="w-full h-full flex flex-col">
                     {!showMobileMap && <PageHeader pageTitle={'Airspaces'} />}
                     {(showMobileMap && isMobile) && <ExplorerMobile onGoBack={() => setShowMobileMap(false)} flyToAddress={flyToAddress} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} onClaimAirspace={() => setShowClaimModal(true)} />}
