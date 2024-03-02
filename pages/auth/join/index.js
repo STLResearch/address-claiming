@@ -209,11 +209,12 @@ const Signup = () => {
     }
   };
 
-  const loginHandlerGood = async (e) => {
-    e.preventDefault();
+  const loginHandlerGood = async () => {
+  
 
     const email = emailRef.current.value;
-    console.info('Login: email is', email);
+    console.log({email})
+
 
     if (!isEmailValid(email)) {
       console.log('Login: email is not valid', email);
@@ -233,6 +234,9 @@ const Signup = () => {
           login_hint: email,
         },
       });
+
+      
+      
     } catch (error) {
       console.log('Login: ERROR while creating provider...', { error });
       localStorage.removeItem('openlogin_store');
@@ -456,9 +460,10 @@ const Signup = () => {
                 />
                 Send me newsletter to keep me updated
               </label>
+
             )}
             <button
-              onClick={(e) => loginHandlerGood(e)}
+              onClick={loginHandlerGood}
               className='w-full rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600'
             >
               Get started

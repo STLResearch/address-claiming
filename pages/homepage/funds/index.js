@@ -18,6 +18,7 @@ import { Connection, LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/we
 import { TokenAccountNotFoundError, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
 import Head from "next/head";
 import Image from 'next/image';
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
@@ -136,9 +137,8 @@ const TransactionHistory = ({ transactions, user }) => {
 
 const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance, Solbalance}) => {
     const router=useRouter()
-    const [amount, setAmount] = useState()
-
-
+    const [amount, setAmount] = useState('')
+    const [copy, setCopy] = useState(false);
  
     
     const notifySuccess= () => toast.success("Success !. Your funds have been withdrawn successfully");
@@ -323,6 +323,13 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
     },];
      
 
+      const copyTextHandler = () => {
+        setCopy(true);
+    
+        setTimeout(() => {
+          setCopy(false);
+        }, 2000);
+      };
     return (
 
         <div className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]" style={{
@@ -365,8 +372,10 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                         <div className="flex flex-col items-start gap-[5px] flex-1">
                             <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Wallet ID</label>
                             <div className="relative w-full">
-                                <input className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="walletId" id="walletId" value={walletId} disabled />
-                                <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">Copy</p>
+                             <input className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="walletId" id="walletId" value={walletId} disabled />
+                                <CopyToClipboard text={walletId} onCopy={copyTextHandler} >
+                                 <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">{copy ? "Copied" : "Copy"}</p>
+                                </CopyToClipboard>
                             </div>
                         
                         </div>

@@ -13,6 +13,7 @@ import {
   CloseIcon,
   LocationPointIcon,
   SuccessIcon,
+  FailureIcon,
   EarthIcon,
 } from '@/Components/Icons';
 import useDatabase from '@/hooks/useDatabase';
@@ -503,6 +504,19 @@ const PopUp = ({ status }) => {
     );
 }
 
+const FailurePopUp = ({ isVisible }) => {
+    return (
+			<div
+				className={` z-20 absolute top-[14px] ${isVisible ? 'right-0' : '-right-[100%]'} bg-white p-5 flex items-center gap-5 duration-500`}>
+				{/* <div className='flex items-center justify-center w-[18px] h-[18px]'>
+					<FailureIcon />
+				</div> */}
+				🛑 Claim Failed! Please review your submission and ensure all
+				information is correct.
+			</div>
+		);
+}
+
 const HowToModal = ({ goBack }) => {
   const [section, setSection] = useState(0);
   return (
@@ -622,6 +636,8 @@ const Airspaces = () => {
     // showing
     const [showOptions, setShowOptions] = useState(false);
     const [confirmationStatus, setConfirmationStatus] = useState(null);
+    const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
+    const [showFailurePopUp, setShowFailurePopUp] = useState(false);
     const [showClaimModal, setShowClaimModal] = useState(false);
     const [data, setData] = useState({ ...defaultData });
     // database
@@ -779,6 +795,15 @@ const Airspaces = () => {
 
 
 
+    useEffect(() => {
+    if (!showFailurePopUp) return;
+    const timeoutId = setTimeout(() => {
+      setShowFailurePopUp(false);
+    }, 4000);
+
+    return () => clearTimeout(timeoutId);
+  }, [showFailurePopUp]);
+
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
     setFlyToAddress(placeName);
@@ -828,6 +853,14 @@ const Airspaces = () => {
             setData({ ...defaultData });
 
 
+          if (addProperty === undefined) {
+            setShowFailurePopUp(true);
+            
+          } else {
+            setShowSuccessPopUp(true);
+          }
+            setShowClaimModal(false);
+            setData({ ...defaultData });
         } catch (error) {
             setConfirmationStatus('failed');
         } finally {
@@ -858,12 +891,12 @@ const Airspaces = () => {
     };
 
     return (
-        <Fragment>
-            <Head>
-                <title>SkyTrade - Airspaces</title>
-            </Head>
-            {isLoading && <Backdrop />}
-            {isLoading && <Spinner />}
+			<Fragment>
+				<Head>
+					<title>SkyTrade - Airspaces</title>
+				</Head>
+				{isLoading && <Backdrop />}
+				{isLoading && <Spinner />}
 
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
                 {!showMobileMap && <Sidebar />}
@@ -887,6 +920,7 @@ const Airspaces = () => {
                             <Explorer flyToAddress={flyToAddress} claimedProperty={claimedProperty} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} onClaimAirspace={() => setShowClaimModal(true)} />
                             <Slider />
                             {confirmationStatus && <PopUp status={confirmationStatus} />}
+                            <FailurePopUp isVisible={showFailurePopUp} />
                             {showClaimModal && <ClaimModal onCloseModal={() => setShowClaimModal(false)} data={data} setData={setData} onClaim={onClaim} />}
                         </div>)}
                         {!showMobileMap && <div className="flex md:hidden flex-col w-full h-full">
