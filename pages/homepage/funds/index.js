@@ -306,9 +306,9 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
 
     const handleAmountInputChanged = (e) => {
         const inputValue = e.target.value;
-        const formattedValue = inputValue.replace(/[^0-9]/g, "")
-
-        //setAmount(formattedValue)
+        if (inputValue.includes("-")) return;
+        const regex = /^\d*\.?\d*$/;
+        if (!regex.test(inputValue)) return;
         setAmount(inputValue)
 
     }
@@ -354,7 +354,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                     <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-{#87878D}">
                     <label htmlFor="usdc" className=" text-[14px] font-normal text-[#838187]">$</label>
 
-                   <input type="number" value={amount} name="amount" onChange={handleAmountInputChanged} id="amount" min={0} className="appearance-none outline-none border-none flex-1 pl-[0.5rem] " />
+                   <input type="text" value={amount} name="amount" onChange={handleAmountInputChanged} id="amount" min={0} className="appearance-none outline-none border-none flex-1 pl-[0.5rem] " />
 
                     </div>
                     </div>

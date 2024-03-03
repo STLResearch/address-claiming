@@ -15,6 +15,7 @@ import {
   SuccessIcon,
   FailureIcon,
   EarthIcon,
+  ChevronRightIcon,
 } from '@/Components/Icons';
 import useDatabase from '@/hooks/useDatabase';
 import { useAuth } from '@/hooks/useAuth';
@@ -211,6 +212,20 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
 
 const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
     const [isInfoVisible, setIsInfoVisible] = useState(false)
+    const handleSellingPriceAmount = (e) => {
+      const inputValue = e.target.value;
+      if (inputValue.includes("-")) return;
+      const regex = /^\d*\.?\d*$/;
+      if (!regex.test(inputValue)) return;
+      setData((prev) => {
+          return {
+              ...prev,
+              sellingPrice: inputValue
+          };
+      });
+    };
+  
+    
     return (
         <div className="fixed top-0 left-0 w-full h-full bg-[rgba(37,37,48,0.45)] flex items-center justify-center z-50">
         <div className="px-8  fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#FFFFFF]  md:rounded-[30px]  w-full max-h-screen h-screen md:max-h-[600px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] short-scrollbar">
@@ -296,7 +311,9 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
                                         className='rounded-lg pl-[31px] w-full py-[16px] text-[14px] text-[#222222] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
                                         style={{ border: '1px solid #87878D' }}
                                         autoComplete='off'
-                                        type='number'
+                                        onChange={handleSellingPriceAmount}
+                                        type='text'
+                                        value={data.sellingPrice}
                                         name='sellingPrice'
                                         id='sellingPrice'
                                     />
@@ -366,18 +383,15 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                     <MagnifyingGlassIcon />
                 </div>
                 {showOptions && (
-                    <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
+                    <div className="absolute top-[60px] left-0 bg-[#FFFFFF] w-full flex-col rounded-[15px] overflow-y-scroll no-scrollbar" style={{ maxHeight: '240px' }}c>
                         {addresses.map((item) => {
                             return (
                                 <div
                                     key={item.id}
                                     value={item.place_name}
                                     onClick={() => handleSelectAddress(item.place_name)}
-                                    className='p-5 text-left text-[#222222] w-full'
-                                    style={{
-                                        borderTop: '0.2px solid #222222',
-                                    }}
-                                >
+                                    className='p-5 text-left text-[#87878D] w-full cursor-pointer'
+                                    >
                                     {item.place_name}
                                 </div>
                             );
@@ -385,6 +399,18 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                     </div>
                 )}
             </div>
+            <div>
+                  
+            </div>
+            {!showOptions && flyToAddress && (<div className=" max-w-[320px] max-h-full z-20">
+                <div>
+                <h1 className="mt-2 text-[20px] font-medium text-[#222222] text-center">My Airspaces</h1>
+                </div>
+                    <div className="space-x-4 px-4 py-4 w-full mt-2  border flex items-center  bg-[#FFFFFF] rounded-lg  cursor-pointer">        
+                      <div className=" w-6 h-6"><LocationPointIcon /></div>
+                        <p className="flex-1 min-w-0 font-normal text-[#222222] text-[15px] overflow-hidden whitespace-nowrap overflow-ellipsis">{address} </p>                
+                    </div>
+            </div>)}
             {displayClaimBtn()}
         </div>
     )
@@ -623,7 +649,7 @@ const Airspaces = () => {
     const [coordinates, setCoordinates] = useState({ longitude: '', latitude: '' })
     const [marker, setMarker] = useState();
     const defaultData = {
-        address: flyToAddress, name: 'My Airspace', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
+        address: flyToAddress, name: 'My Airspace', rent: true, sell: true, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
             { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 0 },
             { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 1 },
             { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 2 },
