@@ -140,20 +140,30 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
 
   const options = Array.from({ length: 25 });
 
+  // Initialize the weekDayRanges state with all days set to available
+  useEffect(() => {
+    const defaultWeekDayRanges = weekDays.map((day) => ({
+      isAvailable: true,
+      fromTime: 0,
+      toTime: 0,
+    }));
+    setWeekDayRanges(defaultWeekDayRanges);
+  }, []);
+
   const handleToggle = (day) => {
-    const weekDayRangesCopy = JSON.parse(JSON.stringify(weekDayRanges));
+    const weekDayRangesCopy = [...weekDayRanges];
     weekDayRangesCopy[day].isAvailable = !weekDayRangesCopy[day].isAvailable;
     setWeekDayRanges(weekDayRangesCopy);
   };
 
   const handleFromTimeChange = (day, time) => {
-    const weekDayRangesCopy = JSON.parse(JSON.stringify(weekDayRanges));
+    const weekDayRangesCopy = [...weekDayRanges];
     weekDayRangesCopy[day].fromTime = time;
     setWeekDayRanges(weekDayRangesCopy);
   };
 
   const handleToTimeChange = (day, time) => {
-    const weekDayRangesCopy = JSON.parse(JSON.stringify(weekDayRanges));
+    const weekDayRangesCopy = [...weekDayRanges];
     weekDayRangesCopy[day].toTime = time;
     setWeekDayRanges(weekDayRangesCopy);
   };
@@ -162,7 +172,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
     const isDayAvailable = weekDayRanges[index].isAvailable;
 
     return (
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" key={index}>
         <div className="flex items-center gap-[15px] pr-[32px]">
           <Toggle
             checked={isDayAvailable}
@@ -181,7 +191,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
             style={{ border: "1px solid #87878D" }}
           >
             {options.map((_, index) => (
-              <option key={index} value={index}>
+              <option key={`start-${index}`} value={index}>
                 {index.toString().padStart(2, "0")}:00
               </option>
             ))}
@@ -197,7 +207,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
             style={{ border: "1px solid #87878D" }}
           >
             {options.map((_, index) => (
-              <option key={index} value={index}>
+              <option key={`end-${index}`} value={index}>
                 {index.toString().padStart(2, "0")}:00
               </option>
             ))}
@@ -646,7 +656,6 @@ const Explorer = ({
         <div
           className="top-[60px] left-0 bg-[#FFFFFF] w-full flex-col rounded-[15px] overflow-y-scroll no-scrollbar"
           style={{ maxHeight: "240px" }}
-          c
         >
           {addresses.map((item) => {
             return (
@@ -679,15 +688,15 @@ const ExplorerMobile = ({
   onGoBack,
 }) => {
   return (
-    <div className="flex bg-white items-center gap-[15px] py-[19px] px-[21px] z-[40]">
+    <div className="z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
       <div
         onClick={onGoBack}
-        className="flex items-center justify-center w-6 h-6"
+        className="flex h-6 w-6 items-center justify-center"
       >
         <ArrowLeftIcon />
       </div>
       <div
-        className="relative px-[22px] py-[16px] bg-white rounded-lg w-full"
+        className="relative w-full rounded-lg bg-white px-[22px] py-[16px]"
         style={{ border: "1px solid #87878D" }}
       >
         <input
@@ -698,20 +707,20 @@ const ExplorerMobile = ({
           name="searchAirspaces"
           id="searchAirspaces"
           placeholder="Search Airspaces"
-          className="outline-none w-full pr-[20px]"
+          className="w-full pr-[20px] outline-none"
         />
-        <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
+        <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
           <MagnifyingGlassIcon />
         </div>
         {showOptions && (
-          <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
+          <div className="absolute left-0 top-[55px] w-full flex-col bg-white">
             {addresses.map((item) => {
               return (
                 <div
                   key={item.id}
                   value={item.place_name}
                   onClick={() => handleSelectAddress(item.place_name)}
-                  className="p-5 text-left text-[#222222] w-full"
+                  className="w-full p-5 text-left text-[#222222]"
                   style={{
                     borderTop: "0.2px solid #222222",
                   }}
@@ -733,19 +742,19 @@ const Slider = () => {
   return (
     <div
       onClick={() => setIsFullyVisible((prev) => !prev)}
-      className={`cursor-pointer rounded-t-[30px] absolute ${isFullyVisible ? "bottom-0" : "-bottom-[600px]"} right-6 flex flex-col items-center gap-[34px] py-[43px] px-[23px] bg-white max-w-[362px] duration-5000 z-50`}
+      className={`absolute cursor-pointer rounded-t-[30px] ${isFullyVisible ? "bottom-0" : "-bottom-[600px]"} right-6 flex max-w-[362px] flex-col items-center gap-[34px] bg-white px-[23px] py-[43px] duration-1000`}
     >
-      <div className="flex items-center gap-[4px]">
-        <div className="flex items-center justify-center w-[24px] h-[24px]">
+      <div className="flex items-center gap-[0px]">
+        <div className="flex h-[24px] w-[24px] items-center justify-center">
           <HelpQuestionIcon />
         </div>
-        <p className="font-medium text-xl text-[#222222] text-center">
+        <p className="text-center text-xl font-medium text-[#222222]">
           How to Claim My Airspsace?
         </p>
       </div>
       <div className="flex flex-col px-[6px]">
         <div
-          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          className="flex items-start gap-[4px] text-[15px] font-normal text-[#222222]"
           key={1}
         >
           <p className="">1.</p>
@@ -755,7 +764,7 @@ const Slider = () => {
           </div>
         </div>
         <div
-          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          className="flex items-start gap-[4px] text-[15px] font-normal text-[#222222]"
           key={2}
         >
           <p className="">2.</p>
@@ -765,7 +774,7 @@ const Slider = () => {
           </div>
         </div>
         <div
-          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          className="flex items-start gap-[4px] text-[15px] font-normal text-[#222222]"
           key={3}
         >
           <p className="">3.</p>
@@ -778,7 +787,7 @@ const Slider = () => {
           </div>
         </div>
         <div
-          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          className="flex items-start gap-[4px] text-[15px] font-normal text-[#222222]"
           key={4}
         >
           <p className="">4.</p>
@@ -791,7 +800,7 @@ const Slider = () => {
           </div>
         </div>
         <div
-          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          className="flex items-start gap-[4px] text-[15px] font-normal text-[#222222]"
           key={5}
         >
           <p className="">5.</p>
@@ -801,7 +810,7 @@ const Slider = () => {
           </div>
         </div>
         <div
-          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          className="flex items-start gap-[4px] text-[15px] font-normal text-[#222222]"
           key={6}
         >
           <p className="">6.</p>
@@ -811,7 +820,7 @@ const Slider = () => {
           </div>
         </div>
       </div>
-      <div className="font-normal text-[15px] text-[#222222] text-center">
+      <div className="text-center text-[15px] font-normal text-[#222222]">
         Let's get started on creating the future and receiving passive income
         from your skies. 🚀✨
       </div>
@@ -942,7 +951,8 @@ const HowToModal = ({ goBack }) => {
 
 const Airspaces = () => {
   const [isLoading, setIsLoading] = useState(false);
-  // map
+  //
+  const [claimButtonLoading, setClaimButtonLoading] = useState(false);
   const [map, setMap] = useState(null);
   const { isMobile } = useMobile();
   const [showMobileMap, setShowMobileMap] = useState(false);
@@ -1138,6 +1148,15 @@ const Airspaces = () => {
   }, [flyToAddress, address]);
 
   useEffect(() => {
+    if (!showSuccessPopUp) return;
+    const timeoutId = setTimeout(() => {
+      setShowSuccessPopUp(false);
+    }, 4000);
+
+    return () => clearTimeout(timeoutId);
+  }, [showSuccessPopUp]);
+
+  useEffect(() => {
     if (!showFailurePopUp) return;
     const timeoutId = setTimeout(() => {
       setShowFailurePopUp(false);
@@ -1151,11 +1170,10 @@ const Airspaces = () => {
     setFlyToAddress(placeName);
     setShowOptions(false);
   };
-
   const [claimedProperty, setClaimedProperty] = useState(null);
-
   const onClaim = async () => {
     try {
+      setClaimButtonLoading(true);
       const {
         address,
         name,
@@ -1274,10 +1292,10 @@ const Airspaces = () => {
             <HowToModal goBack={() => setShowHowToModal(false)} />
           )}
           <section
-            className={`flex relative w-full h-full justify-start items-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
+            className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
             <div
-              className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0`}
+              className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-full`}
               id="map"
               style={{
                 opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",
@@ -1287,7 +1305,7 @@ const Airspaces = () => {
             {isMobile && showMobileMap && flyToAddress && (
               <div
                 onClick={() => setShowClaimModal(true)}
-                className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-[#0653EA] text-white rounded-lg py-[16px] text-center text-[15px] font-normal cursor-pointer w-[90%] z-[25]"
+                className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
               >
                 Claim Airspace
               </div>
@@ -1300,6 +1318,7 @@ const Airspaces = () => {
                     data={data}
                     setData={setData}
                     onClaim={onClaim}
+                    claimButtonLoading={claimButtonLoading}
                   />
                 )}
               </Fragment>
@@ -1318,61 +1337,61 @@ const Airspaces = () => {
                 />
                 <Slider />
                 {confirmationStatus && <PopUp status={confirmationStatus} />}
-                <FailurePopUp isVisible={showFailurePopUp} />
                 {showClaimModal && (
                   <ClaimModal
                     onCloseModal={() => setShowClaimModal(false)}
                     data={data}
                     setData={setData}
                     onClaim={onClaim}
+                    claimButtonLoading={claimButtonLoading}
                   />
                 )}
               </div>
             )}
             {!showMobileMap && (
-              <div className="flex md:hidden flex-col w-full h-full">
+              <div className="flex h-full w-full flex-col md:hidden">
                 <div
                   onClick={() => setShowMobileMap(true)}
-                  className="flex flex-col justify-between p-[17px] w-full gap-[184px] bg-no-repeat bg-center bg-cover"
+                  className="flex w-full flex-col justify-between gap-[184px] bg-cover bg-center bg-no-repeat p-[17px]"
                   style={{ backgroundImage: "url('/images/map-bg.png')" }}
                 >
-                  <div className="font-normal text-base text-white text-center bg-[#222222] w-full p-[12px] rounded-[20px]">
+                  <div className="w-full rounded-[20px] bg-[#222222] p-[12px] text-center text-base font-normal text-white">
                     Exciting times ahead!
                     <br />
                     Claim your airspace 🚀✨
                   </div>
-                  <div className="font-normal text-base text-white text-center bg-[#0653EA] w-full p-[12px] rounded-lg">
+                  <div className="w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
                     Claim your airspace
                   </div>
                 </div>
-                <div className="py-[29px] px-[13px] flex flex-col gap-[23px] flex-1">
-                  <div className="flex items-center gap-[14px] flex-1">
+                <div className="flex flex-1 flex-col gap-[23px] px-[13px] py-[29px]">
+                  <div className="flex flex-1 items-center gap-[14px]">
                     <Link
                       href={"/homepage/portfolio"}
-                      className="flex flex-col justify-between p-[17px] w-full gap-[184px] bg-no-repeat bg-center bg-cover h-full rounded-[20px] cursor-pointer"
+                      className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
                       style={{
                         backgroundImage: "url('/images/airspace-preview.png')",
                       }}
                     >
-                      <p className="text-white text-xl font-medium">Airspace</p>
+                      <p className="text-xl font-medium text-white">Airspace</p>
                     </Link>
                     <Link
                       href={"/homepage/portfolio"}
-                      className="flex flex-col justify-between p-[17px] w-full gap-[184px] bg-no-repeat bg-center bg-cover h-full rounded-[20px] cursor-pointer"
+                      className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
                       style={{
                         backgroundImage: "url('/images/portfolio.jpg')",
                       }}
                     >
-                      <p className="text-white text-xl font-medium">
+                      <p className="text-xl font-medium text-white">
                         Portfolio
                       </p>
                     </Link>
                   </div>
                   <div
                     onClick={() => setShowHowToModal(true)}
-                    className="flex items-center justify-center gap-[7px] p-[13px] bg-[#222222] text-white rounded-[20px] cursor-pointer"
+                    className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
                   >
-                    <div className="w-[24px] h-[24px]">
+                    <div className="h-[24px] w-[24px]">
                       <HelpQuestionIcon color="white" />
                     </div>
                     <p>How to Claim My Airspace?</p>
