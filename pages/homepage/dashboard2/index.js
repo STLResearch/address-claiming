@@ -60,15 +60,15 @@ const MyAirspaces = ({ airspaces = [] }) => {
     console.log({airspaces})
 
     return (
-        <Item title={<Fragment>My Airspaces <span className="text-[15px] font-normal">({airspaces.length})</span></Fragment>} icon={<DroneIcon isActive />} linkText={'View all airspaces'} href={'/homepage/portfolio'}>
+        <Item  title={<Fragment>My Airspaces <span className="text-[15px] font-normal">({airspaces.length})</span></Fragment>} icon={<DroneIcon isActive />} linkText={'View all airspaces'} href={'/homepage/portfolio'}>
             <div className="flex flex-col items-center gap-[29px]">
                 <div className="w-[265.81px] h-[131.01px]">
                     <WorldMap coloredCountries={['Spain']} />
                 </div>
                 <div className="flex flex-col items-center gap-[7px] w-full">
                     {airspaces.length === 0 && <p className="text-[17px] text-[#222222] font-normal px-[55px] text-center">Claim your first piece of sky now!</p>}
-                    {airspaces.length !== 0 && airspaces.slice(0, 3).map((airspace) => (
-                        <div className="rounded-lg w-full py-[16px] px-[22px] flex items-center gap-[10px]" style={{ border: "1px solid #4285F4" }}>
+                    {airspaces.length !== 0 && airspaces.slice(0, 3).map((airspace,i) => (
+                        <div key={i} className="rounded-lg w-full py-[16px] px-[22px] flex items-center gap-[10px]" style={{ border: "1px solid #4285F4" }}>
                             <div className="w-[24px] h-[24px] flex justify-center items-center"><LocationPointIcon /></div>
                             <p className="flex-1">{(airspace.title || airspace.address).substring(0, 15)}</p>
                             <div className="w-[18px] h-[18px] flex items-center justify-center"><ChevronRightIcon /></div>
@@ -308,13 +308,16 @@ const Dashboard = () => {
                 )
                 if(response){
                     let retrievedAirspaces= response.items.map((item)=>{
+
                         return {
-                            address:item.metadata.addresses[0],
+                          
+                            address:item.address,
                             
                            
 
                         }
                     })
+                    console.log("yooooo",retrievedAirspaces)
                     setAirspaces(retrievedAirspaces)
                     
 

@@ -13,6 +13,7 @@ import {
   CloseIcon,
   LocationPointIcon,
   SuccessIcon,
+  FailureIcon,
   EarthIcon,
 } from "@/Components/Icons";
 import useDatabase from "@/hooks/useDatabase";
@@ -801,6 +802,20 @@ const PopUp = ({ isVisible }) => {
   );
 };
 
+const FailurePopUp = ({ isVisible }) => {
+  return (
+    <div
+      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+    >
+      {/* <div className='flex items-center justify-center w-[18px] h-[18px]'>
+					<FailureIcon />
+				</div> */}
+      🛑 Claim Failed! Please review your submission and ensure all information
+      is correct.
+    </div>
+  );
+};
+
 const HowToModal = ({ goBack }) => {
   const [section, setSection] = useState(0);
   return (
@@ -936,6 +951,7 @@ const Airspaces = () => {
   // showing
   const [showOptions, setShowOptions] = useState(false);
   const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
+  const [showFailurePopUp, setShowFailurePopUp] = useState(false);
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [data, setData] = useState({ ...defaultData });
   // database
@@ -1088,6 +1104,15 @@ const Airspaces = () => {
     return () => clearTimeout(timeoutId);
   }, [showSuccessPopUp]);
 
+  useEffect(() => {
+    if (!showFailurePopUp) return;
+    const timeoutId = setTimeout(() => {
+      setShowFailurePopUp(false);
+    }, 4000);
+
+    return () => clearTimeout(timeoutId);
+  }, [showFailurePopUp]);
+
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
     setFlyToAddress(placeName);
@@ -1138,175 +1163,179 @@ const Airspaces = () => {
         ],
         weekDayRanges,
       });
+      if (addProperty === undefined) {
+        setShowFailurePopUp(true);
+      } else {
+        setShowSuccessPopUp(true);
+      }
       setShowClaimModal(false);
       setData({ ...defaultData });
-      setShowSuccessPopUp(true);
     } catch (error) {
       console.log(error);
     }
   };
-  const flyToUserIpAddress = async (map) => {
-    if (!map) {
+};
+const flyToUserIpAddress = async (map) => {
+  if (!map) {
+    return;
+  }
+  try {
+    const ipResponse = await axios.get("https://api.ipify.org/?format=json");
+    const ipAddress = ipResponse.data.ip;
+    const ipGeolocationApiUrl = await axios.get(
+      `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`
+    );
+    const latitude = parseFloat(ipGeolocationApiUrl.data.latitude);
+    const longitude = parseFloat(ipGeolocationApiUrl.data.longitude);
+
+    if (isNaN(latitude) || isNaN(longitude)) {
       return;
     }
-    try {
-      const ipResponse = await axios.get("https://api.ipify.org/?format=json");
-      const ipAddress = ipResponse.data.ip;
-      const ipGeolocationApiUrl = await axios.get(
-        `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`
-      );
-      const latitude = parseFloat(ipGeolocationApiUrl.data.latitude);
-      const longitude = parseFloat(ipGeolocationApiUrl.data.longitude);
-
-      if (isNaN(latitude) || isNaN(longitude)) {
-        return;
-      }
-      map.flyTo({
-        center: [longitude, latitude],
-        zoom: 15,
-      });
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  return (
-    <Fragment>
-      <Head>
-        <title>SkyTrade - Airspaces</title>
-      </Head>
-      {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
-
-      <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F6FAFF]">
-        {!showMobileMap && <Sidebar />}
-        <div className="flex h-full w-full flex-col">
-          {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
-          {showMobileMap && isMobile && (
-            <ExplorerMobile
-              onGoBack={() => setShowMobileMap(false)}
-              flyToAddress={flyToAddress}
-              address={address}
-              setAddress={setAddress}
-              addresses={addresses}
-              showOptions={showOptions}
-              handleSelectAddress={handleSelectAddress}
-              onClaimAirspace={() => setShowClaimModal(true)}
-            />
-          )}
-          {showHowToModal && (
-            <HowToModal goBack={() => setShowHowToModal(false)} />
-          )}
-          <section
-            className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
-          >
-            <div
-              className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-full`}
-              id="map"
-              style={{
-                opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",
-                zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
-              }}
-            />
-            {isMobile && showMobileMap && flyToAddress && (
-              <div
-                onClick={() => setShowClaimModal(true)}
-                className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
-              >
-                Claim Airspace
-              </div>
-            )}
-            {isMobile && (
-              <Fragment>
-                {showClaimModal && (
-                  <ClaimModal
-                    onCloseModal={() => setShowClaimModal(false)}
-                    data={data}
-                    setData={setData}
-                    onClaim={onClaim}
-                  />
-                )}
-              </Fragment>
-            )}
-            {!isMobile && (
-              <div className="flex items-start justify-start">
-                <Explorer
-                  flyToAddress={flyToAddress}
-                  address={address}
-                  setAddress={setAddress}
-                  addresses={addresses}
-                  showOptions={showOptions}
-                  handleSelectAddress={handleSelectAddress}
-                  onClaimAirspace={() => setShowClaimModal(true)}
-                />
-                <Slider />
-                <PopUp isVisible={showSuccessPopUp} />
-                {showClaimModal && (
-                  <ClaimModal
-                    onCloseModal={() => setShowClaimModal(false)}
-                    data={data}
-                    setData={setData}
-                    onClaim={onClaim}
-                  />
-                )}
-              </div>
-            )}
-            {!showMobileMap && (
-              <div className="flex h-full w-full flex-col md:hidden">
-                <div
-                  onClick={() => setShowMobileMap(true)}
-                  className="flex w-full flex-col justify-between gap-[184px] bg-cover bg-center bg-no-repeat p-[17px]"
-                  style={{ backgroundImage: "url('/images/map-bg.png')" }}
-                >
-                  <div className="w-full rounded-[20px] bg-[#222222] p-[12px] text-center text-base font-normal text-white">
-                    Exciting times ahead!
-                    <br />
-                    Claim your airspace 🚀✨
-                  </div>
-                  <div className="w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
-                    Claim your airspace
-                  </div>
-                </div>
-                <div className="flex flex-1 flex-col gap-[23px] px-[13px] py-[29px]">
-                  <div className="flex flex-1 items-center gap-[14px]">
-                    <Link
-                      href={"/homepage/portfolio"}
-                      className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
-                      style={{
-                        backgroundImage: "url('/images/airspace-preview.png')",
-                      }}
-                    >
-                      <p className="text-xl font-medium text-white">Airspace</p>
-                    </Link>
-                    <Link
-                      href={"/homepage/portfolio"}
-                      className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
-                      style={{
-                        backgroundImage: "url('/images/portfolio.jpg')",
-                      }}
-                    >
-                      <p className="text-xl font-medium text-white">
-                        Portfolio
-                      </p>
-                    </Link>
-                  </div>
-                  <div
-                    onClick={() => setShowHowToModal(true)}
-                    className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
-                  >
-                    <div className="h-[24px] w-[24px]">
-                      <HelpQuestionIcon color="white" />
-                    </div>
-                    <p>How to Claim My Airspace?</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </section>
-        </div>
-      </div>
-    </Fragment>
-  );
+    map.flyTo({
+      center: [longitude, latitude],
+      zoom: 15,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };
+
+return (
+  <Fragment>
+    <Head>
+      <title>SkyTrade - Airspaces</title>
+    </Head>
+    {isLoading && <Backdrop />}
+    {isLoading && <Spinner />}
+
+    <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA]">
+      {!showMobileMap && <Sidebar />}
+      <div className="flex h-full w-full flex-col">
+        {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
+        {showMobileMap && isMobile && (
+          <ExplorerMobile
+            onGoBack={() => setShowMobileMap(false)}
+            flyToAddress={flyToAddress}
+            address={address}
+            setAddress={setAddress}
+            addresses={addresses}
+            showOptions={showOptions}
+            handleSelectAddress={handleSelectAddress}
+            onClaimAirspace={() => setShowClaimModal(true)}
+          />
+        )}
+        {showHowToModal && (
+          <HowToModal goBack={() => setShowHowToModal(false)} />
+        )}
+        <section
+          className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
+        >
+          <div
+            className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-full`}
+            id="map"
+            style={{
+              opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",
+              zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
+            }}
+          />
+          {isMobile && showMobileMap && flyToAddress && (
+            <div
+              onClick={() => setShowClaimModal(true)}
+              className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+            >
+              Claim Airspace
+            </div>
+          )}
+          {isMobile && (
+            <Fragment>
+              {showClaimModal && (
+                <ClaimModal
+                  onCloseModal={() => setShowClaimModal(false)}
+                  data={data}
+                  setData={setData}
+                  onClaim={onClaim}
+                />
+              )}
+            </Fragment>
+          )}
+          {!isMobile && (
+            <div className="flex items-start justify-start">
+              <Explorer
+                flyToAddress={flyToAddress}
+                address={address}
+                setAddress={setAddress}
+                addresses={addresses}
+                showOptions={showOptions}
+                handleSelectAddress={handleSelectAddress}
+                onClaimAirspace={() => setShowClaimModal(true)}
+              />
+              <Slider />
+              <PopUp isVisible={showSuccessPopUp} />
+              <FailurePopUp isVisible={showFailurePopUp} />
+
+              {showClaimModal && (
+                <ClaimModal
+                  onCloseModal={() => setShowClaimModal(false)}
+                  data={data}
+                  setData={setData}
+                  onClaim={onClaim}
+                />
+              )}
+            </div>
+          )}
+          {!showMobileMap && (
+            <div className="flex h-full w-full flex-col md:hidden">
+              <div
+                onClick={() => setShowMobileMap(true)}
+                className="flex w-full flex-col justify-between gap-[184px] bg-cover bg-center bg-no-repeat p-[17px]"
+                style={{ backgroundImage: "url('/images/map-bg.png')" }}
+              >
+                <div className="w-full rounded-[20px] bg-[#222222] p-[12px] text-center text-base font-normal text-white">
+                  Exciting times ahead!
+                  <br />
+                  Claim your airspace 🚀✨
+                </div>
+                <div className="w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
+                  Claim your airspace
+                </div>
+              </div>
+              <div className="flex flex-1 flex-col gap-[23px] px-[13px] py-[29px]">
+                <div className="flex flex-1 items-center gap-[14px]">
+                  <Link
+                    href={"/homepage/portfolio"}
+                    className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
+                    style={{
+                      backgroundImage: "url('/images/airspace-preview.png')",
+                    }}
+                  >
+                    <p className="text-xl font-medium text-white">Airspace</p>
+                  </Link>
+                  <Link
+                    href={"/homepage/portfolio"}
+                    className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
+                    style={{
+                      backgroundImage: "url('/images/portfolio.jpg')",
+                    }}
+                  >
+                    <p className="text-xl font-medium text-white">Portfolio</p>
+                  </Link>
+                </div>
+                <div
+                  onClick={() => setShowHowToModal(true)}
+                  className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
+                >
+                  <div className="h-[24px] w-[24px]">
+                    <HelpQuestionIcon color="white" />
+                  </div>
+                  <p>How to Claim My Airspace?</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
+  </Fragment>
+);
 
 export default Airspaces;

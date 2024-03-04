@@ -100,7 +100,7 @@ const Sidebar = () => {
         className='md:flex overflow-y-scroll no-scrollbar hidden relative border-e-2 bg-white px-[21.95px] py-[29.27px] items-center flex-col gap-[14.64px]'
         style={{ width: !isCollapsed ? '297.29px' : "98.2833px", height: '100vh', transition: "width 0.3s ease" }}
       >
-       <a href={'/homepage/dashboard2'}>
+       <Link href={'/homepage/dashboard2'}>
           <Image
           src={logoNoChars}
           alt="Company's logo"
@@ -109,15 +109,18 @@ const Sidebar = () => {
           className={`${isCollapsed ? 'opacity-100 mb-[29.27px] w-[44.62px] h-[51px]' : 'opacity-0 mb-0 w-0 h-0'}`}
           style={{ transition: "all 0.3s ease" }}
         />
-        </a>
-        <Image
-          src={logo}
-          alt="Company's logo"
-          width={isCollapsed ? 0 : 147}
-          height={isCollapsed ? 0 : 58}
-          className={`${isCollapsed ? 'opacity-0 mb-0 w-0 h-0' : 'opacity-100 mt-[-14.64px] mb-[29.27px] w-[147px] h-[58px]'}`}
-          style={{ transition: "all 0.3s ease" }}
-        />
+        </Link>
+        <Link href={'/homepage/dashboard2'}>
+          <Image
+            src={logo}
+            alt="Company's logo"
+            width={isCollapsed ? 0 : 147}
+            height={isCollapsed ? 0 : 58}
+            className={`${isCollapsed ? 'opacity-0 mb-0 w-0 h-0' : 'opacity-100 mt-[-14.64px] mb-[29.27px] w-[147px] h-[58px]'}`}
+            style={{ transition: "all 0.3s ease" }}
+          />
+        </Link>
+       
         <SidebarItem href={'/homepage/dashboard2'} text={'Dashboard'} children={<DashboardIcon />} />
         <SidebarItem href={'/homepage/airspace2'} text={'Airspaces'} children={<EarthIcon />} />
         <SidebarItem href={'/homepage/referral'} text={'Referral Program'} children={<GiftIcon />} />
