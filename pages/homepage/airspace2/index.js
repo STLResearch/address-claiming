@@ -402,7 +402,7 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
             <div>
                   
             </div>
-            {!showOptions && flyToAddress && (<div className=" max-w-[320px] max-h-full z-20">
+            {!showOptions && flyToAddress && !claimedProperty && (<div className=" max-w-[320px] max-h-full z-20">
                 <div>
                 <h1 className="mt-2 text-[20px] font-medium text-[#222222] text-center">My Airspaces</h1>
                 </div>
@@ -870,7 +870,7 @@ const Airspaces = () => {
                 weekDayRanges
             })
 
-            if(!response){
+            if(!addProperty){
                 setConfirmationStatus('failed');
             } else {
                 setConfirmationStatus('success');

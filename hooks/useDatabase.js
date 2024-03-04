@@ -225,8 +225,7 @@ const useDatabase = () => {
             if (!response.ok || response.statusCode === 500) {
                 throw new Error("Error when creating property.");
             }
-
-            return response.json();
+            return await response.json();
         } catch (error) {
             console.log(error);
         }
