@@ -345,30 +345,31 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
     const [isInfoVisible, setIsInfoVisible] = useState(false);
 
     const displayClaimBtn = () => {
-        if (claimedProperty){
-            return (
-                <div className=" max-w-[320px] max-h-full z-20">
-                <div>
-                <h1 className="mt-2 text-[20px] font-medium text-[#222222] text-center">My Airspaces</h1>
-                </div>
-                    <div className="space-x-4 px-4 py-4 w-full mt-2  border flex items-center  bg-[#FFFFFF] rounded-lg  cursor-pointer  ">
-                    
-                      <div className=" w-6 h-6"><LocationPointIcon /></div>
-                        <p className="flex-1 min-w-0 font-normal text-[#222222] text-[15px] overflow-hidden whitespace-nowrap overflow-ellipsis">{claimedProperty.name} </p>
-                       <div  className="w-4 h-4" ><ChevronRightIcon /></div>
-                        
+      if(showOptions) return <></>
+        return (
+          <>
+          {claimedProperty && (
+                    <div className=" max-w-[320px] max-h-full z-20">
+                    <div>
+                    <h1 className="mt-2 text-[20px] font-medium text-[#222222] text-center">My Airspaces</h1>
                     </div>
-            </div>
-            )
-        } else if(flyToAddress){
-            return (
-                <div onClick={onClaimAirspace} className="bg-[#0653EA] text-white rounded-lg py-[16px] text-center text-[15px] font-normal cursor-pointer w-full">Claim Airspace</div>
-            )
-        }
+                        <div className="space-x-4 px-4 py-4 w-full mt-2  border flex items-center  bg-[#FFFFFF] rounded-lg  cursor-pointer  ">
+                        
+                          <div className=" w-6 h-6"><LocationPointIcon /></div>
+                            <p className="flex-1 min-w-0 font-normal text-[#222222] text-[15px] overflow-hidden whitespace-nowrap overflow-ellipsis">{claimedProperty.name} </p>
+                           <div  className="w-4 h-4" ><ChevronRightIcon /></div>
+                            
+                        </div>
+                    </div>
+          )}
+
+           <div onClick={onClaimAirspace} className="bg-[#0653EA] text-white rounded-lg py-[16px] text-center text-[15px] font-normal cursor-pointer w-full">Claim Airspace</div>
+      </>
+        )
     }
 
     return (
-        <div className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
+        <div className="hidden md:flex bg-[#FFFFFFCC] py-[30px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex gap-[5px] items-center">
                 <p className="text-xl font-medium text-[#222222]">Claim Airspace</p>
                 <div onClick={() => setIsInfoVisible(prev => !prev)} className="relative w-[20px] h-[20px] flex justify-center items-center">
@@ -382,8 +383,9 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                 <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
                     <MagnifyingGlassIcon />
                 </div>
-                {showOptions && (
-                    <div className="absolute top-[60px] left-0 bg-[#FFFFFF] w-full flex-col rounded-[15px] overflow-y-scroll no-scrollbar" style={{ maxHeight: '240px' }}c>
+            </div>
+            {showOptions && (
+                    <div className="top-[60px] left-0 bg-[#FFFFFF] w-full flex-col rounded-[15px] overflow-y-scroll no-scrollbar" style={{ maxHeight: '240px' }}c>
                         {addresses.map((item) => {
                             return (
                                 <div
@@ -398,19 +400,9 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                         })}
                     </div>
                 )}
-            </div>
             <div>
                   
             </div>
-            {!showOptions && flyToAddress && !claimedProperty && (<div className=" max-w-[320px] max-h-full z-20">
-                <div>
-                <h1 className="mt-2 text-[20px] font-medium text-[#222222] text-center">My Airspaces</h1>
-                </div>
-                    <div className="space-x-4 px-4 py-4 w-full mt-2  border flex items-center  bg-[#FFFFFF] rounded-lg  cursor-pointer">        
-                      <div className=" w-6 h-6"><LocationPointIcon /></div>
-                        <p className="flex-1 min-w-0 font-normal text-[#222222] text-[15px] overflow-hidden whitespace-nowrap overflow-ellipsis">{address} </p>                
-                    </div>
-            </div>)}
             {displayClaimBtn()}
         </div>
     )
@@ -875,6 +867,7 @@ const Airspaces = () => {
             } else {
                 setConfirmationStatus('success');
                 setClaimedProperty({name: data.name})
+                setAddress('')
             }
             setData({ ...defaultData });
 
