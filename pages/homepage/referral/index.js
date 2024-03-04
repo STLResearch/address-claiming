@@ -119,9 +119,7 @@ const Share = ({ activeSection, section, isMobile, referralCode, blockchainAddre
         }
     }
 
-    const shareOnGoogle = (textToShare) => {
-        window.open(`https://plus.google.com/share?url=${encodeURIComponent(textToShare)}`, '_blank');
-    };
+
 
     const shareOnFacebook = (textToShare) => {
         console.log(encodeURIComponent(textToShare))
@@ -166,9 +164,7 @@ const Share = ({ activeSection, section, isMobile, referralCode, blockchainAddre
                         <div onClick={() => shareOnLinkedIn(`${origin}/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><LinkedInIcon /></div>
                         </div>
-                        <div onClick={() => shareOnGoogle(`${origin}/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
-                            <div className="w-5 h-5 flex items-center justify-center"><GoogleIcon /></div>
-                        </div>
+                       
                         <div onClick={() => shareOnTwitter(`${origin}/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><XIcon /></div>
                         </div>

@@ -12,6 +12,7 @@ import Spinner from '@/Components/Spinner';
 import { Fragment } from 'react';
 import logo from '../../../../public/images/logo.jpg';
 import { useAuth } from '@/hooks/useAuth';
+import * as Yup from 'yup'
 
 const PartOne = ({ setPart }) => {
     return (
@@ -36,6 +37,28 @@ const PartOne = ({ setPart }) => {
     )
 }
 
+export const phoneValidationSchema = Yup.object().shape({
+    phone: Yup.string()
+      .required('Phone number is required')
+      .matches(/^\+[0-9]+$/, "Phone number must be only digits, and should start with +")
+      .min(10, 'Phone number must be at least 10 digits')
+      .max(15, 'Phone number must be less than 15 digits'),
+  });
+export  const checkPhoneIsValid = async (phone) => {
+    try {
+         await phoneValidationSchema.validate({ phone });
+        return {
+            status: true,
+            message: ""
+        }
+      } catch (error) {
+        return {
+            status: false,
+            message: error.message
+        }
+      }
+
+}
 const IndividualSignup = () => {
     const [part, setPart] = useState(0);
     const [name,setName] = useState('');
@@ -92,16 +115,15 @@ const IndividualSignup = () => {
         return !!name;
     }
 
-    const checkPhoneIsValid = (phoneNumber) => {
-        return !(!phoneNumber || isNaN(+(phoneNumber.slice(1,))) || phoneNumber.charAt(0) !== '+')
-    }
+
 
     const checkReferralCodeIsValid = (referralCode1) => {
         return true;
     }
 
+    const [errorMessage, setErrorMessage] = useState('')
 
-    const formSubmitHandler = (e) => {
+    const formSubmitHandler = async (e) => {
         e.preventDefault();
 
         const [  referralCode] = [, referralCodeRef].map(ref => ref.current?.value);
@@ -110,9 +132,12 @@ const IndividualSignup = () => {
             setIsNameValid(false);
             return;
         }
+        console.log(checkPhoneIsValid(phoneNumber), "checkPhoneIsValid(phoneNumber)")
 
-        if (!checkPhoneIsValid(phoneNumber)) {
+        const phoneCheck = await checkPhoneIsValid(phoneNumber)
+        if (!phoneCheck.status) {
             setIsPhoneNumberValid(false);
+            setErrorMessage(phoneCheck.message)
             return;
         }
 
@@ -247,7 +272,7 @@ const IndividualSignup = () => {
                                         type='text'
                                         value={phoneNumber}
                                         onChange={(e) => {
-                                            setIsPhoneNumberValid(true);
+                                            setIsPhoneNumberValid(true )
                                             setPhoneNumber(e.target.value);
                                             }}
                                         placeholder='Enter your phone number'
@@ -256,7 +281,7 @@ const IndividualSignup = () => {
                                     />
                                     {!isPhoneNumberValid && (
                                         <p className='text-[11px] italic text-red-600'>
-                                            This field is mandatory. Add the country code e.g. '+1'
+                                            {errorMessage}
                                         </p>
                                     )}
                                 </div>
@@ -307,6 +332,7 @@ const IndividualSignup = () => {
                                     )}
                                 </div>
                                 <div className='w-full bg-[#0653EA] py-[16px] flex items-center justify-center text-white font-normal text-[15px] rounded-lg cursor-pointer' onClick={formSubmitHandler}>Submit</div>
+
                             </Fragment>
                         )
                     }
