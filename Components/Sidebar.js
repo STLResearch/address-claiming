@@ -28,7 +28,7 @@ const Sidebar = () => {
 
     if (onClick !== undefined) {
       return (
-        <div onClick={()=>onClick()} className={`${style || ''} cursor-pointer py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
+        <div onClick={onClick} className={`${style || ''} cursor-pointer py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
           <div className='w-6 h-6 flex items-center justify-center'>
             {React.cloneElement(children, { isActive })}
           </div>
