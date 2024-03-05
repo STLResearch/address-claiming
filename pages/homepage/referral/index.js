@@ -9,6 +9,7 @@ import { useMobile } from "@/hooks/useMobile";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import useOrigin from "@/hooks/useOrigin";
+import { useRouter } from "next/router";
 
 import Head from "next/head";
 
@@ -245,9 +246,14 @@ const Referral = () => {
     const { user } = useAuth()
     const { retrieveReferralData } = useDatabase();
     const sections = ['The Program', 'Share', 'My Referrals'];
-    console.log("userss ",user)
+    const router = useRouter()
+
     useEffect(() => {
-        if (!user) return;
+        if (user  == undefined){
+            localStorage.removeItem('openlogin_store');
+            router.push('/auth/join');
+            return;
+        }
 
         const { id, blockchainAddress, ownedReferralCode: { code } } = user;
 

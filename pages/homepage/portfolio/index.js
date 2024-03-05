@@ -9,6 +9,7 @@ import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -130,6 +131,7 @@ const PortfolioSectionMobile = ({ title, airspacesList, onGoBack }) => {
 
 
 const Portfolio = () => {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [selectedAirspace, setSelectedAirspace] = useState(null);
     const { getPropertiesByUserAddress } = useDatabase();
@@ -143,7 +145,11 @@ const Portfolio = () => {
     ]};
 
     useEffect(() => {
-        if (!user) return;
+        if (user == undefined) {
+            localStorage.removeItem('openlogin_store');
+            router.push('/auth/join');
+            return;
+        }
         (async () => {
             try {
                 setIsLoading(true)

@@ -10,6 +10,7 @@ import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
 import DatePicker from "react-datepicker";
+import swal from "sweetalert"
 import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
@@ -94,7 +95,14 @@ const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1 }) => {
     console.log("yo selector user",rentData)
 
     useEffect(() => {
-        const authUser = async () => {
+         (async () => {
+
+            if (selectorUser == undefined) {
+              localStorage.removeItem("openlogin_store");
+              router.push("/auth/join");
+              return;
+            }
+
             const chainConfig = {
                 chainNamespace: 'solana',
                 chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
@@ -133,10 +141,7 @@ const connectionConfig = await solanaWallet.request({
 
   //const transaction = Transaction.from(Buffer.from(json.transaction, 'base64'));
 console.log("solanaWallet=",balance)// ui info wrong
-        };
-        authUser();
-    
-      
+        })()  
     }, [selectorUser])
     
 
@@ -624,7 +629,7 @@ const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSel
 }
 
 const Rent = () => {
-    
+    const router = useRouter()
     const [isLoading, setIsLoading] = useState(false);
     // map
     const [map, setMap] = useState(null);
@@ -663,61 +668,50 @@ const Rent = () => {
     const [showOptions, setShowOptions] = useState(false);
 
 //setting user
-    useEffect(() => {
-        if (selectorUser) {
-          const authUser = async () => {
-            const chainConfig = {
-              chainNamespace: 'solana',
-              chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-              rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-              displayName: 'Solana Mainnet',
-              blockExplorer: 'https://explorer.solana.com',
-              ticker: 'SOL',
-              tickerName: 'Solana',
-            };
-    
-            const web3auth = new Web3Auth({
-              clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-    
-              web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-              chainConfig: chainConfig,
-            });
-    
-            await web3auth.initModal();
-    
-            // await web3auth.connect();
-    
-            let userInfo;
-    
-            try {
-              userInfo = await web3auth.getUserInfo();
-            } catch (err) {
-              localStorage.removeItem('openlogin_store');
-              swal({
-                title: 'oops!',
-                text: 'Something went wrong. Kindly try again',
-              }).then(() => router.push('/auth/join'));
-              return;
-            }
-    
-            const fetchedToken = JSON.parse(
-              localStorage.getItem('openlogin_store')
-            );
-    
-            if (!selectorUser) {
-              localStorage.removeItem('openlogin_store');
-              router.push('/auth/join');
-              return;
-            }
-    
-            setToken(fetchedToken.sessionId);
-            setUser1(selectorUser);
-          };
-    
-          authUser();
+useEffect(() => {
+    (async () => {
+        if(selectorUser == undefined){
+                localStorage.removeItem('openlogin_store');
+                router.push('/auth/join');
+                return;
         }
-      }, []);
+        const chainConfig = {
+            chainNamespace: 'solana',
+            chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+            displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
+            blockExplorer: 'https://explorer.solana.com',
+            ticker: 'SOL',
+            tickerName: 'Solana',
+        };
+        const web3auth = new Web3Auth({
+            clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+            web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+            chainConfig: chainConfig,
+        });
+        await web3auth.initModal();
+        // await web3auth.connect();
+        let userInfo;
+        try {
+            userInfo = await web3auth.getUserInfo();
+        } catch (err) {
+            localStorage.removeItem('openlogin_store');
+            swal({
+              title: 'oops!',
+              text: 'Something went wrong. Kindly try again',
+            }).then(() => router.push('/auth/join'));
+            return;
+        }
 
+        const fetchedToken = JSON.parse(
+            localStorage.getItem('openlogin_store')
+        );
+
+        setToken(fetchedToken.sessionId);
+        setUser1(selectorUser);
+    })()
+
+}, [selectorUser]);
 
     //map creation and adding event listeners
     useEffect(() => {

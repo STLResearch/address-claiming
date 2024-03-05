@@ -1,9 +1,11 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Link from "next/link";
 import Head from "next/head";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/router";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -21,6 +23,16 @@ const Item = ({ title, text, imageUrl, link, style }) => {
 
 const Marketplace = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const { user } = useAuth();
+    const router = useRouter();
+
+    useEffect(()=>{
+        if (user == undefined) {
+            localStorage.removeItem('openlogin_store');
+            router.push('/auth/join');
+            return;
+        }
+    },[user])
 
     return (
         <Fragment>

@@ -16,6 +16,7 @@ import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 import useDatabase from "@/hooks/useDatabase";
 import Head from "next/head";
+import swal from 'sweetalert'
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -122,51 +123,50 @@ const Dashboard = () => {
     const { getPropertiesByUserAddress } = useDatabase();
     // GET USER AND TOKEN
     useEffect(() => {
-        if (selectorUser) {
-            const authUser = async () => {
-                const chainConfig = {
-                    chainNamespace: 'solana',
-                    chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-                    displayName: 'Solana Mainnet',
-                    blockExplorer: 'https://explorer.solana.com',
-                    ticker: 'SOL',
-                    tickerName: 'Solana',
-                };
-                const web3auth = new Web3Auth({
-                    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-                    web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-                    chainConfig: chainConfig,
-                });
-                await web3auth.initModal();
-                // await web3auth.connect();
-                let userInfo;
-                try {
-                    userInfo = await web3auth.getUserInfo();
-                } catch (err) {
+        (async () => {
+            if(selectorUser == undefined){
                     localStorage.removeItem('openlogin_store');
                     router.push('/auth/join');
                     return;
-                }
-
-                const fetchedToken = JSON.parse(
-                    localStorage.getItem('openlogin_store')
-                );
-
-                if (!selectorUser) {
-                    localStorage.removeItem('openlogin_store');
-                    router.push('/auth/join');
-                    return;
-                }
-
-                setToken(fetchedToken.sessionId);
-                setUser(selectorUser);
+            }
+            const chainConfig = {
+                chainNamespace: 'solana',
+                chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+                rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+                displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
+                blockExplorer: 'https://explorer.solana.com',
+                ticker: 'SOL',
+                tickerName: 'Solana',
             };
-            authUser();
-        }
+            const web3auth = new Web3Auth({
+                clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+                web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+                chainConfig: chainConfig,
+            });
+            await web3auth.initModal();
+            // await web3auth.connect();
+            let userInfo;
+            try {
+                userInfo = await web3auth.getUserInfo();
+            } catch (err) {
+                localStorage.removeItem('openlogin_store');
+                swal({
+                  title: 'oops!',
+                  text: 'Something went wrong. Kindly try again',
+                }).then(() => router.push('/auth/join'));
+                return;
+            }
+    
+            const fetchedToken = JSON.parse(
+                localStorage.getItem('openlogin_store')
+            );
+    
+            setToken(fetchedToken.sessionId);
+            setUser(selectorUser);
+        })()
+    
     }, [selectorUser]);
-
+    
     // GET TOKEN BALANCE
     useEffect(() => {
         if (user) {
