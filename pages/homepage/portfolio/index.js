@@ -16,11 +16,16 @@ let USDollar = new Intl.NumberFormat('en-US', {
     currency: 'USD',
 });
 
-const Modal = ({ selectedAirspace,setMyAirspaces,setShowPopUp,airspace, onCloseModal, isOffer }) => {
+const Modal = ({ airspace,setMyAirspaces, selectedAirspace,onCloseModal, isOffer ,setShowPopUp}) => {
     const { user } = useAuth()
-    const [showClaimModal, setShowClaimModal] = useState(false);
     const [data,setData]=useState(airspace)
     const { updateProperty } = useDatabase();
+    const [showClaimModal, setShowClaimModal] = useState(false);
+    const { title, address, id, currentPrice } = airspace;
+    let expirationDate;
+    if(airspace?.type === 'rental'){
+        expirationDate =  new Date(airspace?.metadata?.endTime)?.toString();
+    }
     const onClaim = async (e) =>{
         e.preventDefault();
         try {
@@ -60,14 +65,14 @@ const Modal = ({ selectedAirspace,setMyAirspaces,setShowPopUp,airspace, onCloseM
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
                 <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                     <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}><ArrowLeftIcon /></div>
-                    <h2 className="text-[#222222] text-center font-medium text-xl">{airspace?.title || airspace?.address}</h2>
+                    <h2 className="text-[#222222] text-center font-medium text-xl">{title || address}</h2>
                     <div onClick={onCloseModal} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
                 </div>
                 <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
                     <div className="w-6 h-6"><LocationPointIcon /></div>
-                    <p className="font-normal text-[#222222] text-[14px] flex-1">{airspace?.address}</p>
+                    <p className="font-normal text-[#222222] text-[14px] flex-1">{address}</p>
                 </div>
-                {Object.entries({ 'ID': airspace?.id, 'Expiration Date': airspace?.expirationDate, 'Current Price': airspace?.currentPrice }).map(([key, value]) => {
+                {Object.entries({ 'ID': id, 'Expiration Date': expirationDate, 'Current Price': currentPrice }).map(([key, value]) => {
                     if (!value) return;
                     return (
                         <div className="flex gap-[15px]">
@@ -97,7 +102,7 @@ const Modal = ({ selectedAirspace,setMyAirspaces,setShowPopUp,airspace, onCloseM
     )
 }
 
-const PortfolioItem = ({ airspaceName, tags, selectAirspace }) => {
+const PortfolioItem = ({ airspaceName, tags, type, selectAirspace }) => {
     return (
         <div onClick={selectAirspace} className="flex p-[11px] items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex items-center gap-[10px] flex-1">
@@ -105,7 +110,7 @@ const PortfolioItem = ({ airspaceName, tags, selectAirspace }) => {
                 <p className="font-normal text-[#222222] text-[14px] flex-1">{airspaceName}</p>
             </div>
             <div className="flex gap-[10px] items-center">
-                {!!tags[0] && <div className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">On Rent</div>}
+                {!!tags[0] && <div className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">{type === "land" ? "On Claim": "On Rent"}</div>}
                 {!!tags[1] && <div className="bg-[#E7E6E6] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">On Sale</div>}
                 {!!tags[2] && <div className="bg-[#222222] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">No Fly Zone</div>}
                 {!!tags[3] && <div className="bg-[#E04F64] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">Review Offer</div>}
@@ -115,7 +120,7 @@ const PortfolioItem = ({ airspaceName, tags, selectAirspace }) => {
     )
 }
 
-const PortfolioItemMobile = ({ airspaceName, tags, selectAirspace }) => {
+const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
     return (
         <div onClick={selectAirspace} className="flex p-[11px] items-center justify-between gap-[10px] cursor-pointer px-[20px]" style={{ borderBottom: "1px solid #DBDBDB" }}>
             <div className="flex items-center gap-[10px] flex-1">
@@ -123,7 +128,7 @@ const PortfolioItemMobile = ({ airspaceName, tags, selectAirspace }) => {
                 <p className="font-normal text-[#222222] text-[14px] flex-1">{airspaceName}</p>
             </div>
             <div className="flex gap-[10px] items-center">
-                {!!tags[0] && <div className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">On Rent</div>}
+                {!!tags[0] && <div className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">{type === "land" ? "On Claim": "On Rent"}</div>}
                 {!!tags[1] && <div className="bg-[#E7E6E6] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">On Sale</div>}
                 {!!tags[2] && <div className="bg-[#222222] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">No Fly Zone</div>}
                 {!!tags[3] && <div className="bg-[#E04F64] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">Review Offer</div>}
@@ -137,7 +142,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
         <div className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <h2 className="font-medium text-xl text-[#222222] text-center">{title}</h2>
             <div className="flex flex-col gap-[15px]">
-                {airspacesList.map(({address,expirationDate,name}, index) => (<PortfolioItem key={index} airspaceName={address} key={index} tags={[true, false,false,  false]} selectAirspace={() => selectAirspace(index)} />))}
+                {airspacesList?.map(({address,id, type}, index) => (<PortfolioItem airspaceName={address} key={index} tags={[true, false,false,  false]} type={type} selectAirspace={() => selectAirspace(index)} />))}
             </div>
         </div>
     )
@@ -146,7 +151,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
 const PortfolioListMobile = ({ airspacesList, selectAirspace }) => {
     return (
         <div className="flex flex-col gap-[11px] w-full">
-            {airspacesList.map(({ title, address, noFlyZone }, index) => (<PortfolioItemMobile key={index} airspaceName={title || address} tags={[false, false, noFlyZone, false]} selectAirspace={() => selectAirspace(index)} />))}
+            {airspacesList.map(({ title, address, noFlyZone, type }, index) => (<PortfolioItemMobile airspaceName={title || address} tags={[false, false, noFlyZone, false]} type={type} selectAirspace={() => selectAirspace(index)} />))}
         </div>
     )
 }
@@ -160,7 +165,7 @@ const PortfolioSectionMobile = ({ title, airspacesList, onGoBack }) => {
                     <p className="text-xl font-normal md:font-medium mx-auto md:m-0">{title}</p>
                 </div>
                 <div className="relative w-full flex flex-wrap gap-6 py-[20px]">
-                    {airspacesList.map(({ name }, index) => (<PortfolioItem key={index} airspaceName={name || address} tags={[1, 1, 1, 1]} selectAirspace={() => selectAirspace(index)} />))}
+                    {airspacesList.map(({ name }, index) => (<PortfolioItem airspaceName={name || address} tags={[1, 1, 1, 1]} selectAirspace={() => selectAirspace(index)} />))}
                 </div>
             </div>
         </div>
@@ -172,13 +177,12 @@ const Portfolio = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedAirspace, setSelectedAirspace] = useState(null);
     const { getPropertiesByUserAddress } = useDatabase();
-    const [myAirspaces, setMyAirspaces] = useState([]);
+    const [myAirspaces, setMyAirspaces] = useState([])
     const { user } = useAuth()
     const [showPopUp, setShowPopUp] = useState({isVisible:false,type:'',message:''});
 
-
     useEffect(() => {
-        if (!showPopUp) return;
+        if (!showPopUp?.isVisible) return;
         const timeoutId = setTimeout(() => {
             setShowPopUp({
                 isVisible: false,
@@ -188,36 +192,44 @@ const Portfolio = () => {
         }, 4000);
 
         return () => clearTimeout(timeoutId)
-    }, [showPopUp])
-    const fetchPortfolioData = async () => {
-        if (!user) return;
-        try {
-            setIsLoading(true);
-            const blockchain = user?.blockchainAddress;
-            const response = await getPropertiesByUserAddress(blockchain);
-            if (response) {
-                let resp = response.items;
-                setMyAirspaces(resp);
-            }
-            setIsLoading(false);
-        } catch (error) {
-            console.log(error);
-            setIsLoading(false);
-        }
-    };
+    }, [showPopUp?.isVisible])
 
     useEffect(() => {
-        fetchPortfolioData();
-    }, [user]);
+        if (!user) return;
+
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const rentedAirspacePromise = getPropertiesByUserAddress(user.blockchainAddress, 'rentalToken');
+                const claimedAirspacePromise = getPropertiesByUserAddress(user.blockchainAddress, 'landToken');
+
+                const [rentedAirspaceResp, claimedAirspaceResp] = await Promise.all([
+                    rentedAirspacePromise,
+                    claimedAirspacePromise
+                ]);
+
+                setMyAirspaces(
+                    [...rentedAirspaceResp?.items, ...claimedAirspaceResp?.items].map(item=>({    
+                        weekDayRanges : item?.weekDayRanges?.sort((a, b) => a?.weekDayId - b?.weekDayId),
+                        ...item
+                    }))
+                )
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, [user?.blockchainAddress]);
+
 
     const onCloseModal = () => {
         setSelectedAirspace(null);
     }
 
-    const selectAirspace = (x) => { 
-        setSelectedAirspace(x) 
-    
-    }
+    const selectAirspace = (x) => { setSelectedAirspace(x) }
+
     return (
         <Fragment>
             <Head>
@@ -226,19 +238,19 @@ const Portfolio = () => {
             {isLoading && createPortal(<Backdrop />, document?.getElementById('backdrop-root'))}
             {isLoading && createPortal(<Spinner />, document?.getElementById('backdrop-root'))}
             {selectedAirspace !== null && <Backdrop onClick={onCloseModal} />}
-            <div className='relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F6FAFF]'>
-            <Sidebar />
+
+            <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
+                <Sidebar />
                 <div className="w-full h-full flex flex-col">
-                    {selectedAirspace !== null && <Modal setShowPopUp={setShowPopUp} selectedAirspace={selectedAirspace} setMyAirspaces={setMyAirspaces} airspace={myAirspaces?.[selectedAirspace]} onCloseModal={onCloseModal} />}
+                    {selectedAirspace !== null && <Modal setShowPopUp={setShowPopUp} setMyAirspaces={setMyAirspaces} airspace={myAirspaces[selectedAirspace]} selectedAirspace={selectedAirspace} onCloseModal={onCloseModal} />}
                     <PopUp isVisible={showPopUp?.isVisible} type={showPopUp?.type} message={showPopUp?.message}/>
                     <PageHeader pageTitle={'Portfolio'} username={'John Doe'} />
                     <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
-                        <PortfolioList airspacesList={myAirspaces} title={'Rented airspaces'} selectAirspace={selectAirspace} />
+                        <PortfolioList airspacesList={myAirspaces} title={'My Airspaces'} selectAirspace={selectAirspace} />
                     </section>
                     <section className="relative w-full h-full flex flex-wrap gap-6 py-[20px] md:hidden overflow-y-auto mb-[79px]">
-                        <PortfolioListMobile airspacesList={myAirspaces} title={'Rented airspaces'} selectAirspace={selectAirspace} />
+                        <PortfolioListMobile airspacesList={myAirspaces} title={'My Airspaces'} selectAirspace={selectAirspace} />
                     </section>
-
                     {/** TODO: <PortfolioSectionMobile title={'Hola'} airspacesList={myAirspacesToSellAndRent} />*/}
                 </div>
             </div>
