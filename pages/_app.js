@@ -10,7 +10,10 @@ import { msclaritConfig } from '@/hooks/msclaritConfig';
 import { useMobile } from '@/hooks/useMobile';
 import { useEffect, useState } from 'react';
 import { SidebarProvider } from '@/hooks/sidebarContext';
+import { ToastContainer } from "react-toastify";
+
 import "react-datepicker/dist/react-datepicker.css";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App({ Component, pageProps }) {
   const { isMobile } = useMobile();
@@ -56,6 +59,7 @@ export default function App({ Component, pageProps }) {
             `}
           </Script>
           <SidebarProvider>
+            <ToastContainer style={{ width: "500px" }} />
             <Component {...pageProps} />
           </SidebarProvider>
           <CookieConsent />

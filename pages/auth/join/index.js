@@ -25,6 +25,8 @@ import logo from '../../../public/images/logo.jpg';
 
 import { useSignature } from '@/hooks/useSignature';
 import Head from 'next/head';
+import Link from 'next/link';
+import { toast } from "react-toastify";
 
 const chainConfig = {
   chainNamespace: 'solana',
@@ -217,7 +219,7 @@ const Signup = () => {
 
 
     if (!isEmailValid(email)) {
-      console.log('Login: email is not valid', email);
+      toast.error('Login: email is not valid', email);
       return;
     }
     console.log('Login: email is valid', email);
@@ -348,24 +350,11 @@ const Signup = () => {
     }
   };
 
-  const formSubmitHandler = (path, e) => {
-    e.preventDefault();
-
-    dispatch(
-      counterActions.category({
-        categoryId: path === 'individual' ? '0' : '1',
-      })
-    );
-  };
-
   const handleSwitchingBetweenLoginAndRegister = () => {
     setIsLogin((prev) => !prev);
     setIsNewsletterChecked(false);
   };
 
-  const onTermsAndConditionsClicked = () => {};
-
-  const onPrivacyPolicyClicked = () => {};
 
   const isEmailValid = (email) => {
     const regex = /^\S+@\S+\.\S+$/;
@@ -391,7 +380,7 @@ const Signup = () => {
   return (
     <Fragment>
       <Head>
-        <title>StyTrade - Login</title>
+        <title>SkyTrade - Login</title>
       </Head>
       {isLoading &&
         createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
@@ -416,7 +405,7 @@ const Signup = () => {
             </p>
             {isLogin && (
               <p className='text-center text-sm text-light-grey'>
-                Sign in effortlessly usign the authentication method you chose
+                Sign in effortlessly using the authentication method you chose
                 during sign up.
               </p>
             )}
@@ -463,6 +452,7 @@ const Signup = () => {
 
             )}
             <button
+              type='button'
               onClick={loginHandlerGood}
               className='w-full rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600'
             >
@@ -512,19 +502,14 @@ const Signup = () => {
             </button>
             <p className='text-center text-sm text-[#87878D]'>
               By creating an account I agree with{' '}
-              <span
-                onClick={onTermsAndConditionsClicked}
-                className='cursor-pointer text-[#0653EA]'
-              >
+              <Link target='_blank' href="https://docs.sky.trade/terms.pdf" className='cursor-pointer text-[#0653EA]'>
                 Terms and Conditions
-              </span>{' '}
-              and{' '}
-              <span
-                onClick={onPrivacyPolicyClicked}
-                className='cursor-pointer text-[#0653EA]'
-              >
+              </Link>
+              {' '} and {' '}
+              <Link target='_blank' href="https://docs.sky.trade/privacy.pdf" className='cursor-pointer text-[#0653EA]'>
                 Privacy Policy
-              </span>{' '}
+              </Link>
+              {' '}
               agreement
             </p>
             <div

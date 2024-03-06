@@ -203,8 +203,10 @@ const YourReferrals = ({ activeSection, section, isMobile, registeredFriends, re
     )
 }
 
-const InviteYourFriends = () => {
-    const [friendEmail,setFriendEmail]=useState('')
+const InviteYourFriends = ({referralCode}) => {
+    const [friendEmail,setFriendEmail]=useState('');
+    const origin = useOrigin();
+
     return (
         <div className="flex flex-col gap-[15px] px-[51px]">
             <p className="text-[#222222] text-xl font-normal">Invite your friends</p>
@@ -212,7 +214,7 @@ const InviteYourFriends = () => {
             <div className="relative max-w-[522px]">
                 <input value={friendEmail} onChange={(e)=>{setFriendEmail(e.target.value);console.log(friendEmail);}} className="w-full rounded-lg py-[16px] pr-[45px] pl-[22px] outline-none" style={{ border: '1px solid #87878D' }} type="email" name="friendEmail" id="friendEmail" placeholder="email address" />
                 <div className="absolute right-[5px] top-1/2 -translate-y-1/2 w-[38px] h-[41px] bg-[#0653EA] flex items-center justify-center cursor-pointer rounded-lg">
-                    <a href={`mailto:${friendEmail}`} target="_blank">
+                    <a href={`mailto:${friendEmail}?body=${origin}/r/${referralCode}`} target="_blank">
                     <div className="w-[15px] h-[15px] ">
                         <ShareIcon color={'white'} />
                     </div>
@@ -276,7 +278,7 @@ const Referral = () => {
                         <AlertMessage />
                         <TheProgram activeSection={activeSection} isMobile={isMobile} section={0} />
                         <Share activeSection={activeSection} isMobile={isMobile} section={1} referralCode={data.referralCode} blockchainAddress={user?.blockchainAddress} user={user} />
-                        <InviteYourFriends />
+                        <InviteYourFriends referralCode={data.referralCode}/>
                         <YourReferrals activeSection={activeSection} isMobile={isMobile} section={2} registeredFriends={data.registeredFriends} registeredAirspaces={data.registeredAirspaces} validatedProperties={data.validatedProperties} />
                     </section>
                 </div>
