@@ -11,6 +11,8 @@ import { ShieldIcon } from "@/Components/Icons";
 import { useSignature } from "@/hooks/useSignature";
 import useDatabase from "@/hooks/useDatabase";
 import { useRouter } from "next/router";
+import { checkPhoneIsValid } from "@/pages/auth/join/intro";
+
 
 const Portfolio = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +24,8 @@ const Portfolio = () => {
     const { signatureObject } = useSignature();
     const { updateUser } = useDatabase()
     const router = useRouter()
+    const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
+    const [errorMessage, setErrorMessage] = useState('')
 
  
     useEffect(() => {
@@ -78,7 +82,14 @@ const Portfolio = () => {
         const { name, email, phoneNumber, newsletter } = personalInformation;
         // TODO: check if data has changed
         // TODO: check if data is valid
+        const check = await  checkPhoneIsValid(phoneNumber)
 
+        if(!check.status){
+            setIsPhoneNumberValid(false)
+            setErrorMessage(check.message )
+            return
+
+        }
         setIsLoading(true);
 
         try {
@@ -150,7 +161,7 @@ const Portfolio = () => {
             {isLoading && createPortal(<Backdrop />, document?.getElementById('backdrop-root'))}
             {isLoading && createPortal(<Spinner />, document?.getElementById('backdrop-root'))}
 
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
+            <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
                     <PageHeader pageTitle={'Account'} />
@@ -182,7 +193,8 @@ const Portfolio = () => {
                                 </div>
                                 <div className="flex flex-col gap-[5px] basis-full md:basis-1/3 flex-1">
                                     <label className="font-normal text-[14px] text-[#838187]" htmlFor="phone">Phone</label>
-                                    <input value={personalInformation.phoneNumber} onChange={(e) => setPersonalInformation(prev => ({ ...prev, phoneNumber: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="phone" id="phone" />
+                                    <input value={personalInformation.phoneNumber} onChange={(e) => {setIsPhoneNumberValid(true ); setPersonalInformation(prev => ({ ...prev, phoneNumber: e.target.value }))}} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: isPhoneNumberValid ? '1px solid #87878D' : '1px solid #E04F64' }} type="text" name="phone" id="phone" />
+                                    {!isPhoneNumberValid && (<p className='text-[11px] italic text-red-600'>{errorMessage}</p> )}
                                 </div>
                                 <div className="flex flex-col gap-[10px] basis-full">
                                     <label className="font-normal text-[14px] text-[#838187]" htmlFor="phone">Newsletter</label>

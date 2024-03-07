@@ -57,14 +57,13 @@ const router=useRouter()
            
              {finalAns?.status === "Rent SuccessFull" && (
                  <div  className=" w-[75%] h-[10%]  ">
-                 <p className="font-[400] text-[10px] text-center text-[#FFFFFF]">A copy of your transaction is availble inside your funds </p>
+                 <p className="font-[400] text-[10px] text-center text-[#FFFFFF]">A copy of your transaction is availble inside your Portfolio </p>
               </div>
              )}
            
             {finalAns?.status ==='Rent SuccessFull' ? (
                 <>
-                            <button className="py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-white text-center text-[#34A853] text-[14px]">Marketplace</button>
-            <button onClick={()=>(router.push('/homepage/funds'))} className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-[14px]">Funds</button>
+            <button onClick={()=>(router.push('/homepage/portfolio'))} className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-[14px]">Portfolio</button>
                 </>
             ) : (
                 <>
@@ -520,7 +519,7 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                 </div>
                 </div>
                 {showOptions && (
-          <div className='overflow-y-scroll max-h-60 w-full flex-col bg-white'>
+          <div className=' overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white'>
             {addresses.map((item) => {
               return (
                 <div
@@ -628,15 +627,22 @@ const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSel
     )
 }
 
+
+
+
+
+
+
+
+
+
 const Rent = () => {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false);
-    // map
     const [map, setMap] = useState(null);
     const { isMobile } = useMobile();
-    // variables
-    const [registeredAddress,setRegisteredAddress]=useState([]);
-    const [mapMove,setmapMove]=useState()
+    const [registeredAddress, setRegisteredAddress] = useState([]);
+    const [mapMove, setMapMove] = useState();
     const [address, setAddress] = useState('');
     const [addressData, setAddressData] = useState();
     const [addresses, setAddresses] = useState([]);
@@ -645,8 +651,8 @@ const Rent = () => {
 
     const [token, setToken] = useState();
     const [marker, setMarker] = useState();
-    const [rentData,setRentData]=useState()
-    const [showClaimModal,setShowClaimModal]=useState(false)
+    const [rentData, setRentData] = useState()
+    const [showClaimModal, setShowClaimModal] = useState(false);
     console.log("front")
     const defaultData = {
         address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: null, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
@@ -659,13 +665,14 @@ const Rent = () => {
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 },
         ]
     }
-    // showing
+
     const { user: selectorUser } = useAuth();
     const [user1, setUser1] = useState();
     const [data, setData] = useState({ ...defaultData });
-    // showing
-    const [regAdressShow,setregAdressShow]=useState(false)
+    const [regAdressShow, setRegAdressShow] = useState(false)
     const [showOptions, setShowOptions] = useState(false);
+    const router = useRouter();
+
 
 //setting user
 useEffect(() => {
@@ -713,9 +720,7 @@ useEffect(() => {
 
 }, [selectorUser]);
 
-    //map creation and adding event listeners
     useEffect(() => {
-       
         if (map) return;
 
         const createMap = () => {
@@ -724,7 +729,7 @@ useEffect(() => {
             const newMap = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/mapbox/streets-v12',
-                center: [ -104.718243, 40.413869],
+                center: [-104.718243, 40.413869],
                 zoom: 15,
                 // attributionControl: false
             });
@@ -748,154 +753,119 @@ useEffect(() => {
                         'fill-color': '#D20C0C',
                     },
                 });
-
-                 
-                
-
-
             });
-            newMap.on('move', async(e) => {
 
-                let el = document.createElement('div');
-                
-                if(el){
-                    
-                  // console.log("el==",el)
-                }
-                
-                el.id = 'markerWithExternalCss';
-                let crds=e.target.getBounds()
-                // todo: make it server side
+            let timeoutId;
 
-                const signatureObj = {};
-                
-                if(user1){
-                    const chainConfig = {
-                        chainNamespace: 'solana',
-                        chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-                        rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-                        displayName: 'Solana Mainnet',
-                        blockExplorer: 'https://explorer.solana.com',
-                        ticker: 'SOL',
-                        tickerName: 'Solana',
-                      };
-              
-                      const web3auth = new Web3Auth({
-                        clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-              
-                        web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-                        chainConfig: chainConfig,
-                      });
-              
-                      await web3auth.initModal();
-              
-                      const web3authProvider = await web3auth.connect();
-              
-                      const solanaWallet = new SolanaWallet(web3authProvider);
-              
-                      // const userInfo = await web3auth.getUserInfo();
-              
-                      const domain = window.location.host;
-                      // const domain = 'localhost:3000';
-                      const origin = window.location.origin;
-                      // const origin = 'http://localhost:3000';
-              
-                      const payload = new SIWPayload();
-                      payload.domain = domain;
-                      payload.uri = origin;
-                      payload.address = user1.blockchainAddress;
-                      payload.statement = 'Sign in to SkyTrade app.';
-                      payload.version = '1';
-                      payload.chainId = 1;
-              
-                      const header = { t: 'sip99' };
-                      const network = 'solana';
-              
-                      let message = new SIWWeb3({ header, payload, network });
-              
-                      const messageText = message.prepareMessage();
-                      const msg = new TextEncoder().encode(messageText);
-                      const result = await solanaWallet.signMessage(msg);
-              
-                      const signature = base58.encode(result);
-              
-                      signatureObj.sign = signature;
-                      signatureObj.sign_nonce = message.payload.nonce;
-                      signatureObj.sign_issue_at = message.payload.issuedAt;
-                      signatureObj.sign_address = user1.blockchainAddress;
-      
-      
+            newMap.on('move', async (e) => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(async () => {
+                    let el = document.createElement('div');
+                    el.id = 'markerWithExternalCss';
+                    let crds = e.target.getBounds();
 
-                }                
-                // Add the new marker to the map and update the marker state
-                let res=await fetch(`/api/proxy?${Date.now()}`,{
-                    method: 'POST',
-                    headers: {
-                      Accept: 'application/json',
-                      'Content-Type': 'application/json',
-                      
+                    const signatureObj = {};
 
-                      uri: `/public/properties/`,
-            sign: signatureObj.sign,
-            time: signatureObj.sign_issue_at,
-            nonce: signatureObj.sign_nonce,
-            address: signatureObj.sign_address,
-                    },
-                    body:JSON.stringify({
-                        minLongitude:crds._sw.lng,
-                        minLatitude:crds._sw.lat,
-                        maxLongitude:crds._ne.lng,
-                        maxLatitude:crds._ne.lat,
+                    if (user1) {
+                        const chainConfig = {
+                            chainNamespace: 'solana',
+                            chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+                            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+                            displayName: 'Solana Mainnet',
+                            blockExplorer: 'https://explorer.solana.com',
+                            ticker: 'SOL',
+                            tickerName: 'Solana',
+                        };
 
-                    })
-                })
-                res=await res.json();
-                console.log("returned from the api property",res)
-                //res=res.slice(0,5)
-                let ans,features1=[];
-                 if(res){
-                     ans=res.filter((property1)=>{
-                       //console.log(`p1Lon= ${property1.latitude} crdsswLon= ${crds._sw.lng}   crdsnelng= ${crds._ne.lng}  p1lat= ${property1.longitude} crdsswlat= ${crds._sw.lat}  crdsnelat= ${crds._ne.lat}` );
-                        if(property1.longitude>=crds._sw.lng && property1.longitude<=crds._ne.lng && property1.latitude>=crds._sw.lat && property1.latitude<=crds._ne.lat ){
-                            return property1
-                        }
-                    }) 
-                } 
-                
-                setRegisteredAddress(ans)
-                if(ans.length>0){
-                    for(let i=0;i<ans.length;i++){
-                        let lng1=ans[i].longitude;
-                        let lat1=ans[i].latitude;
-                        //console.log("ansarray==",lng1,lat1)
-                        let ans2=new mapboxgl.LngLat(lng1,lat1);
-                        
-                                
+                        const web3auth = new Web3Auth({
+                            clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-                        let popup1=new maplibregl.Popup().setHTML(`<strong>${ans[i].address}</strong>`)
-                        new maplibregl.Marker(el)
-                    .setLngLat(ans2)
-                    .setPopup(popup1)
-                    .addTo(newMap); 
+                            web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+                            chainConfig: chainConfig,
+                        });
+
+                        await web3auth.initModal();
+
+                        const web3authProvider = await web3auth.connect();
+
+                        const solanaWallet = new SolanaWallet(web3authProvider);
+
+                        const domain = window.location.host;
+                        const origin = window.location.origin;
+
+                        const payload = new SIWPayload();
+                        payload.domain = domain;
+                        payload.uri = origin;
+                        payload.address = user1.blockchainAddress;
+                        payload.statement = 'Sign in to SkyTrade app.';
+                        payload.version = '1';
+                        payload.chainId = 1;
+
+                        const header = { t: 'sip99' };
+                        const network = 'solana';
+
+                        let message = new SIWWeb3({ header, payload, network });
+
+                        const messageText = message.prepareMessage();
+                        const msg = new TextEncoder().encode(messageText);
+                        const result = await solanaWallet.signMessage(msg);
+
+                        const signature = base58.encode(result);
+
+                        signatureObj.sign = signature;
+                        signatureObj.sign_nonce = message.payload.nonce;
+                        signatureObj.sign_issue_at = message.payload.issuedAt;
+                        signatureObj.sign_address = user1.blockchainAddress;
                     }
 
-                   
-                }
+                    let res = await fetch(`/api/proxy?${Date.now()}`, {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
 
-                
+                            uri: `/public/properties/`,
+                            sign: signatureObj.sign,
+                            time: signatureObj.sign_issue_at,
+                            nonce: signatureObj.sign_nonce,
+                            address: signatureObj.sign_address,
+                        },
+                        body: JSON.stringify({
+                            minLongitude: crds._sw.lng,
+                            minLatitude: crds._sw.lat,
+                            maxLongitude: crds._ne.lng,
+                            maxLatitude: crds._ne.lat,
 
+                        })
+                    });
+                    res = await res.json();
+                    console.log("returned from the api property", res);
+                    let ans, features1 = [];
+                    if (res) {
+                        ans = res.filter((property1) => {
+                            if (property1.longitude >= crds._sw.lng && property1.longitude <= crds._ne.lng && property1.latitude >= crds._sw.lat && property1.latitude <= crds._ne.lat) {
+                                return property1;
+                            }
+                        });
+                    }
 
-                
+                    setRegisteredAddress(ans);
 
+                    if (ans.length > 0) {
+                        for (let i = 0; i < ans.length; i++) {
+                            let lng1 = ans[i].longitude;
+                            let lat1 = ans[i].latitude;
+                            let ans2 = new mapboxgl.LngLat(lng1, lat1);
 
-
-
-                  
-               //console.log("new bounds",crds)
-                });
-                               
-
-              
+                            let popup1 = new maplibregl.Popup().setHTML(`<strong>${ans[i].address}</strong>`)
+                            new maplibregl.Marker(el)
+                                .setLngLat(ans2)
+                                .setPopup(popup1)
+                                .addTo(newMap);
+                        }
+                    }
+                }, 3000);
+            });
 
             setMap(newMap);
         }
@@ -903,15 +873,13 @@ useEffect(() => {
         createMap();
     }, []);
 
-
-    useEffect(()=>{
-        //console.log("the registered addressesssss",registeredAddress)
-        if(registeredAddress.length>0){
-            setregAdressShow(true)
-        }else{
-            setregAdressShow(false)
+    useEffect(() => {
+        if (registeredAddress.length > 0) {
+            setRegAdressShow(true);
+        } else {
+            setRegAdressShow(false);
         }
-    },[registeredAddress])
+    }, [registeredAddress])
 
     useEffect(() => {
         if (!showOptions) setShowOptions(true);
@@ -930,7 +898,7 @@ useEffect(() => {
                     const data = await response.json();
                     if (!response.ok) throw new Error("Error while getting addresses");
 
-    
+
                     if (data.features && data.features.length > 0) {
                         setAddresses(data.features);
                     } else {
@@ -1001,8 +969,6 @@ useEffect(() => {
 
     }, [flyToAddress, map]);
 
-   
-
     useEffect(() => {
         if (flyToAddress === address) setShowOptions(false);
         if (flyToAddress) setData(prev => ({ ...prev, address: flyToAddress }))
@@ -1020,31 +986,31 @@ useEffect(() => {
             <Head><title>SkyTrade - Marketplace : Rent</title></Head>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
-                
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center  overflow-hidden ">
+
+            <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
                 <Sidebar />
-                
+
                 <div className="w-full h-full flex flex-col">
-                
+
                     <PageHeader pageTitle={isMobile ? 'Rent' : 'Marketplace: Rent'} />
                     {isMobile && <ExplorerMobile address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} />}
                     <section className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}>
                         <div
                             className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0 `}
                             //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
-                            
+
                             id='map'
                             style={{ zIndex: '20' }}
                         />
-                         
-                         {!isMobile && <div className="flex justify-start items-start">
-                            <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData} user1={user1}/>
+
+                        {!isMobile && <div className="flex justify-start items-start">
+                            <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData} user1={user1} />
                             {/* {showClaimModal &&  */}
-                            
-                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress} user1={user1}/>}
-                            
+
+                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress} user1={user1} />}
+
                             {/* } */}
-                        
+
                         </div>}
                     </section>
                 </div>

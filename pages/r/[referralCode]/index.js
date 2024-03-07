@@ -343,7 +343,7 @@ const ReferralCodeRedirect = () => {
         </div>
       )}
       {doesCodeExist && isVisitYourInboxVisible && (
-        <div className='relative rounded bg-[#F0F0FA] max-sm:bg-[white] h-screen w-screen flex flex-col items-center justify-center gap-[21.5px] overflow-hidden'>
+        <div className='relative rounded bg-[#F6FAFF] max-sm:bg-[white] h-screen w-screen flex flex-col items-center justify-center gap-[21.5px] overflow-hidden'>
           <div className='mx-auto flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] rounded relative justify-center'
             style={{
               maxWidth: '449px',
