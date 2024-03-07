@@ -23,6 +23,7 @@ import Link from "next/link";
 import { useTimezoneSelect, allTimezones } from "react-timezone-select";
 import axios from "axios";
 import Head from "next/head";
+import Image from "next/image";
 
 const Toggle = ({ checked, setChecked }) => {
   return (
@@ -966,6 +967,8 @@ const Airspaces = () => {
   // database
   const { createProperty } = useDatabase();
   const { user } = useAuth();
+  const [drawTool, setDrawTool] = useState(null);
+  const [isDrawMode, setIsDrawMode] = useState(false);
 
   useEffect(() => {
     if (map) return;
