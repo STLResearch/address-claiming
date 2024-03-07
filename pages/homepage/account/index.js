@@ -27,8 +27,12 @@ const Portfolio = () => {
     const router = useRouter()
 
     useEffect(() => {
-        if (selectorUser) {
-            const authUser = async () => {
+            (async () => {
+                if(selectorUser == undefined){
+                        localStorage.removeItem('openlogin_store');
+                        router.push('/auth/join');
+                        return;
+                }
                 const chainConfig = {
                     chainNamespace: 'solana',
                     chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
@@ -58,18 +62,12 @@ const Portfolio = () => {
                     localStorage.getItem('openlogin_store')
                 );
 
-                if (!selectorUser) {
-                    localStorage.removeItem('openlogin_store');
-                    router.push('/auth/join');
-                    return;
-                }
-
                 setToken(fetchedToken.sessionId);
                 setUser(selectorUser);
-            };
-            authUser();
-        }
+            })()
+  
     }, [selectorUser]);
+
 
     useEffect(() => {
         if (!user) return;

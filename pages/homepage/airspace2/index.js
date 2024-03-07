@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
+import { useRouter } from 'next/router';
 import Script from "next/script";
 import { InfoIcon, MagnifyingGlassIcon } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
@@ -966,6 +967,15 @@ const Airspaces = () => {
   // database
   const { createProperty } = useDatabase();
   const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(()=>{
+    if(user == undefined){
+      localStorage.removeItem('openlogin_store');
+      router.push('/auth/join');
+      return;
+    }
+  },[user])
 
   useEffect(() => {
     if (map) return;

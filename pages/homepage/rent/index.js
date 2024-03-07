@@ -93,50 +93,55 @@ const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1 }) => {
     console.log("yo selector user",rentData)
 
     useEffect(() => {
-        const authUser = async () => {
-            const chainConfig = {
-                chainNamespace: 'solana',
-                chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-                rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-                displayName: 'Solana Testnet',
-                blockExplorer: 'https://explorer.solana.com',
-                ticker: 'SOL',
-                tickerName: 'Solana',
-            };
-            const web3auth = new Web3Auth({
-                clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+        (async () => {
 
-                web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-                chainConfig: chainConfig,
-            });
-            await web3auth.initModal();
-            // await web3auth.connect();
-            const web3authProvider = await web3auth.connect();
+           if (selectorUser == undefined) {
+             localStorage.removeItem("openlogin_store");
+             router.push("/auth/join");
+             return;
+           }
+
+           const chainConfig = {
+               chainNamespace: 'solana',
+               chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+               rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+               displayName: 'Solana Testnet',
+               blockExplorer: 'https://explorer.solana.com',
+               ticker: 'SOL',
+               tickerName: 'Solana',
+           };
+           const web3auth = new Web3Auth({
+               clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+
+               web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+               chainConfig: chainConfig,
+           });
+           await web3auth.initModal();
+           // await web3auth.connect();
+           const web3authProvider = await web3auth.connect();
 
 const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
-           
+          
 const user = await web3auth.getUserInfo(); // web3auth instance
 // Get user's Solana public address
 const accounts = await solanaWallet.requestAccounts();
 const connectionConfig = await solanaWallet.request({
-    method: "solana_provider_config",
-    params: [],
-  });
-  
-  const connection = new Connection(connectionConfig.rpcTarget);
-  
-  // Fetch the balance for the specified public key
-  const balance = await connection.getBalance(new PublicKey(accounts[0]));
+   method: "solana_provider_config",
+   params: [],
+ });
+ 
+ const connection = new Connection(connectionConfig.rpcTarget);
+ 
+ // Fetch the balance for the specified public key
+ const balance = await connection.getBalance(new PublicKey(accounts[0]));
 
 
 
-  //const transaction = Transaction.from(Buffer.from(json.transaction, 'base64'));
+ //const transaction = Transaction.from(Buffer.from(json.transaction, 'base64'));
 console.log("solanaWallet=",balance)// ui info wrong
-        };
-        authUser();
-    
-      
-    }, [selectorUser])
+       })()  
+   }, [selectorUser])
+   
     
 
 

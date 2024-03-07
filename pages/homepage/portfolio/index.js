@@ -139,9 +139,12 @@ const Portfolio = () => {
 
 
     useEffect(() => {
-        if (!user) return;
-
-        const fetchData = async () => {
+        if (user == undefined) {
+            localStorage.removeItem('openlogin_store');
+            router.push('/auth/join');
+            return;
+        }
+        (async () => {
             setIsLoading(true);
             try {
                 const rentedAirspacePromise = getPropertiesByUserAddress(user.blockchainAddress, 'rentalToken');
@@ -165,8 +168,7 @@ const Portfolio = () => {
             } finally {
                 setIsLoading(false);
             }
-        };
-        fetchData();
+        })()
     }, [user?.blockchainAddress]);
 
 

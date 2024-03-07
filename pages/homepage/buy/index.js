@@ -10,6 +10,7 @@ import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress }) => {
     return (
@@ -81,6 +82,7 @@ const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSel
 }
 
 const Buy = () => {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     // map
     const [map, setMap] = useState(null);
@@ -92,6 +94,7 @@ const Buy = () => {
     const [flyToAddress, setFlyToAddress] = useState('');
     const [coordinates, setCoordinates] = useState({ longitude: '', latitude: '' })
     const [marker, setMarker] = useState();
+    const { user }  = useAuth();
     const defaultData = {
         address: flyToAddress, name: '',  rent: true, sell: false, hasPlanningPermission: null, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
@@ -107,6 +110,14 @@ const Buy = () => {
     const [showOptions, setShowOptions] = useState(false);
     const [data, setData] = useState({ ...defaultData });
 
+    
+    useEffect(() => {
+        if (user == undefined) {
+          localStorage.removeItem("openlogin_store");
+          router.push("/auth/join");
+          return;
+        }
+      }, [user]);
 
     useEffect(() => {
         if (map) return;
