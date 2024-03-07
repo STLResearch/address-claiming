@@ -11,7 +11,7 @@ import logoNoChars from '../public/images/logo-no-chars.png';
 import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon } from './Icons';
 import { useAuth } from '@/hooks/useAuth';
 import { SidebarContext } from '@/hooks/sidebarContext';
-
+import useLocalSorage from '@/hooks/useLocalStorage';
 
 const chainConfig = {
   chainNamespace: 'solana',
@@ -37,6 +37,7 @@ const Sidebar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { isCollapsed, setIsCollapsed } = useContext(SidebarContext)
   const { signOut } = useAuth();
+  const { clearStorage } = useLocalSorage();
 
   const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications }) => {
     const isActive = href ? asPath.includes(href) : false;
@@ -86,8 +87,10 @@ const Sidebar = () => {
     )
   }
 
-  const logoutHandler = async () => {
-      signOut()
+  const logoutHandler = () => {
+    setIsLoading(true);
+    clearStorage();
+    router.push("/auth/join");
   };
 
   return (

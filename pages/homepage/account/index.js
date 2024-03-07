@@ -11,6 +11,7 @@ import { ShieldIcon } from "@/Components/Icons";
 import { useSignature } from "@/hooks/useSignature";
 import useDatabase from "@/hooks/useDatabase";
 import { checkPhoneIsValid } from "@/pages/auth/join/intro";
+import { useRouter } from "next/router";
 
 const Portfolio = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +24,7 @@ const Portfolio = () => {
     const { updateUser } = useDatabase()
     const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState('')
-
+    const router = useRouter()
 
     useEffect(() => {
         if (selectorUser) {
