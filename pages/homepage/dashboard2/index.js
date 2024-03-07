@@ -264,12 +264,15 @@ const Dashboard = () => {
           return;
         }
 
+        console.log({ selectorUser });
+
         setToken(fetchedToken.sessionId);
         setUser(selectorUser);
       };
       authUser();
     }
   }, [selectorUser]);
+  console.log({ selectorUser });
 
   // GET TOKEN BALANCE
   useEffect(() => {
@@ -428,6 +431,8 @@ const Dashboard = () => {
       }
     })();
   }, [user]);
+
+  console.log({ user });
 
   if (!user || !token) {
     return <Spinner />;

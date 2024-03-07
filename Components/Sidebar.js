@@ -39,11 +39,11 @@ const Sidebar = () => {
   const { signOut } = useAuth();
 
   const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications }) => {
-    const isActive = asPath.includes(href);
+    const isActive = href ? asPath.includes(href) : false;
 
     if (onClick !== undefined) {
       return (
-        <div onClick={onClick} className={`${style || ''} cursor-pointer py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
+        <div onClick={onClick} className={`${style || ''} ${href ? 'cursor-pointer' : 'cursor-not-allowed'} py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
           <div className='w-6 h-6 flex items-center justify-center'>
             {React.cloneElement(children, { isActive })}
           </div>
@@ -56,7 +56,7 @@ const Sidebar = () => {
     }
 
     return (
-      <Link title={text} target={text === 'Help Center' ? "_blank" : "_self"} href={href} className={`${style || ''} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
+      <Link title={text} target={text === 'Help Center' ? "_blank" : "_self"} href={href} className={`${style || ''} ${href ? 'cursor-pointer' : 'cursor-not-allowed'} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
         <div className='relative w-6 h-6 flex items-center justify-center'>
           {React.cloneElement(children, { isActive })}
           {(numberOfUnseenNotifications >= 1 && isCollapsed) && <div className='absolute bg-[#E04F64] left-[110%] top-1/2 -translate-y-1/2 p-[7px] text-white w-[18px] h-[19px] text-[11.89px] leading-[0px] font-normal flex items-center justify-center rounded-[3px]'>{numberOfUnseenNotifications}</div>}
@@ -73,10 +73,10 @@ const Sidebar = () => {
   }
 
   const SidebarItemMobile = ({ href, text, children, numberOfUnseenNotifications }) => {
-    const isActive = asPath.includes(href);
+    const isActive = href ? asPath.includes(href) : false;
 
     return (
-      <Link href={href} className={`py-[16.87px] flex flex-col items-center gap-2 px-[11.77px] w-full ${isActive && 'text-[#4285F4]'} rounded-[3.66px]`}>
+      <Link href={href} className={`${href ? 'cursor-pointer' : 'cursor-not-allowed'} py-[16.87px] flex flex-col items-center gap-2 px-[11.77px] w-full ${isActive && 'text-[#4285F4]'} rounded-[3.66px]`}>
         <div className='relative w-5 h-5 flex items-center justify-center'>
           {React.cloneElement(children, { isActive })}
           {numberOfUnseenNotifications !== 0 && <div className='bg-[#E04F64] rounded-[50%] absolute -bottom-1 -right-1 w-3 h-3'></div>}
@@ -126,7 +126,7 @@ const Sidebar = () => {
         <SidebarItem href={'/homepage/referral'} text={'Referral Program'} children={<GiftIcon />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
         {!isCollapsed && <p className='font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]'>MARKETPLACE</p>}
-        <SidebarItem href={'/homepage/buy'} text={'Buy Airspace'} children={<MapIcon />} />
+        <SidebarItem href={''} text={'Buy Airspace'} children={<MapIcon />} />
         <SidebarItem href={'/homepage/rent'} text={'Rent Airspace'} children={<DroneIcon />} />
         <SidebarItem href={'/homepage/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={0} />
         <SidebarItem href={'/homepage/funds'} text={'Funds'} children={<WalletIcon />} />
