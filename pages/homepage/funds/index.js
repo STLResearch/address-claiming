@@ -404,6 +404,9 @@ const DepositAndWithdraw = ({
       setCopy(false);
     }, 2000);
   };
+
+  const displayWalletId = walletId ? `${walletId.slice(0, 7)}...` : "";
+
   return (
     <div
       className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]"
@@ -565,8 +568,24 @@ const DepositAndWithdraw = ({
           <WarningIcon />
         </div>
         <div className="text-[#222222] text-[14px] font-normal w-full">
-          Funds may be irrecoverable if you enter an incorrect wallet ID. It is
-          crucial to ensure the accuracy of the provided ID to avoid any loss.
+          To complete your deposit, please use your crypto wallet to deposit
+          USDC to the following address:
+          <span style={{ color: "#0653EA", marginLeft: "4px" }}>
+            {displayWalletId}
+          </span>{" "}
+          Thank you
+        </div>
+      </div>
+      <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
+        <div className="w-6 h-6">
+          <WarningIcon />
+        </div>
+        <div className="text-[#222222] text-[14px] font-normal w-full">
+          Scan the QR Code with your Wallet, you can use Phantom Wallet,
+          Solflare, Exodus, Atomic Wallet, Coinbase Wallet, Metamask Span. Note
+          that funds may be irrecoverable if you enter an incorrect wallet ID.
+          It is crucial to ensure the accuracy of the provided ID to avoid any
+          loss.
         </div>
       </div>
     </div>
