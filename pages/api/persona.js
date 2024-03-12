@@ -36,7 +36,7 @@ const handler = async (req, res) => {
         body: JSON.stringify(reqBody),
       };
       const fetchRes = await fetch(
-        `${process.env.SERVER_URL}/services/persona`,
+        `${process.env.SERVER_URL}/public/services/persona`,
         fetchOptions
       );
       const resData = await fetchRes.json();
@@ -48,6 +48,17 @@ const handler = async (req, res) => {
       if (resData?.data && resData?.data?.statusCode >= 400) {
         throw new Error(resData.data.message);
       }
+      //if successful update the local storage here;
+      if(resData?.received ===true){
+        console.log("here",resData?.received)
+        let userData = getUserData();
+        console.log(userData,"the userData")
+        // userData.kycStatusId = kycStatusId;
+        // updateUserData(userData);
+
+      }
+      // localStorage.setItem('user', JSON.stringify());
+
     } catch (err) {
       let message = 'Unknown Error';
       if (err instanceof Error) message = err.message;
