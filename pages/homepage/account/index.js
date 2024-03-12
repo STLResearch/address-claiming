@@ -23,25 +23,30 @@ const Portfolio = () => {
     const { updateUser,getUser } = useDatabase()
     const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState('')
-
+    const [verificationTriggered, setVerificationTriggered] = useState(false);
     useEffect(() => {
-        if (!user || user?.KYCStatusId === 2) return;
+        if (!user || verificationTriggered) return;
       
         const fetchData = async () => {
           try {
             let userData = await getUser(user.blockchainAddress);
-            const updatedUser = {
-                ...user,
-                KYCStatusId:userData?.KYCStatusId,
-            };
+            if(user?.KYCStatusId != userData?.KYCStatusId){
+                const updatedUser = {
+                    ...user,
+                    KYCStatusId:userData?.KYCStatusId,
+                };
+                updateProfile(updatedUser);
+            }
 
-            updateProfile(updatedUser);
           } catch (error) {
             console.error('Error fetching user data:', error);
           }
+          finally{
+            setVerificationTriggered(false)
+          }
         };
         fetchData();
-        const intervalId = setInterval(fetchData, 10000);
+        const intervalId = setInterval(fetchData, 15000);
         return () => clearInterval(intervalId);
       }, [user]);
     useEffect(() => {
@@ -164,6 +169,7 @@ const Portfolio = () => {
 
     const onVerifyMyAccount = () => {
             setIsLoading(true);
+            setVerificationTriggered(true);
           const client = new Persona.Client({
             templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
             referenceId: user?.id.toString(),
