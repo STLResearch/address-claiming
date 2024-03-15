@@ -23,7 +23,9 @@ import Link from "next/link";
 import { useTimezoneSelect, allTimezones } from "react-timezone-select";
 import axios from "axios";
 import Head from "next/head";
-
+import ShareButtons from "@/Components/ShareButtons/ShareButtons";
+import CircularProgressButton from "@/Components/CircularProgressCloseButton/CircularProgressCloseButton";
+import useOrigin from "@/hooks/useOrigin";
 const Toggle = ({ checked, setChecked }) => {
   return (
     <label className="relative inline-flex cursor-pointer items-center">
@@ -796,16 +798,26 @@ const Slider = () => {
   );
 };
 
-const PopUp = ({ isVisible }) => {
+const PopUp = ({ isVisible,setShowSuccessPopUp,setIsSharing,isSharing }) => {
+  const origin = useOrigin();
+
   return (
-    <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
-    >
-      <div className="flex items-center justify-center w-[18px] h-[18px]">
-        <SuccessIcon />
+      <div
+        className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} gap-5   p-5 bg-white flex flex-col items-center duration-500`}
+        >
+          <div className="flex gap-5">
+            <div className="flex items-center justify-center w-[18px] h-[18px] mt-[10px]">
+              <SuccessIcon />
+            </div>
+            <p className="text-[#1FD387] text-[14px] leading-[21px]">
+              Congratulations on claiming your first piece of the sky <br/> 
+              successfully! Share the good news on social media and let <br/>
+              your friends know about your great experience with SkyTrade. 
+            </p>
+            <CircularProgressButton isVisible={isVisible} isSharing={isSharing} setIsSharing={setIsSharing} totalTime={4000} setShowSuccessPopUp={setShowSuccessPopUp} />
+          </div>
+        <div><ShareButtons setIsSharing={setIsSharing} url={`${origin}/homepage/airspace2`}/></div>
       </div>
-      Congratulations on claiming your piece of the sky successfully!
-    </div>
   );
 };
 
@@ -963,6 +975,8 @@ const Airspaces = () => {
   const [showFailurePopUp, setShowFailurePopUp] = useState(false);
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [data, setData] = useState({ ...defaultData });
+  const[isSharing,setIsSharing] = useState(false);
+
   // database
   const { createProperty } = useDatabase();
   const { user } = useAuth();
@@ -1107,11 +1121,13 @@ const Airspaces = () => {
   useEffect(() => {
     if (!showSuccessPopUp) return;
     const timeoutId = setTimeout(() => {
-      setShowSuccessPopUp(false);
+      if(!isSharing){
+        setShowSuccessPopUp(false);
+      }
     }, 4000);
 
     return () => clearTimeout(timeoutId);
-  }, [showSuccessPopUp]);
+  }, [showSuccessPopUp,isSharing]);
 
   useEffect(() => {
     if (!showFailurePopUp) return;
@@ -1285,7 +1301,7 @@ const Airspaces = () => {
                   onClaimAirspace={() => {setShowClaimModal(true);setIsLoading(true)}}
                 />
                 <Slider />
-                <PopUp isVisible={showSuccessPopUp} />
+                 <PopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} setIsSharing={setIsSharing} isSharing={isSharing}/>
                 <FailurePopUp isVisible={showFailurePopUp} />
 
                 {showClaimModal && (
