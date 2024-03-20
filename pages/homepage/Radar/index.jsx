@@ -4,11 +4,11 @@ import ReactDOMServer from "react-dom/server";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import MapboxDraw from '@mapbox/mapbox-gl-draw';
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { MagnifyingGlassIcon } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
-import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
 import { DroneIconRadar } from "@/Components/Icons";
@@ -17,6 +17,7 @@ import { useMobile } from "@/hooks/useMobile";
 import axios from "axios";
 import Head from "next/head";
 import RadarTooltip from "@/Components/Tooltip/RadarTooltip";
+import Image from "next/image";
 
 const Explorer = ({
   address,
@@ -130,6 +131,33 @@ const ExplorerMobile = ({
   );
 };
 
+const RadarModal = () => {
+  return (
+    <div className=" w-[362px] z-20 m-[39px] hidden max-h-full max-w-[362px] flex-col  gap-[15px] rounded-[30px] bg-[#FFFFFFCC] px-[10px] py-[10px] md:flex">
+      <div className=" flex justify-end">
+        <Image src="/images/Clear.png" alt="star icon" width={24} height={24} />
+      </div>
+      <div className="flex justify-center items-center gap-[10px]   h-[30px] border">
+        <Image src="/images/drone.png" alt="star icon" width={24} height={24} />
+        <h1 className="text-[20px] font-[500]">Drone ABC</h1>
+      </div>
+     <div>
+     <p className="text-[14px]  text-[#4285F4] font-[600] leading-[2rem]">CONNECTION</p>
+     <p className="text-[14px]  text-[#4285F4] font-[600]">CONNECTION</p>
+     <div className="border-t-2"></div>
+     <div>
+      <p>RSSI <span>-40 dBm Beacon</span></p>
+      <p>MAC <span>04:33:c2:67:1:45</span></p>
+      <p>Started <span>05:01 ago</span></p>
+      <p>Last seen <span>0:01 ago</span></p>
+      <p>Msg <span>2.6s</span></p>
+      <p>Distance <span>68m</span></p>
+     </div>
+     </div>
+    </div>
+  );
+};
+
 const Radar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState();
@@ -166,11 +194,11 @@ const Radar = () => {
         center: [0, 0],
         zoom: 5,
       });
-      const draw = new MapboxDraw({displayControlsDefault:true});
-    newMap.addControl(draw, 'top-right');
+      const draw = new MapboxDraw({ displayControlsDefault: true });
+      newMap.addControl(draw, "top-right");
 
-    // newMap.on('draw.create', updateArea);
-    // newMap.on('draw.delete', updateArea)
+      // newMap.on('draw.create', updateArea);
+      // newMap.on('draw.delete', updateArea)
 
       // Add drone markers
       const addDroneMarkers = (droneData) => {
@@ -429,6 +457,8 @@ const Radar = () => {
                 />
               </div>
             )} */}
+            {!isMobile && <RadarModal />}
+
             {!showMobileMap && (
               <div className="flex h-full w-full flex-col md:hidden">
                 <div
