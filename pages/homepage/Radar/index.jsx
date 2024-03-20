@@ -1,38 +1,22 @@
 import { Fragment, useState, useEffect } from "react";
-import { renderToStaticMarkup } from 'react-dom/server';
-import ReactDOMServer from 'react-dom/server';
+import { renderToStaticMarkup } from "react-dom/server";
+import ReactDOMServer from "react-dom/server";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
-import 'mapbox-gl/dist/mapbox-gl.css';
-import Script from "next/script";
-import { InfoIcon, MagnifyingGlassIcon } from "@/Components/Icons";
+import "mapbox-gl/dist/mapbox-gl.css";
+import MapboxDraw from '@mapbox/mapbox-gl-draw';
+import { MagnifyingGlassIcon } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
 import { DroneIconRadar } from "@/Components/Icons";
-import {
-  HelpQuestionIcon,
-  ArrowLeftIcon,
-  CloseIcon,
-  LocationPointIcon,
-  SuccessIcon,
-  FailureIcon,
-  EarthIcon,
-} from "@/Components/Icons";
-import useDatabase from "@/hooks/useDatabase";
-import { useAuth } from "@/hooks/useAuth";
+import { ArrowLeftIcon } from "@/Components/Icons";
 import { useMobile } from "@/hooks/useMobile";
-import Link from "next/link";
-import { useTimezoneSelect, allTimezones } from "react-timezone-select";
 import axios from "axios";
 import Head from "next/head";
 import RadarTooltip from "@/Components/Tooltip/RadarTooltip";
-
-
-
-
-
 
 const Explorer = ({
   address,
@@ -42,7 +26,6 @@ const Explorer = ({
   handleSelectAddress,
   flyToAddress,
 }) => {
-
   return (
     <div
       className="absolute right-0 top-0 z-20 mt-[13px] ml-[18px] max-h-full max-w-[362px] flex-col items-center rounded-[8px] bg-[#FFFFFFCC] px-[10px] py-[10px] md:flex"
@@ -50,7 +33,7 @@ const Explorer = ({
     >
       <div
         className="relative w-full rounded-lg bg-white px-[10px] py-[10px]"
-        style={{ border: "1px solid rgb(135, 135, 141,0.3)"}}
+        style={{ border: "1px solid rgb(135, 135, 141,0.3)" }}
       >
         <input
           autoComplete="off"
@@ -85,8 +68,6 @@ const Explorer = ({
           </div>
         )}
       </div>
-      
-      
     </div>
   );
 };
@@ -152,8 +133,7 @@ const ExplorerMobile = ({
 const Radar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState();
-  // 
-  const [claimButtonLoading,setClaimButtonLoading] = useState(false);
+
   const [map, setMap] = useState(null);
   const { isMobile } = useMobile();
   const [showMobileMap, setShowMobileMap] = useState(false);
@@ -168,86 +148,90 @@ const Radar = () => {
     latitude: "",
   });
   const [marker, setMarker] = useState();
-  
+
   // showing
   const [showOptions, setShowOptions] = useState(false);
   const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
   const [showFailurePopUp, setShowFailurePopUp] = useState(false);
-  const [showClaimModal, setShowClaimModal] = useState(false);
-  const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  // database
-  const { createProperty } = useDatabase();
-  const { user } = useAuth();
 
   useEffect(() => {
     if (map) return;
 
     const createMap = () => {
-        mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
-        const newMap = new mapboxgl.Map({
-            container: "map",
-            style: "mapbox://styles/mapbox/streets-v12",
-            center: [-15.498211, 28.035056],
-            zoom: 15,
-            bounds: [
-                [-73.9876, 40.7661],
-                [-73.9397, 40.8002],
-            ],
+      const newMap = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v12",
+        center: [0, 0],
+        zoom: 5,
+      });
+      const draw = new MapboxDraw({displayControlsDefault:true});
+    newMap.addControl(draw, 'top-right');
+
+    // newMap.on('draw.create', updateArea);
+    // newMap.on('draw.delete', updateArea)
+
+      // Add drone markers
+      const addDroneMarkers = (droneData) => {
+        droneData.forEach((data) => {
+          const { id, name, latitude, longitude } = data;
+          const markerElement = document.createElement("div");
+          markerElement.innerHTML = renderToStaticMarkup(
+            <DroneIconRadar isActive={true} />
+          );
+          const marker = new mapboxgl.Marker({
+            element: markerElement,
+            draggable: false,
+          })
+            .setLngLat([longitude, latitude])
+            .addTo(newMap);
+
+          // Add popup when marker is clicked
+          marker.getElement().addEventListener("click", () => {
+            // Simulate fetching detailed information from backend
+            fetchDroneDetails(id);
+          });
+          let tooltip;
+          marker.getElement().addEventListener("mouseenter", () => {
+            const tooltipContent = ReactDOMServer.renderToString(
+              <RadarTooltip content={data?.name} />
+            );
+            tooltip = new mapboxgl.Popup({
+              closeButton: false,
+              className: "custom-popup-style",
+            })
+              .setLngLat(marker.getLngLat())
+              .setHTML(tooltipContent)
+              .addTo(newMap);
+          });
+
+          // Remove tooltip when mouse leaves marker
+          marker.getElement().addEventListener("mouseleave", () => {
+            if (tooltip) {
+              tooltip.remove(); // Check if tooltip exists before attempting to remove
+            }
+          });
         });
+      };
 
-        // Add drone markers
-        const addDroneMarkers = (droneData) => {
-            droneData.forEach(data => {
-                const { id, name, latitude, longitude } = data;
-                const markerElement = document.createElement('div');
-                markerElement.innerHTML = renderToStaticMarkup(<DroneIconRadar isActive={true} />);
-                const marker = new mapboxgl.Marker({ element:markerElement, draggable: false })
-                    .setLngLat([longitude, latitude])
-                    .addTo(newMap);
+      // Simulate receiving drone data
+      const mockDroneData = [
+        { id: 1, name: "Drone 1", latitude: 41.386405, longitude: 2.170048 }, // Barcelona
+        { id: 2, name: "Drone 2", latitude: 40.416775, longitude: -3.70379 }, // Madrid
+        { id: 3, name: "Drone 3", latitude: 37.389092, longitude: -5.984459 }, // Seville
+        { id: 4, name: "Drone 4", latitude: 43.362343, longitude: -8.41154 }, // La Coruña
+        { id: 5, name: "Drone 5", latitude: 28.123545, longitude: -15.436257 }, // Las Palmas de Gran Canaria
+        // Add more mock drone data as needed
+      ];
 
-                // Add popup when marker is clicked
-                marker.getElement().addEventListener('click', () => {
-                    // Simulate fetching detailed information from backend
-                    fetchDroneDetails(id);
-                });
-                let tooltip;
-                marker.getElement().addEventListener('mouseenter', () => {
-                  const tooltipContent = ReactDOMServer.renderToString(<RadarTooltip content={data?.name} />);
-                  tooltip = new mapboxgl.Popup({ closeButton:false, className:'custom-popup-style'})
-                      .setLngLat(marker.getLngLat())
-                      .setHTML(tooltipContent)
-                      .addTo(newMap);
-              });
-              
-              // Remove tooltip when mouse leaves marker
-              marker.getElement().addEventListener('mouseleave', () => {
-                  if (tooltip) {
-                      tooltip.remove(); // Check if tooltip exists before attempting to remove
-                  }
-              });
-            });
-        };
+      // addDroneMarkers(mockDroneData);
 
-        // Simulate receiving drone data
-        const mockDroneData = [
-            { id: 1, name: 'Drone 1', latitude: 41.386405, longitude: 2.170048 }, // Barcelona
-            { id: 2, name: 'Drone 2', latitude: 40.416775, longitude: -3.703790 }, // Madrid
-            { id: 3, name: 'Drone 3', latitude: 37.389092, longitude: -5.984459 }, // Seville
-            { id: 4, name: 'Drone 4', latitude: 43.362343, longitude: -8.411540 }, // La Coruña
-            { id: 5, name: 'Drone 5', latitude: 28.123545, longitude: -15.436257 }, // Las Palmas de Gran Canaria
-            // Add more mock drone data as needed
-        ];
-
-        addDroneMarkers(mockDroneData);
-
-        setMap(newMap);
+      setMap(newMap);
     };
 
     createMap();
-}, []);
-
+  }, []);
 
   useEffect(() => {
     if (!showOptions) setShowOptions(true);
@@ -432,8 +416,8 @@ const Radar = () => {
                 Claim Airspace test 2
               </div>
             )} */}
-            
-            {!isMobile && (
+
+            {/* {!isMobile && (
               <div className="flex items-start justify-start">
                 <Explorer
                   flyToAddress={flyToAddress}
@@ -444,56 +428,14 @@ const Radar = () => {
                   handleSelectAddress={handleSelectAddress}
                 />
               </div>
-            )}
+            )} */}
             {!showMobileMap && (
               <div className="flex h-full w-full flex-col md:hidden">
                 <div
                   onClick={() => setShowMobileMap(true)}
                   className="flex w-full flex-col justify-between gap-[184px] bg-cover bg-center bg-no-repeat p-[17px]"
                   style={{ backgroundImage: "url('/images/map-bg.png')" }}
-                >
-                  <div className="w-full rounded-[20px] bg-[#222222] p-[12px] text-center text-base font-normal text-white">
-                    Exciting times ahead!
-                    <br />
-                    Claim your airspace 🚀✨
-                  </div>
-                  <div className="w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
-                    Claim your airspace
-                  </div>
-                </div>
-                <div className="flex flex-1 flex-col gap-[23px] px-[13px] py-[29px]">
-                  <div className="flex flex-1 items-center gap-[14px]">
-                    <Link
-                      href={"/homepage/portfolio"}
-                      className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
-                      style={{
-                        backgroundImage: "url('/images/airspace-preview.png')",
-                      }}
-                    >
-                      <p className="text-xl font-medium text-white">Airspace</p>
-                    </Link>
-                    <Link
-                      href={"/homepage/portfolio"}
-                      className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
-                      style={{
-                        backgroundImage: "url('/images/portfolio.jpg')",
-                      }}
-                    >
-                      <p className="text-xl font-medium text-white">
-                        Portfolio
-                      </p>
-                    </Link>
-                  </div>
-                  <div
-                    onClick={() => setShowHowToModal(true)}
-                    className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
-                  >
-                    <div className="h-[24px] w-[24px]">
-                      <HelpQuestionIcon color="white" />
-                    </div>
-                    <p>How to Claim My Airspace?</p>
-                  </div>
-                </div>
+                ></div>
               </div>
             )}
           </section>
