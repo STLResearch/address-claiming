@@ -133,26 +133,138 @@ const ExplorerMobile = ({
 
 const RadarModal = () => {
   return (
-    <div className=" w-[362px] z-20 m-[39px] hidden max-h-full max-w-[362px] flex-col  gap-[15px] rounded-[30px] bg-[#FFFFFFCC] px-[10px] py-[10px] md:flex">
-      <div className=" flex justify-end">
+    <div className="z-20 mt-4 ml-12 max-w-[362px]  flex-col  gap-[15px] bg-[#FFFFFFCC] px-[30px] py-[15px] sm:flex overflow-y-auto no-scrollbar  bg-white rounded-[30px] w-full max-h-screen h-screen md:max-h-[630px] md:h-auto">
+
+      <div className=" flex  items-center justify-end gap-[6rem]">
+      <div className=" md:hidden">
+         <Image src="/images/Rectangle.png" alt="star icon" width={70} height={24} />
+     </div>
         <Image src="/images/Clear.png" alt="star icon" width={24} height={24} />
       </div>
-      <div className="flex justify-center items-center gap-[10px]   h-[30px] border">
+      <div className="flex md:justify-center  items-center gap-[4rem] md:gap-0 mt-[1.2rem] md:mt-0 ">
+      <div className="w-[16px] h-[12px] sm:hidden">
+      <Image src="/images/Chevron Right.png" alt="star icon" width={24} height={24} />
+          </div>
+        <div className="flex gap-[10px] justify-center items-center">
         <Image src="/images/drone.png" alt="star icon" width={24} height={24} />
         <h1 className="text-[20px] font-[500]">Drone ABC</h1>
+        </div>
       </div>
      <div>
-     <p className="text-[14px]  text-[#4285F4] font-[600] leading-[2rem]">CONNECTION</p>
-     <p className="text-[14px]  text-[#4285F4] font-[600]">CONNECTION</p>
-     <div className="border-t-2"></div>
+     <p className="mt-[1rem] md:mt-0 text-[14px]  text-[#4285F4] font-semibold leading-[2rem]">CONNECTION</p>
+  
+     <div className="border-t-2 my-2 md:my-4"></div>
+    <div>
+    <div className="flex   gap-[3.5rem] leading-[20px]">
      <div>
-      <p>RSSI <span>-40 dBm Beacon</span></p>
-      <p>MAC <span>04:33:c2:67:1:45</span></p>
-      <p>Started <span>05:01 ago</span></p>
-      <p>Last seen <span>0:01 ago</span></p>
-      <p>Msg <span>2.6s</span></p>
-      <p>Distance <span>68m</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">RSSI <span className="text-[#222222]">-40 dBm Beacon</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Started <span className="text-[#222222]">05:01 ago</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Msg <span className="text-[#222222]">2.6s</span></p>
      </div>
+     <div>
+     <p className="flex text-[#838187] text-[10px] gap-[10px]">MAC <span className="text-[#222222]">04:33:c2:67:1:45</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Last seen <span className="text-[#222222]">0:01 ago</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Distance <span className="text-[#222222]">68m</span></p>
+     </div>
+     </div>
+     <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">BASIC ID 1</h1>
+    </div>
+    <div className="border-t-2 my-2"></div>
+    <div>
+    <div className="flex   gap-[1rem] leading-[20px] w-[304px] ">
+    <div>
+     <p className="flex text-[#838187] text-[10px] gap-[10px]">Type <span className="text-[#222222]">Helicopter_or_Multirotor</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">UAS ID <span className="text-[#222222]">112624150A90E31EC0</span></p>
+     </div>
+     <div>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">ID Type <span className="text-[#222222]">Serial Number</span></p>
+     </div>
+     </div>
+     <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">BASIC ID 2</h1>
+    </div>
+    <div className="border-t-2 my-2"></div>
+    <div>
+    <div className="flex   gap-[1rem] leading-[20px] w-[304px] ">
+    <div>
+     <p className="flex text-[#838187] text-[10px] gap-[10px]">Type <span className="text-[#222222]">Helicopter_or_Multirotor</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">UAS ID <span className="text-[#222222]">112624150A90E31EC0</span></p>
+     </div>
+     <div>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">ID Type <span className="text-[#222222]">Serial Number</span></p>
+     </div>
+     </div>
+     <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">LOCATION</h1>
+    </div>
+    <div className="border-t-2 my-2"></div>
+    <div>
+    <div className="flex   gap-[2rem] leading-[20px] ">
+     <div >
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Latitude <span className="text-[#222222]">51.4791000</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Altitude Press <span className="text-[#222222]">0.0m</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Direction <span className="text-[#222222]">Unknown</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Horizontal Speed <span className="text-[#222222]">0.00m/s</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Height <span className="text-[#222222]">0.00m/s</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Horizontal Accuracy <span className="text-[#222222]">10m</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Baro Acc. <span className="text-[#222222]">1m</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Time Acc. <span className="text-[#222222]">0.1s</span></p>
+     </div>
+     <div >
+     <p className="flex text-[#838187] text-[10px] gap-[10px]"> Longitude <span className="text-[#222222]">-0.0013000</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Altitude Geod <span className="text-[#222222]">110.0m</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Status <span className="text-[#222222]">Airbone</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Vertical Speed <span className="text-[#222222]">0.00 m/s</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Height Over <span className="text-[#222222]">Ground</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Vertical Accuracy<span className="text-[#222222]">68m</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Speed Acc.<span className="text-[#222222]">1m/s</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Timestamp<span className="text-[#222222]">06/01</span></p>
+     </div>
+     </div>
+     <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">SELF ID</h1>
+    </div>
+    <div className="border-t-2 my-2"></div>
+    <div>
+    <div className="flex   gap-[4rem] leading-[20px]">
+     <div>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Operation <span className="text-[#222222]">Drone ID</span></p>
+     </div>
+     <div>
+     <p className="flex text-[#838187] text-[10px] gap-[10px]">Type <span className="text-[#222222]">0</span></p>
+     </div>
+     </div>
+     <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">SYSTEM OPERATOR</h1>
+    </div>
+    <div className="border-t-2 my-2"></div>
+    <div>
+    <div className="flex   gap-[3rem] leading-[20px] w-[304px] ">
+    <div>
+     <p className="flex text-[#838187] text-[10px] gap-[10px]">Location Type <span className="text-[#222222]">TakeOff</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Latitude<span className="text-[#222222]">51.4791000</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Area Count<span className="text-[#222222]">1</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Area Celling<span className="text-[#222222]">0.0m</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Classification<span className="text-[#222222]">EU</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Category<span className="text-[#222222]">EU_Open</span></p>
+     </div>
+     <div>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Altitude<span className="text-[#222222]">-0.0013000</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Longitude<span className="text-[#222222]">-0.0013000</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Area radius<span className="text-[#222222]">0 m</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Area floor<span className="text-[#222222]">0.00 m</span></p>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Class<span className="text-[#222222]">EU_Class_1</span></p>
+     </div>
+     </div>
+     <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">OPERATOR ID</h1>
+    </div>
+    <div className="border-t-2 my-2"></div>
+    <div>
+    <div className="flex   gap-[3rem] leading-[20px] mb-4">
+     <div>
+      <p className="flex text-[#838187] text-[10px] gap-[10px]">Operation IF<span className="text-[#222222]">FIN87astrdge&éK8</span></p>
+     </div>
+     <div>
+     <p className="flex text-[#838187] text-[10px] gap-[10px]">Type <span className="text-[#222222]">0</span></p>
+     </div>
+     </div>
+    </div>
      </div>
     </div>
   );
