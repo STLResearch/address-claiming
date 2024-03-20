@@ -1087,10 +1087,10 @@ const Airspaces = () => {
         return [lng / count, lat / count];
       };
       const handleCoordinates = async (e) => {
-        const d = draw.getAll();
-        if (d.features.length > 0) {
+        const drawnFeatures  = draw.getAll();
+        if (drawnFeatures .features.length > 0) {
           const coordinates = calculateAveragePoints(
-            d.features[0].geometry.coordinates
+            drawnFeatures .features[0].geometry.coordinates
           );
           const longitude = coordinates[0];
           const latitude = coordinates[1];
