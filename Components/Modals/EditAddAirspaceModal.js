@@ -130,16 +130,16 @@ const EditAddAirspaceModal = ({ onCloseModal, data, setData, onClaim }) => {
 
             <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
                 <div className="w-6 h-6"><LocationPointIcon /></div>
-                <p className="font-normal text-[#222222] text-[14px] flex-1">{data.address}</p>
+                <p className="font-normal text-[#222222] text-[14px] flex-1">{data?.address}</p>
             </div>
             <div className="flex flex-col gap-[5px]">
                 <label htmlFor="name">Name of airspace<span className="text-[#E04F64]">*</span></label>
-                <input value={data.title} onChange={(e) => setData(prev => ({ ...prev, title: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }} type="text" name="name" id="name" autoComplete="off" />
+                <input value={data?.title} onChange={(e) => setData(prev => ({ ...prev, title: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }} type="text" name="name" id="name" autoComplete="off" />
             </div>
             <div className="flex flex-col gap-[10px]">
                 <p className="text-[14px] font-normal text-[#838187]">Are you looking to Rent or Sell your airspace?</p>
                 <div className="flex items-center gap-[7px]">
-                <input className='h-[18px] w-[18px] cursor-pointer' type='checkbox' id='rent' name='rent' checked={data.rent}
+                <input className='h-[18px] w-[18px] cursor-pointer' type='checkbox' id='rent' name='rent' checked={data?.rent}
             onChange={() =>
               setData((prev) => {
                 const newData = { ...prev, rent: !prev.rent };
@@ -168,10 +168,10 @@ const EditAddAirspaceModal = ({ onCloseModal, data, setData, onClaim }) => {
                     <Link target="_blank" href={"https://skytrade.tawk.help"} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about rentals in our FAQ.</Link>
                     <div className="flex items-center justify-between gap-[15px]">
                         <div className="flex-1">
-                            <VariableFeeRentalRangesSelect fee={data.transitFee} setFee={(fee) => setData(prev => ({ ...prev, transitFee: '' + fee }))} />
+                            {data?.transitFee && <VariableFeeRentalRangesSelect fee={data.transitFee} setFee={(fee) => setData(prev => ({ ...prev, transitFee: '' + fee }))} />}
                         </div>
                         <div className="flex-1">
-                            <TimeZoneSelect timeZone={data.timezone} setTimeZone={(timezone) => setData(prev => ({ ...prev, timezone }))} />
+                            {data?.timeZone && <TimeZoneSelect timeZone={data?.timezone} setTimeZone={(timezone) => setData(prev => ({ ...prev, timezone }))} />}
                         </div>
                     </div>
                     <div className="flex flex-col gap-[10px]">
@@ -187,7 +187,7 @@ const EditAddAirspaceModal = ({ onCloseModal, data, setData, onClaim }) => {
                     </div>
                     <div className="flex flex-col gap-[15px]">
                         <p>Availability<span className="text-[#E04F64]">*</span></p>
-                        <WeekDayRangesForm weekDayRanges={data.weekDayRanges} setWeekDayRanges={(weekDayRanges) => setData(prev => ({ ...prev, weekDayRanges }))} />
+                        {data?.weekDayRanges && <WeekDayRangesForm weekDayRanges={data?.weekDayRanges} setWeekDayRanges={(weekDayRanges) => setData(prev => ({ ...prev, weekDayRanges }))} />}
                     </div>
                 </Fragment>
             )}
@@ -222,15 +222,15 @@ const EditAddAirspaceModal = ({ onCloseModal, data, setData, onClaim }) => {
 
             <p className="text-[14px] font-normal text-[#838187]">Do you currently have zoning or planning permission to develop above your land or property? <span className="italic text-[10px]">(Your answer won't affect your claim)<span className="text-[#E04F64]">*</span></span> </p>
             <div className="flex items-center gap-[7px] text-[#87878D] text-[14px]">
-            <input className='relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]' checked={data.hasPlanningPermission === 'true'}  onChange={() =>  setData((prev) => ({ ...prev, hasPlanningPermission: 'true' })) }
+            <input className='relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]' checked={data?.hasPlanningPermission === 'true'}  onChange={() =>  setData((prev) => ({ ...prev, hasPlanningPermission: 'true' })) }
            style={{
             appearance: 'none',
             border:
-              data.hasPlanningPermission !== 'true'
+              data?.hasPlanningPermission !== 'true'
                 ? '2px solid #222222'
                 : '2px solid #0653EA',
             backgroundColor:
-              data.hasPlanningPermission === 'true'
+              data?.hasPlanningPermission === 'true'
                 ? '#0653EA'
                 : 'transparent',
             borderRadius: '50%',
@@ -248,11 +248,11 @@ const EditAddAirspaceModal = ({ onCloseModal, data, setData, onClaim }) => {
           style={{
             appearance: 'none',
             border:
-              data.hasPlanningPermission !== 'false'
+              data?.hasPlanningPermission !== 'false'
                 ? '2px solid #222222'
                 : '2px solid #0653EA',
             backgroundColor:
-              data.hasPlanningPermission === 'false' ? '#0653EA' : 'transparent',
+              data?.hasPlanningPermission === 'false' ? '#0653EA' : 'transparent',
             borderRadius: '50%',
             backgroundClip: 'content-box',
           }}
@@ -267,10 +267,10 @@ const EditAddAirspaceModal = ({ onCloseModal, data, setData, onClaim }) => {
           }
           style={{
             appearance: 'none',
-            border: data.hasPlanningPermission
+            border: data?.hasPlanningPermission
               ? '2px solid #222222'
               : '2px solid #0653EA',
-            backgroundColor: !data.hasPlanningPermission
+            backgroundColor: !data?.hasPlanningPermission
               ? '#0653EA'
               : 'transparent',
             borderRadius: '50%',
