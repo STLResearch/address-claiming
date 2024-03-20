@@ -158,3 +158,13 @@ button {
 .no-scrollbar::-webkit-scrollbar {
   display: none !important;
 }
+.custom-popup-style.mapboxgl-popup-content {
+  /* Remove default outline style */
+  outline: none !important;
+  background-color: #222222 !important;
+  /* Add other custom styles */
+  /* For example, to remove the white space around the content */
+  padding: 0;
+  margin: 0;
+  /* Add your other custom styles here */
+}
