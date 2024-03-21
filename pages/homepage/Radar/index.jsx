@@ -133,29 +133,32 @@ const ExplorerMobile = ({
 
 const RadarModal = () => {
   return (
-    <div className="z-20 mt-4 ml-12 max-w-[362px]  flex-col  gap-[15px] bg-[#FFFFFFCC] px-[30px] py-[15px] sm:flex overflow-y-auto no-scrollbar  bg-white rounded-[30px] w-full max-h-screen h-screen md:max-h-[630px] md:h-auto">
-
-      <div className=" flex  items-center justify-end gap-[6rem]">
-      <div className=" md:hidden">
-         <Image src="/images/Rectangle.png" alt="star icon" width={70} height={24} />
-     </div>
-        <Image src="/images/Clear.png" alt="star icon" width={24} height={24} />
-      </div>
-      <div className="flex md:justify-center  items-center gap-[4rem] md:gap-0 mt-[1.2rem] md:mt-0 ">
-      <div className="w-[16px] h-[12px] sm:hidden">
-      <Image src="/images/Chevron Right.png" alt="star icon" width={24} height={24} />
-          </div>
-        <div className="flex gap-[10px] justify-center items-center">
-        <Image src="/images/drone.png" alt="star icon" width={24} height={24} />
-        <h1 className="text-[20px] font-[500]">Drone ABC</h1>
-        </div>
-      </div>
-     <div>
-     <p className="mt-[1rem] md:mt-0 text-[14px]  text-[#4285F4] font-semibold leading-[2rem]">CONNECTION</p>
+    <div className=" z-50  mt-4 md:ml-12  bg-white  md:bg-[#FFFFFFCC] no-scrollbar rounded-[30px] w-full h-full max-w-sm  px-[30px] py-[40px] fixed  md:rounded-[30px]     overflow-y-auto  md:w-[689px]  flex flex-col gap-[15px] ">
   
-     <div className="border-t-2 my-2 md:my-4"></div>
+      <div className=" flex  justify-center md:justify-end items-center md:gap-[6rem] md:mt-5">
+        <div  className=" md:hidden">
+          <Image src="/images/Rectangle.png" alt="star icon" width={70} height={24} />
+        </div>
+        <div className=" ">
+        <Image src="/images/Clear.png" alt="star icon" width={24} height={24} />
+        </div>        
+      </div>
+
+      <div className="flex md:justify-center  items-center gap-[4rem] mt-2 md:mt-0">
+        <div className="md:hidden">
+          <Image src="/images/Chevron Right.png" alt="star icon" width={24} height={24} />
+        </div>
+          <div className="flex gap-[10px] justify-center items-center">
+            <Image src="/images/drone.png" alt="star icon" width={24} height={24} />
+            <h1 className="text-[20px] font-[500]">Drone ABC</h1>
+          </div>
+        </div>
+     <div>
+     <p className=" text-[14px]  text-[#4285F4] font-semibold leading-[2rem] mt-2 md:mt-0">CONNECTION</p>
+  
+     <div className="border-t-2 my-4"></div>
     <div>
-    <div className="flex   gap-[3.5rem] leading-[20px]">
+    <div className="flex   gap-[5rem]   leading-[20px] ">
      <div>
       <p className="flex text-[#838187] text-[10px] gap-[10px]">RSSI <span className="text-[#222222]">-40 dBm Beacon</span></p>
       <p className="flex text-[#838187] text-[10px] gap-[10px]">Started <span className="text-[#222222]">05:01 ago</span></p>
@@ -171,7 +174,7 @@ const RadarModal = () => {
     </div>
     <div className="border-t-2 my-2"></div>
     <div>
-    <div className="flex   gap-[1rem] leading-[20px] w-[304px] ">
+    <div className="flex   gap-[2rem]    leading-[20px] ">
     <div>
      <p className="flex text-[#838187] text-[10px] gap-[10px]">Type <span className="text-[#222222]">Helicopter_or_Multirotor</span></p>
       <p className="flex text-[#838187] text-[10px] gap-[10px]">UAS ID <span className="text-[#222222]">112624150A90E31EC0</span></p>
@@ -184,7 +187,7 @@ const RadarModal = () => {
     </div>
     <div className="border-t-2 my-2"></div>
     <div>
-    <div className="flex   gap-[1rem] leading-[20px] w-[304px] ">
+    <div className="flex   gap-[2rem]    leading-[20px] ">
     <div>
      <p className="flex text-[#838187] text-[10px] gap-[10px]">Type <span className="text-[#222222]">Helicopter_or_Multirotor</span></p>
       <p className="flex text-[#838187] text-[10px] gap-[10px]">UAS ID <span className="text-[#222222]">112624150A90E31EC0</span></p>
@@ -197,7 +200,7 @@ const RadarModal = () => {
     </div>
     <div className="border-t-2 my-2"></div>
     <div>
-    <div className="flex   gap-[2rem] leading-[20px] ">
+    <div className="flex   gap-[3rem]    leading-[20px] ">
      <div >
       <p className="flex text-[#838187] text-[10px] gap-[10px]">Latitude <span className="text-[#222222]">51.4791000</span></p>
       <p className="flex text-[#838187] text-[10px] gap-[10px]">Altitude Press <span className="text-[#222222]">0.0m</span></p>
@@ -223,7 +226,7 @@ const RadarModal = () => {
     </div>
     <div className="border-t-2 my-2"></div>
     <div>
-    <div className="flex   gap-[4rem] leading-[20px]">
+    <div className="flex   gap-[5rem]    leading-[20px]">
      <div>
       <p className="flex text-[#838187] text-[10px] gap-[10px]">Operation <span className="text-[#222222]">Drone ID</span></p>
      </div>
@@ -235,7 +238,7 @@ const RadarModal = () => {
     </div>
     <div className="border-t-2 my-2"></div>
     <div>
-    <div className="flex   gap-[3rem] leading-[20px] w-[304px] ">
+    <div className="flex   gap-[4rem]    leading-[20px] ">
     <div>
      <p className="flex text-[#838187] text-[10px] gap-[10px]">Location Type <span className="text-[#222222]">TakeOff</span></p>
       <p className="flex text-[#838187] text-[10px] gap-[10px]">Latitude<span className="text-[#222222]">51.4791000</span></p>
@@ -256,7 +259,7 @@ const RadarModal = () => {
     </div>
     <div className="border-t-2 my-2"></div>
     <div>
-    <div className="flex   gap-[3rem] leading-[20px] mb-4">
+    <div className="flex   gap-[5rem]    leading-[20px] mb-4">
      <div>
       <p className="flex text-[#838187] text-[10px] gap-[10px]">Operation IF<span className="text-[#222222]">FIN87astrdge&éK8</span></p>
      </div>
@@ -265,7 +268,8 @@ const RadarModal = () => {
      </div>
      </div>
     </div>
-     </div>
+     </div> 
+   
     </div>
   );
 };
