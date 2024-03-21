@@ -5,7 +5,7 @@ import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import { MagnifyingGlassIcon } from "@/Components/Icons";
+import { MagnifyingGlassIcon,ClearIcon,DroneradarIcon,ChevronLeftIcon,RectangleIcon} from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
@@ -137,19 +137,19 @@ const RadarModal = () => {
        <div className= "z-50  mt-4 md:ml-12  bg-white  md:bg-[#FFFFFFCC] no-scrollbar rounded-[30px] w-full h-full md:max-w-sm  md:max-h-[600px] max-w-[600px] px-[25px] md:py-[12px] fixed  md:rounded-[30px]  mx-auto overflow-x-auto overflow-y-auto flex flex-col gap-[15px] pb-[6rem] md:pb-0">
   <div className=" flex justify-end items-center mt-4 md:mt-0 ">    
    <div  className=" w-[90%] flex justify-center  items-center  md:hidden">
-      <Image src="/images/Rectangle.png" alt="star icon" width={70} height={24} />
+      <RectangleIcon />
     </div>
     <div className=" ">
-    <Image src="/images/Clear.png" alt="star icon" width={24} height={24} />
+    <ClearIcon />
     </div>       
   </div>
 
   <div className="flex   items-center  md:justify-center mt-2 md:mt-0 ">
     <div className="w-[20%] md:hidden ">
-      <Image src="/images/Chevron Right.png" alt="star icon" width={24} height={24} />
+      <ChevronLeftIcon />
     </div>
       <div className=" w-[60%]  flex gap-[10px] justify-center items-center">
-        <Image src="/images/drone.png" alt="star icon" width={24} height={24} />
+        <DroneradarIcon />
         <h1 className="text-[20px] font-[500]">Drone ABC</h1>
       </div>
     </div>
