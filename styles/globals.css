@@ -158,13 +158,39 @@ button {
 .no-scrollbar::-webkit-scrollbar {
   display: none !important;
 }
-.custom-popup-style.mapboxgl-popup-content {
-  /* Remove default outline style */
-  outline: none !important;
+/* Marker tweaks */
+.mapboxgl-popup-close-button {
+  display: none;
+}
+.mapboxgl-popup{
   background-color: #222222 !important;
-  /* Add other custom styles */
-  /* For example, to remove the white space around the content */
-  padding: 0;
-  margin: 0;
-  /* Add your other custom styles here */
+  border-radius: 3px;
+}
+
+.mapboxgl-popup-content {
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 18px !important;
+  padding: 0px !important;
+  width: auto;
+  cursor: pointer;
+}
+.mapboxgl-popup-tip{
+  display: none !important;
+}
+
+
+.mapboxgl-popup-content div {
+  padding: 10px;
+  margin:0px !important;
+}
+
+.mapboxgl-popup-anchor-top > .mapboxgl-popup-content {
+  margin-top: 15px;
+  display: none;
+}
+
+.mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
+  display: none;
 }
