@@ -13,6 +13,7 @@ import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
 import { DroneIconRadar } from "@/Components/Icons";
 import { ArrowLeftIcon } from "@/Components/Icons";
+import { RadarZoomOutIcon,RadarLocationIcon,RadarZoomInIcon,RadarLayerIcon } from "@/Components/Icons";
 import { useMobile } from "@/hooks/useMobile";
 import axios from "axios";
 import Head from "next/head";
@@ -154,9 +155,9 @@ const Radar = () => {
   const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
   const [showFailurePopUp, setShowFailurePopUp] = useState(false);
 
+
   useEffect(() => {
     if (map) return;
-
     const createMap = () => {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
@@ -165,73 +166,52 @@ const Radar = () => {
         style: "mapbox://styles/mapbox/streets-v12",
         center: [0, 0],
         zoom: 5,
-      });
-      const draw = new MapboxDraw({displayControlsDefault:true});
-    newMap.addControl(draw, 'top-right');
-
-    // newMap.on('draw.create', updateArea);
-    // newMap.on('draw.delete', updateArea)
-
-      // Add drone markers
-      const addDroneMarkers = (droneData) => {
-        droneData.forEach((data) => {
-          const { id, name, latitude, longitude } = data;
-          const markerElement = document.createElement("div");
-          markerElement.innerHTML = renderToStaticMarkup(
-            <DroneIconRadar isActive={true} />
-          );
-          const marker = new mapboxgl.Marker({
-            element: markerElement,
-            draggable: false,
-          })
-            .setLngLat([longitude, latitude])
-            .addTo(newMap);
-
-          // Add popup when marker is clicked
-          marker.getElement().addEventListener("click", () => {
-            // Simulate fetching detailed information from backend
-            fetchDroneDetails(id);
-          });
-          let tooltip;
-          marker.getElement().addEventListener("mouseenter", () => {
-            const tooltipContent = ReactDOMServer.renderToString(
-              <RadarTooltip content={data?.name} />
-            );
-            tooltip = new mapboxgl.Popup({
-              closeButton: false,
-              className: "custom-popup-style",
-            })
-              .setLngLat(marker.getLngLat())
-              .setHTML(tooltipContent)
-              .addTo(newMap);
-          });
-
-          // Remove tooltip when mouse leaves marker
-          marker.getElement().addEventListener("mouseleave", () => {
-            if (tooltip) {
-              tooltip.remove(); // Check if tooltip exists before attempting to remove
-            }
-          });
-        });
-      };
-
-      // Simulate receiving drone data
-      const mockDroneData = [
-        { id: 1, name: "Drone 1", latitude: 41.386405, longitude: 2.170048 }, // Barcelona
-        { id: 2, name: "Drone 2", latitude: 40.416775, longitude: -3.70379 }, // Madrid
-        { id: 3, name: "Drone 3", latitude: 37.389092, longitude: -5.984459 }, // Seville
-        { id: 4, name: "Drone 4", latitude: 43.362343, longitude: -8.41154 }, // La Coruña
-        { id: 5, name: "Drone 5", latitude: 28.123545, longitude: -15.436257 }, // Las Palmas de Gran Canaria
-        // Add more mock drone data as needed
-      ];
-
-      // addDroneMarkers(mockDroneData);
+      });  
+  
 
       setMap(newMap);
-    };
-
-    createMap();
+  }
+  createMap();
   }, []);
+
+  const handleZoomIn = () => {
+    if(map){
+      const currentZoom = map.getZoom()
+      map.setZoom(currentZoom + 1)    
+      console.log(currentZoom, "map.getZoom")
+    }
+  }
+  const handleZoomOut = () => {
+    if(map){
+      const currentZoom = map.getZoom()
+      map.setZoom(currentZoom - 1)
+      console.log(currentZoom, "map.getZoom")
+    }
+  }
+ 
+  const Layer = () => {
+    map.addLayer({
+      id: "water",
+      type: "circle",
+      source: {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          geometry: {
+            type: "Polygon",
+            coordinates: [],
+          },
+        },
+      },
+      layout: {},
+      paint: {
+        "fill-color": "#00ffff",
+        "line-width":3
+      },
+    });
+   
+}
+
 
   useEffect(() => {
     if (!showOptions) setShowOptions(true);
@@ -397,6 +377,8 @@ const Radar = () => {
               handleSelectAddress={handleSelectAddress}
             />
           )}
+
+               
           <section
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
@@ -429,6 +411,26 @@ const Radar = () => {
                 />
               </div>
             )} */}
+
+            <div className="relative w-full h-full  ">
+                    <div
+                      className="  justify-center  w-[10%]  h-[10%] absolute top-0 right-0   hidden md:flex bg-[#FFFFFFCC]  rounded-[8px] mt-4 mr-5  items-center gap-[10px] z-20 "
+                      style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+                    >
+                    <RadarLocationIcon />
+                   <button onClick={() => { console.log("Button clicked"); Layer(map);}}>
+                    <RadarLayerIcon />
+                    </button>
+                  
+                                      
+                    <button onClick={handleZoomIn}>
+                      <RadarZoomInIcon />
+                    </button>
+                    <button onClick={handleZoomOut}>
+                      <RadarZoomOutIcon />
+                    </button>
+                     </div>
+                  </div>
             {!showMobileMap && (
               <div className="flex h-full w-full flex-col md:hidden">
                 <div
