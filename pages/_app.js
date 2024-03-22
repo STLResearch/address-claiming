@@ -1,7 +1,8 @@
-import "@/styles/globals.css";
-import { Provider } from "react-redux";
-import store from "@/store/store";
-import Script from "next/script";
+import '@/styles/globals.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { Provider } from 'react-redux';
+import store from '@/store/store';
+import Script from 'next/script';
 
 import CookieConsent from "@/Components/CookieConsent";
 
