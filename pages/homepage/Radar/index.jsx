@@ -26,16 +26,22 @@ const Explorer = ({
   showOptions,
   handleSelectAddress,
   flyToAddress,
+  setSatelliteView,
+  handleZoomIn,
+  handleZoomOut,
+  flyToUserIpAddress
 }) => {
   return (
     <div
-      className="absolute right-0 top-0 z-20 mt-[13px] ml-[18px] max-h-full max-w-[362px] flex-col items-center rounded-[8px] bg-[#FFFFFFCC] px-[10px] py-[10px] md:flex"
-      style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+      className="absolute  right-0 z-20 rounded-[8px]  w-[50%] h-[10%] mt-4"
+     
     >
-      <div
-        className="relative w-full rounded-lg bg-white px-[10px] py-[10px]"
-        style={{ border: "1px solid rgb(135, 135, 141,0.3)" }}
-      >
+      <div className=" w-full flex justify-end p-2">
+                    <div
+                      className=" flex p-4  justify-center w-[70%] h-[10%]  rounded-[10px]   gap-[15px] z-20 bg-[#FFFFFFCC] "  style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+                   
+                    >
+                <div className="relative w-full flex items-center rounded-lg bg-white px-[10px] py-[10px]" style={{ border: "1px solid rgb(135, 135, 141,0.3)" }}>
         <input
           autoComplete="off"
           value={address}
@@ -46,9 +52,10 @@ const Explorer = ({
           placeholder="Search location"
           className="w-full pr-[20px] outline-none"
         />
-        <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
+        <div className=" h-[17px] w-[17px]">
           <MagnifyingGlassIcon />
         </div>
+  
         {showOptions && (
           <div className="absolute left-0 top-[55px] w-full flex-col bg-white">
             {addresses.map((item) => {
@@ -68,7 +75,25 @@ const Explorer = ({
             })}
           </div>
         )}
-      </div>
+                </div>
+                    <div className="flex gap-3">
+                    <button onClick={() => flyToUserIpAddress(map) }>
+                    <RadarLocationIcon />
+                    </button>
+                       <button onClick={() => setSatelliteView()}>
+                          <RadarLayerIcon />
+                        </button>
+                  
+                                      
+                    <button onClick={handleZoomIn}>
+                      <RadarZoomInIcon />
+                    </button>
+                    <button onClick={handleZoomOut}>
+                      <RadarZoomOutIcon />
+                    </button>
+                    </div>
+                     </div>
+       </div>
     </div>
   );
 };
@@ -127,9 +152,12 @@ const ExplorerMobile = ({
           </div>
         )}
       </div>
+      
     </div>
   );
 };
+
+
 
 const Radar = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -174,6 +202,9 @@ const Radar = () => {
         center: [0, 40],
         zoom: 3.5,
       });
+
+      newMap.addControl(new mapboxgl.NavigationControl());
+
       var nav = new mapboxgl.NavigationControl();
       newMap.addControl(nav, "top-right");
       newMap.on("load", () => {
@@ -184,6 +215,16 @@ const Radar = () => {
     };
     createMap();
   }, [map]);
+
+  function setSatelliteView() {
+    if (map.getStyle().name === 'Mapbox Streets') {
+      map.setStyle("mapbox://styles/mapbox/satellite-v9");
+  } else {
+      map.setStyle("mapbox://styles/mapbox/streets-v12");
+  }
+  console.log(map.getStyle())
+  }
+
 
   let activePopup = null;
   let activePopupHover = null;
@@ -325,30 +366,6 @@ const Radar = () => {
       console.log(currentZoom, "map.getZoom")
     }
   }
- 
-  const Layer = () => {
-    map.addLayer({
-      id: "water",
-      type: "circle",
-      source: {
-        type: "geojson",
-        data: {
-          type: "Feature",
-          geometry: {
-            type: "Polygon",
-            coordinates: [],
-          },
-        },
-      },
-      layout: {},
-      paint: {
-        "fill-color": "#00ffff",
-        "line-width":3
-      },
-    });
-   
-}
-
 
   useEffect(() => {
     if (!showOptions) setShowOptions(true);
@@ -447,7 +464,7 @@ const Radar = () => {
     setShowOptions(false);
   };
 
-  const flyToUserIpAddress = async (map) => {
+  const flyToUserIpAddress = async () => {
     if (!map) {
       return;
     }
@@ -522,29 +539,26 @@ const Radar = () => {
                   addresses={addresses}
                   showOptions={showOptions}
                   handleSelectAddress={handleSelectAddress}
+                  setSatelliteView={setSatelliteView}
+                  handleZoomIn={ handleZoomIn}
+                  handleZoomOut={handleZoomOut}
+                  flyToUserIpAddress={flyToUserIpAddress}
                 />
               </div>
             )} 
 
-            <div className="relative w-full h-full  ">
-                    <div
-                      className="  justify-center  w-[10%]  h-[10%] absolute top-0 right-0   hidden md:flex bg-[#FFFFFFCC]  rounded-[8px] mt-4 mr-5  items-center gap-[10px] z-20 "
-                      style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-                    >
-                    <RadarLocationIcon />
-                   <button onClick={() => { console.log("Button clicked"); Layer(map);}}>
-                    <RadarLayerIcon />
-                    </button>
-                  
-                                      
-                    <button onClick={handleZoomIn}>
-                      <RadarZoomInIcon />
-                    </button>
-                    <button onClick={handleZoomOut}>
-                      <RadarZoomOutIcon />
-                    </button>
-                     </div>
-                  </div>
+           
+{isMobile &&(
+  <div className="z-[40] right-0  gap-[15px] bg-white px-[21px] py-[19px]">
+    <button onClick={() => flyToUserIpAddress(map) }>
+        <RadarLocationIcon />
+        </button>
+           <button onClick={() => setSatelliteView()}>
+              <RadarLayerIcon />
+            </button>
+  </div>
+)}
+            
             {!showMobileMap && (
               <div className="flex h-full w-full flex-col md:hidden">
                 <div
