@@ -23,12 +23,7 @@ export default function App({ Component, pageProps }) {
   const { user: selectorUser } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!selectorUser) {
-      localStorage.clear();
-      router.push("/auth/join");
-    }
-  }, [selectorUser]);
+ 
 
   useEffect(() => {
     var Tawk_API = global?.Tawk_API || undefined;
