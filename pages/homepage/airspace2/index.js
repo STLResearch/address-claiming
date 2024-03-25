@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect,useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
@@ -636,8 +636,33 @@ const Explorer = ({
   handleSelectAddress,
   onClaimAirspace,
   flyToAddress,
+  setData
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+  const cardRef = useRef(null);
+  useEffect(() => {
+    if(!address) return
+    function handleClickOutside(event) {
+      console.log("czcdcsdcsd")
+      console.log(address)
+      console.log(cardRef.current)
+      if (cardRef.current && !cardRef.current.contains(event.target)) {
+        if(address){
+          setData((prev) => ({ ...prev, address }))
+          handleSelectAddress(address, false)
+        }
+
+      }
+     
+    }
+    
+    
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [address]);
 
   return (
     <div
@@ -682,6 +707,7 @@ const Explorer = ({
           <MagnifyingGlassIcon />
         </div>
         {showOptions && (
+           <div ref={cardRef}>
           <div className="absolute left-0 top-[55px] w-full flex-col bg-white">
             {addresses.map((item) => {
               return (
@@ -699,9 +725,10 @@ const Explorer = ({
               );
             })}
           </div>
+          </div>
         )}
       </div>
-      {flyToAddress && (
+      {flyToAddress || address && (
         <div
           onClick={onClaimAirspace}
           className="w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
@@ -989,7 +1016,7 @@ const Airspaces = () => {
   });
   const [marker, setMarker] = useState();
   const defaultData = {
-    address: flyToAddress,
+    address: flyToAddress || address,
     name: "",
     rent: true,
     sell: false,
@@ -1076,9 +1103,7 @@ const Airspaces = () => {
       });
 
       const calculateAveragePoints = (coordinates) => {
-        let lat = 0,
-          lng = 0,
-          count = 0;
+        let  lat = 0, lng = 0, count = 0;
         coordinates[0].forEach((c) => {
           lng += c[0];
           lat += c[1];
@@ -1092,6 +1117,7 @@ const Airspaces = () => {
           const coordinates = calculateAveragePoints(
             drawnFeatures .features[0].geometry.coordinates
           );
+          console.log(coordinates)
           const longitude = coordinates[0];
           const latitude = coordinates[1];
           setCoordinates({ longitude, latitude });
@@ -1224,9 +1250,9 @@ const Airspaces = () => {
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
 
-  const handleSelectAddress = (placeName) => {
+  const handleSelectAddress = (placeName, shouldFlyToAddress = true) => {
     setAddress(placeName);
-    setFlyToAddress(placeName);
+    shouldFlyToAddress && setFlyToAddress(placeName);
     setShowOptions(false);
   };
 
@@ -1394,7 +1420,7 @@ const Airspaces = () => {
                   address={address}
                   setAddress={setAddress}
                   addresses={addresses}
-                  showOptions={showOptions}
+                  setData={setData}
                   handleSelectAddress={handleSelectAddress}
                   onClaimAirspace={() => {
                     setShowClaimModal(true);
@@ -1407,14 +1433,15 @@ const Airspaces = () => {
                 {!showSuccessPopUp && (
                   <div className="relative w-full h-full  ">
                     <div
-                      className=" flex justify-center items-center w-[43%]  h-[10%] absolute top-0 right-0   hidden md:flex bg-[#FFFFFFCC]  rounded-[8px] mt-4 mr-5  items-center gap-[10px] z-20 "
+                      className="w-[40%]  h-[10%] absolute top-0 right-0 m-4 hidden md:flex bg-[#FFFFFFCC]  rounded-[8px]  gap-[10px] z-20 "
                       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
                     >
-                      <p className="text-[14px] font-[400]">
+                      <div className="w-[100%] md:flex  justify-center items-center gap-[10px] ">
+                      <p className="text-[14px] font-[400] w-[40%]">
                         Location is not exact?
                       </p>
                       <button
-                        className={`w-[22%] flex justify-center   rounded-[8px] ${isDrawMode && "bg-[#0000FF]"} hover:bg-[#0000FF] px-[6px] py-[5px] group `}
+                        className={`w-[20%] flex justify-center   rounded-[8px] ${isDrawMode && "bg-[#0000FF]"} hover:bg-[#0000FF] px-[6px] py-[5px] group `}
                         onClick={() => {
                           drawTool?.changeMode("draw_polygon");
                           setIsDrawMode(true);
@@ -1437,7 +1464,7 @@ const Airspaces = () => {
                       </button>
 
                       <button
-                        className="w-[23%] flex justify-center   bg-[#FFFFFF] rounded-[8px] hover:bg-[#0000FF] px-[6px] py-[5px] group "
+                        className="w-[20%] flex justify-center   bg-[#FFFFFF] rounded-[8px] hover:bg-[#0000FF] px-[6px] py-[5px] group "
                         onClick={() => {
                           deletePolygon();
                         }}
@@ -1456,6 +1483,7 @@ const Airspaces = () => {
                           />
                         </div>
                       </button>
+                      </div>
                     </div>
                   </div>
                 )}
