@@ -143,7 +143,7 @@ const Wallet = () => {
                 setTokenBalance(response.tokens[key].balance)
               }
           }
-            console.log(balanceArray);
+
           })
         .catch(err => console.error(err));
 
@@ -190,7 +190,7 @@ const Wallet = () => {
         }
       }
 
-      console.log(collectedTransactions);
+
       setCompletedTransactions(collectedTransactions);
     }
   }, [transactions]);

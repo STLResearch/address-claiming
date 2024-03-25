@@ -86,7 +86,7 @@ const AvailableBalance = ({ balance, loading }) => {
 };
 
 const MyAirspaces = ({ airspaces = [] }) => {
-  console.log({ airspaces });
+
 
   return (
     <Item
@@ -264,7 +264,7 @@ const Dashboard = () => {
           return;
         }
 
-        console.log({ selectorUser });
+
 
         setToken(fetchedToken.sessionId);
         setUser(selectorUser);
@@ -272,15 +272,13 @@ const Dashboard = () => {
       authUser();
     }
   }, [selectorUser]);
-  console.log({ selectorUser });
+
 
   // GET TOKEN BALANCE
   useEffect(() => {
     setBalanceLoading(true);
     if (user) {
       setInterval(() => {
-        console.log("set interval function called");
-        console.log({ user });
         const data = {
           jsonrpc: "2.0",
           id: 1,
@@ -313,18 +311,13 @@ const Dashboard = () => {
             return response.json();
           })
           .then((result) => {
-            console.log(result, " this is result");
+
             if (result.result.value.length < 1) {
               setTokenBalance("0");
               setBalanceLoading(false);
 
               return;
             }
-            console.log(
-              "tokenBalance  ==  ",
-              result.result.value[0].account.data.parsed.info.tokenAmount
-                .uiAmountString
-            );
             setTokenBalance(
               result.result.value[0].account.data.parsed.info.tokenAmount
                 .uiAmountString
@@ -409,21 +402,21 @@ const Dashboard = () => {
     if (!user) return;
     (async () => {
       try {
-        console.log({ user });
+
         const response = await getPropertiesByUserAddress(
           user.blockchainAddress,
           "landToken"
         );
         //test
         //const response =myAirspacesTest;
-        console.log("res landrtoken== ", response);
+
         if (response) {
           let retrievedAirspaces = response.items.map((item) => {
             return {
               address: item.address,
             };
           });
-          console.log("yooooo", retrievedAirspaces);
+
           setAirspaces(retrievedAirspaces);
         }
       } catch (error) {
@@ -432,7 +425,7 @@ const Dashboard = () => {
     })();
   }, [user]);
 
-  console.log({ user });
+
 
   if (!user || !token) {
     return <Spinner />;

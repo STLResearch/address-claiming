@@ -212,20 +212,20 @@ const Signup = () => {
 
   const loginHandlerGood = async () => {
     const email = emailRef.current.value;
-    console.log({ email });
+
 
     if (!isEmailValid(email)) {
       toast.error("Login: email is not valid", email);
       return;
     }
-    console.log("Login: email is valid", email);
+
 
     setIsVisitYourInboxVisible(true);
 
     let provider;
 
     try {
-      console.log("Login: creating provider...");
+
       provider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
         loginProvider: "email_passwordless",
         extraLoginOptions: {
@@ -239,14 +239,14 @@ const Signup = () => {
       return;
     }
 
-    console.log("Login: provider created");
+
 
     let userInformation;
 
     try {
-      console.log("Login: getting user information...");
+
       userInformation = await web3auth.getUserInfo();
-      console.log("Login: user information is", userInformation);
+
     } catch (err) {
       console.log("Login: ERROR while getting user information...", { err });
       localStorage.removeItem("openlogin_store");
@@ -255,14 +255,14 @@ const Signup = () => {
       return;
     }
 
-    console.log("Login: creatinng solana wallet...");
+
     const solanaWallet = new SolanaWallet(provider);
-    console.log("Login: solana wallet created...");
+
     let accounts;
-    console.log("Login: getting accounts of wallet");
+
     try {
       accounts = await solanaWallet.requestAccounts();
-      console.log("Login: accounts", accounts);
+
     } catch (err) {
       console.log("Login: error getting accounts", { err });
       localStorage.removeItem("openlogin_store");
@@ -271,19 +271,14 @@ const Signup = () => {
       return;
     }
 
-    console.log("Login: constructing object of signatures...");
+
 
     const { sign, sign_nonce, sign_issue_at, sign_address } =
       await signatureObject(accounts[0]);
-    console.log("Login: signature created", {
-      sign,
-      sign_nonce,
-      sign_issue_at,
-      sign_address,
-    });
+
 
     try {
-      console.log("Login: fetching...");
+
       const userRequest = await fetch(`/api/proxy?${Date.now()}`, {
         headers: {
           uri: "/private/users/session",
@@ -294,24 +289,24 @@ const Signup = () => {
         },
       });
 
-      console.log("Login: fetched done");
+
       const user = await userRequest.json();
-      console.log("Login: json done", user);
+
 
       if (user.id) {
-        console.log("Login: user has id and we use the auth hook");
+
         signIn({ user });
-        console.log("Login: done!");
+
         router.push("/homepage/dashboard2");
         // dispatch(counterActions.userAuth(user));
         // localStorage.setItem('user', JSON.stringify(user));
         // router.push('/homepage/dashboard');
         return user;
       }
-      console.log("Login: user has no ID");
+
 
       if (user.errorMessage === "UNAUTHORIZED") {
-        console.log("Login: UNAUTHORIZED");
+
         setTemporaryToken(JSON.parse(localStorage.getItem("openlogin_store")));
         // const token = localStorage.getItem('openlogin_store');
 
@@ -355,7 +350,7 @@ const Signup = () => {
 
   const getProvider = async () => {
     try {
-      console.log("Login: creating provider...");
+
       provider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
         loginProvider: "email_passwordless",
         extraLoginOptions: {

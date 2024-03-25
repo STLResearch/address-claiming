@@ -39,7 +39,7 @@ const IndividualSignup = () => {
 
       const lsReferralCode = localStorage.getItem('referralCode');
 
-      console.log({ lsReferralCode });
+
 
       if (lsReferralCode) {
         setRefCode(lsReferralCode);
@@ -121,7 +121,7 @@ const IndividualSignup = () => {
       },
     })
       .then((res) => {
-        console.log({ signUpRes: res, ok: res.ok });
+
 
         if (!res.ok) {
           return res.json().then((errorData) => {

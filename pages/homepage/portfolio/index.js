@@ -9,6 +9,7 @@ import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
+import RentalAirspaceModal from "@/Components/Modals/RentalAirspaceModal";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -48,8 +49,8 @@ const Modal = ({ airspace: { title, address, id, expirationDate, currentPrice },
                     </div>
                     :
                     <div className="flex gap-[20px] md:mt-[15px] mt-auto -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 py-[16px] md:py-0">
-                        <div onClick={onCloseModal} className="flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center" style={{ border: '1px solid #0653EA' }}>Cancel</div>
-                        <div className="flex-1 text-white rounded-[5px] bg-[#0653EA] text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center" style={{ border: '1px solid #0653EA' }}>Edit</div>
+                        <button onClick={onCloseModal} className="flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center" style={{ border: '1px solid #0653EA' }}>Cancel</button>
+                        <button className="flex-1 text-white rounded-[5px] bg-[#0653EA] text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center" style={{ border: '1px solid #0653EA' }}>Edit</button>
                     </div>
                 }
             </div>
@@ -57,18 +58,25 @@ const Modal = ({ airspace: { title, address, id, expirationDate, currentPrice },
     )
 }
 
-const PortfolioItem = ({ airspaceName, tags, type, selectAirspace }) => {
+const PortfolioItem = ({ airspace, selectAirspace }) => {
+    console.log({airspace})
     return (
         <div onClick={selectAirspace} className="flex p-[11px] items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex items-center gap-[10px] flex-1">
                 <div className="w-6 h-6"><LocationPointIcon /></div>
-                <p className="font-normal text-[#222222] text-[14px] flex-1">{airspaceName}</p>
+                <p className="font-normal text-[#222222] text-[14px] flex-1">{airspace?.address}</p>
             </div>
             <div className="flex gap-[10px] items-center">
-                {!!tags[0] && <div className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">{type === "land" ? "On Claim": "On Rent"}</div>}
-                {!!tags[1] && <div className="bg-[#E7E6E6] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">On Sale</div>}
-                {!!tags[2] && <div className="bg-[#222222] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">No Fly Zone</div>}
-                {!!tags[3] && <div className="bg-[#E04F64] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">Review Offer</div>}
+                {airspace.type === 'land' && <div className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">{"On Rent"}</div>}
+                {airspace.type === 'rental' && <div className="bg-[#4285F4] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">My rental</div>}
+
+
+
+                {/* Logic for the badges not clear, will revisit  -#Ikenna */}
+                {/* {!!tags[0] && <div className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">{type === "land" ? "On Claim": "On Rent"}</div>} */}
+                {/* {!!tags[1] && <div className="bg-[#E7E6E6] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">On Sale</div>} */}
+                {/* {!!tags[2] && <div className="bg-[#222222] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">No Fly Zone</div>} */}
+                {/* {!!tags[3] && <div className="bg-[#E04F64] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">Review Offer</div>} */}
                 <div className="w-[7px] h-[14px]"><ChevronRightIcon /></div>
             </div>
         </div>
@@ -93,13 +101,12 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
     )
 }
 const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
-    console.log("all airspacesz ",airspacesList)
     return (
         <div className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <h2 className="font-medium text-xl text-[#222222] text-center">{title}</h2>
             <div className="flex flex-col gap-[15px]">
-                {airspacesList.map(({address,expirationDate,name, type}, index) => (<PortfolioItem airspaceName={address} key={index} tags={[true, false,false,  false]} type={type} selectAirspace={() => selectAirspace(index)} />))}
-            </div>
+                    {airspacesList.map((airspace, index) => (<PortfolioItem airspace={airspace} selectAirspace={() => selectAirspace(index)} />))}
+                </div>
         </div>
     )
 }
@@ -176,6 +183,9 @@ const Portfolio = () => {
 
     const selectAirspace = (x) => { setSelectedAirspace(x) }
 
+
+
+
     return (
         <Fragment>
             <Head>
@@ -188,7 +198,8 @@ const Portfolio = () => {
             <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
-                    {selectedAirspace !== null && <Modal airspace={myAirspaces[selectedAirspace]} onCloseModal={onCloseModal} />}
+                    {selectedAirspace !== null && myAirspaces[selectedAirspace].type==="land" && <Modal airspace={myAirspaces[selectedAirspace]} onCloseModal={onCloseModal} />}
+                    {selectedAirspace !== null && myAirspaces[selectedAirspace].type==="rental" && <RentalAirspaceModal airspace={myAirspaces[selectedAirspace]} onCloseModal={onCloseModal} />}
                     <PageHeader pageTitle={'Portfolio'} username={'John Doe'} />
                     <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
                         <PortfolioList airspacesList={myAirspaces} title={'My Airspaces'} selectAirspace={selectAirspace} />

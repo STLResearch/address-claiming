@@ -78,10 +78,7 @@ const IndividualSignup = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [pageLoad, setPageLoad] = useState(true);
     const [referralDisabled,setReferralDisabled] = useState(false);
-    useEffect(() => {
-        console.log(status);
-        console.log(typeof status);
-    }, [status])
+ 
 
     useEffect(() => {
         setPageLoad(false);
@@ -97,7 +94,7 @@ const IndividualSignup = () => {
     const category = useSelector((state) => state.value.category);
 
     useEffect(() => {
-        console.log("Category:", category)
+
     }, [category])
 
     const { temporaryToken, signIn } = useAuth();
@@ -132,7 +129,7 @@ const IndividualSignup = () => {
             setIsNameValid(false);
             return;
         }
-        console.log(checkPhoneIsValid(phoneNumber), "checkPhoneIsValid(phoneNumber)")
+
 
         const phoneCheck = await checkPhoneIsValid(phoneNumber)
         if (!phoneCheck.status) {
@@ -145,7 +142,7 @@ const IndividualSignup = () => {
             setIsReferralCodeValid(false);
             return;
         }
-        console.log("ref code state ",referralCode1)
+
         const userInfo = {
             ...category,
             name,
@@ -154,7 +151,7 @@ const IndividualSignup = () => {
             phoneNumber,
             referralCode:referralCode1.code
         };
-        console.log("userInfo    ",userInfo)
+
 
         setIsLoading(true);
 
@@ -168,7 +165,7 @@ const IndividualSignup = () => {
             },
         })
             .then((res) => {
-                console.log({ signUpRes: res, ok: res.ok });
+
 
                 if (!res.ok) {
                     return res.json().then((errorData) => {
@@ -320,7 +317,7 @@ const IndividualSignup = () => {
                                         ref={referralCodeRef}
                                         value={referralCode1.code}
                                         placeholder='Enter referral code'
-                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value });console.log("on change ref code val",referralCode1.code)}}
+                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value })}}
                                         disabled={referralDisabled}
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isReferralCodeValid ? '1px solid #87878D' : '1px solid #E04F64' }}

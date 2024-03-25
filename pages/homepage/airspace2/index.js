@@ -231,10 +231,10 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
   },[])
   const handleSellPrice=(e)=>{
   let inputVal=e.target.value;
-  console.log(inputVal)
+
   let parsedVal=parseFloat(inputVal)
    if(parsedVal>=0 && parsedVal!=NaN){
-    console.log("parseVal ",parseFloat(inputVal))
+
     setData((prev) => {
       return {
         ...prev,
@@ -824,7 +824,7 @@ const FailurePopUp = ({ isVisible }) => {
 };
 
 const HowToModal = ({ goBack }) => {
-  console.log("yoo how too")
+
   const [section, setSection] = useState(0);
   return (
     <div className="absolute z-50 flex h-screen w-screen flex-col items-center justify-center bg-white">
@@ -1173,7 +1173,7 @@ const Airspaces = () => {
         ],
         weekDayRanges,
       });
-      console.log("add property results ,",addProperty)
+
       if (addProperty === undefined) {
         setShowFailurePopUp(true);
       } else {

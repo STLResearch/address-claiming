@@ -106,7 +106,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1 }) => {
     const [finalAns,setfinalAns]=useState();
     const { user: selectorUser } = useAuth();
 
-    console.log("yo selector user",rentData)
+
 
     useEffect(() => {
         const authUser = async () => {
@@ -147,7 +147,7 @@ const connectionConfig = await solanaWallet.request({
 
 
   //const transaction = Transaction.from(Buffer.from(json.transaction, 'base64'));
-console.log("solanaWallet=",balance)// ui info wrong
+
         };
         authUser();
     
@@ -163,7 +163,7 @@ console.log("solanaWallet=",balance)// ui info wrong
         try {
            
             setOwner(rentData.owner)
-            console.log("user if this land",owner)
+
           } catch (error) {
             console.log(error)
             
@@ -205,14 +205,10 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
 
 
 
-        console.log("date ansd time")
-        console.log("da1",date.toString())
         //console.log("da2",time.add(30,'minute').toString())
          let startDate=new Date(date.toString())
         let endDate = new Date(startDate.getTime()); 
         endDate.setMinutes(endDate.getMinutes() + 30);
-        console.log("start date in date fm",startDate)
-        console.log('endtart date in date fm',endDate) 
 
          if(startDate.getMinutes()%30!=0){
             setfinalAns({status:'Rent failed',
@@ -222,8 +218,6 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
         setIsLoading(false)
         }else{
                     setLandAssetIds([rentData?.layers[0].tokenId]);
-                    console.log("landASSTId==",landAssetIds)
-                    console.log("res resll",rentData.layers[0].tokenId)
                 
     
             let req1Body={
@@ -232,7 +226,7 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
                 endTime:endDate.toISOString(),
                 landAssetIds:[rentData.layers[0].tokenId]
             }
-            console.log("reqbody",JSON.stringify(req1Body))
+
             let signatureObj={}
             if(user1){
                 const chainConfig = {
@@ -293,7 +287,7 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
 
             } 
 
-            console.log("signature obj  ", signatureObj)
+
 
 try {
     let res=await  fetch(`/api/proxy?${Date.now()}`,{
@@ -312,7 +306,7 @@ try {
         body:JSON.stringify(req1Body)
       })
       res=await res.json()
-      console.log("res body",res)
+
       if(res.statusCode==400){
         setShowSuccess(true)
         setfinalAns({status:'Rent failed',
@@ -326,7 +320,7 @@ return
       //let partialsignedTx=transaction.partialSign(solanaWallet);
       //console.log("is solana wallet partial=",partialsignedTx)
        const signedTx = await solanaWallet.signTransaction(transaction);
- console.log(signedTx); 
+
 let serializedTx=signedTx.serialize({requireAllSignatures:false})
 let txToString=serializedTx.toString('base64');
 if(signedTx){
@@ -336,7 +330,7 @@ if(signedTx){
         startTime:startDate.toISOString(),
         endTime:endDate.toISOString(),
     }
-    console.log("final exexution",JSON.stringify(req2body))
+
      signatureObj={}
     if(user1){
         const chainConfig = {
@@ -486,7 +480,7 @@ if(ans2) {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
         <div style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className="touch-manipulation fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto  md:w-[689px] z-40 flex flex-col gap-[15px]">
             <div className="touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
-                <div className="w-[16px] h-[12px] md:hidden" onClick={()=>{console.log("ggdgdgdg")}}><ArrowLeftIcon /></div>
+                <div className="w-[16px] h-[12px] md:hidden" onClick={()=>{}}><ArrowLeftIcon /></div>
                 <h2 className="text-[#222222] text-center font-medium text-xl"> Airspace Details</h2>
                 <div onClick={()=>{setShowClaimModal(false)}} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
             </div>
@@ -524,7 +518,7 @@ if(ans2) {
 
 const Explorer = ({ loadingReg,loading,address, setAddress, addresses, showOptions, handleSelectAddress,regAdressShow,registeredAddress,map,marker,setMarker,showClaimModal ,setShowClaimModal ,rentData, setRentData, user1}) => {
     const [selectedAddress,setSelectedAddress]=useState()
-    console.log({loading})
+
     return (
         <div className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex gap-[5px] items-center">
@@ -569,7 +563,7 @@ const Explorer = ({ loadingReg,loading,address, setAddress, addresses, showOptio
                 const rentCLickHandler=()=>{
                     let el1 = document.createElement('div');
                     
-                                console.log("am rrent clickedd",item.id)
+
                                 setSelectedAddress(item.id);
                                 
                             
@@ -588,7 +582,7 @@ const Explorer = ({ loadingReg,loading,address, setAddress, addresses, showOptio
 }
 
 const onClickRent=() =>{
-    console.log("hello rent data==",rentData)
+
     setRentData(item)
     setShowClaimModal(true)
      

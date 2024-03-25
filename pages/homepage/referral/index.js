@@ -194,7 +194,7 @@ const Share = ({
   };
 
   const shareOnFacebook = (textToShare) => {
-    console.log(encodeURIComponent(textToShare));
+
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(textToShare)}`,
       "_blank"
@@ -377,7 +377,7 @@ const InviteYourFriends = ({ referralCode }) => {
           value={friendEmail}
           onChange={(e) => {
             setFriendEmail(e.target.value);
-            console.log(friendEmail);
+
           }}
           className="w-full rounded-lg py-[16px] pr-[45px] pl-[22px] outline-none"
           style={{ border: "1px solid #87878D" }}
@@ -430,7 +430,7 @@ const Referral = () => {
   const { user } = useAuth();
   const { retrieveReferralData } = useDatabase();
   const sections = ["The Program", "Share", "My Referrals"];
-  console.log("userss ", user);
+
   useEffect(() => {
     if (!user) return;
 
@@ -443,9 +443,9 @@ const Referral = () => {
     (async () => {
       try {
         const response = await retrieveReferralData(blockchainAddress);
-        console.log("from the reff page", user, response);
+
         setData(response);
-        console.log("the data  ", data);
+
       } catch (error) {
         console.log(error);
       }

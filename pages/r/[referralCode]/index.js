@@ -94,7 +94,7 @@ const ReferralCodeRedirect = () => {
 
 
   useEffect(() => {
-    console.log('web3auth:', web3auth)
+
     const init = async () => {
       await web3auth.init();
     };

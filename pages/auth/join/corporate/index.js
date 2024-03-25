@@ -96,7 +96,7 @@ const CorporateSignup = () => {
       .then((res) => {
         if (!res.ok) {
           return res.json().then((errorData) => {
-            console.log('This is the errordata', errorData);
+
             swal({
               title: '',
               text: `${errorData.errorMessage}`,

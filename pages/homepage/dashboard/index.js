@@ -212,7 +212,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (user) {
-      console.log({ user });
+
       const data = {
         jsonrpc: '2.0',
         id: 1,

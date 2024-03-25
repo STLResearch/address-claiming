@@ -242,16 +242,13 @@ const DepositAndWithdraw = ({
         activeSection == 1 &&
         parseFloat(tokenBalance) <= parseFloat(amount)
       ) {
-        console.log(tokenBalance, "this is tokenBalance");
-        console.log(amount, "this is amount");
-        console.log("amts=", parseFloat(tokenBalance), parseFloat(amount));
 
         notifyFail();
 
         throw new Error("invalid transafer amount");
       }
       if (activeSection == 1 && parseFloat(userSolBalc) == 0) {
-        console.log("amts=", parseFloat(tokenBalance), parseFloat(amount));
+
         notifyFail();
 
         throw new Error("NO sol");
@@ -282,7 +279,7 @@ const DepositAndWithdraw = ({
 
       const solanaWallet = new SolanaWallet(web3authProvider);
 
-      console.log("solana wallet ", solanaWallet);
+
       const accounts = await solanaWallet.requestAccounts();
 
       const connectionConfig = await solanaWallet.request({
@@ -295,13 +292,8 @@ const DepositAndWithdraw = ({
         new PublicKey(accounts[0])
       );
 
-      console.log("sol balance = ", Solbalance);
-      console.log("connection ", connection);
       let mintAccount = process.env.NEXT_PUBLIC_MINT_ADDRESS;
       let tx = new Transaction();
-      console.log("sender ", user.blockchainAddress);
-      console.log("reciever ", recipientWalletAddress);
-      console.log(mintAccount);
       let recipientUSDCAddr = await getAssociatedTokenAddress(
         new PublicKey(mintAccount),
         new PublicKey(recipientWalletAddress)
@@ -326,7 +318,7 @@ const DepositAndWithdraw = ({
           ix.push(createIx);
         }
       }
-      console.log("amount = ", amount);
+
       let transferIx = createTransferInstruction(
         senderUSDCAddr,
         recipientUSDCAddr,
@@ -344,17 +336,17 @@ const DepositAndWithdraw = ({
       tx.recentBlockhash = blockhash;
       tx.feePayer = new PublicKey(user.blockchainAddress);
 
-      console.log("transaction obj ", tx);
+
       try {
         const signature = await solanaWallet.signAndSendTransaction(tx);
 
-        console.log("sig =", signature);
+
 
         setTokenBalance(tokenBalance - amount);
-        console.log("new token bal=", amount);
+
         setTimeout(() => {
           setIsLoading(false);
-          console.log("timeout over");
+
           router.prefetch("/homepage/funds");
         }, 10000);
         notifySuccess();
@@ -749,8 +741,6 @@ const Funds = () => {
     setBalanceLoading(true);
     if (user) {
       setInterval(() => {
-        console.log("set interval function called");
-        console.log({ user });
         const data = {
           jsonrpc: "2.0",
           id: 1,
@@ -783,17 +773,13 @@ const Funds = () => {
             return response.json();
           })
           .then((result) => {
-            console.log(result, " this is result");
+
             if (result.result.value.length < 1) {
               setTokenBalance("0");
               setBalanceLoading(false);
               return;
             }
-            console.log(
-              "tokenBalance  ==  ",
-              result.result.value[0].account.data.parsed.info.tokenAmount
-                .uiAmountString
-            );
+          
             setTokenBalance(
               result.result.value[0].account.data.parsed.info.tokenAmount
                 .uiAmountString
@@ -844,7 +830,7 @@ const Funds = () => {
 
         const solanaWallet = new SolanaWallet(web3authProvider);
 
-        console.log("solana wallet ", solanaWallet);
+
         const accounts = await solanaWallet.requestAccounts();
 
         const connectionConfig = await solanaWallet.request({
@@ -857,7 +843,7 @@ const Funds = () => {
           new PublicKey(accounts[0])
         );
 
-        console.log("sol balance = ", Solbalance);
+
         // const userInfo = await web3auth.getUserInfo();
 
         const domain = window.location.host;
@@ -919,7 +905,7 @@ const Funds = () => {
 
         const solanaWallet = new SolanaWallet(web3authProvider);
 
-        console.log("solana wallet ", solanaWallet);
+
         const accounts = await solanaWallet.requestAccounts();
 
         const connectionConfig = await solanaWallet.request({
@@ -932,7 +918,7 @@ const Funds = () => {
           new PublicKey(accounts[0])
         );
         setSolBalance(Solbalance1);
-        console.log("sol balance = ", Solbalance);
+
       }
     };
     fetchbalance()
@@ -991,7 +977,7 @@ const Funds = () => {
         }
       }
 
-      console.log(collectedTransactions);
+
       setTransactions(collectedTransactions);
     }
   }, [transactionHistory]);
