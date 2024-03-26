@@ -227,10 +227,7 @@ const DepositAndWithdraw = ({
 
   const notifySuccess = () =>
     toast.success("Success !. Your funds have been withdrawn successfully");
-  const notifyFail = () =>
-    toast.error(
-      "Something went wrong. Please try again later"
-    );
+  
 
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
 
@@ -355,13 +352,13 @@ const DepositAndWithdraw = ({
         }, 10000);
         notifySuccess();
       } catch (err) {
-        notifyFail();
+        toast.error(err.message);
       }
     } catch (error) {
       console.log("pub key ", error);
 
       setIsLoading(false);
-      notifyFail();
+      toast.error(err.message);
     }
   };
 
