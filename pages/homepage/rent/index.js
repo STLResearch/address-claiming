@@ -53,7 +53,7 @@ const router=useRouter()
                <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
              {finalAns?.status ==='Rent SuccessFull' && 
              <div>
-                 'You rented'  <span className=" text-[14px] font-bold">{`${rentData.address}`}</span> {` for `}  <span className=" text-[14px] font-bold">$1</span>  
+                 'You rented'  <span className=" text-[14px] font-bold">{`${rentData.address}`}</span> {` for `}  <span className=" text-[14px] font-bold">${rentData.price}</span>  
              </div>
                  
                  }
@@ -607,7 +607,7 @@ const onClickRent=() =>{
                                     }}
                                 >
 
-                                    <h3 className="text-black pt-[0.6rem]">{item.address}</h3><h1 className={item.id!=selectedAddress?" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2":" text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"}>$1</h1><span onClick={onClickRent} className={item.id!=selectedAddress?"bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2":"bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2"}>RENT</span>
+                                    <h3 className="text-black pt-[0.6rem]">{item.address}</h3><h1 className={item.id!=selectedAddress?" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2":" text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"}>${item.price}</h1><span onClick={onClickRent} className={item.id!=selectedAddress?"bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2":"bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2"}>RENT</span>
                                 </div>
                             )
                         })}

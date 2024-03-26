@@ -1,18 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 * {
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #F6FAFF;
-  font-family: 'Poppins', sans-serif;
+  background-color: #f6faff;
+  font-family: "Poppins", sans-serif;
 }
 
 #map {
@@ -27,15 +27,15 @@ button {
 }
 
 #markerWithExternalCss {
-  background-image: url('https://maps.locationiq.com/v3/samples/marker50px.png');
+  background-image: url("https://maps.locationiq.com/v3/samples/marker50px.png");
   background-size: cover;
   width: 100px;
   height: 100px;
   cursor: pointer;
 }
-#marker2{
+#marker2 {
   background-color: #0653ea;
-  
+
   background-size: cover;
   width: 100px;
   height: 100px;
@@ -78,7 +78,7 @@ button {
 }
 
 ::-webkit-scrollbar {
-  width: 3px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -87,7 +87,7 @@ button {
 
 ::-webkit-scrollbar-thumb {
   background-color: #888;
-  border-radius: 6px;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

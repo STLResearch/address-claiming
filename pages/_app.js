@@ -6,7 +6,7 @@ import Script from 'next/script';
 
 import CookieConsent from "@/Components/CookieConsent";
 
-import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { AuthProvider } from "@/hooks/useAuth";
 import { msclaritConfig } from "@/hooks/msclaritConfig";
 import { useMobile } from "@/hooks/useMobile";
 import { useEffect, useState } from "react";
@@ -15,12 +15,10 @@ import { ToastContainer } from "react-toastify";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
-import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }) {
   const { isMobile } = useMobile();
   const [doItAgain, setDoItAgain] = useState(false);
-  const router = useRouter();
 
 
   useEffect(() => {
