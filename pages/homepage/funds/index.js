@@ -229,7 +229,7 @@ const DepositAndWithdraw = ({
     toast.success("Success !. Your funds have been withdrawn successfully");
   const notifyFail = () =>
     toast.error(
-      "Withdrawal unsuccessful. plz try again or contact support at support@sky.trade"
+      "Something went wrong. Please try again later"
     );
 
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
@@ -243,15 +243,19 @@ const DepositAndWithdraw = ({
         parseFloat(tokenBalance) <= parseFloat(amount)
       ) {
 
-        notifyFail();
+        toast.error(
+          "You do not have enough funds"
+        );
 
-        throw new Error("invalid transafer amount");
+        return
       }
       if (activeSection == 1 && parseFloat(userSolBalc) == 0) {
 
-        notifyFail();
+        toast.error(
+          "You have no Sol available"
+        );
 
-        throw new Error("NO sol");
+        return
       }
       //new PublicKey('fgdf')
 
@@ -379,7 +383,8 @@ const DepositAndWithdraw = ({
   };
 
   const [selectedMethod, setSelectedMethod] = useState({
-    name: "",
+    icon: "/images/bank-note-arrow.svg",
+    name: "Native",
   });
   const [selectedOption, setSelectedOption] = useState("");
   const options = [

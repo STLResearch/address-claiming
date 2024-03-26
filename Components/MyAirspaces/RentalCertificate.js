@@ -24,12 +24,12 @@ export default function RentalCertificate({ rentalData }) {
   return (
     <div
       style={{ zIndex: 500 }}
-      className="flex flex-col  min-h-screen w-screen items-center justify-center "
+      className="flex flex-col w-screen items-center justify-center text-[14px]"
     >
-      <div className="w-[50rem] bg-white py-20 min-h-screen">
+      <div className="w-[50rem] bg-white py-20">
         <div
           ref={componentRef}
-          className="flex flex-col  items-center px-24 gap-8"
+          className="flex flex-col relative items-center px-24 gap-8"
         >
           <div>
             <Image
@@ -65,6 +65,14 @@ export default function RentalCertificate({ rentalData }) {
               <div>SkyTrade Team </div>
               <div>www.sky.trade</div>
             </div>
+          </div>
+          <div className="">
+            <Image
+              width={245}
+              height={180}
+              src={"/images/cert.png"}
+              alt="cert"
+            />
           </div>
         </div>
         <div className="w-full">
