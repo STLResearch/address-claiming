@@ -23,6 +23,7 @@ import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
+
 const SuccessModal = ({ setShowSuccess,finalAns,rentData,setShowClaimModal}) => {
 const router=useRouter()
        return (
@@ -54,7 +55,7 @@ const router=useRouter()
                <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
              {finalAns?.status ==='Rent SuccessFull' && 
              <div>
-                 'You rented'  <span className=" text-[14px] font-bold">{`${rentData.address}`}</span> {` for `}  <span className=" text-[14px] font-bold">$1</span>  
+                 'You rented'  <span className=" text-[14px] font-bold">{`${rentData.address}`}</span> {` for `}  <span className=" text-[14px] font-bold">${rentData.price}</span>  
              </div>
                  
                  }
@@ -364,15 +365,20 @@ try {
         body:JSON.stringify(req1Body)
       })
       res=await res.json()
-
+      console.log("res body",res)
+      if(res && res.errorMessage) {
+        toast.error(res.errorMessage)
+        setIsLoading(false)
+        return;
+      }
       if(res.statusCode==400){
         setShowSuccess(true)
-        setfinalAns({status:'Rent failed',
-        message:res.data.message
-        
-})
-setIsLoading(false)
-return
+        setfinalAns({
+            status:'Rent failed',
+            message:res.errorMessage
+        })
+        setIsLoading(false)
+        return
       }
       const transaction = Transaction.from(Buffer.from(res, 'base64'));
       //let partialsignedTx=transaction.partialSign(solanaWallet);
@@ -467,7 +473,11 @@ if(signedTx){
       );
       ans2=await ans2.json();
 
-
+      if(ans2 && ans2.errorMessage) {
+        toast.error(ans2.errorMessage)
+        setIsLoading(false)
+        return;
+      }
 
 if(ans2) {
     if(ans2.data.status=='success'){
