@@ -9,7 +9,6 @@ import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
-import RentalAirspaceModal from "@/Components/Modals/RentalAirspaceModal";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
