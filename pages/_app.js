@@ -20,15 +20,8 @@ import { useRouter } from "next/router";
 export default function App({ Component, pageProps }) {
   const { isMobile } = useMobile();
   const [doItAgain, setDoItAgain] = useState(false);
-  const { user: selectorUser } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!selectorUser) {
-      localStorage.clear();
-      router.push("/auth/join");
-    }
-  }, [selectorUser]);
 
   useEffect(() => {
     var Tawk_API = global?.Tawk_API || undefined;

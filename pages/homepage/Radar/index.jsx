@@ -10,7 +10,7 @@ import PageHeader from "@/Components/PageHeader";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
-import { DroneIconRadar } from "@/Components/Icons";
+import DroneSVGComponent from "@/Components/Modals/DroneSVGComponent";
 import { ArrowLeftIcon } from "@/Components/Icons";
 import {
   RadarZoomOutIcon,
@@ -179,6 +179,13 @@ const Radar = () => {
     useState(false);
   const [showDroneDetail, setShowDroneDetail] = useState(false);
   const [DroneDataDetailSelected, setDroneDataSelected] = useState(null);
+  const [activePopup, setActivePopup] = useState(null);
+  const [isAllPopupClosed, setIsAllPopupClosed] = useState(false);
+  const [activeMarker, setActiveMarker] = useState(null);
+  const [isDroneSVGColor, setIsDroneSVGColor] = useState({});
+  const [isDroneHoverSVGColor, setIsDroneHoverSVGColor] = useState({});
+  const [droneMarker, setDroneMarker] = useState();
+  const [droneMarkerArray, setDroneMarkerArray] = useState({});
 
   const mockDroneData = [
     { id: 1, name: "Drone 1", latitude: 41.386405, longitude: 2.170048 },
@@ -208,8 +215,6 @@ const Radar = () => {
       var nav = new mapboxgl.NavigationControl();
       newMap.addControl(nav, "top-right");
       newMap.on("load", () => {
-        // const draw = new MapboxDraw({ displayControlsDefault: false });
-        // newMap.addControl(draw, "top-right");
         setMap(newMap);
       });
     };
@@ -217,44 +222,76 @@ const Radar = () => {
   }, [map]);
 
   function setSatelliteView() {
-    if (map.getStyle().name === "Mapbox Streets") {
-      map.setStyle("mapbox://styles/mapbox/satellite-v9");
+    if (map && map?.getStyle().name === "Mapbox Streets") {
+      map?.setStyle("mapbox://styles/mapbox/satellite-v9");
     } else {
-      map.setStyle("mapbox://styles/mapbox/streets-v12");
+      map?.setStyle("mapbox://styles/mapbox/streets-v12");
     }
-    console.log(map.getStyle());
   }
 
-  let activePopup = null;
   let activePopupHover = null;
   let activeMarkerHover = null;
+
   useEffect(() => {
     if (!map) return;
+
     const addDroneMarkers = (droneData) => {
-      let activeMarker = null;
-      droneData.forEach((data) => {
+      droneData.forEach((data, index) => {
         const { id, name, latitude, longitude } = data;
         const markerElement = document.createElement("div");
-        markerElement.innerHTML = renderToStaticMarkup(<DroneIconRadar />);
-        const marker = new mapboxgl.Marker({
-          element: markerElement,
-          draggable: false,
-        })
-          .setLngLat([longitude, latitude])
-          .addTo(map);
+        markerElement.classList.add(`drone-marker-${index}`);
+
+        const droneColor = isDroneSVGColor[index]
+          ? "red"
+          : isDroneHoverSVGColor[index]
+            ? "red"
+            : "blue";
+        markerElement.innerHTML = ReactDOMServer.renderToString(
+          <DroneSVGComponent droneColor={droneColor} />
+        );
+
+        let marker;
+
+        if (!droneMarker) {
+          marker = new mapboxgl.Marker({
+            element: markerElement,
+            draggable: false,
+          })
+            .setLngLat([longitude, latitude])
+            .addTo(map);
+
+          setDroneMarkerArray({ [index]: marker });
+        } else {
+          marker = droneMarkerArray[index];
+
+          const elements = document.getElementsByClassName(
+            `drone-marker-${index}`
+          );
+          Array.from(elements).forEach((element) => element.remove());
+
+          marker = new mapboxgl.Marker({
+            element: markerElement,
+            draggable: false,
+          })
+            .setLngLat([longitude, latitude])
+            .addTo(map);
+
+          setDroneMarkerArray({ [index]: marker });
+        }
+
         const showPopup = () => {
-          if (activePopup) {
-            activePopup.remove();
-            activePopup = null;
-          }
+          const elementToRemove = document.querySelector(".mapboxgl-popup");
+          if (elementToRemove) elementToRemove.remove();
 
           const tooltipContent = ReactDOMServer.renderToString(
             <RadarTooltip content={name} />
           );
-          activePopup = new mapboxgl.Popup({ closeOnClick: false })
+          const activePopup1 = new mapboxgl.Popup({ closeOnClick: false })
             .setLngLat(marker.getLngLat())
             .setHTML(tooltipContent)
             .addTo(map);
+
+          setActivePopup(activePopup1);
         };
 
         if (!isMobile) {
@@ -265,91 +302,83 @@ const Radar = () => {
             if (activePopupHover) {
               activePopupHover.remove();
               activePopupHover = null;
+              const elementToRemove = document.querySelector(".mapboxgl-popup");
+              if (elementToRemove) elementToRemove.remove();
             }
             activePopupHover = new mapboxgl.Popup({ closeOnClick: false })
               .setLngLat(marker.getLngLat())
               .setHTML(tooltipContent)
               .addTo(map);
-            activeMarkerHover = markerElement.querySelectorAll("svg path");
-
-            activeMarkerHover.forEach((path) => {
-              path.setAttribute("stroke", "#FF3D00");
-            });
+            setIsDroneHoverSVGColor({ [index]: true });
           };
+
           const handleMouseLeave = () => {
             if (activePopupHover) {
               activePopupHover.remove();
               activePopupHover = null;
+              const elementToRemove = document.querySelector(".mapboxgl-popup");
+              if (elementToRemove) elementToRemove.remove();
             }
-            if (activeMarkerHover) {
-              activeMarkerHover.forEach((path) => {
-                path.setAttribute("stroke", "#0000FF");
-              });
-            }
+            setIsDroneHoverSVGColor({ [index]: false });
           };
+
           const handleClick = () => {
-            activeMarkerHover = null;
-            if (activeMarker) {
-              let paths = activeMarker.querySelectorAll("svg path");
-              paths.forEach((path) => {
-                path.setAttribute("stroke", "#0000FF");
-              });
-            }
-            activeMarker = markerElement;
+            setIsDroneSVGColor({ [index]: true });
+            setIsAllPopupClosed(false);
+            setActiveMarker(true);
             showPopup();
             setDroneDataSelected(data);
             setShowDroneDetail(true);
-            let paths = markerElement.querySelectorAll("svg path");
-
-            paths.forEach((path) => {
-              path.setAttribute("stroke", "#FF3D00");
-            });
           };
-          marker.getElement().addEventListener("click", handleClick);
 
-          if (!showDroneDetail) {
-            activeMarker = null;
-            marker
-              .getElement()
-              .addEventListener("mouseenter", handleMouseEnter);
-            marker
-              .getElement()
-              .addEventListener("mouseleave", handleMouseLeave);
-          }
+          markerElement.addEventListener("click", handleClick);
+          markerElement.addEventListener("mouseenter", handleMouseEnter);
+          markerElement.addEventListener("mouseleave", handleMouseLeave);
         }
+
         if (isMobile) {
-          marker.getElement().addEventListener("touchend", (e) => {
+          markerElement.addEventListener("touchend", (e) => {
             e.preventDefault();
-            if (activeMarker) {
-              let paths = activeMarker.querySelectorAll("svg path");
-              paths.forEach((path) => {
-                path.setAttribute("stroke", "#0000FF");
-              });
-            }
-            activeMarker = markerElement;
+            setIsAllPopupClosed(false);
+            setIsDroneSVGColor({ [index]: true });
             showPopup();
             setDroneDataSelected(data);
             setMobileBottomDroneDetailVisible(true);
-            const paths = markerElement.querySelectorAll("svg path");
-            paths.forEach((path) => {
-              path.setAttribute("stroke", "#FF3D00");
-            });
           });
         }
       });
-    };
-    const closePopups = () => {
-      if (activePopup) {
-        activePopup.remove();
-        activePopup = null;
-      }
+      setDroneMarker(true);
     };
 
     addDroneMarkers(mockDroneData);
+
     return () => {
       map.off("click", closePopups);
     };
-  }, [map, isMobile]);
+  }, [
+    map,
+    isMobile,
+    showDroneDetail,
+    activePopup,
+    ...Object.values(isDroneSVGColor),
+    ...Object.values(isDroneHoverSVGColor),
+  ]);
+
+  const closePopups = () => {
+    if (activePopup) {
+      activePopup.remove();
+      setActivePopup(null);
+    }
+  };
+
+  useEffect(() => {
+    if (isAllPopupClosed) {
+      closePopups();
+      const elementToRemove = document.querySelector(".mapboxgl-popup");
+      if (elementToRemove) elementToRemove.remove();
+      setIsDroneSVGColor({});
+    }
+  }, [isAllPopupClosed]);
 
   const handleZoomIn = () => {
     if (map) {
@@ -575,6 +604,7 @@ const Radar = () => {
               <RadarModal
                 onClose={() => {
                   setShowDroneDetail(false);
+                  setIsAllPopupClosed(true);
                 }}
                 DroneDataDetailSelected={DroneDataDetailSelected}
               />

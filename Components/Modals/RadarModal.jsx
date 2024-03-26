@@ -1,10 +1,8 @@
 import React from "react";
 import { RectangleIcon,ClearIcon,DroneradarIcon,ChevronLeftIcon } from "../Icons";
 const RadarModal = ({onClose,DroneDataDetailSelected}) => {
-    console.log(DroneDataDetailSelected,"the data");
   return (
-    <div className="">
-      <div className="z-50  mt-4 md:ml-12  bg-white  md:bg-[#FFFFFFCC] no-scrollbar rounded-[30px] w-full h-full md:max-w-sm  md:max-h-[600px] max-w-[600px] px-[25px] md:py-[12px] fixed  md:rounded-[30px]  mx-auto overflow-x-auto overflow-y-auto flex flex-col gap-[15px] pb-[6rem] md:pb-0">
+      <div className="z-50  mt-4 md:ml-12  bg-white  md:bg-[#FFFFFFCC] no-scrollbar rounded-[30px] w-full h-full md:max-w-sm  md:max-h-[600px] max-w-[600px] px-[25px] md:py-[12px] fixed md:rounded-[30px]  mx-auto overflow-x-auto overflow-y-auto flex flex-col gap-[15px] pb-[6rem] md:pb-0 ">
         <div className=" flex justify-end items-center mt-4 md:mt-0 ">
           <div className=" w-[90%] flex justify-center  items-center  md:hidden">
             <RectangleIcon />
@@ -249,7 +247,7 @@ const RadarModal = ({onClose,DroneDataDetailSelected}) => {
                   </p>
                 </div>
                 <div className="w-[40%] ">
-                  <p className="flex text-[#838187] text-[10px] gap-[10px]">
+                  <p className="flex text-[#838187] text-[10px] gap-[10px] mb-[43px] md:mb-0">
                     Type <span className="text-[#222222]">0</span>
                   </p>
                 </div>
@@ -258,7 +256,6 @@ const RadarModal = ({onClose,DroneDataDetailSelected}) => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 export default RadarModal;
