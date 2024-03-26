@@ -60,8 +60,8 @@ const AlertMessage = () => {
         boxShadow: "0px 0px 40px 0px #0813391A",
       }}
     >
-      <span className="font-bold">Refer now!</span> First 500 users score a
-      one-time bonus. Act fast!
+      <span className="font-bold">Refer now!</span> Score a one-time bonus. Act
+      fast!
     </div>
   );
 };
