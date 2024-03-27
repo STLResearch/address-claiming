@@ -659,7 +659,7 @@ const Explorer = ({
       document.removeEventListener("click", handleClickOutside);
     };
   }, [address]);
-
+console.log(showOptions, "|||||||||||")
   return (
     <div
       className="z-20 m-[39px] hidden max-h-full max-w-[362px] flex-col items-center gap-[15px] rounded-[30px] bg-[#FFFFFFCC] px-[29px] py-[43px] md:flex"
@@ -1100,6 +1100,7 @@ const Airspaces = () => {
       });
 
       const calculateAveragePoints = (coordinates) => {
+        console.log(coordinates,"..............")
         let lat = 0,
           lng = 0,
           count = 0;
@@ -1113,10 +1114,11 @@ const Airspaces = () => {
       const handleCoordinates = async (e) => {
         const drawnFeatures = draw.getAll();
         if (drawnFeatures.features.length > 0) {
+          console.log( drawnFeatures.features[0].geometry.coordinates, "aaaaaaaaaaaaaaaaa")
           const coordinates = calculateAveragePoints(
             drawnFeatures.features[0].geometry.coordinates
           );
-          console.log(coordinates);
+          console.log(coordinates, "kkkkkkk");
           const longitude = coordinates[0];
           const latitude = coordinates[1];
           setCoordinates({ longitude, latitude });
@@ -1140,7 +1142,9 @@ const Airspaces = () => {
   }, [user]);
 
   useEffect(() => {
+    console.log(showOptions, "showOptions")
     if (!showOptions) setShowOptions(true);
+    console.log(address, "address")
     if (!address) return setShowOptions(false);
 
     let timeoutId;
@@ -1179,6 +1183,7 @@ const Airspaces = () => {
     const goToAddress = async () => {
       try {
         setIsLoading(true);
+        console.log(flyToAddress, "flyToAddress........")
 
         const mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
 
@@ -1194,6 +1199,7 @@ const Airspaces = () => {
         }
 
         const coordinates = data.features[0].geometry.coordinates;
+        console.log(coordinates, "from fluyy")
         const endPoint = [coordinates[0], coordinates[1]];
 
         setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
@@ -1250,10 +1256,13 @@ const Airspaces = () => {
   }, [showFailurePopUp]);
 
   const handleSelectAddress = (placeName, shouldFlyToAddress = true) => {
-    setAddress(placeName);
+    setAddress(placeName); 
+    console.log(placeName, "placeName")
     shouldFlyToAddress && setFlyToAddress(placeName);
+    console.log(">>>>>>>>>>>>>>>")
     setShowOptions(false);
   };
+
 
   const getPropertyInformation = () => {
     const {
@@ -1421,6 +1430,7 @@ const Airspaces = () => {
                   addresses={addresses}
                   setData={setData}
                   handleSelectAddress={handleSelectAddress}
+                  showOptions={showOptions}
                   onClaimAirspace={() => {
                     setShowClaimModal(true);
                   }}
