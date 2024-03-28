@@ -227,10 +227,7 @@ const DepositAndWithdraw = ({
 
   const notifySuccess = () =>
     toast.success("Success !. Your funds have been withdrawn successfully");
-  const notifyFail = () =>
-    toast.error(
-      "Withdrawal unsuccessful. plz try again or contact support at support@sky.trade"
-    );
+  
 
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
 
@@ -246,15 +243,23 @@ const DepositAndWithdraw = ({
         console.log(amount, "this is amount");
         console.log("amts=", parseFloat(tokenBalance), parseFloat(amount));
 
-        notifyFail();
+        toast.error(
+          "You do not have enough funds"
+        );
 
-        throw new Error("invalid transafer amount");
+        return
+
+
       }
       if (activeSection == 1 && parseFloat(userSolBalc) == 0) {
         console.log("amts=", parseFloat(tokenBalance), parseFloat(amount));
-        notifyFail();
+        toast.error(
+          "You do not have enough SOL"
+        );
 
-        throw new Error("NO sol");
+        return
+
+
       }
       //new PublicKey('fgdf')
 
@@ -359,13 +364,13 @@ const DepositAndWithdraw = ({
         }, 10000);
         notifySuccess();
       } catch (err) {
-        notifyFail();
+        toast.error(err.message);
       }
     } catch (error) {
       console.log("pub key ", error);
 
       setIsLoading(false);
-      notifyFail();
+      toast.error(err.message);
     }
   };
 
@@ -387,7 +392,8 @@ const DepositAndWithdraw = ({
   };
 
   const [selectedMethod, setSelectedMethod] = useState({
-    name: "",
+    icon: "/images/bank-note-arrow.svg",
+    name: "Native",
   });
   const [selectedOption, setSelectedOption] = useState("");
   const options = [
@@ -404,6 +410,9 @@ const DepositAndWithdraw = ({
       setCopy(false);
     }, 2000);
   };
+
+  const displayWalletId = walletId ? `${walletId.slice(0, 7)}...` : "";
+
   return (
     <div
       className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]"
@@ -565,8 +574,24 @@ const DepositAndWithdraw = ({
           <WarningIcon />
         </div>
         <div className="text-[#222222] text-[14px] font-normal w-full">
-          Funds may be irrecoverable if you enter an incorrect wallet ID. It is
-          crucial to ensure the accuracy of the provided ID to avoid any loss.
+          To complete your deposit, please use your crypto wallet to deposit
+          USDC to the following address:
+          <span style={{ color: "#0653EA", marginLeft: "4px" }}>
+            {displayWalletId}
+          </span>{" "}
+          Thank you
+        </div>
+      </div>
+      <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
+        <div className="w-6 h-6">
+          <WarningIcon />
+        </div>
+        <div className="text-[#222222] text-[14px] font-normal w-full">
+          Scan the QR Code with your Wallet, you can use Phantom Wallet,
+          Solflare, Exodus, Atomic Wallet, Coinbase Wallet, Metamask Span. Note
+          that funds may be irrecoverable if you enter an incorrect wallet ID.
+          It is crucial to ensure the accuracy of the provided ID to avoid any
+          loss.
         </div>
       </div>
     </div>

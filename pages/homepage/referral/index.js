@@ -21,6 +21,7 @@ import { useAuth } from "@/hooks/useAuth";
 import useOrigin from "@/hooks/useOrigin";
 
 import Head from "next/head";
+import { toast } from "react-toastify";
 
 const Item = ({ icon, title, text }) => {
   return (
@@ -60,8 +61,7 @@ const AlertMessage = () => {
         boxShadow: "0px 0px 40px 0px #0813391A",
       }}
     >
-      <span className="font-bold">Refer now!</span> First 500 users score a
-      one-time bonus. Act fast!
+      <span className="font-bold">Refer now!</span>score a one-time bonus. Act fast!
     </div>
   );
 };
@@ -176,47 +176,60 @@ const Share = ({
 
   const handleUpdateReferralCode = async () => {
     try {
+      if (temporalReferralCode.length !== 6) {
+        toast.error("Referral code must be six(6) characters")
+        return;
+      }
       const {
         ownedReferralCode: { id },
       } = user;
-      await updateReferral(blockchainAddress, temporalReferralCode);
-      updateProfile({
-        ownedReferralCode: {
-          id: id,
-          code: temporalReferralCode,
-          codeChanged: true,
-        },
-      });
+      const resp = await updateReferral(blockchainAddress, temporalReferralCode);
+      if (resp && resp.codeChanged) {
+        toast.success("Referral code updated successfully");
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        localStorage.setItem('user', JSON.stringify({
+          ...user,
+          ownedReferralCode: {
+            id: id,
+            code: temporalReferralCode,
+            codeChanged: true,
+          },
+        }));
+
+        window.location.reload()
+      }
+      else toast.error("Error when updating referral")
     } catch (error) {
       console.log(error);
+      toast.error(error.messsage)
       setTemporalReferralCode(referralCode);
     }
   };
 
   const shareOnFacebook = (textToShare) => {
-    console.log(encodeURIComponent(textToShare));
     window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(textToShare)}`,
+      `https://www.facebook.com/sharer/sharer.php?u=${textToShare}`,
       "_blank"
     );
   };
 
   const shareOnTwitter = (textToShare) => {
     window.open(
-      `https://twitter.com/intent/tweet?text=${encodeURIComponent(textToShare)}`,
+      `https://twitter.com/intent/tweet?text=${textToShare}`,
       "_blank"
     );
   };
 
   const shareOnLinkedIn = (textToShare) => {
     window.open(
-      `https://www.linkedin.com/shareArticle?url=${encodeURIComponent(textToShare)}`,
+      `https://www.linkedin.com/sharing/share-offsite/?url=${textToShare}`,
       "_blank"
     );
   };
 
   const canCopy = referralCode === temporalReferralCode;
-  const canChangeCode = !canCopy && temporalReferralCode.length === 6;
+  const canChangeCode = !canCopy && !user?.ownedReferralCode?.codeChanged;
 
   return (
     <div className="flex flex-wrap gap-8">
@@ -234,6 +247,7 @@ const Share = ({
             <div className="relative w-full md:w-[300px]">
               <input
                 value={temporalReferralCode}
+                readOnly={user?.ownedReferralCode?.codeChanged}
                 disabled={user?.ownedReferralCode?.codeChanged}
                 onChange={handleOnChange}
                 maxLength={6}

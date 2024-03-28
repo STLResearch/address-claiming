@@ -450,24 +450,24 @@ const Dashboard = () => {
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
-        <div className="w-full h-full flex flex-col">
+        <div className="w-full h-full flex flex-col overflow-scroll md:overflow-hidden">
           <PageHeader pageTitle={"Dashboard"} />
-          <section className="hidden md:flex relative w-full h-full pl-[53px] ">
-            <div className="flex justify-center items-align">
-              <div className="basis-[58%] flex flex-col gap-5 h-screen overflow-y-auto my-[-53px] py-[53px]">
-                <h2 className="font-medium text-xl text-black pt-10">
+          <section className=" md:flex relative w-full h-full md:pl-[53px]  ">
+            <div className="flex-col-reverse flex justify-center items-align  md:flex-row">
+              <div className="md:basis-[58%] md:flex md:flex-col md:gap-5 md:h-screen md:overflow-y-auto md:my-[-53px] md:py-[53px]">
+                <h2 className="font-medium hidden md:flex text-xl text-black pt-10">
                   Welcome on SkyTrade!
                 </h2>
-                <p className="font-normal text-base text-[#87878D]">
+                <p className="font-normal text-base text-[#87878D] hidden md:flex">
                   Claim your airspace on the dashboard to kickstart your passive
                   income journey. Don't forget to share the love—refer friends
                   using your code or link and watch your earnings grow. Welcome
                   to the community, where the future is yours to seize! 🌟🚀
                 </p>
 
-                <div className="flex justify-evenly gap-2">
+                <div className="flex flex-col md:flex-row justify-evenly gap-2">
                   <div className="flex flex-col gap-2">
-                    <div className="flex flex-col gap-[22px]">
+                    <div className="flex flex-col-reverse md:flex-col gap-[22px]">
                       <AvailableBalance
                         loading={balanceLoading}
                         balance={tokenBalance}
@@ -478,10 +478,10 @@ const Dashboard = () => {
                   <ReferralProgram />
                 </div>
               </div>
-              <div className="overflow-y-scroll  h-screen min-h-screen w-1/2 m-0 bg-black">
+              <div className="overflow-y-scroll w-full overflow-x-hidden h-screen md:min-h-screen md:w-1/2 m-0 ">
                 <Link
                   href={"/homepage/airspace2"}
-                  className="flex-1 flex flex-col items-center justify-between bg-cover bg-no-repeat bg-center -mt-[53px] -mr-[53px] pt-[42px] px-[18px] pb-[40px] h-full overflow-y-scroll"
+                  className="md:flex-1 flex flex-col items-center justify-between bg-cover bg-no-repeat bg-center -mt-[53px] md:-mr-[53px] pt-[42px] md:px-[18px] md:pb-[40px] h-full overflow-y-scroll"
                   style={{ backgroundImage: "url('/images/map-bg.png')" }}
                 >
                   <div
@@ -516,7 +516,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px]">
+                  <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px] mb-10 ">
                     Claim Airspace
                   </div>
                 </Link>

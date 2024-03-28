@@ -14,5 +14,5 @@ export default function useOrigin() {
         return null
     }
 
-    return origin.split("//")[1];
+    return origin;
 }

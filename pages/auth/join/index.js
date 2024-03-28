@@ -442,7 +442,6 @@ const Signup = () => {
               </label>
             )}
             <button
-              type="button"
               onClick={loginHandlerGood}
               className="w-full rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600"
             >
