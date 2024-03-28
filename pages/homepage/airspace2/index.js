@@ -241,10 +241,8 @@ const ClaimModal = ({
   }, []);
   const handleSellPrice = (e) => {
     let inputVal = e.target.value;
-    console.log(inputVal);
     let parsedVal = parseFloat(inputVal);
     if (parsedVal >= 0 && parsedVal != NaN) {
-      console.log("parseVal ", parseFloat(inputVal));
       setData((prev) => {
         return {
           ...prev,
@@ -1104,12 +1102,7 @@ const Airspaces = () => {
         setIsLoading(true);
         const drawnFeatures = draw.getAll();
         if (drawnFeatures.features.length > 0) {
-          console.log( drawnFeatures.features[0].geometry.coordinates, "aaaaaaaaaaaaaaaaa")
-
           const coordinates = drawnFeatures.features[0].geometry.coordinates[0][0]
-       
-          console.log(coordinates, "firstCoordinate");
-          console.log(coordinates, "kkkkkkk");
           const longitude = coordinates[0];
           const latitude = coordinates[1];
           setCoordinates({ longitude, latitude });
@@ -1180,7 +1173,6 @@ const Airspaces = () => {
     const goToAddress = async () => {
       try {
         setIsLoading(true);
-        console.log(flyToAddress, "flyToAddress........")
 
         const mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
 
@@ -1196,7 +1188,6 @@ const Airspaces = () => {
         }
 
         const coordinates = data.features[0].geometry.coordinates;
-        console.log(coordinates, "from fluyy")
         const endPoint = [coordinates[0], coordinates[1]];
 
         setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
@@ -1254,9 +1245,7 @@ const Airspaces = () => {
 
   const handleSelectAddress = (placeName, shouldFlyToAddress = true) => {
     setAddress(placeName); 
-    console.log(placeName, "placeName")
     shouldFlyToAddress && setFlyToAddress(placeName);
-    console.log(">>>>>>>>>>>>>>>")
     setShowOptions(false);
   };
 
@@ -1350,7 +1339,6 @@ const Airspaces = () => {
         ],
         weekDayRanges,
       });
-      console.log("add property results ,", addProperty);
       if (addProperty === undefined) {
         setShowFailurePopUp(true);
       } else {
