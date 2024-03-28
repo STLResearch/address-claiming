@@ -1487,18 +1487,18 @@ const Airspaces = () => {
                 <Slider />
                 <PopUp isVisible={showSuccessPopUp} />
                 <FailurePopUp isVisible={showFailurePopUp} />
-                {!showSuccessPopUp && (
+                {!showSuccessPopUp && !isMobile &&(
                   <div className="relative w-full h-full  ">
                     <div
-                      className="absolute top-0 right-0 z-20 "
+                      className=" absolute top-0 right-0  bg-[#FFFFFFCC]  rounded-[8px] z-20 m-4"
                       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
                     >
-                      <div className="flex ">
+                      <div className="flex p-4 gap-[2rem] items-center">
                         <p className="text-[14px] font-[400]">
                           Location is not exact?
                         </p>
                         <button
-                          className={`rounded-[8px] ${isDrawMode && "bg-[#0000FF]"} hover:bg-[#0000FF] group `}
+                          className={`px-2 py-2 rounded-[8px] ${isDrawMode && "bg-[#0000FF]"} hover:bg-[#0000FF] group `}
                           onClick={() => {
                             drawTool?.changeMode("draw_polygon");
                             
@@ -1521,7 +1521,7 @@ const Airspaces = () => {
                         </button>
 
                         <button
-                          className="   rounded-[8px] hover:bg-[#0000FF]  group "
+                          className="  px-2 py-2 rounded-[8px] hover:bg-[#0000FF]  group "
                           onClick={() => {
                             deletePolygon();
                           }}
