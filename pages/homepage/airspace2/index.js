@@ -658,31 +658,10 @@ const Explorer = ({
   showOptions,
   handleSelectAddress,
   onClaimAirspace,
-  flyToAddress,
   setData,
+  isDrawMode
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
-  const cardRef = useRef(null);
-  useEffect(() => {
-    if (!address) return;
-    function handleClickOutside(event) {
-      console.log("czcdcsdcsd");
-      console.log(address);
-      console.log(cardRef.current);
-      if (cardRef.current && !cardRef.current.contains(event.target)) {
-        if (address) {
-          setData((prev) => ({ ...prev, address }));
-          handleSelectAddress(address, false);
-        }
-      }
-    }
-
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [address]);
-console.log(showOptions, "|||||||||||")
   return (
     <div
       className="z-20 m-[39px] hidden max-h-full max-w-[362px] flex-col items-center gap-[15px] rounded-[30px] bg-[#FFFFFFCC] px-[29px] py-[43px] md:flex"
@@ -726,7 +705,6 @@ console.log(showOptions, "|||||||||||")
           <MagnifyingGlassIcon />
         </div>
         {showOptions && (
-          <div ref={cardRef}>
             <div className="absolute left-0 top-[55px] w-full flex-col bg-white">
               {addresses.map((item) => {
                 return (
@@ -744,11 +722,9 @@ console.log(showOptions, "|||||||||||")
                 );
               })}
             </div>
-          </div>
         )}
       </div>
-      {flyToAddress ||
-        (address && (
+      {(address && (
           <div
             onClick={onClaimAirspace}
             className="w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
@@ -1123,25 +1099,16 @@ const Airspaces = () => {
         });
       });
 
-      const calculateAveragePoints = (coordinates) => {
-        console.log(coordinates,"..............")
-        let lat = 0,
-          lng = 0,
-          count = 0;
-        coordinates[0].forEach((c) => {
-          lng += c[0];
-          lat += c[1];
-          count++;
-        });
-        return [lng / count, lat / count];
-      };
       const handleCoordinates = async (e) => {
+        setIsDrawMode(true);
+        setIsLoading(true);
         const drawnFeatures = draw.getAll();
         if (drawnFeatures.features.length > 0) {
           console.log( drawnFeatures.features[0].geometry.coordinates, "aaaaaaaaaaaaaaaaa")
-          const coordinates = calculateAveragePoints(
-            drawnFeatures.features[0].geometry.coordinates
-          );
+
+          const coordinates = drawnFeatures.features[0].geometry.coordinates[0][0]
+       
+          console.log(coordinates, "firstCoordinate");
           console.log(coordinates, "kkkkkkk");
           const longitude = coordinates[0];
           const latitude = coordinates[1];
@@ -1152,13 +1119,15 @@ const Airspaces = () => {
           const data = await response.json();
           if (data.features && data.features.length > 0) {
             setAddress(data.features[0].place_name);
+            setData((prev) => {return {...prev, address: data.features[0].place_name}})
+            setShowClaimModal(true);
           }
-          setIsDrawMode(false);
         }
       };
 
       newMap.on("draw.create", handleCoordinates);
       newMap.on("draw.update", handleCoordinates);
+
       setMap(newMap);
       flyToUserIpAddress(newMap);
     };
@@ -1166,10 +1135,13 @@ const Airspaces = () => {
   }, [user]);
 
   useEffect(() => {
-    console.log(showOptions, "showOptions")
+    if(isDrawMode){
+      setIsDrawMode(false)
+      return
+    }
     if (!showOptions) setShowOptions(true);
-    console.log(address, "address")
     if (!address) return setShowOptions(false);
+
 
     let timeoutId;
 
@@ -1190,6 +1162,7 @@ const Airspaces = () => {
           } else {
             setAddresses([]);
           }
+          setIsDrawMode(false)
         } catch (error) {
           console.log(error);
         }
@@ -1507,6 +1480,7 @@ const Airspaces = () => {
                     setShowClaimModal(true);
                     setIsLoading(true);
                   }}
+                  isDrawMode={isDrawMode}
                   
                 />
 
@@ -1527,7 +1501,7 @@ const Airspaces = () => {
                           className={`w-[20%] flex justify-center   rounded-[8px] ${isDrawMode && "bg-[#0000FF]"} hover:bg-[#0000FF] px-[6px] py-[5px] group `}
                           onClick={() => {
                             drawTool?.changeMode("draw_polygon");
-                            setIsDrawMode(true);
+                            
                           }}
                         >
                           <div className="flex gap-2">
