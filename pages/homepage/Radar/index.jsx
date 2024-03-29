@@ -1,5 +1,4 @@
 import { Fragment, useState, useEffect } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import ReactDOMServer from "react-dom/server";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
@@ -24,6 +23,7 @@ import Head from "next/head";
 import RadarTooltip from "@/Components/Tooltip/RadarTooltip";
 import DroneMobileBottomBar from "@/Components/Modals/DroneMobileBottomBar";
 import RadarModal from "@/Components/Modals/RadarModal";
+import io from "socket.io-client";
 const Explorer = ({
   address,
   setAddress,
@@ -179,21 +179,21 @@ const Radar = () => {
     useState(false);
   const [showDroneDetail, setShowDroneDetail] = useState(false);
   const [DroneDataDetailSelected, setDroneDataSelected] = useState(null);
-  const [activePopup, setActivePopup] = useState(null);
   const [isAllPopupClosed, setIsAllPopupClosed] = useState(false);
-  const [activeMarker, setActiveMarker] = useState(null);
   const [isDroneSVGColor, setIsDroneSVGColor] = useState({});
   const [isDroneHoverSVGColor, setIsDroneHoverSVGColor] = useState({});
   const [droneMarker, setDroneMarker] = useState();
   const [droneMarkerArray, setDroneMarkerArray] = useState({});
+  const [droneSocketDatas, setSocketDatas] = useState();
+  const [droneId, setDroneId] = useState();
+  const [boundingBox, setBoundingBox] = useState({
+    minLatitude: 17.555484669042485,
+    maxLatitude: 55.242651682301556,
+    minLongitude: -41.90240522562678,
+    maxLongitude: 38.82041496478121,
+  });
 
-  const mockDroneData = [
-    { id: 1, name: "Drone 1", latitude: 41.386405, longitude: 2.170048 },
-    { id: 2, name: "Drone 2", latitude: 40.416775, longitude: -3.70379 },
-    { id: 3, name: "Drone 3", latitude: 37.389092, longitude: -5.984459 },
-    { id: 4, name: "Drone 4", latitude: 43.362343, longitude: -8.41154 },
-    { id: 5, name: "Drone 5", latitude: 28.123545, longitude: -15.436257 },
-  ];
+  const SOCKET_SERVER_URL = process.env.NEXT_PUBLIC_SOCKET_SERVER_URL;
 
   useEffect(() => {
     setShowMobileMap(isMobile);
@@ -207,7 +207,7 @@ const Radar = () => {
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
         center: [0, 40],
-        zoom: 3.5,
+        zoom: 6,
       });
 
       newMap.addControl(new mapboxgl.NavigationControl());
@@ -220,6 +220,73 @@ const Radar = () => {
     };
     createMap();
   }, [map]);
+  useEffect(() => {
+    if (!map) return;
+    map.on("moveend", function () {
+      var bounds = map.getBounds();
+      let boundingBoxTemp = {
+        minLatitude: bounds.getSouth(),
+        maxLatitude: bounds.getNorth(),
+        minLongitude: bounds.getWest(),
+        maxLongitude: bounds.getEast(),
+      };
+      setBoundingBox(boundingBoxTemp);
+    });
+    const socket = io(SOCKET_SERVER_URL);
+    socket.on("boundingBoxResponse", (data) => {
+      setSocketDatas(data);
+    });
+
+    socket.on("droneIdResponse", (data) => {
+      setDroneDataSelected(data[0]);
+    });
+    if (boundingBox != undefined) {
+      socket.emit("sendMessageByBoundingBox", boundingBox);
+    }
+    if (droneId) {
+      socket.emit("sendMessageByDroneId", droneId);
+    }
+    return () => {
+      socket.disconnect();
+    };
+  }, [map, boundingBox, droneId]);
+
+  useEffect(() => {
+    if (DroneDataDetailSelected) {
+      const dronePath = DroneDataDetailSelected?.remoteData?.flightPath;
+      if (map.getSource("route")) {
+        map.removeLayer("route");
+        map.removeSource("route");
+      }
+
+      if (!map.getSource("route") && dronePath) {
+        map.addSource("route", {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              type: "LineString",
+              coordinates: dronePath,
+            },
+          },
+        });
+        map.addLayer({
+          id: "route",
+          type: "line",
+          source: "route",
+          layout: {
+            "line-join": "round",
+            "line-cap": "round",
+          },
+          paint: {
+            "line-color": "#F43E0D",
+            "line-width": 1.5,
+          },
+        });
+      }
+    }
+  }, [DroneDataDetailSelected]);
 
   function setSatelliteView() {
     if (map && map?.getStyle().name === "Mapbox Streets") {
@@ -229,15 +296,14 @@ const Radar = () => {
     }
   }
 
-  let activePopupHover = null;
-  let activeMarkerHover = null;
-
   useEffect(() => {
     if (!map) return;
 
     const addDroneMarkers = (droneData) => {
-      droneData.forEach((data, index) => {
-        const { id, name, latitude, longitude } = data;
+      droneData?.forEach((data, index) => {
+        const { id } = data;
+        const latitude = data?.remoteData?.location?.latitude;
+        const longitude = data?.remoteData?.location?.longitude;
         const markerElement = document.createElement("div");
         markerElement.classList.add(`drone-marker-${index}`);
 
@@ -247,12 +313,12 @@ const Radar = () => {
             ? "red"
             : "blue";
         markerElement.innerHTML = ReactDOMServer.renderToString(
-          <DroneSVGComponent droneColor={droneColor} />
+          <DroneSVGComponent droneColor={droneColor} direction={35} />
         );
 
         let marker;
 
-        if (!droneMarker) {
+        if (!droneMarker && latitude && longitude) {
           marker = new mapboxgl.Marker({
             element: markerElement,
             draggable: false,
@@ -280,32 +346,38 @@ const Radar = () => {
         }
 
         const showPopup = () => {
-          const elementToRemove = document.querySelector(".mapboxgl-popup");
+          const elementToRemove = document.querySelector(
+            ".popup-clicked-class"
+          );
           if (elementToRemove) elementToRemove.remove();
 
           const tooltipContent = ReactDOMServer.renderToString(
-            <RadarTooltip content={name} />
+            <RadarTooltip content={id} />
           );
-          const activePopup1 = new mapboxgl.Popup({ closeOnClick: false })
+          new mapboxgl.Popup({
+            closeOnClick: false,
+            offset: [0, 15],
+            className: "popup-clicked-class",
+          })
             .setLngLat(marker.getLngLat())
             .setHTML(tooltipContent)
             .addTo(map);
-
-          setActivePopup(activePopup1);
         };
 
         if (!isMobile) {
           const handleMouseEnter = () => {
             const tooltipContent = ReactDOMServer.renderToString(
-              <RadarTooltip content={name} />
+              <RadarTooltip content={id} />
             );
-            if (activePopupHover) {
-              activePopupHover.remove();
-              activePopupHover = null;
-              const elementToRemove = document.querySelector(".mapboxgl-popup");
-              if (elementToRemove) elementToRemove.remove();
-            }
-            activePopupHover = new mapboxgl.Popup({ closeOnClick: false })
+            const elementToRemove = document.querySelector(
+              ".popup-hovered-class"
+            );
+            if (elementToRemove) elementToRemove.remove();
+            new mapboxgl.Popup({
+              closeOnClick: false,
+              className: "popup-hovered-class",
+              offset: [0, 15],
+            })
               .setLngLat(marker.getLngLat())
               .setHTML(tooltipContent)
               .addTo(map);
@@ -313,21 +385,18 @@ const Radar = () => {
           };
 
           const handleMouseLeave = () => {
-            if (activePopupHover) {
-              activePopupHover.remove();
-              activePopupHover = null;
-              const elementToRemove = document.querySelector(".mapboxgl-popup");
-              if (elementToRemove) elementToRemove.remove();
-            }
+            const elementToRemove = document.querySelector(
+              ".popup-hovered-class"
+            );
+            if (elementToRemove) elementToRemove.remove();
             setIsDroneHoverSVGColor({ [index]: false });
           };
 
           const handleClick = () => {
             setIsDroneSVGColor({ [index]: true });
             setIsAllPopupClosed(false);
-            setActiveMarker(true);
             showPopup();
-            setDroneDataSelected(data);
+            setDroneId(data?.id);
             setShowDroneDetail(true);
           };
 
@@ -342,7 +411,7 @@ const Radar = () => {
             setIsAllPopupClosed(false);
             setIsDroneSVGColor({ [index]: true });
             showPopup();
-            setDroneDataSelected(data);
+            setDroneId(data?.id);
             setMobileBottomDroneDetailVisible(true);
           });
         }
@@ -350,7 +419,7 @@ const Radar = () => {
       setDroneMarker(true);
     };
 
-    addDroneMarkers(mockDroneData);
+    addDroneMarkers(droneSocketDatas);
 
     return () => {
       map.off("click", closePopups);
@@ -359,24 +428,29 @@ const Radar = () => {
     map,
     isMobile,
     showDroneDetail,
-    activePopup,
     ...Object.values(isDroneSVGColor),
     ...Object.values(isDroneHoverSVGColor),
+    droneSocketDatas,
   ]);
 
   const closePopups = () => {
-    if (activePopup) {
-      activePopup.remove();
-      setActivePopup(null);
-    }
+    const elementToRemove = document.querySelector(".popup-clicked-class");
+    if (elementToRemove) elementToRemove.remove();
+    const elementHoverToRemove = document.querySelector(".popup-hovered-class");
+    if (elementHoverToRemove) elementHoverToRemove.remove();
   };
 
   useEffect(() => {
     if (isAllPopupClosed) {
       closePopups();
-      const elementToRemove = document.querySelector(".mapboxgl-popup");
-      if (elementToRemove) elementToRemove.remove();
       setIsDroneSVGColor({});
+      setIsDroneHoverSVGColor({});
+      setDroneDataSelected(null);
+      setDroneId(null);
+      if (map && map.getSource("route")) {
+        map.removeLayer("route");
+        map.removeSource("route");
+      }
     }
   }, [isAllPopupClosed]);
 
@@ -384,14 +458,12 @@ const Radar = () => {
     if (map) {
       const currentZoom = map.getZoom();
       map.setZoom(currentZoom + 1);
-      console.log(currentZoom, "map.getZoom");
     }
   };
   const handleZoomOut = () => {
     if (map) {
       const currentZoom = map.getZoom();
       map.setZoom(currentZoom - 1);
-      console.log(currentZoom, "map.getZoom");
     }
   };
 
@@ -483,7 +555,6 @@ const Radar = () => {
 
   useEffect(() => {
     if (flyToAddress === address) setShowOptions(false);
-    // if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
   }, [flyToAddress, address]);
 
   const handleSelectAddress = (placeName) => {
