@@ -45,6 +45,7 @@ import React from "react";
 import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
+import { getPriorityFeeIx } from "@/hooks/utils";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -227,7 +228,6 @@ const DepositAndWithdraw = ({
 
   const notifySuccess = () =>
     toast.success("Success !. Your funds have been withdrawn successfully");
-  
 
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
 
@@ -243,23 +243,15 @@ const DepositAndWithdraw = ({
         console.log(amount, "this is amount");
         console.log("amts=", parseFloat(tokenBalance), parseFloat(amount));
 
-        toast.error(
-          "You do not have enough funds"
-        );
+        toast.error("You do not have enough funds");
 
-        return
-
-
+        return;
       }
       if (activeSection == 1 && parseFloat(userSolBalc) == 0) {
         console.log("amts=", parseFloat(tokenBalance), parseFloat(amount));
-        toast.error(
-          "You do not have enough SOL"
-        );
+        toast.error("You do not have enough SOL");
 
-        return
-
-
+        return;
       }
       //new PublicKey('fgdf')
 
@@ -317,6 +309,11 @@ const DepositAndWithdraw = ({
         new PublicKey(user.blockchainAddress)
       );
       let ix = [];
+
+      let priorityIx = await getPriorityFeeIx(connection);
+
+      ix.push(priorityIx);
+
       try {
         await getAccount(connection, recipientUSDCAddr);
       } catch (error) {
@@ -971,8 +968,6 @@ const Funds = () => {
         });
     }
   }, [user, tokenBalance, Solbalance]);
-
-
 
   useEffect(() => {
     if (transactionHistory) {
