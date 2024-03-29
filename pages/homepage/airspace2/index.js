@@ -656,8 +656,7 @@ const Explorer = ({
   showOptions,
   handleSelectAddress,
   onClaimAirspace,
-  setData,
-  isDrawMode
+  flyToAddress
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   return (
@@ -722,7 +721,7 @@ const Explorer = ({
             </div>
         )}
       </div>
-      {(address && (
+      {flyToAddress && (
           <div
             onClick={onClaimAirspace}
             className="w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
@@ -730,7 +729,7 @@ const Explorer = ({
          >
             Claim Airspace
           </div>
-        ))}
+        )}
     </div>
   );
 };
@@ -1155,7 +1154,6 @@ const Airspaces = () => {
           } else {
             setAddresses([]);
           }
-          setIsDrawMode(false)
         } catch (error) {
           console.log(error);
         }
@@ -1243,9 +1241,9 @@ const Airspaces = () => {
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
 
-  const handleSelectAddress = (placeName, shouldFlyToAddress = true) => {
+  const handleSelectAddress = (placeName) => {
     setAddress(placeName); 
-    shouldFlyToAddress && setFlyToAddress(placeName);
+    setFlyToAddress(placeName);
     setShowOptions(false);
   };
 
@@ -1467,9 +1465,7 @@ const Airspaces = () => {
                   onClaimAirspace={() => {
                     setShowClaimModal(true);
                     setIsLoading(true);
-                  }}
-                  isDrawMode={isDrawMode}
-                  
+                  }} 
                 />
 
                 <Slider />
