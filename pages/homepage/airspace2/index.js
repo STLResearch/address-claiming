@@ -1102,7 +1102,7 @@ const Airspaces = () => {
         const drawnFeatures = draw.getAll();
         if (drawnFeatures.features.length > 0) {
           const coordinates = drawnFeatures.features[0].geometry.coordinates[0][0]
-          console.log('Polygon vertices:', coordinates); 
+          console.log('Polygon vertexes:', coordinates); 
          let el = document.createElement("div");
          el.id = "markerWithExternalCss";
           new maplibregl.Marker(el).setLngLat(coordinates).addTo(newMap);
