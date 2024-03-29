@@ -227,10 +227,7 @@ const DepositAndWithdraw = ({
 
   const notifySuccess = () =>
     toast.success("Success !. Your funds have been withdrawn successfully");
-  const notifyFail = () =>
-    toast.error(
-      "Withdrawal unsuccessful. plz try again or contact support at support@sky.trade"
-    );
+  
 
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
 
@@ -246,15 +243,23 @@ const DepositAndWithdraw = ({
         console.log(amount, "this is amount");
         console.log("amts=", parseFloat(tokenBalance), parseFloat(amount));
 
-        notifyFail();
+        toast.error(
+          "You do not have enough funds"
+        );
 
-        throw new Error("invalid transafer amount");
+        return
+
+
       }
       if (activeSection == 1 && parseFloat(userSolBalc) == 0) {
         console.log("amts=", parseFloat(tokenBalance), parseFloat(amount));
-        notifyFail();
+        toast.error(
+          "You do not have enough SOL"
+        );
 
-        throw new Error("NO sol");
+        return
+
+
       }
       //new PublicKey('fgdf')
 
@@ -359,13 +364,13 @@ const DepositAndWithdraw = ({
         }, 10000);
         notifySuccess();
       } catch (err) {
-        notifyFail();
+        toast.error(err.message);
       }
     } catch (error) {
       console.log("pub key ", error);
 
       setIsLoading(false);
-      notifyFail();
+      toast.error(err.message);
     }
   };
 
@@ -387,7 +392,8 @@ const DepositAndWithdraw = ({
   };
 
   const [selectedMethod, setSelectedMethod] = useState({
-    name: "",
+    icon: "/images/bank-note-arrow.svg",
+    name: "Native",
   });
   const [selectedOption, setSelectedOption] = useState("");
   const options = [
@@ -964,7 +970,9 @@ const Funds = () => {
           console.error(error);
         });
     }
-  }, [user]);
+  }, [user, tokenBalance, Solbalance]);
+
+
 
   useEffect(() => {
     if (transactionHistory) {

@@ -61,8 +61,7 @@ const AlertMessage = () => {
         boxShadow: "0px 0px 40px 0px #0813391A",
       }}
     >
-      <span className="font-bold">Refer now!</span> First 500 users score a
-      one-time bonus. Act fast!
+      <span className="font-bold">Refer now!</span>score a one-time bonus. Act fast!
     </div>
   );
 };
@@ -209,23 +208,22 @@ const Share = ({
   };
 
   const shareOnFacebook = (textToShare) => {
-    console.log(encodeURIComponent(textToShare));
     window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(textToShare)}`,
+      `https://www.facebook.com/sharer/sharer.php?u=${textToShare}`,
       "_blank"
     );
   };
 
   const shareOnTwitter = (textToShare) => {
     window.open(
-      `https://twitter.com/intent/tweet?text=${encodeURIComponent(textToShare)}`,
+      `https://twitter.com/intent/tweet?text=${textToShare}`,
       "_blank"
     );
   };
 
   const shareOnLinkedIn = (textToShare) => {
     window.open(
-      `https://www.linkedin.com/shareArticle?url=${encodeURIComponent(textToShare)}`,
+      `https://www.linkedin.com/sharing/share-offsite/?url=${textToShare}`,
       "_blank"
     );
   };
