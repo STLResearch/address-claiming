@@ -193,10 +193,7 @@ useEffect(()=>{
     paginateAirspaces()
 }, [pageNumber, rentalPageNumber, unverifiedPageNumber])
 
-// console.log({verifiedAirspaces})
-// console.log({rentedAirspaces})
-console.log({unverifiedAirspaces})
-console.log({allUnverifiedAirspaces})
+
 
 
     return (
