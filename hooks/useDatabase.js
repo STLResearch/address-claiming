@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useSignature } from "./useSignature"
 
 const useDatabase = () => {
@@ -8,7 +9,7 @@ const useDatabase = () => {
             const { sign, sign_nonce, sign_issue_at, sign_address } =
                 await signatureObject(blockchainAddress);
             const response = await fetch(`/api/proxy?${Date.now()}`, {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     URI: `/referral-code/referral-code/${id}`,
@@ -312,38 +313,60 @@ const useDatabase = () => {
         }
     }
 
-    const getPropertiesByUserAddress = async (blockchainAddress,type) => {
-        try {
-            const { sign, sign_nonce, sign_issue_at, sign_address } =
-                await signatureObject(blockchainAddress);
-            const response = await fetch(`/api/proxy?${Date.now()}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    URI: `/private/airspace-rental/retrieve-tokens`,
-                    sign,
-                    time: sign_issue_at,
-                    nonce: sign_nonce,
-                    address: sign_address,
-                },
-                body:JSON.stringify({
-                    callerAddress:blockchainAddress,
-                    type
-                })
-            })
+    const getPropertiesByUserAddress = async (callerAddress, type, limit, afterAssetId)=>{
 
-            console.log("-----------------------Response----------",response)
+    try {
+        const { sign, sign_nonce, sign_issue_at, sign_address } =
+                await signatureObject(callerAddress);
+        const response = await axios.get(
+          `/api/private/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`,
+          {
+            headers: {
+                'Content-Type': 'application/json',
+                sign,
+                time: sign_issue_at,
+                nonce: sign_nonce,
+                address: sign_address,
+            },
+            
+          }
+        );
 
-            if (!response.ok || response.statusCode === 500) {
-                throw new Error("Error when getting properties by user.");
-            }
+        console.log({response})
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+}
 
-            return response.json();
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
-    }
+
+const getUnverifiedAirspaces = async (callerAddress, limit, page)=>{
+
+    try {
+        const { sign, sign_nonce, sign_issue_at, sign_address } =
+                await signatureObject(callerAddress);
+        const response = await axios.get(
+          `/api/private/airspace-rental/retrieve-unverified-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`,
+          {
+            headers: {
+                'Content-Type': 'application/json',
+                sign,
+                time: sign_issue_at,
+                nonce: sign_nonce,
+                address: sign_address,
+            },
+            
+          }
+        );
+
+        console.log({response})
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+}
 
     const getRents = async (blockchainAddress) => {
         try {
@@ -478,7 +501,7 @@ const useDatabase = () => {
         }
     }
 
-    return { getReferralCodeById,retrieveReferralData,getReferralByCode, updateReferral, createUser, getUser, updateUser, deleteUser, createProperty, deleteProperty, getPropertyById, updateProperty, getPropertiesByUserAddress, getRents, getRentById, updateRent, createRent, deleteRent }
+    return { getReferralCodeById,retrieveReferralData,getReferralByCode,getUnverifiedAirspaces, updateReferral, createUser, getUser, updateUser, deleteUser, createProperty, deleteProperty, getPropertyById, updateProperty, getPropertiesByUserAddress, getRents, getRentById, updateRent, createRent, deleteRent }
 }
 
 export default useDatabase;

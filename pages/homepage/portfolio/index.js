@@ -9,6 +9,8 @@ import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
+import { RxCaretRight, RxCaretLeft } from "react-icons/rx";
+import { PortfolioList } from "@/Components/MyAirspaces";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -57,23 +59,7 @@ const Modal = ({ airspace: { title, address, id, expirationDate, currentPrice },
     )
 }
 
-const PortfolioItem = ({ airspaceName, tags, type, selectAirspace }) => {
-    return (
-        <div onClick={selectAirspace} className="flex p-[11px] items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
-            <div className="flex items-center gap-[10px] flex-1">
-                <div className="w-6 h-6"><LocationPointIcon /></div>
-                <p className="font-normal text-[#222222] text-[14px] flex-1">{airspaceName}</p>
-            </div>
-            <div className="flex gap-[10px] items-center">
-                {!!tags[0] && <div className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">{type === "land" ? "On Claim": "On Rent"}</div>}
-                {!!tags[1] && <div className="bg-[#E7E6E6] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">On Sale</div>}
-                {!!tags[2] && <div className="bg-[#222222] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">No Fly Zone</div>}
-                {!!tags[3] && <div className="bg-[#E04F64] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">Review Offer</div>}
-                <div className="w-[7px] h-[14px]"><ChevronRightIcon /></div>
-            </div>
-        </div>
-    )
-}
+
 
 const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
     return (
@@ -92,23 +78,34 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
         </div>
     )
 }
-const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
-    console.log("all airspacesz ",airspacesList)
-    return (
-        <div className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
-            <h2 className="font-medium text-xl text-[#222222] text-center">{title}</h2>
-            <div className="flex flex-col gap-[15px]">
-                {airspacesList.map(({address,expirationDate,name, type}, index) => (<PortfolioItem airspaceName={address} key={index} tags={[true, false,false,  false]} type={type} selectAirspace={() => selectAirspace(index)} />))}
-            </div>
-        </div>
-    )
-}
+
 
 const PortfolioListMobile = ({ airspacesList, selectAirspace }) => {
+
+    const [pageNumber, setPageNumber] = useState(0)
+
+    const handleNextPage = () =>{
+        setPageNumber(prevPageNumber => prevPageNumber + 1);
+    };
+
+    const handlePrevPage = () =>{
+        if (pageNumber === 0) return;
+        setPageNumber(prevPageNumber => prevPageNumber - 1);
+    };
+
+
     return (
-        <div className="flex flex-col gap-[11px] w-full">
-            {airspacesList.map(({ title, address, noFlyZone, type }, index) => (<PortfolioItemMobile airspaceName={title || address} tags={[false, false, noFlyZone, false]} type={type} selectAirspace={() => selectAirspace(index)} />))}
-        </div>
+        <div className="flex flex-col gap-4"><div className="flex flex-col gap-[11px] w-full">
+        {airspacesList.map(({ title, address, noFlyZone, type }, index) => (<PortfolioItemMobile airspaceName={title || address} tags={[false, false, noFlyZone, false]} type={type} selectAirspace={() => selectAirspace(index)} />))}
+    </div>
+
+<div className="flex flex-col w-full text-gray-600">
+<div className="flex self-end items-center gap-2 w-[5rem]">
+<div onClick={handlePrevPage} className="p-1 border rounded-lg border-gray-200"><RxCaretLeft/></div>
+<div>{pageNumber}</div>
+<div  onClick={handleNextPage} className="p-1 cursor-pointer border rounded-lg border-gray-200"><RxCaretRight /></div>
+</div>
+</div></div>
     )
 }
 
@@ -134,6 +131,8 @@ const Portfolio = () => {
     const [selectedAirspace, setSelectedAirspace] = useState(null);
     const { getPropertiesByUserAddress } = useDatabase();
     const [myAirspaces, setMyAirspaces] = useState([])
+    const [rentedAirspaces, setRentedAirspaces] = useState([])
+    const [claimedAirspaces, setClaimedAirspaces] = useState([])
     const { user } = useAuth()
 
 
@@ -144,22 +143,42 @@ const Portfolio = () => {
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                const rentedAirspacePromise = getPropertiesByUserAddress(user.blockchainAddress, 'rentalToken');
-                const claimedAirspacePromise = getPropertiesByUserAddress(user.blockchainAddress, 'landToken');
+                // const rentedAirspacePromise = await getPropertiesByUserAddress(user.blockchainAddress, 'rentalToken');
+                // const claimedAirspacePromise = await getPropertiesByUserAddress(user.blockchainAddress, 'landToken');
 
-                const [rentedAirspaceResp, claimedAirspaceResp] = await Promise.all([
-                    rentedAirspacePromise,
-                    claimedAirspacePromise
-                ]);
+                // const [rentedAirspaceResp, claimedAirspaceResp] = await Promise.all([
+                //     rentedAirspacePromise,
+                //     claimedAirspacePromise
+                // ]);
 
-                setMyAirspaces(
-                    [...rentedAirspaceResp?.items, ...claimedAirspaceResp?.items].map(item => ({
-                        address: item.address,
-                        name: item.id,
-                        type: item.type,
-                        expirationDate: item.type === "land" ? "" : new Date(item.metadata.endTime).toString()
-                    }))
-                )
+
+                // setRentedAirspaces(
+                //     [...rentedAirspaceResp?.items].map(item => ({
+                //         address: item.address,
+                //         name: item.id,
+                //         type: item.type,
+                //         expirationDate: item.type === "land" ? "" : new Date(item.metadata.endTime).toString()
+                //     }))
+                // )
+
+                // setClaimedAirspaces(
+                //     [...claimedAirspaceResp?.items].map(item => ({
+                //         address: item.address,
+                //         name: item.id,
+                //         type: item.type,
+                //         expirationDate: item.type === "land" ? "" : new Date(item.metadata.endTime).toString()
+                //     }))
+                
+                // )
+
+                // setMyAirspaces(
+                //     [...rentedAirspaceResp?.items, ...claimedAirspaceResp?.items].map(item => ({
+                //         address: item.address,
+                //         name: item.id,
+                //         type: item.type,
+                //         expirationDate: item.type === "land" ? "" : new Date(item.metadata.endTime).toString()
+                //     }))
+                // )
             } catch (error) {
                 console.log(error);
             } finally {
@@ -168,6 +187,9 @@ const Portfolio = () => {
         };
         fetchData();
     }, [user?.blockchainAddress]);
+
+    console.log({claimedAirspaces})
+    console.log({rentedAirspaces})
 
 
     const onCloseModal = () => {
@@ -191,7 +213,7 @@ const Portfolio = () => {
                     {selectedAirspace !== null && <Modal airspace={myAirspaces[selectedAirspace]} onCloseModal={onCloseModal} />}
                     <PageHeader pageTitle={'Portfolio'} username={'John Doe'} />
                     <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
-                        <PortfolioList airspacesList={myAirspaces} title={'My Airspaces'} selectAirspace={selectAirspace} />
+                        <PortfolioList address={user?.blockchainAddress} claimedAirspaces={claimedAirspaces} rentedAirspaces={rentedAirspaces} airspacesList={myAirspaces} title={'My Airspaces'} selectAirspace={selectAirspace} />
                     </section>
                     <section className="relative w-full h-full flex flex-wrap gap-6 py-[20px] md:hidden overflow-y-auto mb-[79px]">
                         <PortfolioListMobile airspacesList={myAirspaces} title={'My Airspaces'} selectAirspace={selectAirspace} />
