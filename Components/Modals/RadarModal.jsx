@@ -6,10 +6,22 @@ import {
   ChevronLeftIcon,
 } from "../Icons";
 const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
-  let truncatedId =
-    DroneDataDetailSelected?.id?.length > 10
-      ? DroneDataDetailSelected?.id.substring(0, 10) + "..."
-      : DroneDataDetailSelected?.id;
+  function formatTimeAgoFromMilliseconds(timestamp) {
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - timestamp;
+    const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+    const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
+    const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes} ago`;
+    return formattedTime;
+  }
+  function convertToTimestampDate(seconds) {
+    const milliseconds = seconds * 1000;
+    const date = new Date(milliseconds);
+    const utcMonth = ("0" + (date.getUTCMonth() + 1)).slice(-2);
+    const utcDay = ("0" + date.getUTCDate()).slice(-2);
+    const formattedDate = `${utcMonth}/${utcDay}`;
+    return formattedDate;
+  }
   return (
     <div className="z-50  mt-4 md:ml-12  bg-white  md:bg-[#FFFFFFCC] no-scrollbar rounded-[30px] w-full h-full md:max-w-sm  md:max-h-[600px] max-w-[600px] px-[25px] md:py-[12px] fixed md:rounded-[30px]  mx-auto overflow-x-auto overflow-y-auto flex flex-col gap-[15px] pb-[6rem] md:pb-0 ">
       <div className=" flex justify-end items-center mt-4 md:mt-0 ">
@@ -25,9 +37,11 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
         <div className="w-[20%] md:hidden ">
           <ChevronLeftIcon />
         </div>
-        <div className=" w-[60%]  flex gap-[10px] justify-center items-center">
+        <div className=" w-[60%] break-words text-center flex gap-[10px] justify-center items-center">
           <DroneradarIcon />
-          <h1 className="text-[20px] font-[500]">{truncatedId}</h1>
+          <h1 className="text-[20px] font-[500] overflow-auto">
+            {DroneDataDetailSelected?.id}
+          </h1>
         </div>
       </div>
       <div>
@@ -39,47 +53,52 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
           <div className="border-t-2 my-4"></div>
           <div>
             <div className="flex   gap-[12px]  leading-[20px] ">
-              <div className="w-[60%] ">
+              <div className="w-[60%] break-words">
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   RSSI{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.connection?.rssi} dBm
                     Beacon
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Started{" "}
-                  <span className="text-[#222222]">
-                    {DroneDataDetailSelected?.remoteData?.connection?.firstSeen}{" "}
-                    ago
+                  <span className="text-[#222222] overflow-auto">
+                    {formatTimeAgoFromMilliseconds(
+                      DroneDataDetailSelected?.remoteData?.connection?.firstSeen
+                    )}{" "}
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Msg{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.connection?.msgDelta}s
                   </span>
                 </p>
               </div>
-              <div className="w-[40%] ">
+              <div className="w-[40%] break-words">
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   MAC{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.connection
                         ?.macAddress
                     }
                   </span>
                 </p>
-                <p className="flex text-[#838187] text-[10px] gap-[10px]">
-                  Last seen{" "}
-                  <span className="text-[#222222]">
-                    {DroneDataDetailSelected?.remoteData?.connection?.lastSeen}{" "}
-                    ago
+                <div className="flex text-[#838187] text-[10px] gap-[10px]">
+                  <pre>Last seen </pre>
+                  <span className="text-[#222222] overflow-auto">
+                    {formatTimeAgoFromMilliseconds(
+                      DroneDataDetailSelected?.remoteData?.connection?.lastSeen
+                    )}{" "}
                   </span>
-                </p>
+                </div>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
-                  Distance <span className="text-[#222222]">{DroneDataDetailSelected?.remoteData?.location?.distance}m</span>
+                  Distance{" "}
+                  <span className="text-[#222222]">
+                    {DroneDataDetailSelected?.remoteData?.location?.distance}m
+                  </span>
                 </p>
               </div>
             </div>
@@ -90,27 +109,36 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
           <div className="border-t-2 my-2"></div>
           <div>
             <div className="flex gap-[1rem] leading-[20px]">
-              <div className="w-[60%] gap-[12px]">
+              <div className="w-[60%] gap-[12px] break-words">
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Type{" "}
                   <span className="text-[#222222]">
-                    {DroneDataDetailSelected?.remoteData?.id1Shadow?.type}
+                    {
+                      DroneDataDetailSelected?.remoteData?.identification1
+                        ?.uaType
+                    }
                   </span>
                 </p>
-                <p className="flex text-[#838187] text-[10px] gap-[10px]">
-                  UAS ID{" "}
-                  <span className="text-[#222222]">
-                    {DroneDataDetailSelected?.remoteData?.id1Shadow?.uasId}
+                <div className="flex text-[#838187] text-[10px] gap-[10px]">
+                  <pre>UAS ID</pre>
+                  <span className="text-[#222222] overflow-auto">
+                    {
+                      DroneDataDetailSelected?.remoteData?.identification1
+                        ?.uasId
+                    }
                   </span>
-                </p>
+                </div>
               </div>
-              <div className="w-[40%] ">
-                <p className="flex text-[#838187] text-[10px] gap-[10px]">
-                  ID Type{" "}
-                  <span className="text-[#222222]">
-                    {DroneDataDetailSelected?.remoteData?.id1Shadow?.idType}
+              <div className="w-[40%] break-words">
+                <div className="flex text-[#838187] text-[10px] gap-[10px]">
+                  <pre>ID Type</pre>
+                  <span className="text-[#222222] overflow-auto">
+                    {
+                      DroneDataDetailSelected?.remoteData?.identification1
+                        ?.idType
+                    }
                   </span>
-                </p>
+                </div>
               </div>
             </div>
             <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">
@@ -120,25 +148,36 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
           <div className="border-t-2 my-2"></div>
           <div>
             <div className="flex   gap-[12px]   leading-[20px] ">
-              <div className="w-[60%] ">
+              <div className="w-[60%] break-words">
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Type{" "}
-                  <span className="text-[#222222]">
-                    {DroneDataDetailSelected?.remoteData?.id2Shadow?.uaType}
+                  <span className="text-[#222222] overflow-auto">
+                    {
+                      DroneDataDetailSelected?.remoteData?.identification2
+                        ?.uaType
+                    }
                   </span>
                 </p>
-                <p className="flex text-[#838187] text-[10px] gap-[10px]">
-                  UAS ID{" "}
-                  <span className="text-[#222222]">
-                    {DroneDataDetailSelected?.remoteData?.id2Shadow?.uasId}
+                <div className="flex text-[#838187] text-[10px] gap-[10px]">
+                  <pre>UAS ID</pre>
+                  <span className="text-[#222222] overflow-auto">
+                    {
+                      DroneDataDetailSelected?.remoteData?.identification2
+                        ?.uasId
+                    }
                   </span>
-                </p>
+                </div>
               </div>
-              <div className="w-[40%] ">
-                <p className="flex text-[#838187] text-[10px] gap-[10px]">
-                  ID Type{" "}
-                  {DroneDataDetailSelected?.remoteData?.id2Shadow?.idType}
-                </p>
+              <div className="w-[40%] break-words">
+                <div className="flex text-[#838187] text-[10px] gap-[10px] ">
+                  <pre>ID Type</pre>
+                  <span className="text-[#222222] overflow-auto">
+                    {
+                      DroneDataDetailSelected?.remoteData?.identification2
+                        ?.idType
+                    }
+                  </span>
+                </div>
               </div>
             </div>
             <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">
@@ -148,16 +187,16 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
           <div className="border-t-2 my-2"></div>
           <div>
             <div className="flex   gap-[12px]    leading-[20px] ">
-              <div className="w-[60%] ">
+              <div className="w-[60%] break-words">
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Latitude{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.location?.latitude}
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Altitude Press{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.location
                         ?.altitudePressure
@@ -166,29 +205,31 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Direction{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.location?.direction}
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Horizontal Speed{" "}
-                  <span className="text-[#222222]">
-                    {
-                      DroneDataDetailSelected?.remoteData?.location
-                        ?.speedHorizontal
-                    }
+                  <span className="text-[#222222] overflow-auto">
+                    {(
+                      parseFloat(
+                        DroneDataDetailSelected?.remoteData?.location
+                          ?.speedHorizontal
+                      ) / 100
+                    ).toFixed(2)}
                     m/s
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Height{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.location?.height}m
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Horizontal Accuracy{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.location
                         ?.horizontalAccuracy
@@ -197,7 +238,7 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Baro Acc.{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.location
                         ?.baroAccuracy
@@ -207,7 +248,7 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Time Acc.{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.location
                         ?.timeAccuracy
@@ -216,17 +257,17 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                   </span>
                 </p>
               </div>
-              <div className="w-[40%] ">
+              <div className="w-[40%] break-words">
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   {" "}
                   Longitude{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.location?.longitude}
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Altitude Geod{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.location
                         ?.altitudeGeodetic
@@ -236,26 +277,29 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Status{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.location?.status}
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Vertical Speed{" "}
-                  <span className="text-[#222222]">
-                    {
-                      DroneDataDetailSelected?.remoteData?.location
-                        ?.speedVertical
-                    }
+                  <span className="text-[#222222] overflow-auto">
+                    {(
+                      parseFloat(
+                        DroneDataDetailSelected?.remoteData?.location
+                          ?.speedVertical
+                      ) / 100
+                    ).toFixed(2)}
                     m/s
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
-                  Height Over <span className="text-[#222222]">Ground</span>
+                  Height Over{" "}
+                  <span className="text-[#222222] overflow-auto">Ground</span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Vertical Accuracy
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] ">
                     {
                       DroneDataDetailSelected?.remoteData?.location
                         ?.verticalAccuracy
@@ -264,7 +308,7 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Speed Acc.
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.location
                         ?.speedAccuracy
@@ -273,11 +317,11 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Timestamp
-                  <span className="text-[#222222]">
-                    {
+                  <span className="text-[#222222] overflow-auto">
+                    {convertToTimestampDate(
                       DroneDataDetailSelected?.remoteData?.location
                         ?.locationTimestamp
-                    }
+                    )}
                   </span>
                 </p>
               </div>
@@ -289,14 +333,23 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
           <div className="border-t-2 my-2"></div>
           <div>
             <div className="flex  gap-[12px]  leading-[20px]">
-              <div className="w-[60%] ">
+              <div className="w-[60%] break-words">
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
-                  Operation <span className="text-[#222222]">Drone ID</span>
+                  Operation{" "}
+                  <span className="text-[#222222] overflow-auto">
+                    {DroneDataDetailSelected?.id}
+                  </span>
                 </p>
               </div>
-              <div className="w-[40%] ">
+              <div className="w-[40%] break-words">
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
-                  Type <span className="text-[#222222]">0</span>
+                  Type{" "}
+                  <span className="text-[#222222] overflow-auto">
+                    {
+                      DroneDataDetailSelected?.remoteData?.selfId
+                        ?.descriptionType
+                    }
+                  </span>
                 </p>
               </div>
             </div>
@@ -307,10 +360,10 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
           <div className="border-t-2 my-2"></div>
           <div>
             <div className="flex   gap-[12px]    leading-[20px] ">
-              <div className="w-[60%] ">
+              <div className="w-[60%] break-words">
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Location Type{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.system
                         ?.operatorLocationType
@@ -319,7 +372,7 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Latitude
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.system
                         ?.operatorLatitude
@@ -328,19 +381,19 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Area Count
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.system?.areaCount}
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Area Celling
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.system?.areaCeiling}m
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Classification
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.system
                         ?.classificationType
@@ -349,15 +402,15 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Category
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.system?.category}
                   </span>
                 </p>
               </div>
-              <div className="w-[40%] ">
+              <div className="w-[40%] break-words">
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Altitude
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.system
                         ?.operatorAltitudeGeo
@@ -366,7 +419,7 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Longitude
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.system
                         ?.operatorLongitude
@@ -375,19 +428,19 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Area radius
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.system?.areaRadius}m
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Area floor
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.system?.areaFloor} m
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Class
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {DroneDataDetailSelected?.remoteData?.system?.classValue}
                   </span>
                 </p>
@@ -400,21 +453,21 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
           <div className="border-t-2 my-2"></div>
           <div>
             <div className="flex  gap-[12px]    leading-[20px] mb-4">
-              <div className="w-[60%] ">
-                <p className="flex text-[#838187] text-[10px] gap-[10px]">
-                  Operation IF
-                  <span className="text-[#222222]">
+              <div className="w-[60%] break-words">
+                <div className="flex text-[#838187] text-[10px] gap-[10px]">
+                  <pre>Operation IF</pre>
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.operatorId
                         ?.operatorId
                     }
                   </span>
-                </p>
+                </div>
               </div>
-              <div className="w-[40%] ">
+              <div className="w-[40%] break-words">
                 <p className="flex text-[#838187] text-[10px] gap-[10px] mb-[43px] md:mb-0">
                   Type{" "}
-                  <span className="text-[#222222]">
+                  <span className="text-[#222222] overflow-auto">
                     {
                       DroneDataDetailSelected?.remoteData?.operatorId
                         ?.operatorIdType

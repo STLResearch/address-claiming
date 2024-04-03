@@ -6,7 +6,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { MagnifyingGlassIcon } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
 import DroneSVGComponent from "@/Components/Modals/DroneSVGComponent";
@@ -24,6 +23,7 @@ import RadarTooltip from "@/Components/Tooltip/RadarTooltip";
 import DroneMobileBottomBar from "@/Components/Modals/DroneMobileBottomBar";
 import RadarModal from "@/Components/Modals/RadarModal";
 import io from "socket.io-client";
+import { useRouter } from "next/router";
 const Explorer = ({
   address,
   setAddress,
@@ -192,7 +192,7 @@ const Radar = () => {
     minLongitude: -41.90240522562678,
     maxLongitude: 38.82041496478121,
   });
-
+  const router = useRouter();
   const SOCKET_SERVER_URL = process.env.NEXT_PUBLIC_SOCKET_SERVER_URL;
 
   useEffect(() => {
@@ -238,7 +238,7 @@ const Radar = () => {
     });
 
     socket.on("droneIdResponse", (data) => {
-      setDroneDataSelected(data[0]);
+      setDroneDataSelected(data);
     });
     if (boundingBox != undefined) {
       socket.emit("sendMessageByBoundingBox", boundingBox);
@@ -253,38 +253,52 @@ const Radar = () => {
 
   useEffect(() => {
     if (DroneDataDetailSelected) {
-      const dronePath = DroneDataDetailSelected?.remoteData?.flightPath;
+      const dronePath = DroneDataDetailSelected?.remoteData?.location?.flightPath
       if (map.getSource("route")) {
         map.removeLayer("route");
         map.removeSource("route");
       }
-
-      if (!map.getSource("route") && dronePath) {
-        map.addSource("route", {
-          type: "geojson",
-          data: {
+      const geojson = {
+        type: "FeatureCollection",
+        features: [
+          {
             type: "Feature",
             properties: {},
             geometry: {
-              type: "LineString",
               coordinates: dronePath,
+              type: "LineString",
             },
           },
-        });
-        map.addLayer({
-          id: "route",
-          type: "line",
-          source: "route",
-          layout: {
-            "line-join": "round",
-            "line-cap": "round",
-          },
-          paint: {
-            "line-color": "#F43E0D",
-            "line-width": 1.5,
-          },
-        });
-      }
+        ],
+      };
+
+      map.addSource("route", {
+        type: "geojson",
+        lineMetrics: true,
+        data: geojson
+      });
+      map.addLayer({
+        id: "route",
+        type: "line",
+        source: "route", 
+        layout: {
+          "line-join": "round",
+          "line-cap": "round",
+        },
+        paint: {
+          "line-color": "#F43E0D",
+          "line-width": 1.5,
+          "line-gradient": [
+            "interpolate",
+            ["linear"],
+            ["line-progress"],
+            0,
+            "#F79663",
+            1,
+            "#F43E0D", 
+          ],
+        },
+      });
     }
   }, [DroneDataDetailSelected]);
 
@@ -302,18 +316,22 @@ const Radar = () => {
     const addDroneMarkers = (droneData) => {
       droneData?.forEach((data, index) => {
         const { id } = data;
+        const macAddress = data?.remoteData?.macAddress;
         const latitude = data?.remoteData?.location?.latitude;
         const longitude = data?.remoteData?.location?.longitude;
         const markerElement = document.createElement("div");
         markerElement.classList.add(`drone-marker-${index}`);
 
         const droneColor = isDroneSVGColor[index]
-          ? "red"
+          ? "#FF3D00"
           : isDroneHoverSVGColor[index]
-            ? "red"
-            : "blue";
+            ? "#FF3D00"
+            : "#0000FF";
         markerElement.innerHTML = ReactDOMServer.renderToString(
-          <DroneSVGComponent droneColor={droneColor} direction={35} />
+          <DroneSVGComponent
+            droneColor={droneColor}
+            direction={data?.remoteData?.location?.direction}
+          />
         );
 
         let marker;
@@ -356,7 +374,7 @@ const Radar = () => {
           );
           new mapboxgl.Popup({
             closeOnClick: false,
-            offset: [0, 15],
+            offset: [0, -20],
             className: "popup-clicked-class",
           })
             .setLngLat(marker.getLngLat())
@@ -376,7 +394,7 @@ const Radar = () => {
             new mapboxgl.Popup({
               closeOnClick: false,
               className: "popup-hovered-class",
-              offset: [0, 15],
+              offset: [0, -20],
             })
               .setLngLat(marker.getLngLat())
               .setHTML(tooltipContent)
@@ -396,7 +414,7 @@ const Radar = () => {
             setIsDroneSVGColor({ [index]: true });
             setIsAllPopupClosed(false);
             showPopup();
-            setDroneId(data?.id);
+            setDroneId(data?.remoteData?.macAddress);
             setShowDroneDetail(true);
           };
 
@@ -411,7 +429,7 @@ const Radar = () => {
             setIsAllPopupClosed(false);
             setIsDroneSVGColor({ [index]: true });
             showPopup();
-            setDroneId(data?.id);
+            setDroneId(data?.remoteData?.macAddress);
             setMobileBottomDroneDetailVisible(true);
           });
         }
@@ -587,10 +605,13 @@ const Radar = () => {
       console.error("Error:", error);
     }
   };
-  useEffect(() => {}, [showDroneDetail, mobileBottomDroneDetailVisible]);
   const handleShowDetailFullMobile = () => {
     setMobileBottomDroneDetailVisible(false);
     setShowDroneDetail(true);
+  };
+  const handleGoBack = () => {
+    setIsLoading(true);
+    router.push("/homepage/airspace2");
   };
   return (
     <Fragment>
@@ -606,7 +627,7 @@ const Radar = () => {
           {!showMobileMap && <PageHeader pageTitle={"Radar"} />}
           {showMobileMap && (
             <ExplorerMobile
-              onGoBack={() => setShowMobileMap(false)}
+              onGoBack={handleGoBack}
               flyToAddress={flyToAddress}
               address={address}
               setAddress={setAddress}
