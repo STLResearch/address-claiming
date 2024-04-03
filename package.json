@@ -19,6 +19,7 @@
     "@mapbox/mapbox-gl-draw": "^1.4.3",
     "@mui/material": "^5.15.7",
     "@mui/x-date-pickers": "^6.19.3",
+    "@reactour/tour": "^3.6.1",
     "@reduxjs/toolkit": "^1.9.5",
     "@sentry/nextjs": "^7.77.0",
     "@solana/spl-token": "^0.4.0",

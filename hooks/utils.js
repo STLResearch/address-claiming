@@ -9,3 +9,16 @@ export const checkPhoneIsValid = (phoneNumber) => {
 export const checkReferralCodeIsValid = (referralCode) => {
     return true;
 }
+
+export const getPriorityFeeIx = async (connection) => {
+  let fees = await connection.getRecentPrioritizationFees();
+  let maxPrioritizationFee = fees.reduce((max, cur) => {
+    return cur.prioritizationFee > max.prioritizationFee ? cur : max;
+  }, fees[0]);
+
+  const PRIORITY_FEE_IX = ComputeBudgetProgram.setComputeUnitPrice({
+    microLamports: maxPrioritizationFee.prioritizationFee,
+  });
+
+  return PRIORITY_FEE_IX;
+};

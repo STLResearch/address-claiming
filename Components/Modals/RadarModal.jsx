@@ -5,7 +5,8 @@ import {
   DroneradarIcon,
   ChevronLeftIcon,
 } from "../Icons";
-const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
+import Spinner from "../Spinner";
+const RadarModal = ({ onClose, DroneDataDetailSelected,isLoading }) => {
   function formatTimeAgoFromMilliseconds(timestamp) {
     const currentTime = Date.now();
     const elapsedTime = currentTime - timestamp;
@@ -24,6 +25,7 @@ const RadarModal = ({ onClose, DroneDataDetailSelected }) => {
   }
   return (
     <div className="z-50  mt-4 md:ml-12  bg-white  md:bg-[#FFFFFFCC] no-scrollbar rounded-[30px] w-full h-full md:max-w-sm  md:max-h-[600px] max-w-[600px] px-[25px] md:py-[12px] fixed md:rounded-[30px]  mx-auto overflow-x-auto overflow-y-auto flex flex-col gap-[15px] pb-[6rem] md:pb-0 ">
+      {isLoading &&<Spinner />}
       <div className=" flex justify-end items-center mt-4 md:mt-0 ">
         <div className=" w-[90%] flex justify-center  items-center  md:hidden">
           <RectangleIcon />

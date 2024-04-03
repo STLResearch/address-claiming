@@ -239,6 +239,7 @@ const Radar = () => {
 
     socket.on("droneIdResponse", (data) => {
       setDroneDataSelected(data);
+      setIsLoading(false);
     });
     if (boundingBox != undefined) {
       socket.emit("sendMessageByBoundingBox", boundingBox);
@@ -411,6 +412,7 @@ const Radar = () => {
           };
 
           const handleClick = () => {
+            setIsLoading(true);
             setIsDroneSVGColor({ [index]: true });
             setIsAllPopupClosed(false);
             showPopup();

@@ -45,6 +45,7 @@ import React from "react";
 import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
+import { getPriorityFeeIx } from "@/hooks/utils";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -317,6 +318,12 @@ const DepositAndWithdraw = ({
         new PublicKey(user.blockchainAddress)
       );
       let ix = [];
+
+      let priorityIx = await getPriorityFeeIx(connection);
+
+      ix.push(priorityIx);
+
+
       try {
         await getAccount(connection, recipientUSDCAddr);
       } catch (error) {
