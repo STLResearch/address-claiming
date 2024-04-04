@@ -137,7 +137,7 @@ const IndividualSignup = () => {
   };
 
   const checkReferralCodeIsValid = (referralCode1) => {
-    return true;
+    return !!referralCode1?.code
   };
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -167,6 +167,10 @@ const IndividualSignup = () => {
       setIsReferralCodeValid(false);
       return;
     }
+    console.log(
+      checkReferralCodeIsValid(referralCode1),
+      "checkReferralCodeIsValid(referralCode1),"
+    );
     console.log("ref code state ", referralCode1);
     const userInfo = {
       ...category,
