@@ -6,7 +6,7 @@ import {
   ChevronLeftIcon,
 } from "../Icons";
 import Spinner from "../Spinner";
-const RadarModal = ({ onClose, DroneDataDetailSelected,isLoading }) => {
+const RadarModal = ({ onClose, DroneDataDetailSelected, isLoading }) => {
   function formatTimeAgoFromMilliseconds(timestamp) {
     const currentTime = Date.now();
     const elapsedTime = currentTime - timestamp;
@@ -15,17 +15,38 @@ const RadarModal = ({ onClose, DroneDataDetailSelected,isLoading }) => {
     const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes} ago`;
     return formattedTime;
   }
-  function convertToTimestampDate(seconds) {
-    const milliseconds = seconds * 1000;
-    const date = new Date(milliseconds);
-    const utcMonth = ("0" + (date.getUTCMonth() + 1)).slice(-2);
-    const utcDay = ("0" + date.getUTCDate()).slice(-2);
-    const formattedDate = `${utcMonth}/${utcDay}`;
-    return formattedDate;
+
+  function convertToTimestampDate(epochTime) {
+    const milliseconds = epochTime * 1000;
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const formattedMinutes = String(minutes).padStart(2, "0");
+    const formattedSeconds = String(seconds).padStart(2, "0");
+    return formattedMinutes + ":" + formattedSeconds;
+  }
+
+  function convertToHex(inputArray) {
+    let hexString = "";
+    for (let i = 0; i < inputArray?.length; i++) {
+      const char = String.fromCharCode(inputArray[i]);
+      hexString += char;
+    }
+    return hexString;
+  }
+  function formatAccuracy(accuracyString) {
+    const numericValue = parseFloat(accuracyString?.split("_")?.pop());
+    if (accuracyString?.startsWith("meters_")) {
+      return "< " + numericValue + " m";
+    } else if (accuracyString?.startsWith("meter_per_second_")) {
+      return "< " + numericValue + " m/s";
+    } else {
+      return accuracyString;
+    }
   }
   return (
     <div className="z-50  mt-4 md:ml-12  bg-white  md:bg-[#FFFFFFCC] no-scrollbar rounded-[30px] w-full h-full md:max-w-sm  md:max-h-[600px] max-w-[600px] px-[25px] md:py-[12px] fixed md:rounded-[30px]  mx-auto overflow-x-auto overflow-y-auto flex flex-col gap-[15px] pb-[6rem] md:pb-0 ">
-      {isLoading &&<Spinner />}
+      {isLoading && <Spinner />}
       <div className=" flex justify-end items-center mt-4 md:mt-0 ">
         <div className=" w-[90%] flex justify-center  items-center  md:hidden">
           <RectangleIcon />
@@ -74,7 +95,11 @@ const RadarModal = ({ onClose, DroneDataDetailSelected,isLoading }) => {
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Msg{" "}
                   <span className="text-[#222222] overflow-auto">
-                    {DroneDataDetailSelected?.remoteData?.connection?.msgDelta}s
+                    {parseInt(
+                      DroneDataDetailSelected?.remoteData?.connection
+                        ?.msgDelta / 1000
+                    )}
+                    s
                   </span>
                 </p>
               </div>
@@ -124,10 +149,10 @@ const RadarModal = ({ onClose, DroneDataDetailSelected,isLoading }) => {
                 <div className="flex text-[#838187] text-[10px] gap-[10px]">
                   <pre>UAS ID</pre>
                   <span className="text-[#222222] overflow-auto">
-                    {
+                    {convertToHex(
                       DroneDataDetailSelected?.remoteData?.identification1
                         ?.uasId
-                    }
+                    )}
                   </span>
                 </div>
               </div>
@@ -163,10 +188,10 @@ const RadarModal = ({ onClose, DroneDataDetailSelected,isLoading }) => {
                 <div className="flex text-[#838187] text-[10px] gap-[10px]">
                   <pre>UAS ID</pre>
                   <span className="text-[#222222] overflow-auto">
-                    {
+                    {convertToHex(
                       DroneDataDetailSelected?.remoteData?.identification2
                         ?.uasId
-                    }
+                    )}
                   </span>
                 </div>
               </div>
@@ -232,20 +257,19 @@ const RadarModal = ({ onClose, DroneDataDetailSelected,isLoading }) => {
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Horizontal Accuracy{" "}
                   <span className="text-[#222222] overflow-auto">
-                    {
+                    {formatAccuracy(
                       DroneDataDetailSelected?.remoteData?.location
                         ?.horizontalAccuracy
-                    }
+                    )}
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Baro Acc.{" "}
                   <span className="text-[#222222] overflow-auto">
-                    {
+                    {formatAccuracy(
                       DroneDataDetailSelected?.remoteData?.location
                         ?.baroAccuracy
-                    }
-                    m
+                    )}
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
@@ -299,22 +323,22 @@ const RadarModal = ({ onClose, DroneDataDetailSelected,isLoading }) => {
                   Height Over{" "}
                   <span className="text-[#222222] overflow-auto">Ground</span>
                 </p>
-                <p className="flex text-[#838187] text-[10px] gap-[10px]">
+                <div className="flex text-[#838187] text-[10px] gap-[6px]">
                   Vertical Accuracy
-                  <span className="text-[#222222] ">
-                    {
+                  <div className="text-[#222222] ">
+                    {formatAccuracy(
                       DroneDataDetailSelected?.remoteData?.location
                         ?.verticalAccuracy
-                    }
-                  </span>
-                </p>
+                    )}
+                  </div>
+                </div>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
                   Speed Acc.
                   <span className="text-[#222222] overflow-auto">
-                    {
+                    {formatAccuracy(
                       DroneDataDetailSelected?.remoteData?.location
                         ?.speedAccuracy
-                    }
+                    )}
                   </span>
                 </p>
                 <p className="flex text-[#838187] text-[10px] gap-[10px]">
@@ -459,10 +483,10 @@ const RadarModal = ({ onClose, DroneDataDetailSelected,isLoading }) => {
                 <div className="flex text-[#838187] text-[10px] gap-[10px]">
                   <pre>Operation IF</pre>
                   <span className="text-[#222222] overflow-auto">
-                    {
+                    {convertToHex(
                       DroneDataDetailSelected?.remoteData?.operatorId
                         ?.operatorId
-                    }
+                    )}
                   </span>
                 </div>
               </div>

@@ -236,11 +236,10 @@ const Radar = () => {
     socket.on("boundingBoxResponse", (data) => {
       setSocketDatas(data);
     });
-
     socket.on("droneIdResponse", (data) => {
       setDroneDataSelected(data);
-      setIsLoading(false);
     });
+
     if (boundingBox != undefined) {
       socket.emit("sendMessageByBoundingBox", boundingBox);
     }
@@ -253,8 +252,11 @@ const Radar = () => {
   }, [map, boundingBox, droneId]);
 
   useEffect(() => {
+    if(!map)return;
     if (DroneDataDetailSelected) {
-      const dronePath = DroneDataDetailSelected?.remoteData?.location?.flightPath
+      const dronePath =
+        DroneDataDetailSelected?.remoteData?.location?.flightPath;
+      const swappedCoordinates = dronePath.map((coord) => [coord[1], coord[0]]);
       if (map.getSource("route")) {
         map.removeLayer("route");
         map.removeSource("route");
@@ -266,7 +268,7 @@ const Radar = () => {
             type: "Feature",
             properties: {},
             geometry: {
-              coordinates: dronePath,
+              coordinates: swappedCoordinates,
               type: "LineString",
             },
           },
@@ -276,12 +278,12 @@ const Radar = () => {
       map.addSource("route", {
         type: "geojson",
         lineMetrics: true,
-        data: geojson
+        data: geojson,
       });
       map.addLayer({
         id: "route",
         type: "line",
-        source: "route", 
+        source: "route",
         layout: {
           "line-join": "round",
           "line-cap": "round",
@@ -296,12 +298,12 @@ const Radar = () => {
             0,
             "#F79663",
             1,
-            "#F43E0D", 
+            "#F43E0D",
           ],
         },
       });
     }
-  }, [DroneDataDetailSelected]);
+  }, [DroneDataDetailSelected,map]);
 
   function setSatelliteView() {
     if (map && map?.getStyle().name === "Mapbox Streets") {
@@ -317,7 +319,6 @@ const Radar = () => {
     const addDroneMarkers = (droneData) => {
       droneData?.forEach((data, index) => {
         const { id } = data;
-        const macAddress = data?.remoteData?.macAddress;
         const latitude = data?.remoteData?.location?.latitude;
         const longitude = data?.remoteData?.location?.longitude;
         const markerElement = document.createElement("div");
@@ -412,7 +413,6 @@ const Radar = () => {
           };
 
           const handleClick = () => {
-            setIsLoading(true);
             setIsDroneSVGColor({ [index]: true });
             setIsAllPopupClosed(false);
             showPopup();

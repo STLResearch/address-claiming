@@ -2,23 +2,23 @@ const DroneSVGComponent = ({ droneColor, direction }) => {
   const degrees = direction / 100;
   return (
     <div
-      className={`svg-container w-[40px] h-[40px] z-[100]`}
+      className={`svg-container w-[35px] h-[35px] z-[100] `}
       style={{ transform: degrees !== 361 ?  `rotate(${degrees}deg)`:'none' }}
     >
       <div className="flex flex-col items-center justify-center">
         {parseInt(degrees) != 361 && (
           <svg
-            width="15"
-            height="15"
+            width="12"
+            height="12"
             viewBox="0 0 6 5"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
               d="M3 0L5.59808 4.5L0.401924 4.5L3 0Z"
-              fill={`${droneColor}`}
+              fill={droneColor ?  `${droneColor} `: '#0000FF'}
               stroke="white"
-              strokeWidth={0.5}
+              strokeWidth={0.3}
             />
           </svg>
         )}
