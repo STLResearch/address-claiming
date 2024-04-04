@@ -318,7 +318,7 @@ const Radar = () => {
 
     const addDroneMarkers = (droneData) => {
       droneData?.forEach((data, index) => {
-        const { id } = data;
+        const popupName = data?.remoteData?.connection?.macAddress
         const latitude = data?.remoteData?.location?.latitude;
         const longitude = data?.remoteData?.location?.longitude;
         const markerElement = document.createElement("div");
@@ -372,7 +372,7 @@ const Radar = () => {
           if (elementToRemove) elementToRemove.remove();
 
           const tooltipContent = ReactDOMServer.renderToString(
-            <RadarTooltip content={id} />
+            <RadarTooltip content={popupName} />
           );
           new mapboxgl.Popup({
             closeOnClick: false,
@@ -387,7 +387,7 @@ const Radar = () => {
         if (!isMobile) {
           const handleMouseEnter = () => {
             const tooltipContent = ReactDOMServer.renderToString(
-              <RadarTooltip content={id} />
+              <RadarTooltip content={popupName} />
             );
             const elementToRemove = document.querySelector(
               ".popup-hovered-class"

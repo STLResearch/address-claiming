@@ -1,12 +1,11 @@
 const DroneSVGComponent = ({ droneColor, direction }) => {
-  const degrees = direction / 100;
   return (
     <div
       className={`svg-container w-[35px] h-[35px] z-[100] `}
-      style={{ transform: degrees !== 361 ?  `rotate(${degrees}deg)`:'none' }}
+      style={{ transform: direction !== 361 ?  `rotate(${direction}deg)`:'none' }}
     >
       <div className="flex flex-col items-center justify-center">
-        {parseInt(degrees) != 361 && (
+        {parseInt(direction) != 361 && (
           <svg
             width="12"
             height="12"
