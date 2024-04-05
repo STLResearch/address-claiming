@@ -13,6 +13,7 @@ import { Fragment } from "react";
 import logo from "../../../../public/images/logo.jpg";
 import { useAuth } from "@/hooks/useAuth";
 import * as Yup from "yup";
+import axios from "axios";
 
 const PartOne = ({ setPart }) => {
   return (
@@ -136,9 +137,17 @@ const IndividualSignup = () => {
     return !!name;
   };
 
-  const checkReferralCodeIsValid = (referralCode1) => {
-    return !!referralCode1?.code
+  const checkReferralCodeIsValid = async(referralCode1) => {
+    try {
+      const referralCodeRes = await axios.get(`${process.env.SERVER_URL}/referral-code/referral-code/${referralCode1?.code}`)
+      console.log(referralCodeRes, "referralCodeRes")
+      return !!referralCode1?.code
+    } catch (error) {
+      console.log(error)
+      return false
+    }
   };
+  
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -146,6 +155,7 @@ const IndividualSignup = () => {
     e.preventDefault();
 
     const [referralCode] = [, referralCodeRef].map((ref) => ref.current?.value);
+    
 
     if (!checkNameIsValid(name)) {
       setIsNameValid(false);
@@ -163,7 +173,7 @@ const IndividualSignup = () => {
       return;
     }
 
-    if (!checkReferralCodeIsValid(referralCode1)) {
+    if (referralCode?.code && !checkReferralCodeIsValid(referralCode1)) {
       setIsReferralCodeValid(false);
       return;
     }
