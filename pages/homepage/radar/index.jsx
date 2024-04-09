@@ -238,6 +238,8 @@ const Radar = () => {
     });
     socket.on("droneIdResponse", (data) => {
       setDroneDataSelected(data);
+      setIsLoading(false);
+
     });
 
     if (boundingBox != undefined) {
@@ -413,6 +415,9 @@ const Radar = () => {
           };
 
           const handleClick = () => {
+            if(!showDroneDetail){
+              setIsLoading(true);
+            }
             setIsDroneSVGColor({ [index]: true });
             setIsAllPopupClosed(false);
             showPopup();
@@ -687,14 +692,14 @@ const Radar = () => {
                 ></div>
               </div>
             )}
-            {isMobile && mobileBottomDroneDetailVisible && (
+            {isMobile && mobileBottomDroneDetailVisible && !isLoading && (
               <DroneMobileBottomBar
                 DroneDataDetailSelected={DroneDataDetailSelected}
                 onActivate={handleShowDetailFullMobile}
               />
             )}
 
-            {showDroneDetail && (
+            {showDroneDetail && !isLoading && (
               <RadarModal
                 onClose={() => {
                   setShowDroneDetail(false);
