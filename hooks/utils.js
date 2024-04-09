@@ -1,3 +1,5 @@
+import { ComputeBudgetProgram } from "@solana/web3.js"
+
 export const checkNameIsValid = (name) => {
     return !!name;
 }

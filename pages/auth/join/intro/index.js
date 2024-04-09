@@ -13,6 +13,7 @@ import { Fragment } from "react";
 import logo from "../../../../public/images/logo.jpg";
 import { useAuth } from "@/hooks/useAuth";
 import * as Yup from "yup";
+import useDatabase from '@/hooks/useDatabase';
 
 const PartOne = ({ setPart }) => {
   return (
@@ -86,6 +87,7 @@ const IndividualSignup = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const newsletterRef = useRef();
   const referralCodeRef = useRef();
+  const { getReferralByCode } = useDatabase();
 
   const router = useRouter();
 
@@ -136,8 +138,14 @@ const IndividualSignup = () => {
     return !!name;
   };
 
-  const checkReferralCodeIsValid = (referralCode1) => {
-    return true;
+  const checkReferralCodeIsValid = async (referralCode) => {
+    if (!referralCode) {
+      return true;
+    } else {
+      const res = await getReferralByCode(referralCode);
+      if (!res) return false;
+      else return true;
+    }
   };
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -162,9 +170,10 @@ const IndividualSignup = () => {
       setErrorMessage(phoneCheck.message);
       return;
     }
+    const isValid = await checkReferralCodeIsValid(referralCode1?.code)
 
-    if (!checkReferralCodeIsValid(referralCode1)) {
-      setIsReferralCodeValid(false);
+    if (referralCode1?.code && !isValid) {
+      setIsReferralCodeValid(isValid);
       return;
     }
     console.log("ref code state ", referralCode1);
@@ -405,6 +414,7 @@ const IndividualSignup = () => {
                       ...referralCode1,
                       code: event.target.value,
                     });
+                    setIsReferralCodeValid(true)
                     console.log("on change ref code val", referralCode1.code);
                   }}
                   disabled={referralDisabled}
