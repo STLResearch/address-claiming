@@ -24,7 +24,7 @@ const Portfolio = () => {
     const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState('')
 
-
+    console.log(user, "user")
     useEffect(() => {
         if (selectorUser) {
             const authUser = async () => {
@@ -144,6 +144,8 @@ const Portfolio = () => {
     };
 
     const onVerifyMyAccount = () => {
+        // verify account only if verification is not pending or approved
+        if([1, 2].includes(user?.KYCStatusId)) return
             setIsLoading(true);
           const client = new Persona.Client({
             templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
@@ -154,6 +156,13 @@ const Portfolio = () => {
               client.open();
             },
           });
+    }
+
+    const verifyKYCtext = {
+        0 : "Verify your account",
+        1 : "Pending",
+        2 : "Approved",
+        3 : "Rejected"
     }
 
     return (
@@ -178,7 +187,7 @@ const Portfolio = () => {
                                 </div>}
                             </div>
                             <p className="font-normal text-base text-[#87878D] pr-[42px]">{personalInformation.KYCStatusId !== 0 ? 'Thank you, your account is successfully verified. We verify the identity of our customers to assess potential risks, prevent fraud, and comply with legal and regulatory requirements. Note that we store your data securely with advanced encryption and strict authentication measures to ensure utmost privacy and protection.' : 'Your account is not verified. We verify the identity of our customers to assess potential risks, prevent fraud, and comply with legal and regulatory requirements. Note that we store your data securely with advanced encryption and strict authentication measures to ensure utmost privacy and protection.'}</p>
-                            {!(personalInformation.KYCStatusId !== 0) &&!isLoading && <p className="font-medium text-base text-[#0653EA] text-right flex-1 cursor-pointer" onClick={onVerifyMyAccount}>Verify my account</p>}
+                            { !isLoading && user && <p className="font-medium text-base text-[#0653EA] text-right flex-1 cursor-pointer" onClick={onVerifyMyAccount}>{verifyKYCtext[user?.KYCStatusId || 0]}</p>}
                         </div>
                         <div className="flex flex-col py-[17px] px-[25px] rounded-[30px] gap-[15px] bg-white" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                             <h2 className="text-xl font-medium text-[#222222]">Personal Information</h2>
