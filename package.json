@@ -16,6 +16,10 @@
     "@babel/runtime": "^7.23.2",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@metaplex-foundation/digital-asset-standard-api": "^1.0.3",
+    "@metaplex-foundation/mpl-bubblegum": "^3.1.2",
+    "@metaplex-foundation/umi": "^0.9.1",
+    "@metaplex-foundation/umi-bundle-defaults": "^0.9.1",
     "@mui/material": "^5.15.7",
     "@mui/x-date-pickers": "^6.19.3",
     "@reactour/tour": "^3.6.1",
@@ -76,6 +80,7 @@
   "devDependencies": {
     "eslint-config-prettier": "^9.0.0",
     "prettier": "^3.0.3",
-    "prettier-plugin-tailwindcss": "^0.5.7"
+    "prettier-plugin-tailwindcss": "^0.5.7",
+    "typescript": "5.4.5"
   }
 }

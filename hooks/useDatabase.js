@@ -317,19 +317,16 @@ const useDatabase = () => {
             const { sign, sign_nonce, sign_issue_at, sign_address } =
                 await signatureObject(blockchainAddress);
             const response = await fetch(`/api/proxy?${Date.now()}`, {
-                method: 'POST',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    URI: `/private/airspace-rental/retrieve-tokens`,
+                    URI: `/private/airspace-rental/retrieve-tokens?callerAddress=${blockchainAddress}`,
                     sign,
                     time: sign_issue_at,
                     nonce: sign_nonce,
                     address: sign_address,
                 },
-                body:JSON.stringify({
-                    callerAddress:blockchainAddress,
-                    type
-                })
+                
             })
 
             console.log("-----------------------Response----------",response)

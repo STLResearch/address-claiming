@@ -200,7 +200,7 @@ const Sidebar = () => {
             MARKETPLACE
           </p>
         )}
-        <SidebarItem href={""} text={"Buy Airspace"} children={<MapIcon />} />
+        <SidebarItem href={"/homepage/marketplace2"} text={"Buy Airspace"} children={<MapIcon />} />
         <SidebarItem
           href={"/homepage/rent"}
           text={"Rent Airspace"}
