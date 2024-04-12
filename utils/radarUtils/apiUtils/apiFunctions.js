@@ -1,12 +1,11 @@
 import axios from 'axios';
+import maplibregl from "maplibre-gl";
 export const flyToUserIpAddress = async (map) => {
     if (!map) return;
 
     try {
-        console.log('here called')
-        // const ipResponse = await axios.get("https://api.ipify.org/?format=json");
-        // const ipAddress = ipResponse.data.ip;
-        const ipAddress = '196.189.246.115'
+        const ipResponse = await axios.get("https://api.ipify.org/?format=json");
+        const ipAddress = ipResponse.data.ip;
         const ipGeolocationApiUrl = await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`);
         const latitude = parseFloat(ipGeolocationApiUrl.data.latitude);
         const longitude = parseFloat(ipGeolocationApiUrl.data.longitude);
