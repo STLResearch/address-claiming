@@ -6,7 +6,9 @@ const initialState = {
     airspaceAdditionalInfo: false,
     airspaceData: {},
     category: {},
+    userUSDWalletBalance:"0"
   },
+  
 };
 
 const airspaceSlice = createSlice({
@@ -41,6 +43,10 @@ const airspaceSlice = createSlice({
         ...action.payload,
       };
     },
+    setUserUSDWalletBalance: (state, action) => {
+
+      state.value.userUSDWalletBalance = action.payload
+  }
   },
 });
 
@@ -49,5 +55,6 @@ const store = configureStore({
 });
 
 export const counterActions = airspaceSlice.actions;
+
 
 export default store;

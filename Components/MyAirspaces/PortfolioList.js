@@ -91,7 +91,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
                         setVerifiedAirspaces(parsedData);
                     } else {
                         // Fetch data from API
-                        const verified = await getPropertiesByUserAddress(user?.blockchainAddress, "LandToken", 10);
+                        const verified = await getPropertiesByUserAddress(user?.blockchainAddress, "landToken", 10);
                         setVerifiedAirspaces(verified);
                         setAllVerifiedAirspaces(verified);
                         // Cache the fetched data
@@ -103,7 +103,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
                         const parsedData = JSON.parse(cachedData);
                         setVerifiedAirspaces(parsedData);
                     } else {
-                        const verifiedAirspaces = await getPropertiesByUserAddress(user?.blockchainAddress, 10, pageNumber *10, verifiedAirspaces[verifiedAirspaces.length - 1].id);
+                        const verifiedAirspaces = await getPropertiesByUserAddress(user?.blockchainAddress, 'landToken', 10, verifiedAirspaces[verifiedAirspaces.length - 1].id);
                         const updatedAirspaces = [...allVerifiedAirspaces, ...verifiedAirspaces];
                         setVerifiedAirspaces(verifiedAirspaces);
                         setAllVerifiedAirspaces(updatedAirspaces);
@@ -133,7 +133,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
                         const parsedData = JSON.parse(cachedData);
                         setRentedAirspaces(parsedData);
                     } else {
-                        const rentedAirspaces = await getPropertiesByUserAddress(user?.blockchainAddress, rentalToken, rentalPageNumber*10, rentedAirspaces[rentedAirspaces.length - 1].id);
+                        const rentedAirspaces = await getPropertiesByUserAddress(user?.blockchainAddress, 'rentalToken', 10, rentedAirspaces[rentedAirspaces.length - 1].id);
                         const updatedAirspaces = [...allRentedAirspaces, ...rentedAirspaces];
                         setRentedAirspaces(rentedAirspaces);
                         setAllRentedAirspaces(updatedAirspaces);
