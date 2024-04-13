@@ -8,6 +8,7 @@ import {
   LocationPointIcon,
   MagnifyingGlassIcon,
   SuccessIcon,
+  InfoIcon,
   SuccessIconwhite,
   CloseIconWhitesm,
 } from "@/Components/Icons";
@@ -46,6 +47,7 @@ const SuccessModal = ({
   setShowClaimModal,
 }) => {
   const router = useRouter();
+
   return (
     <div
       className={`w-[100%] max-w-[20rem] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}
@@ -98,11 +100,16 @@ const SuccessModal = ({
                 'You rented'{" "}
                 <span className=" text-[14px] font-bold">{`${rentData.address}`}</span>{" "}
                 {` for `}{" "}
+
+                <div  className="">
+
                 <span className=" text-[14px] font-bold">
                   ${rentData.price}
                 </span>
+                </div>
+
               </div>
-            )}
+            )}     
           </div>
 
           <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
@@ -162,6 +169,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
 
   const [finalAns, setfinalAns] = useState();
   const { user: selectorUser } = useAuth();
+  const [isInfoVisible, setIsInfoVisible] = useState(false);
 
   useEffect(() => {
     const authUser = async () => {
@@ -614,10 +622,25 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
         </div>
         <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
           <div className="flex touch-manipulation flex-col gap-[5px] w-full">
-            <label htmlFor="rentalDate">
-              Rental Date and Time
-              <span className="text-[#E04F64] touch-manipulation">*</span>
-            </label>
+            <div className="flex items-center gap-[5px]">
+              <label htmlFor="rentalDate">
+                Rental Date and Time
+                <span className="text-[#E04F64] touch-manipulation">*</span>
+              </label>
+              <div
+                onClick={() => setIsInfoVisible((prev) => !prev)}
+                className="relative flex h-[20px] w-[20px] items-center justify-center"
+              >
+                <InfoIcon />
+                {isInfoVisible && (
+                  <div className="absolute -top-4 left-6 w-[189px] rounded-[4px] bg-[#CCE3FC] p-[12px] text-[10px] font-normal italic">
+                    Note that we store your data securely with advanced encryption and
+                    strict authentication measures to ensure utmost privacy and
+                    protection.
+                  </div>
+                )}
+              </div>
+            </div>
             {/* <DatePicker
                     selected={date}
                     onChange={(d) => setDate(d)}
