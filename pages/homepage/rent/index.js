@@ -106,6 +106,8 @@ const SuccessModal = ({
                 <span className=" text-[14px] font-bold">
                   ${rentData.price}
                 </span>
+
+                
                 </div>
 
               </div>
@@ -634,9 +636,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
                 <InfoIcon />
                 {isInfoVisible && (
                   <div className="absolute -top-4 left-6 w-[189px] rounded-[4px] bg-[#CCE3FC] p-[12px] text-[10px] font-normal italic">
-                    Note that we store your data securely with advanced encryption and
-                    strict authentication measures to ensure utmost privacy and
-                    protection.
+                      you can rent airspace for 30 minutes
                   </div>
                 )}
               </div>
