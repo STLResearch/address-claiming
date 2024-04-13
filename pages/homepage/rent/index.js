@@ -47,6 +47,7 @@ const SuccessModal = ({
   setShowClaimModal,
 }) => {
   const router = useRouter();
+  const [isInfoVisible, setIsInfoVisible] = useState(false);
 
   return (
     <div
@@ -101,15 +102,22 @@ const SuccessModal = ({
                 <span className=" text-[14px] font-bold">{`${rentData.address}`}</span>{" "}
                 {` for `}{" "}
 
-                <div  className="">
-
+                <div  className="flex items-center gap-[5px]">
                 <span className=" text-[14px] font-bold">
                   ${rentData.price}
                 </span>
-
-                
-                </div>
-
+                <div
+                onClick={() => setIsInfoVisible((prev) => !prev)}
+                className="relative flex h-[20px] w-[20px] items-center justify-center"
+              >
+                <InfoIcon />
+                {isInfoVisible && (
+                  <div className="absolute -top-4 left-6 w-[189px] rounded-[4px] bg-[#CCE3FC] p-[12px] text-[10px] font-normal italic">
+                      you can rent airspace for 30 minutes
+                  </div>
+                )}
+              </div>
+            </div>
               </div>
             )}     
           </div>
@@ -636,7 +644,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
                 <InfoIcon />
                 {isInfoVisible && (
                   <div className="absolute -top-4 left-6 w-[189px] rounded-[4px] bg-[#CCE3FC] p-[12px] text-[10px] font-normal italic">
-                      you can rent airspace for 30 minutes
+                       you can rent airspace for 30 minutes
                   </div>
                 )}
               </div>
