@@ -376,9 +376,35 @@ const YourReferrals = ({
   );
 };
 
-const InviteYourFriends = ({ referralCode }) => {
+const InviteYourFriends = () => {
   const [friendEmail, setFriendEmail] = useState("");
-  const origin = useOrigin();
+  const [isLoading, setIsLoading] = useState(false);
+  const { sendReferral } = useDatabase();
+  const { user } = useAuth();
+
+
+  const handleReferUser = async () => {
+    try {
+      setIsLoading(true);
+      if (isLoading) return;
+      if (!friendEmail) {
+        toast.error("Enter the receiver email")
+        return;
+      }
+
+      const resp = await sendReferral(user?.blockchainAddress, friendEmail);
+      if (resp) {
+        toast.success("Referral sent successfully");
+      }
+      else toast.error("Error when sending referral")
+    } catch (error) {
+      console.log(error);
+      toast.error(error.messsage)
+    } finally {
+      setIsLoading(false)
+    }
+  };
+
 
   return (
     <div className="flex flex-col gap-[15px] px-[51px]">
@@ -400,15 +426,12 @@ const InviteYourFriends = ({ referralCode }) => {
           id="friendEmail"
           placeholder="email address"
         />
-        <div className="absolute right-[5px] top-1/2 -translate-y-1/2 w-[38px] h-[41px] bg-[#0653EA] flex items-center justify-center cursor-pointer rounded-lg">
-          <a
-            href={`mailto:${friendEmail}?body=${origin}/r/${referralCode}`}
-            target="_blank"
-          >
-            <div className="w-[15px] h-[15px] ">
-              <ShareIcon color={"white"} />
-            </div>
-          </a>
+        <div 
+          onClick={handleReferUser}
+          className={`absolute right-[5px] top-1/2 -translate-y-1/2 bg-[#0653EA] w-[38px] h-[41px]  flex items-center justify-center ${isLoading ? "cursor-wait" : "cursor-pointer"} rounded-lg`}>
+          <div className="w-[15px] h-[15px]">
+            <ShareIcon color={"white"} />
+          </div>
         </div>
       </div>
     </div>
@@ -500,7 +523,7 @@ const Referral = () => {
               blockchainAddress={user?.blockchainAddress}
               user={user}
             />
-            <InviteYourFriends referralCode={data?.referralCode} />
+            <InviteYourFriends />
             <YourReferrals
               activeSection={activeSection}
               isMobile={isMobile}
