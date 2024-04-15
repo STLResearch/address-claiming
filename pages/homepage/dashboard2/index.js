@@ -12,8 +12,8 @@ import {
   MagnifyingGlassIcon,
   ShareIcon,
   EarthIcon,
-} from "@/Components/Icons";
-import Sidebar from "@/Components/Sidebar";
+} from "../../../Components/Icons";
+import Sidebar from "../../../Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";

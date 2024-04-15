@@ -5,7 +5,7 @@ import Script from "next/script";
 
 import CookieConsent from "@/Components/CookieConsent";
 
-import { AuthProvider } from "@/hooks/useAuth";
+import { AuthProvider } from "../hooks/useAuth";
 import { msclaritConfig } from "@/hooks/msclaritConfig";
 import { useMobile } from "@/hooks/useMobile";
 import { useEffect, useState } from "react";

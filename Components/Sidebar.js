@@ -21,8 +21,8 @@ import {
   ShoppingBagsIcon,
   WalletIcon,
 } from "./Icons";
-import { useAuth } from "@/hooks/useAuth";
-import { SidebarContext } from "@/hooks/sidebarContext";
+import { useAuth } from "../hooks/useAuth";
+import { SidebarContext } from "../hooks/sidebarContext";
 import { useTour } from "@reactour/tour";
 
 const chainConfig = {

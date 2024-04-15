@@ -36,7 +36,7 @@ const AuthProvider = ({ children }) => {
 
   const signOut = () => {
     localStorage.clear();
-      window.location = '/'
+      window.location = '/' 
   };
 
   const updateProfile = (updatedUser) => {
