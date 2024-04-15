@@ -134,7 +134,7 @@ const Marketplace = () => {
   
         authUser();
       
-    }, [user1]);
+    }, [user1,selectorUser]);
 
     useEffect(()=>{
       console.log('user',user1)
@@ -253,7 +253,7 @@ const Marketplace = () => {
           };
           getAuctions();
         }
-    },[user1,selectorUser])
+    },[user1,selectorUser,solanaWallet])
     return (
         <Fragment>
             <Head>
