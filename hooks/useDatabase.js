@@ -104,6 +104,32 @@ const useDatabase = () => {
         }
     }
 
+    const sendReferral = async (blockchainAddress, receiverEmail) => {
+        try {
+            const { sign, sign_nonce, sign_issue_at, sign_address } =
+                await signatureObject(blockchainAddress);
+            const response = await fetch(`/api/proxy?${Date.now()}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    URI: `/referral-code/send-referral/${receiverEmail}`,
+                    sign,
+                    time: sign_issue_at,
+                    nonce: sign_nonce,
+                    address: sign_address,
+                },
+            })
+
+            if (!response.ok || response.statusCode === 500) {
+                throw new Error("Error when sending referral.");
+            }
+
+            return response.json();
+        } catch (error) {
+            console.log({hapy: error});
+        }
+    }
+
     const createUser = async (user) => {
         try {
             const response = await fetch(`/api/proxy?${Date.now()}`, {
@@ -475,7 +501,7 @@ const useDatabase = () => {
         }
     }
 
-    return { getReferralCodeById,retrieveReferralData,getReferralByCode, updateReferral, createUser, getUser, updateUser, deleteUser, createProperty, deleteProperty, getPropertyById, updateProperty, getPropertiesByUserAddress, getRents, getRentById, updateRent, createRent, deleteRent }
+    return { getReferralCodeById,retrieveReferralData,getReferralByCode, updateReferral, createUser, getUser, updateUser, deleteUser, createProperty, deleteProperty, getPropertyById, updateProperty, getPropertiesByUserAddress, getRents, getRentById, updateRent, createRent, deleteRent, sendReferral }
 }
 
 export default useDatabase;
