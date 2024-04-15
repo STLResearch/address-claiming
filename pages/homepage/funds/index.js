@@ -46,6 +46,8 @@ import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
 import { getPriorityFeeIx } from "@/hooks/utils";
+import { showRampDepositeAndWithdrawal } from "@/hooks/utils";
+
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -418,7 +420,7 @@ const DepositAndWithdraw = ({
       name: "Native",
     },
   ];
-
+  
   const copyTextHandler = () => {
     setCopy(true);
 
@@ -515,6 +517,7 @@ const DepositAndWithdraw = ({
                 </div>
               </div>
             )}
+             {(selectedMethod.name == "Ramp") && (showRampDepositeAndWithdrawal("withdrawal", walletId))}
           </div>
         )}
       </div>
@@ -566,6 +569,7 @@ const DepositAndWithdraw = ({
               COMING SOON{" "}
             </div>
           )}
+          {(selectedMethod.name == "Ramp") && (showRampDepositeAndWithdrawal("deposit", walletId)) }
         </>
       )}
 
@@ -653,6 +657,10 @@ const Accordion = ({ selectedMethod, setSelectedMethod }) => {
     {
       icon: "/images/bank-note-arrow.svg",
       name: "Native",
+    },
+    {
+      icon: "/images/ramp.svg",
+      name: "Ramp",
     },
   ];
   return (
