@@ -434,7 +434,7 @@ const showRampDepositeAndWithdrawal = (rampOptions, walletId) => {
       case "withdrawal": {
         new RampInstantSDK({
           hostAppName: 'SKYTRADE APP',
-          hostLogoUrl: 'https://assets.ramp.network/misc/test-logo.png',
+          hostLogoUrl: '/images/test-logo-ramp.png',
           hostApiKey: String(process.env.RAMP_TEST_APIKEY),
           defaultAsset: 'SOLANA_USDC',
           userAddress: String(walletId)
@@ -450,7 +450,7 @@ const showRampDepositeAndWithdrawal = (rampOptions, walletId) => {
       case "deposit": {
         new RampInstantSDK({
           hostAppName: 'SKYTRADE APP',
-          hostLogoUrl: 'https://assets.ramp.network/misc/test-logo.png',
+          hostLogoUrl: '/images/test-logo-ramp.png',
           hostApiKey: String(process.env.RAMP_TEST_APIKEY),
           defaultAsset: 'SOLANA_USDC',
           userAddress: String(walletId)
