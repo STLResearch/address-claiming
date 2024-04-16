@@ -46,8 +46,7 @@ import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
 import { getPriorityFeeIx } from "@/hooks/utils";
-import { showRampDepositeAndWithdrawal } from "@/hooks/utils";
-
+import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk"
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -420,7 +419,7 @@ const DepositAndWithdraw = ({
       name: "Native",
     },
   ];
-  
+
   const copyTextHandler = () => {
     setCopy(true);
 
@@ -428,6 +427,52 @@ const DepositAndWithdraw = ({
       setCopy(false);
     }, 2000);
   };
+
+
+const showRampDepositeAndWithdrawal = (rampOptions, walletId) => {
+    switch (rampOptions) {
+      case "withdrawal": {
+        new RampInstantSDK({
+          hostAppName: 'SKYTRADE APP',
+          hostLogoUrl: String(process.env.RAMP_TEST_LOGOURL),
+          hostApiKey: String(process.env.RAMP_TEST_APIKEY),
+          defaultAsset: 'SOLANA_USDC',
+          userAddress: String(walletId)
+        }).show().on('*', (event) => {
+          if (event.type === 'OFFRAMP_SALE_SUCCESS') {
+            toast.success("Success !. Your funds have been withdrawn successfully");
+          } else if (event.type === 'OFFRAMP_SALE_FAILED') {
+            toast.success('Withdrawal failed');
+          }
+        });
+        break;
+      }
+      case "deposit": {
+        new RampInstantSDK({
+          hostAppName: 'SKYTRADE APP',
+          hostLogoUrl: String(process.env.RAMP_TEST_LOGOURL),
+          hostApiKey: String(process.env.RAMP_TEST_APIKEY),
+          defaultAsset: 'SOLANA_USDC',
+          userAddress: String(walletId)
+        }).show().on('*', (event) => {
+          if (event.type === 'PURCHASE_SUCCESS') {
+            toast.success("Success !. Your USDC have been purchased successfully");
+          } else if (event.type === 'PURCHASE_FAILED') {
+            toast.success('Purchase failed');
+          }
+        });
+        break;
+      }
+  
+    }
+  }
+
+
+
+
+
+
+
 
   const displayWalletId = walletId ? `${walletId.slice(0, 7)}...` : "";
 
