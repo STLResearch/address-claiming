@@ -1,42 +1,27 @@
 import { Fragment, useEffect, useState } from "react";
 
 
-import Sidebar from '../../../Components/Sidebar'
-import PageHeader from '../../../Components/PageHeader'
-import Link from "next/link";
-import Head from "next/head";
-import { Web3Auth } from "@web3auth/modal";
-import { SolanaWallet } from "@web3auth/solana-provider";
 import { dasApi } from '@metaplex-foundation/digital-asset-standard-api';
-import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 import { mplBubblegum } from '@metaplex-foundation/mpl-bubblegum';
-import Image from 'next/image'
-import map from '../../../public/map.png'
-import { publicKey } from '@metaplex-foundation/umi';
+import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
+import { CHAIN_NAMESPACES, OPENLOGIN_NETWORK } from "@web3auth/base";
+import { Web3Auth } from "@web3auth/modal";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
+import { SolanaWallet } from "@web3auth/solana-provider";
 import base58 from "bs58";
-import {
-    Connection,
-    LAMPORTS_PER_SOL,
-    PublicKey,
-    SystemProgram,
-    Transaction,
-    VersionedTransaction,
-  } from "@solana/web3.js";
+import Head from "next/head";
 import { useRouter } from "next/router";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import axios from "axios";
 import { createPortal } from "react-dom";
+import 'react-toastify/dist/ReactToastify.css';
 import Backdrop from "../../../Components/Backdrop";
+import { AssetCard } from '../../../Components/marketplace/AssetCard';
+import { AuctionCard } from "../../../Components/marketplace/AuctionCard";
+import { Button } from "../../../Components/marketplace/Button";
+import CreateAuctionModal from "../../../Components/marketplace/CreateAuctionModal";
+import PageHeader from '../../../Components/PageHeader';
+import Sidebar from '../../../Components/Sidebar';
 import Spinner from "../../../Components/Spinner";
 import { useAuth } from "../../../hooks/useAuth";
-import { AuctionCard } from "../../../Components/marketplace/AuctionCard";
-import CreateAuctionModal from "../../../Components/marketplace/CreateAuctionModal";
-import { BidModal } from "../../../Components/marketplace/BidModal";
-import { Button } from "../../../Components/marketplace/Button";
-import {AssetCard} from '../../../Components/marketplace/AssetCard';
-import { CHAIN_NAMESPACES, ChainNamespaceType, OPENLOGIN_NETWORK } from "@web3auth/base";
  
 
 // add proxy 47,
@@ -193,7 +178,10 @@ const Marketplace = () => {
               payload.statement = "Sign in to SkyTrade app.";
               payload.version = "1";
               payload.chainId = 1;
-  
+ 
+              
+
+              
               const header = { t: "sip99" };
               const network = "solana";
   
