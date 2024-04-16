@@ -27,14 +27,14 @@ export default function App({ Component, pageProps }) {
     if (!Tawk_API) return;
 
     if (isMobile) {
-      if (Tawk_API.hideWidget !== undefined) {
-        Tawk_API.hideWidget();
+      if (Tawk_API?.hideWidget !== undefined) {
+        Tawk_API?.hideWidget();
       } else if (!doItAgain) {
         setDoItAgain(true);
       }
     } else {
-      if (Tawk_API.showWidget !== undefined) {
-        Tawk_API.showWidget();
+      if (Tawk_API?.showWidget !== undefined) {
+        Tawk_API?.showWidget();
       } else if (doItAgain) {
         setDoItAgain(false);
       }
