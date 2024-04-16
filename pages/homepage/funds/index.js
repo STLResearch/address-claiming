@@ -46,6 +46,7 @@ import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
 import { getPriorityFeeIx } from "@/hooks/utils";
+import { useSelector } from "react-redux";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",

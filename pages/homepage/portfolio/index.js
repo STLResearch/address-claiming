@@ -294,7 +294,7 @@ const Portfolio = () => {
               onCloseModal={onCloseModal}
             />
           )}
-          <PageHeader pageTitle={"Portfolio"} username={"John Doe"} />
+          <PageHeader pageTitle={"Portfolio"} />
           <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
             <PortfolioList
               address={user?.blockchainAddress}

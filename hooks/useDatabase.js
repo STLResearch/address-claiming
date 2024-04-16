@@ -318,22 +318,23 @@ const useDatabase = () => {
     try {
         const { sign, sign_nonce, sign_issue_at, sign_address } =
                 await signatureObject(callerAddress);
-        const response = await axios.get(
-          `/api/private/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`,
-          {
+        
+
+        const response = await fetch(`/api/proxy?${Date.now()}`, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                URI: `/private/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`,
                 sign,
                 time: sign_issue_at,
                 nonce: sign_nonce,
                 address: sign_address,
-            },
-            
-          }
-        );
 
-        console.log({response})
-        return response.data;
+            },
+        })
+
+
+        return response.json();
       } catch (error) {
         console.error(error);
         return [];
@@ -346,22 +347,20 @@ const getUnverifiedAirspaces = async (callerAddress, limit, page)=>{
     try {
         const { sign, sign_nonce, sign_issue_at, sign_address } =
                 await signatureObject(callerAddress);
-        const response = await axios.get(
-          `/api/private/airspace-rental/retrieve-unverified-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`,
-          {
-            headers: {
-                'Content-Type': 'application/json',
-                sign,
-                time: sign_issue_at,
-                nonce: sign_nonce,
-                address: sign_address,
-            },
-            
-          }
-        );
 
-        console.log({response})
-        return response.data;
+                const response = await fetch(`/api/proxy?${Date.now()}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        URI: `/private/airspace-rental/retrieve-unverified-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`,
+                        sign,
+                        time: sign_issue_at,
+                        nonce: sign_nonce,
+                        address: sign_address,
+
+                    },
+                })
+        return response.json();
       } catch (error) {
         console.error(error);
         return [];
