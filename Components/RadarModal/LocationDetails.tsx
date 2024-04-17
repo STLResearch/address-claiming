@@ -1,7 +1,11 @@
-
 import { formatAccuracy } from "@/utils/radarUtils";
 import { convertToTimestampDate } from "@/utils/radarUtils";
-const LocationDetails = ({ DroneDataDetailSelected }) => {
+import { JsonObject } from "@/types/RemoteIdentifierDrone";
+
+interface Props {
+  DroneDataDetailSelected: JsonObject | null;
+}
+const LocationDetails: React.FC<Props> = ({ DroneDataDetailSelected }) => {
   return (
     <div>
       <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">
@@ -31,10 +35,11 @@ const LocationDetails = ({ DroneDataDetailSelected }) => {
           <p className="flex text-[#838187] text-[10px] gap-[10px]">
             Horizontal Speed{" "}
             <span className="text-[#222222] overflow-auto">
-              {(
-                parseFloat(
-                  DroneDataDetailSelected?.remoteData?.location?.speedHorizontal
-                ) / 100
+              {parseFloat(
+                (
+                  DroneDataDetailSelected?.remoteData?.location
+                    ?.speedHorizontal ?? 0 / 100
+                ).toString()
               ).toFixed(2)}
               m/s
             </span>
@@ -92,17 +97,18 @@ const LocationDetails = ({ DroneDataDetailSelected }) => {
           <p className="flex text-[#838187] text-[10px] gap-[10px]">
             Vertical Speed{" "}
             <span className="text-[#222222] overflow-auto">
-              {(
-                parseFloat(
-                  DroneDataDetailSelected?.remoteData?.location?.speedVertical
-                ) / 100
+              {parseFloat(
+                (
+                  DroneDataDetailSelected?.remoteData?.location
+                    ?.speedVertical ?? 0 / 100
+                ).toString()
               ).toFixed(2)}
               m/s
             </span>
           </p>
           <p className="flex text-[#838187] text-[10px] gap-[10px]">
             Height Over{" "}
-            <span className="text-[#222222] overflow-auto">Ground</span>
+            <span className="text-[#221919] overflow-auto">Ground</span>
           </p>
           <div className="flex text-[#838187] text-[10px] gap-[6px]">
             Vertical Accuracy

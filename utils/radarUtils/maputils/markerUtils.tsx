@@ -45,7 +45,7 @@ if (typeof document !== 'undefined') {
   console.error('Cannot create style element: document is not defined.');
 }
 
-export const showPopup = (marker, popupName, className, map) => {
+export const showPopup = (marker: mapboxgl.Marker, popupName: string, className: string, map: mapboxgl.Map): void => {
   const elementToRemove = document.querySelector(`.${className}`);
   if (elementToRemove) elementToRemove.remove();
 
@@ -60,13 +60,13 @@ export const showPopup = (marker, popupName, className, map) => {
   }).setLngLat(marker.getLngLat()).setHTML(tooltipContent).addTo(map);
 };
 
-export const createMarkerElement = (index) => {
+export const createMarkerElement = (index: number): HTMLDivElement => {
   const markerElement = document.createElement("div");
   markerElement.classList.add(`drone-marker-${index}`);
   return markerElement;
 };
 
-export const createMarker = (latitude, longitude, markerElement, map) => {
+export const createMarker = (latitude: number, longitude: number, markerElement: HTMLDivElement, map: mapboxgl.Map): mapboxgl.Marker => {
   return new mapboxgl.Marker({
     element: markerElement,
     draggable: false,
@@ -75,7 +75,7 @@ export const createMarker = (latitude, longitude, markerElement, map) => {
     .addTo(map);
 };
 
-export const removeMarkerElements = (index) => {
+export const removeMarkerElements = (index: number): void => {
   const elements = document.getElementsByClassName(`drone-marker-${index}`);
   Array.from(elements).forEach((element) => element.remove());
 };

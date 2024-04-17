@@ -1,5 +1,10 @@
 import { convertToHex } from "@/utils/radarUtils";
-const OperatorIDDetails = ({ DroneDataDetailSelected }) => {
+import {JsonObject}  from '@/types/RemoteIdentifierDrone'
+
+interface Props {
+  DroneDataDetailSelected: JsonObject | null;
+}
+const OperatorIDDetails : React.FC<Props> = ({ DroneDataDetailSelected }) => {
   return (
       <div>
         <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">

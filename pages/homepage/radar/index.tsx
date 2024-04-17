@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from "react";
 import ReactDOMServer from "react-dom/server";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { Map, Marker } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -15,7 +15,7 @@ import Explorer from "@/Components/Explorer/Explorer";
 import MobileExplorer from "@/Components/ExplorerMobile/MobileExplorer";
 import { RadarLocationIcon, RadarLayerIcon } from "@/Components/Icons";
 import { useMobile } from "@/hooks/useMobile";
-import useDroneSocket from "@/hooks/useDrone";
+import useDroneSocket from "../../../hooks/useDrone";
 import {
   closePopups,
   toggleMapView,
@@ -33,38 +33,54 @@ import {
   removeMarkerElements,
   handleMobileTouchEnd,
 } from "../../../utils/radarUtils/index";
+import { JsonObject, Coordinates } from "../../../types/RemoteIdentifierDrone";
 const Radar = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [map, setMap] = useState(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [map, setMap] = useState<Map | null>(null);
 
   const { isMobile } = useMobile();
-  const [showMobileMap, setShowMobileMap] = useState(isMobile);
+  const [showMobileMap, setShowMobileMap] = useState<boolean>(isMobile);
+  const [address, setAddress] = useState<string>("");
+  const [addressData, setAddressData] = useState<any>();
+  const [addresses, setAddresses] = useState<
+    { id: string; place_name: string }[]
+  >([]);
+  const [flyToAddress, setFlyToAddress] = useState<string>("");
 
-  const [address, setAddress] = useState("");
-  const [addressData, setAddressData] = useState();
-  const [addresses, setAddresses] = useState([]);
-  const [flyToAddress, setFlyToAddress] = useState("");
+  const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
 
-  const [coordinates, setCoordinates] = useState({
-    longitude: "",
-    latitude: "",
-  });
-  const [marker, setMarker] = useState();
-  const [showOptions, setShowOptions] = useState(false);
+  const [marker, setMarker] = useState<Marker | null>(null);
+  const [showOptions, setShowOptions] = useState<boolean>(false);
 
   const [mobileBottomDroneDetailVisible, setMobileBottomDroneDetailVisible] =
-    useState(false);
-  const [showDroneDetail, setShowDroneDetail] = useState(false);
-  const [DroneDataDetailSelected, setDroneDataSelected] = useState(null);
-  const [isAllPopupClosed, setIsAllPopupClosed] = useState(false);
-  const [isDroneSVGColor, setIsDroneSVGColor] = useState({});
-  const [isDroneHoverSVGColor, setIsDroneHoverSVGColor] = useState({});
-  const [droneMarker, setDroneMarker] = useState();
-  const [droneMarkerArray, setDroneMarkerArray] = useState({});
-  const [droneSocketDatas, setSocketDatas] = useState();
-  const [droneId, setDroneId] = useState();
+    useState<boolean>(false);
+  const [showDroneDetail, setShowDroneDetail] = useState<boolean>(false);
+  const [DroneDataDetailSelected, setDroneDataSelected] =
+    useState<JsonObject | null>(null);
+  const [isAllPopupClosed, setIsAllPopupClosed] = useState<boolean>(false);
+  const [isDroneSVGColor, setIsDroneSVGColor] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [isDroneHoverSVGColor, setIsDroneHoverSVGColor] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [droneMarker, setDroneMarker] = useState<boolean>(false);
+  const [droneMarkerArray, setDroneMarkerArray] = useState<
+    Record<number, Marker>
+  >({});
+  const [droneSocketDatas, setSocketDatas] = useState<JsonObject[] | null>(
+    null
+  );
+  const [droneId, setDroneId] = useState<string | undefined>(undefined);
 
-  const [boundingBox, setBoundingBox] = useState({
+  type BoundingBox = {
+    minLatitude: number;
+    maxLatitude: number;
+    minLongitude: number;
+    maxLongitude: number;
+  };
+
+  const [boundingBox, setBoundingBox] = useState<BoundingBox | undefined>({
     minLatitude: 17.555484669042485,
     maxLatitude: 55.242651682301556,
     minLongitude: -41.90240522562678,
@@ -78,8 +94,10 @@ const Radar = () => {
   useEffect(() => {
     if (map) return;
     const createMap = () => {
-      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
-      var newMap = new mapboxgl.Map({
+      if (process.env.NEXT_PUBLIC_MAPBOX_KEY) {
+        mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+      }
+      const newMap: mapboxgl.Map = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
         center: [0, 40],
@@ -87,8 +105,7 @@ const Radar = () => {
       });
 
       newMap.addControl(new mapboxgl.NavigationControl());
-
-      var nav = new mapboxgl.NavigationControl();
+      const nav = new mapboxgl.NavigationControl();
       newMap.addControl(nav, "top-right");
       newMap.on("load", () => {
         setMap(newMap);
@@ -120,11 +137,11 @@ const Radar = () => {
     if (!map) return;
 
     const addEventListeners = (
-      markerElement,
-      marker,
-      popupName,
-      index,
-      data
+      markerElement: HTMLElement,
+      marker: mapboxgl.Marker,
+      popupName: string,
+      index: number,
+      data: JsonObject
     ) => {
       if (!isMobile) {
         markerElement.addEventListener("click", () =>
@@ -171,7 +188,7 @@ const Radar = () => {
       }
     };
 
-    const addDroneMarkers = (droneData) => {
+    const addDroneMarkers = (droneData: JsonObject[] | null) => {
       droneData?.forEach((data, index) => {
         const popupName = data?.remoteData?.connection?.macAddress;
         const latitude = data?.remoteData?.location?.latitude;
@@ -193,12 +210,12 @@ const Radar = () => {
 
         if (!droneMarker && latitude && longitude) {
           marker = createMarker(latitude, longitude, markerElement, map);
-          setDroneMarkerArray({ [index]: marker });
+          setDroneMarkerArray({ ...droneMarkerArray, [index]: marker });
         } else {
           marker = droneMarkerArray[index];
           removeMarkerElements(index);
           marker = createMarker(latitude, longitude, markerElement, map);
-          setDroneMarkerArray({ [index]: marker });
+          setDroneMarkerArray({ ...droneMarkerArray, [index]: marker });
         }
 
         addEventListeners(markerElement, marker, popupName, index, data);
@@ -226,7 +243,7 @@ const Radar = () => {
       setIsDroneSVGColor({});
       setIsDroneHoverSVGColor({});
       setDroneDataSelected(null);
-      setDroneId(null);
+      setDroneId(undefined);
       if (map && map.getSource("flightPath")) {
         map.removeLayer("flightPath");
         map.removeSource("flightPath");
@@ -237,10 +254,21 @@ const Radar = () => {
   useEffect(() => {
     if (!showOptions) setShowOptions(true);
     if (!address) return setShowOptions(false);
-    let timeoutId;
+    let timeoutId: NodeJS.Timeout | null = null;
     getAddresses(setAddresses, setCoordinates, timeoutId, address);
-    return () => clearTimeout(timeoutId);
-  }, [address]);
+    return () => {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [
+    address,
+    showOptions,
+    setAddress,
+    setAddresses,
+    setCoordinates,
+    setShowOptions,
+  ]);
 
   useEffect(() => {
     if (!flyToAddress || !map) return;
@@ -259,7 +287,7 @@ const Radar = () => {
     if (flyToAddress === address) setShowOptions(false);
   }, [flyToAddress, address]);
 
-  const handleSelectAddress = (placeName) => {
+  const handleSelectAddress = (placeName: string) => {
     setAddress(placeName);
     setFlyToAddress(placeName);
     setShowOptions(false);
@@ -288,7 +316,6 @@ const Radar = () => {
           {showMobileMap && (
             <MobileExplorer
               onGoBack={handleGoBack}
-              flyToAddress={flyToAddress}
               address={address}
               setAddress={setAddress}
               addresses={addresses}
@@ -297,7 +324,9 @@ const Radar = () => {
             />
           )}
           <section
-            className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
+            className={`relative flex h-full w-full items-start justify-start md:mb-0 ${
+              showMobileMap ? "" : "mb-[79px]"
+            }`}
           >
             <div
               className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-full`}
@@ -310,7 +339,6 @@ const Radar = () => {
             {!isMobile && (
               <div className="flex items-start justify-start">
                 <Explorer
-                  flyToAddress={flyToAddress}
                   address={address}
                   setAddress={setAddress}
                   addresses={addresses}
@@ -355,6 +383,7 @@ const Radar = () => {
                   setIsAllPopupClosed(true);
                 }}
                 DroneDataDetailSelected={DroneDataDetailSelected}
+                isLoading={isLoading}
               />
             )}
           </section>

@@ -1,5 +1,10 @@
 import { formatTimeAgoFromMilliseconds } from "@/utils/radarUtils";
-const ConnectionDetails = ({ DroneDataDetailSelected }) => {
+import { JsonObject } from "@/types/RemoteIdentifierDrone";
+
+interface Props {
+  DroneDataDetailSelected: JsonObject | null;
+}
+const ConnectionDetails: React.FC<Props> = ({ DroneDataDetailSelected }) => {
   return (
     <div>
       <p className=" text-[14px]  text-[#4285F4] font-semibold leading-[2rem] mt-2 md:mt-0">
@@ -26,7 +31,10 @@ const ConnectionDetails = ({ DroneDataDetailSelected }) => {
             Msg{" "}
             <span className="text-[#222222] overflow-auto">
               {parseInt(
-                DroneDataDetailSelected?.remoteData?.connection?.msgDelta / 1000
+                (
+                  (DroneDataDetailSelected?.remoteData?.connection?.msgDelta ??
+                    0) / 1000
+                ).toString()
               )}
               s
             </span>

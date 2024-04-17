@@ -1,4 +1,9 @@
-const SelfIDDetails = ({ DroneDataDetailSelected }) => {
+import {JsonObject}  from '@/types/RemoteIdentifierDrone'
+
+interface Props {
+  DroneDataDetailSelected: JsonObject | null;
+}
+const SelfIDDetails : React.FC<Props> = ({ DroneDataDetailSelected }) => {
   return (
     <div>
       <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">

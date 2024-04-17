@@ -1,11 +1,21 @@
-const DroneSVGComponent = ({ droneColor, direction }) => {
+interface DroneSVGComponentProps {
+  droneColor: string;
+  direction: number;
+}
+
+const DroneSVGComponent: React.FC<DroneSVGComponentProps> = ({
+  droneColor,
+  direction,
+}) => {
   return (
     <div
       className={`svg-container w-[35px] h-[35px] z-[100] `}
-      style={{ transform: direction !== 361 ?  `rotate(${direction}deg)`:'none' }}
+      style={{
+        transform: direction !== 361 ? `rotate(${direction}deg)` : "none",
+      }}
     >
       <div className="flex flex-col items-center justify-center">
-        {parseInt(direction) != 361 && (
+        {Math.floor(direction) != 361 && (
           <svg
             width="12"
             height="12"
@@ -15,7 +25,7 @@ const DroneSVGComponent = ({ droneColor, direction }) => {
           >
             <path
               d="M3 0L5.59808 4.5L0.401924 4.5L3 0Z"
-              fill={droneColor ?  `${droneColor} `: '#0000FF'}
+              fill={droneColor ? `${droneColor} ` : "#0000FF"}
               stroke="white"
               strokeWidth={0.3}
             />
