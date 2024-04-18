@@ -1,28 +1,16 @@
 
-import   swal  from "sweetalert";
-import { Web3Auth } from "@web3auth/modal";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { CHAIN_NAMESPACES, OPENLOGIN_NETWORK } from "@web3auth/base";
-import { SolanaWallet } from "@web3auth/solana-provider";
-;
 import Image from 'next/image'
 import map from '../../public/map.png'
-
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
 import {
-  
-    VersionedTransaction,
+      VersionedTransaction,
   } from "@solana/web3.js";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { Button } from "./Button";
 import React from 'react'
-import { useAuth } from "@/hooks/useAuth";
-
-
-
+import { SolanaWallet } from '@web3auth/solana-provider';
 
  export  const AssetCard = ({
     assetId,
@@ -30,28 +18,27 @@ import { useAuth } from "@/hooks/useAuth";
     setIsLoading,
     user1,
     solanaWallet
-  }:{assetId:any,owner:any,setIsLoading:any,user1:any,solanaWallet:any}) => {
-   
-  
-    //@ts-ignore
-
-   
-
-let router=useRouter()
+  }:{assetId:string,
+    owner:string,
+    setIsLoading:React.Dispatch<React.SetStateAction<boolean>>,
+    user1:any,
+    solanaWallet:SolanaWallet
+  }) => {
+      
     const sucess = () => toast.success('nft added to auction', {});
     const error1 = () => toast.error('plzz try again');
     const handleOnClick = async () => {
 
       setIsLoading(true);
       const signatureObj:{
-        sign?:any;
-        sign_nonce?:any ;
-        sign_issue_at?:any ;
-        sign_address?:any
+        sign?:string;
+        sign_nonce?:string ;
+        sign_issue_at?:string ;
+        sign_address?:string
       } = {};
       let date1 = new Date().setHours(new Date().getHours() + 4);
       let endDate = new Date(date1).toISOString();
-      console.log(endDate);
+     
   
       let reqBody = {
         assetId: assetId,
@@ -91,7 +78,7 @@ let router=useRouter()
             signatureObj.sign_address = user1.blockchainAddress;
 
 
-            let ans = await fetch(`/api/proxy?${Date.now()}`, {
+            let addNft = await fetch(`/api/proxy?${Date.now()}`, {
               method: "POST",
               headers: {
                 Accept: "application/json",
@@ -105,12 +92,11 @@ let router=useRouter()
               },
               body: JSON.stringify(reqBody),
             });
-           let  ans1 = await ans.json();
-            console.log('ans',ans)
-        //let ans = await axios.post('/api/postCnftAuction', { body: reqBody });
-        setIsLoading(false);
-        console.log(ans1.tx)
-        let txs = ans1.tx;
+           let  addNftJson = await addNft.json();
+            
+                setIsLoading(false);
+     
+        let txs = addNftJson.tx;
         let bfferedTx1 = Buffer.from(txs[0], 'base64');
         let uintArrTx1 = new Uint8Array(bfferedTx1);
         let Vtx1 = VersionedTransaction.deserialize(uintArrTx1);
@@ -118,22 +104,22 @@ let router=useRouter()
         let uintArrTx2 = new Uint8Array(bfferedTx2);
         let Vtx2 = VersionedTransaction.deserialize(uintArrTx2);
         let sig = await solanaWallet.signAllTransactions([Vtx1, Vtx2]);
-        console.log('raw sig', sig);
+       
         let serializedSig1 = sig[0].serialize();
         let bufferedSeriSx1 = Buffer.from(serializedSig1);
         let finalTx1 = bufferedSeriSx1.toString('base64');
-        console.log('final sig', finalTx1);
+      
         let serializedSig2 = sig[1].serialize();
         let bufferedSeriSx2 = Buffer.from(serializedSig2);
         let finalTx2 = bufferedSeriSx2.toString('base64');
-        console.log('final sig', finalTx2);
+        
   
         let reqBody2 = {
           sig: [finalTx1, finalTx2],
           assetId: assetId
         };
-        console.log('allsig',reqBody2)
-        let ans2 = await fetch(`/api/proxy?${Date.now()}`, {
+      
+        let submitTx = await fetch(`/api/proxy?${Date.now()}`, {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -147,26 +133,19 @@ let router=useRouter()
           },
           body: JSON.stringify(reqBody2),
         });
-        ans2 = await ans2.json();
-        console.log('ans2',ans2)
-
-        //let res2 = await axios.post('/api/sellApi', { body: reqBody2 });
-        //console.log('res2=', res);
-        if (ans1.data.status == 500) {
-          throw new Error(ans1.data.text);
+        submitTx = await submitTx.json();
+        if (addNftJson.data.status == 500) {
+          throw new Error(addNftJson.data.text);
         }
         
         sucess();
       } catch (error) {
-        console.log('error', error);
+        console.error('error', error);
         error1();
       }
     }else{
-      console.log('no user1')
+      console.error('no user1')
     }
-
-  
-      console.log('click');
     };
 
     return (

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 
 import { dasApi } from '@metaplex-foundation/digital-asset-standard-api';
@@ -10,7 +10,6 @@ import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import base58 from "bs58";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import Backdrop from "../../../Components/Backdrop";
@@ -28,37 +27,32 @@ import { useAuth } from "../../../hooks/useAuth";
 
 const Marketplace = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [assetButton, setAssetButton] = useState<any>();
+    const [assetButton, setAssetButton] = useState<React.ReactNode>();
     const [activeTab, setActiveTab] = useState('Auctions');
-    const [sideBarActive, setSideBarActive] = useState(false);
-    const [toggleBidModal, setToggleBidModal] = useState(false);
     const [toggleCreateAuctionModal, setToggleCreateAuctionModal] = useState(false);
     const [auctions, setAuctions] = useState();
     const [solanaWallet,setSolanaWallet] = useState<any>();
     //@ts-ignore
     const {user:selectorUser}=useAuth()
     const [user1, setUser1] = useState<any>();  
-    let router=useRouter()
+
       const handleAuctionAdd = async () => {
       setIsLoading(true);
       setToggleCreateAuctionModal(true);
       try {
-        let ownerAddress = await solanaWallet.requestAccounts();
-        let rpc = process.env.NEXT_PUBLIC_RPCENDPOINT;
-        console.log('rpc',rpc)
+        const ownerAddress = await solanaWallet.requestAccounts();
+        const rpc = process.env.NEXT_PUBLIC_RPCENDPOINT;
+        
         const umi=createUmi(rpc).use(mplBubblegum())
         umi.use(dasApi())
-        console.log('owner address',ownerAddress)
+        
         const rpcAssetList = await umi.rpc.getAssetsByOwner({ owner: ownerAddress[0] });
         
-       /*  let assets = await axios.get('/api/getAssetsByOwner', {
-          headers: { owner: ownerAddress[0] },
-        }); */
-        let assets=rpcAssetList.items.map((item) => item.id);
-        console.log('asset ids', assets)
-        console.log(ownerAddress[0]);
-        //console.log('yo', assets.data.assetIds);
-         let assetButtons = assets.map((item: any, idx: any) => {
+
+        const assets=rpcAssetList.items.map((item) => item.id);
+       
+        
+         const assetButtons = assets.map((item: any, idx: any) => {
           return (
             <AssetCard key={idx} assetId={item} owner={ownerAddress[0]} setIsLoading={setIsLoading} user1={user1} solanaWallet={solanaWallet}/>
           );
@@ -67,7 +61,7 @@ const Marketplace = () => {
        
         setAssetButton(assetButtons);
       } catch(error) {
-        console.log('error to get asset',error)
+        console.error('error to get asset',error)
       }
       setIsLoading(false);
     };
@@ -100,20 +94,8 @@ const Marketplace = () => {
           try {
             userInfo = await web3auth.getUserInfo();
           } catch (err) {
-            console.log('error to get user',err)
+            console.error('error to get user',err)
           }
-  
-          const fetchedToken = JSON.parse(
-            localStorage.getItem("openlogin_store")
-          );
-  
-/*           if (!selectorUser) {
-            localStorage.removeItem("openlogin_store");
-            router.push("/auth/join");
-            return;
-          } */
-  
-          
           setUser1(selectorUser);
         };
   
@@ -122,9 +104,9 @@ const Marketplace = () => {
     }, [user1,selectorUser]);
 
     useEffect(()=>{
-      console.log('user',user1)
+      
        if(user1){ 
-        let getWallet=async()=>{
+        const getWallet=async()=>{
             const chainConfig = {
                 chainNamespace: CHAIN_NAMESPACES.SOLANA ,
                 chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
@@ -145,9 +127,9 @@ const Marketplace = () => {
               const web3authProvider = await web3auth.connect();
         
               const solanaWallet = new SolanaWallet(web3authProvider); 
-              const accounts = await solanaWallet.requestAccounts();
+              
               setSolanaWallet(solanaWallet)
-              console.log('ypp',accounts)
+              
         }
      
           
@@ -155,13 +137,11 @@ const Marketplace = () => {
       }
     },[user1,selectorUser])
     useEffect(()=>{
-      console.log('user',user1)
-      console.log(solanaWallet) 
       const signatureObj:{
-        sign?:any;
-        sign_nonce?:any ;
-        sign_issue_at?:any ;
-        sign_address?:any
+        sign?:string;
+        sign_nonce?:string ;
+        sign_issue_at?:string ;
+        sign_address?:string
       } = {};
       if(user1 && solanaWallet){ 
         const getAuctions = async () => {
@@ -185,7 +165,7 @@ const Marketplace = () => {
               const header = { t: "sip99" };
               const network = "solana";
   
-              let message = new SIWWeb3({ header, payload, network });
+              const message = new SIWWeb3({ header, payload, network });
   
               const messageText = message.prepareMessage();
               const msg = new TextEncoder().encode(messageText);
@@ -197,7 +177,7 @@ const Marketplace = () => {
               signatureObj.sign_nonce = message.payload.nonce;
               signatureObj.sign_issue_at = message.payload.issuedAt;
               signatureObj.sign_address = user1.blockchainAddress;
-              let ans = await fetch(`/api/proxy?${Date.now()}`, {
+              const resNft = await fetch(`/api/proxy?${Date.now()}`, {
                 method: "GET",
                 headers: {
                   Accept: "application/json",
@@ -210,19 +190,18 @@ const Marketplace = () => {
                   address: signatureObj.sign_address,
                 }                
               });
-              let ans1 = await ans.json();
-              console.log('get cnfts',ans)
-              //let ans = await axios.get('/api/postCnftAuction');
-              //console.log('ans', ans);
+              const resNftJson = await resNft.json();
               
-                let resdata = ans1.data;
-                console.log('resdata', resdata);
-                let ans2 = resdata.map((item, idx) => {
+             
+              
+                const resdata = resNftJson.data;
+                
+                const ans2 = resdata.map((item, idx) => {
                   
                     return (
                       <AuctionCard
                         key={idx}
-                        key1={idx}
+                       
                         assetId={item.assetId}
                         owner={item.owner}
                         highestBid={item.highestBid}
@@ -236,7 +215,7 @@ const Marketplace = () => {
                 setAuctions(ans2);
               
             } catch (error) {
-              console.log(error);
+              console.error(error);
             }
           };
           getAuctions();

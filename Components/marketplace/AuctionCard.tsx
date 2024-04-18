@@ -2,25 +2,26 @@ import { useState } from "react";
 import { BidModal } from "./BidModal";
 import Image from "next/image";
 import { Button } from "./Button";
+import { SolanaWallet } from "@web3auth/solana-provider";
 
 
 export const AuctionCard = ({
-    key1,
     assetId,
     owner,
     highestBid,
     totalBids,
     user1,
     solanaWallet
+  }:{
+    assetId:string,
+    owner:string,
+    highestBid:string,
+    totalBids:string,
+    user1:any,
+    solanaWallet:SolanaWallet
   }) => {
     const [toggleBidModal, setToggleBidModal] = useState(false);
-    const dummyName = [
-      '9431 Bank Drive Brooklyn, NY 11216',
-      '97 Carson St. Brooklyn, NY 11204',
-      '7 Bradford Drive  Bronx, NY 10453',
-      '7342 Westminster Ave.  Bronx, NY 10463',
-      ' 957 Liberty Ave.  Buffalo, NY 14221',
-    ];
+
   
     return (
       <>
@@ -37,7 +38,7 @@ export const AuctionCard = ({
             <Image src={'/map.png'} width={290} height={174} alt="map" />
           </div>
           <div className="flex flex-col px-4 gap-4">
-            <div className="font-semibold">{dummyName[key1]}</div>
+            <div className="font-semibold"></div>
             <div className="flex justify-between w-full text-sm">
               <div className="flex flex-col">
                 <div className="text-grayText">Asset ID</div>

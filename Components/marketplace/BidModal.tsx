@@ -1,35 +1,30 @@
 
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { Button } from "./Button";
-import { Web3Auth } from "@web3auth/modal";
-import { CHAIN_NAMESPACES, OPENLOGIN_NETWORK } from "@web3auth/base";
-import   swal  from "sweetalert";
-import { SolanaWallet } from "@web3auth/solana-provider";
+
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
 import { VersionedTransaction } from "@solana/web3.js";
-import { useAuth } from "@/hooks/useAuth";
-export const BidModal = ({ data, onClose, onSubmit,user1,solanaWallet }:{data:any,onClose:any,onSubmit?:any,user1:any,solanaWallet:any}) => {
-    const [bid, setBid] = useState('');
-    const [amount, setAmount] = useState('0');
-       //@ts-ignore
-  const { user: selectorUser } = useAuth();
+import { SolanaWallet } from "@web3auth/solana-provider";
 
-  const router = useRouter();
+export const BidModal = ({ data, onClose, user1,solanaWallet }:{data:{ assetId:string, owner:string, highestBid:string, totalBids:string },
+  onClose: React.MouseEventHandler<HTMLDivElement>,
+  onSubmit?:any,
+  user1:any,
+  solanaWallet:SolanaWallet}) => {
 
-
+    const [amount, setAmount] = useState<string>('0');
     const handleSubmit = async () => {
       const signatureObj:{
-        sign?:any;
-        sign_nonce?:any ;
-        sign_issue_at?:any ;
-        sign_address?:any
+        sign?:string;
+        sign_nonce?:string ;
+        sign_issue_at?:string ;
+        sign_address?:string
       } = {};
       if(user1){
         let ownerAddress = await solanaWallet.requestAccounts();
      
-        console.log(ownerAddress[0]);
+
         let reqBody = {
           assetId: data.assetId,
           bidder: ownerAddress[0],
@@ -65,7 +60,7 @@ export const BidModal = ({ data, onClose, onSubmit,user1,solanaWallet }:{data:an
               signatureObj.sign_address = user1.blockchainAddress;
   
   
-              let ans = await fetch(`/api/proxy?${Date.now()}`, {
+              let addBid = await fetch(`/api/proxy?${Date.now()}`, {
                 method: "POST",
                 headers: {
                   Accept: "application/json",
@@ -79,29 +74,27 @@ export const BidModal = ({ data, onClose, onSubmit,user1,solanaWallet }:{data:an
                 },
                 body: JSON.stringify(reqBody),
               });
-              let ans1 = await ans.json();
-              console.log('ans',ans)
+              let addBidJson = await addBid.json();
+              console.log('ans',addBid)
   
-          //let ans = await axios.post('/api/placeBid', { body: { reqBody } });
-          //console.log(ans);
-          
-            let resTx = ans1?.tx;
-            console.log('tx', resTx);
+       
+            let resTx = addBidJson?.tx;
+        
             let bfferedTx = Buffer.from(resTx, 'base64');
             let uintArrTx = new Uint8Array(bfferedTx);
             let Vtx = VersionedTransaction.deserialize(uintArrTx);
             let sig = await solanaWallet.signTransaction(Vtx);
-            console.log('raw sig', sig);
+          
             let serializedSig = sig.serialize();
             let bufferedSeriSx = Buffer.from(serializedSig);
             let finalTx = bufferedSeriSx.toString('base64');
-            console.log('final sig', finalTx);
+            
             let reqBody2 = {
               sig: finalTx,
               assetId: data.assetId,
             };
   
-            let ans2 = await fetch(`/api/proxy?${Date.now()}`, {
+            let submitTx = await fetch(`/api/proxy?${Date.now()}`, {
               method: "POST",
               headers: {
                 Accept: "application/json",
@@ -115,20 +108,14 @@ export const BidModal = ({ data, onClose, onSubmit,user1,solanaWallet }:{data:an
               },
               body: JSON.stringify(reqBody2),
             });
-            ans2 = await ans2.json();
-            console.log('ans2',ans2)
-  
-            //let res = await axios.post('/api/placeBid/submitBid', { body: reqBody2 });
-            //console.log('res2=', res);
-            /*  const signatureBuffer = Buffer.from(finalTx, 'base64');
-            const txHash = signatureBuffer.toString('hex');
-            console.log('sig hash', txHash); */
+            submitTx = await submitTx.json();
+            
           
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       }else{
-        console.log('no user1')
+        console.error('no user1')
       }
       
     }; // State to store the input value
@@ -148,7 +135,7 @@ export const BidModal = ({ data, onClose, onSubmit,user1,solanaWallet }:{data:an
           <div onClick={onClose} className="absolute top-2 right-2 cursor-pointer">
             <button className="w-6 h-6" >xx</button>
           </div>
-          <div className="text-center font-semibold text-lg">{data.name}</div>
+{/*           <div className="text-center font-semibold text-lg">{data.name}</div> */}
           <div className="flex w-full items-center justify-between mb-4">
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
@@ -179,7 +166,7 @@ export const BidModal = ({ data, onClose, onSubmit,user1,solanaWallet }:{data:an
             </div>
           </div>
           <div className="flex justify-between gap-4">
-            <Button type="secondary" label="Cancel" onClick={onClose} />
+            <Button  label="Cancel" onClick={onClose} />
             <Button label="Submit" onClick={handleSubmit} />
           </div>
         </div>
