@@ -171,6 +171,7 @@ const Signup = () => {
         // dispatch(counterActions.userAuth(user));
         // localStorage.setItem('user', JSON.stringify(user));
         router.push("/homepage/dashboard2");
+        localStorage.set('new', true)
         return user;
       }
 
@@ -303,6 +304,7 @@ const Signup = () => {
         signIn({ user });
         console.log("Login: done!");
         router.push("/homepage/dashboard2");
+        localStorage.set('new', true)
         // dispatch(counterActions.userAuth(user));
         // localStorage.setItem('user', JSON.stringify(user));
         // router.push('/homepage/dashboard');
@@ -442,7 +444,6 @@ const Signup = () => {
               </label>
             )}
             <button
-              type="button"
               onClick={loginHandlerGood}
               className="w-full rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600"
             >

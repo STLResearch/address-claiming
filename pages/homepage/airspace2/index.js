@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import Script from "next/script";
@@ -23,6 +23,9 @@ import Link from "next/link";
 import { useTimezoneSelect, allTimezones } from "react-timezone-select";
 import axios from "axios";
 import Head from "next/head";
+import { useTour } from "@reactour/tour";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 const Toggle = ({ checked, setChecked }) => {
   return (
@@ -66,7 +69,7 @@ const TimeZoneSelect = ({ timeZone, setTimeZone }) => {
     <Fragment>
       <label
         htmlFor="timeZone"
-        className="text-[14px] font-normal text-[#838187]"
+        className="text-[14px] font-normal text-[#838187] leading-[2rem] md:leading-none "
       >
         Time Zone<span className="text-[#E04F64]">*</span>
       </label>
@@ -101,7 +104,7 @@ const VariableFeeRentalRangesSelect = ({ fee, setFee }) => {
     <Fragment>
       <label
         htmlFor="variableFeeRentalRange"
-        className="text-[14px] font-normal text-[#838187]"
+        className="text-[14px] font-normal text-[#838187] leading-[2rem] "
       >
         Variable Fee Rental Range (per transit)
         <span className="text-[#E04F64]">*</span>
@@ -111,7 +114,7 @@ const VariableFeeRentalRangesSelect = ({ fee, setFee }) => {
         onChange={handleVariableFeeRentalRangeChange}
         name="variableFeeRentalRange"
         id="variableFeeRentalRange"
-        className="w-full appearance-none rounded-lg px-[22px] py-[16px] text-[14px] font-normal text-[#222222] focus:outline-none"
+        className="w-full appearance-none rounded-lg px-[22px] py-[16px] text-[14px] font-normal text-[#222222] focus:outline-none "
         style={{ border: "1px solid #87878D" }}
       >
         <option value="1-99">$1-$99</option>
@@ -144,9 +147,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
       isAvailable: true,
       fromTime: 9,
       toTime: 21,
-      weekDayId:day.weekDayId
-
-      
+      weekDayId: day.weekDayId,
     }));
     setWeekDayRanges(defaultWeekDayRanges);
   }, []);
@@ -173,7 +174,10 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
     const isDayAvailable = weekDayRanges[index].isAvailable;
 
     return (
-      <div className="flex items-center justify-between" key={index}>
+      <div
+        className="flex-none md:flex items-center justify-between"
+        key={index}
+      >
         <div className="flex items-center gap-[15px] pr-[32px]">
           <Toggle
             checked={isDayAvailable}
@@ -181,7 +185,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
           />
           <p>{day}</p>
         </div>
-        <div className="flex items-center gap-[66px]">
+        <div className="flex items-center gap-[66px] mt-2">
           <select
             disabled={!isDayAvailable}
             value={weekDayRanges[index].fromTime}
@@ -219,42 +223,57 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
   });
 };
 
-const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading}) => {
+const ClaimModal = ({
+  onCloseModal,
+  data,
+  setData,
+  onClaim,
+  claimButtonLoading,
+}) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
-  useEffect(()=>{
-    let airSpaceName=data.address.split(',')
-    setData((prev) => {
-      return {
-        ...prev,
-        name:airSpaceName[0],
-      };})
-  },[])
-  const handleSellPrice=(e)=>{
-  let inputVal=e.target.value;
-  console.log(inputVal)
-  let parsedVal=parseFloat(inputVal)
-   if(parsedVal>=0 && parsedVal!=NaN){
-    console.log("parseVal ",parseFloat(inputVal))
-    setData((prev) => {
-      return {
-        ...prev,
-        sellingPrice: inputVal,
-      };})
+  const searchParams = useSearchParams();
+  const endOfDivRef = useRef(null);
+  const { currentStep } = useTour();
 
-   }else{
+  useEffect(() => {
+    if (endOfDivRef.current && currentStep === 3) {
+      const { scrollHeight, clientHeight } = endOfDivRef.current;
+      const maxScrollTop = scrollHeight - clientHeight;
+      endOfDivRef.current.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+    }
+  }, [currentStep]);
+  useEffect(() => {
+    let airSpaceName = data.address.split(",");
     setData((prev) => {
       return {
         ...prev,
-        sellingPrice:'0'
-       
-      };})
-   }
-      
-    
-
-  }
+        name: airSpaceName[0],
+      };
+    });
+  }, []);
+  const handleSellPrice = (e) => {
+    let inputVal = e.target.value;
+    console.log(inputVal);
+    let parsedVal = parseFloat(inputVal);
+    if (parsedVal >= 0 && parsedVal != NaN) {
+      console.log("parseVal ", parseFloat(inputVal));
+      setData((prev) => {
+        return {
+          ...prev,
+          sellingPrice: inputVal,
+        };
+      });
+    } else {
+      setData((prev) => {
+        return {
+          ...prev,
+          sellingPrice: "0",
+        };
+      });
+    }
+  };
   return (
-    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white  md:rounded-[30px]  w-full max-h-screen h-screen md:max-h-[600px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] short-scrollbar">
+    <div className="claim-modal-step fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] ">
       <div
         className="z-[100] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px]      md:shadow-none"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -263,9 +282,15 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
           <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}>
             <ArrowLeftIcon />
           </div>
-          <h2 className="text-[#222222] text-center font-medium text-xl">
-            Claim Airspace
-          </h2>
+          <div className="flex justify-center items-center w-[95%] gap-2 ">
+            <h2 className="text-[#222222] text-center font-medium text-xl">
+              Claim Airspace
+            </h2>
+            <div className="hidden md:block w-[20px] h-[20px] ">
+              <InfoIcon />
+            </div>
+          </div>
+
           <div
             onClick={onCloseModal}
             className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
@@ -274,326 +299,364 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
           </div>
         </div>
       </div>
-      <div className="px-[29px]">
-        <div
-          className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
-          style={{ border: "1px solid #4285F4" }}
-        >
-          <div className="w-6 h-6">
-            <LocationPointIcon />
-          </div>
-          <p className="font-normal text-[#222222] text-[14px] flex-1">
-            {data.address}
-          </p>
-        </div>
-        <div className="flex flex-col gap-[5px]">
-          <label htmlFor="name">
-            Name of airspace<span className="text-[#E04F64]">*</span>
-          </label>
-          <input
-            value={data.name}
-            onChange={(e) =>
-              setData((prev) => ({ ...prev, name: e.target.value }))
-            }
-            className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]"
-            style={{ border: "1px solid #87878D" }}
-            type="text"
-            name="name"
-            id="name"
-            autoComplete="off"
-          />
-        </div>
-        <div className="flex flex-col gap-[10px]">
-          <p className="text-[14px] font-normal text-[#838187]">
-            Are you looking to Rent or Sell your airspace?
-          </p>
-          <div className="flex items-center gap-[7px]">
-            <input
-              className="h-[18px] w-[18px] cursor-pointer"
-              type="checkbox"
-              id="rent"
-              name="rent"
-              checked={data.rent}
-              onChange={() =>
-                setData((prev) => {
-                  const newData = { ...prev, rent: !prev.rent };
-                  newData.sell = false;
-                  return newData;
-                })
-              }
-            />
-            <label htmlFor="rent">Rent</label>
-            <input
-              className="h-[18px] w-[18px] cursor-pointer"
-              type="checkbox"
-              id="sell"
-              disabled
-              name="sell"
-              checked={data.sell}
-              onChange={() =>
-                setData((prev) => {
-                  const newData = { ...prev, sell: !prev.sell };
-                  newData.rent = false;
-                  return newData;
-                })
-              }
-            />
-            <label htmlFor="sell">Sell</label>
-          </div>
-        </div>
-        {data.rent && (
-          <Fragment>
-            <h2 className="text-[#222222] font-normal text-[20px]">
-              Rental Details
-            </h2>
-            <Link
-              target="_blank"
-              href={"https://skytrade.tawk.help"}
-              className="text-[#0653EA] text-[14px] font-normal cursor-pointer"
-            >
-              Learn more about rentals in our FAQ.
-            </Link>
-            <div className="flex items-center justify-between gap-[15px]">
-              <div className="flex-1">
-                <VariableFeeRentalRangesSelect
-                  fee={data.transitFee}
-                  setFee={(fee) =>
-                    setData((prev) => ({ ...prev, transitFee: "" + fee }))
-                  }
-                />
-              </div>
-              <div className="flex-1">
-                <TimeZoneSelect
-                  timeZone={data.timezone}
-                  setTimeZone={(timezone) =>
-                    setData((prev) => ({ ...prev, timezone }))
-                  }
-                />
-              </div>
+      <div className="md:overflow-y-scroll">
+        <div className="px-[29px]">
+          <div
+            className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
+            style={{ border: "1px solid #4285F4" }}
+          >
+            <div className="w-6 h-6">
+              <LocationPointIcon />
             </div>
-            <div className="flex flex-col gap-[10px]">
-              <p className="text-[14px] font-normal text-[#838187]">
-                Select extra features your facility provides
-                <span className="text-[#E04F64]">*</span>
-              </p>
-              <div className="flex items-center gap-[10px]">
-                <input
-                  className="w-[18px] h-[18px] cursor-pointer"
-                  type="checkbox"
-                  id="hasLandingDeck"
-                  name="hasLandingDeck"
-                  checked={data.hasLandingDeck}
-                  onChange={() =>
-                    setData((prev) => ({
-                      ...prev,
-                      hasLandingDeck: !prev.hasLandingDeck,
-                    }))
-                  }
-                />
-                <label htmlFor="hasLandingDeck" className="text-[#87878D] text-[14px] font-normal">
-                  Landing Deck
-                </label>
-                <input
-                  className="w-[18px] h-[18px] cursor-pointer"
-                  type="checkbox"
-                  id="hasChargingStation"
-                  name="hasChargingStation"
-                  checked={data.hasChargingStation}
-                  onChange={() =>
-                    setData((prev) => ({
-                      ...prev,
-                      hasChargingStation: !prev.hasChargingStation,
-                    }))
-                  }
-                />
-                <label  htmlFor="hasChargingStation" className="text-[#87878D] text-[14px] font-normal">
-                  Charging Station
-                </label>
-                <input
-                  className="w-[18px] h-[18px] cursor-pointer"
-                  type="checkbox"
-                  id="hasStorageHub"
-                  name="hasStorageHub"
-                  checked={data.hasStorageHub}
-                  onChange={() =>
-                    setData((prev) => ({
-                      ...prev,
-                      hasStorageHub: !prev.hasStorageHub,
-                    }))
-                  }
-                />
-                <label htmlFor="hasStorageHub" className="text-[#87878D] text-[14px] font-normal">
-                  Storage Hub
-                </label>
-              </div>
-            </div>
-            <div className="flex flex-col gap-[15px]">
-              <p>
-                Availability<span className="text-[#E04F64]">*</span>
-              </p>
-              <WeekDayRangesForm
-                weekDayRanges={data.weekDayRanges}
-                setWeekDayRanges={(weekDayRanges) =>
-                  setData((prev) => ({ ...prev, weekDayRanges }))
+            <p className="font-normal text-[#222222] text-[14px] flex-1">
+              {data.address}
+            </p>
+          </div>
+          <div className="flex flex-col gap-[5px] mt-3 md:mt-4 ">
+            <label htmlFor="name">
+              Name of airspace<span className="text-[#E04F64]">*</span>
+            </label>
+            <input
+              value={data.name}
+              onChange={(e) =>
+                setData((prev) => ({ ...prev, name: e.target.value }))
+              }
+              className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222] mt-0.5 md:mt-1"
+              style={{ border: "1px solid #87878D" }}
+              type="text"
+              name="name"
+              id="name"
+              autoComplete="off"
+            />
+          </div>
+          <div className="flex flex-col gap-[10px] mt-2 md:mt-3">
+            <p className="text-[14px] font-normal text-[#838187] ">
+              Are you looking to Rent or Sell your airspace?
+            </p>
+            <div className="flex items-center gap-[7px]">
+              <input
+                className="h-[18px] w-[18px] cursor-pointer"
+                type="checkbox"
+                id="rent"
+                name="rent"
+                checked={data.rent}
+                onChange={() =>
+                  setData((prev) => {
+                    const newData = { ...prev, rent: !prev.rent };
+                    newData.sell = false;
+                    return newData;
+                  })
                 }
               />
+              <label htmlFor="rent">Rent</label>
+              <input
+                className="h-[18px] w-[18px] cursor-pointer"
+                type="checkbox"
+                id="sell"
+                disabled
+                name="sell"
+                checked={data.sell}
+                onChange={() =>
+                  setData((prev) => {
+                    const newData = { ...prev, sell: !prev.sell };
+                    newData.rent = false;
+                    return newData;
+                  })
+                }
+              />
+              <label htmlFor="sell">Sell</label>
             </div>
-          </Fragment>
-        )}
-        {data.sell && (
-          <Fragment>
-            <div className="flex items-center gap-[7.5px]">
-              <h2 className="text-[#222222] font-normal text-[20px]">
-                Selling Details
+          </div>
+          {data.rent && (
+            <Fragment>
+              <h2 className="text-[#222222] font-normal text-[20px] leading-[3rem] ">
+                Rental Details
               </h2>
-              <div
-                onClick={() => setIsInfoVisible((prev) => !prev)}
-                className="relative w-[20px] h-[20px] flex justify-center items-center"
+              <Link
+                target="_blank"
+                href={"https://skytrade.tawk.help"}
+                className="text-[#0653EA] text-[14px] font-normal cursor-pointer leading-[1.5rem]"
               >
-                <InfoIcon />
-                {isInfoVisible && (
-                  <div className="absolute -top-4 left-6 w-[189px] bg-[#CCE3FC] rounded-[4px] p-[12px] font-normal text-[10px] italic">
-                    Note that rental availability are not applicable to your
-                    selling
-                  </div>
-                )}
+                Learn more about rentals in our FAQ.
+              </Link>
+              <div className="md:flex items-center justify-between gap-[15px] mt-4">
+                <div className="flex-1 ">
+                  <VariableFeeRentalRangesSelect
+                    fee={data.transitFee}
+                    setFee={(fee) =>
+                      setData((prev) => ({ ...prev, transitFee: "" + fee }))
+                    }
+                  />
+                </div>
+                <div className="flex-1 mt-4 md:mt-0 ">
+                  <TimeZoneSelect
+                    timeZone={data.timezone}
+                    setTimeZone={(timezone) =>
+                      setData((prev) => ({ ...prev, timezone }))
+                    }
+                  />
+                </div>
               </div>
-            </div>
-            <Link
-              href={"https://skytrade.tawk.help"}
-              className="text-[#0653EA] text-[14px] font-normal cursor-pointer"
-            >
-              Learn more about selling in our FAQ.
-            </Link>
-            <div className="flex flex-col gap-[5px]">
-              <label
-                className="font-normal text-[#838187] text-[14px]"
-                htmlFor="sellingPrice"
+              <div
+                className="
+            flex flex-col gap-[10px] "
               >
-                Selling Price
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center text-[14px] pl-[22px] text-[#222222] ">
-                  $
-                </span>
-                <input
-                  className="rounded-lg pl-[31px] w-full py-[16px] text-[14px] text-[#222222] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  style={{ border: "1px solid #87878D" }}
-                  autoComplete="off"
-                  type="number"
-                  min={0}
-                  value={data.sellingPrice}
-                  onChange={handleSellPrice}
-                  name="sellingPrice"
-                  id="sellingPrice"
+                <p className="text-[14px] font-normal text-[#838187] mt-4">
+                  Select extra features your facility provides
+                  <span className="text-[#E04F64]">*</span>
+                </p>
+                <div className=" flex-col  flex md:flex-row  md:items-center gap-[10px] leading-[2rem]">
+                  <div className="flex items-center gap-[5px]">
+                    <input
+                      className="w-[18px] h-[18px] cursor-pointer"
+                      type="checkbox"
+                      id="hasLandingDeck"
+                      name="hasLandingDeck"
+                      checked={data.hasLandingDeck}
+                      onChange={() =>
+                        setData((prev) => ({
+                          ...prev,
+                          hasLandingDeck: !prev.hasLandingDeck,
+                        }))
+                      }
+                    />
+                    <label
+                      htmlFor="hasLandingDeck"
+                      className="text-[#87878D] text-[14px] font-normal"
+                    >
+                      Landing Deck
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-[5px] mt-1">
+                    <input
+                      className="w-[18px] h-[18px] cursor-pointer"
+                      type="checkbox"
+                      id="hasChargingStation"
+                      name="hasChargingStation"
+                      checked={data.hasChargingStation}
+                      onChange={() =>
+                        setData((prev) => ({
+                          ...prev,
+                          hasChargingStation: !prev.hasChargingStation,
+                        }))
+                      }
+                    />
+                    <label
+                      htmlFor="hasChargingStation"
+                      className="text-[#87878D] text-[14px] font-normal"
+                    >
+                      Charging Station
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-[5px] mt-1">
+                    <input
+                      className="w-[18px] h-[18px] cursor-pointer"
+                      type="checkbox"
+                      id="hasStorageHub"
+                      name="hasStorageHub"
+                      checked={data.hasStorageHub}
+                      onChange={() =>
+                        setData((prev) => ({
+                          ...prev,
+                          hasStorageHub: !prev.hasStorageHub,
+                        }))
+                      }
+                    />
+                    <label
+                      htmlFor="hasStorageHub"
+                      className="text-[#87878D] text-[14px] font-normal"
+                    >
+                      Storage Hub
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-[15px] mt-2">
+                <p>
+                  Availability<span className="text-[#E04F64]">*</span>
+                </p>
+                <WeekDayRangesForm
+                  weekDayRanges={data.weekDayRanges}
+                  setWeekDayRanges={(weekDayRanges) =>
+                    setData((prev) => ({ ...prev, weekDayRanges }))
+                  }
                 />
               </div>
-            </div>
-          </Fragment>
-        )}
+            </Fragment>
+          )}
+          {data.sell && (
+            <Fragment>
+              <div className="flex items-center gap-[7.5px]">
+                <h2 className="text-[#222222] font-normal text-[20px]">
+                  Selling Details
+                </h2>
+                <div
+                  onClick={() => setIsInfoVisible((prev) => !prev)}
+                  className="relative w-[20px] h-[20px] flex justify-center items-center"
+                >
+                  <InfoIcon />
+                  {isInfoVisible && (
+                    <div className="absolute -top-4 left-6 w-[189px] bg-[#CCE3FC] rounded-[4px] p-[12px] font-normal text-[10px] italic">
+                      Note that rental availability are not applicable to your
+                      selling
+                    </div>
+                  )}
+                </div>
+              </div>
+              <Link
+                href={"https://skytrade.tawk.help"}
+                className="text-[#0653EA] text-[14px] font-normal cursor-pointer"
+              >
+                Learn more about selling in our FAQ.
+              </Link>
+              <div className="flex flex-col gap-[5px]">
+                <label
+                  className="font-normal text-[#838187] text-[14px]"
+                  htmlFor="sellingPrice"
+                >
+                  Selling Price
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center text-[14px] pl-[22px] text-[#222222] ">
+                    $
+                  </span>
+                  <input
+                    className="rounded-lg pl-[31px] w-full py-[16px] text-[14px] text-[#222222] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    style={{ border: "1px solid #87878D" }}
+                    autoComplete="off"
+                    type="number"
+                    min={0}
+                    value={data.sellingPrice}
+                    onChange={handleSellPrice}
+                    name="sellingPrice"
+                    id="sellingPrice"
+                  />
+                </div>
+              </div>
+            </Fragment>
+          )}
 
-        <p className="text-[14px] font-normal text-[#838187]">
-          Do you currently have zoning or planning permission to develop above
-          your land or property?{" "}
-          <span className="italic text-[10px]">
-            (Your answer won't affect your claim)
-            <span className="text-[#E04F64]">*</span>
-          </span>{" "}
-        </p>
-        <div className="flex items-center gap-[7px] text-[#87878D] text-[14px]">
-          <input
-            className="relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]"
-            checked={data.hasPlanningPermission === "true"}
-            onChange={() =>
-              setData((prev) => ({ ...prev, hasPlanningPermission: "true" }))
-            }
-            style={{
-              appearance: "none",
-              border:
-                data.hasPlanningPermission !== "true"
-                  ? "2px solid #222222"
-                  : "2px solid #0653EA",
-              backgroundColor:
-                data.hasPlanningPermission === "true"
-                  ? "#0653EA"
-                  : "transparent",
-              borderRadius: "50%",
-              backgroundClip: "content-box",
-            }}
-            type="checkbox"
-            name="zone-yes"
-            id="zone-yes"
-          />
-          <label htmlFor="zone-yes">Yes</label>
-          <input
-            className="relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]"
-            checked={data.hasPlanningPermission === "false"}
-            onChange={() =>
-              setData((prev) => ({ ...prev, hasPlanningPermission: "false" }))
-            }
-            style={{
-              appearance: "none",
-              border:
-                data.hasPlanningPermission !== "false"
-                  ? "2px solid #222222"
-                  : "2px solid #0653EA",
-              backgroundColor:
-                data.hasPlanningPermission === "false"
-                  ? "#0653EA"
-                  : "transparent",
-              borderRadius: "50%",
-              backgroundClip: "content-box",
-            }}
-            type="checkbox"
-            name="zone-no"
-            id="zone-no"
-          />
-          <label htmlFor="zone-no">No</label>
-          <input
-            className="relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]"
-            checked={!data.hasPlanningPermission}
-            onChange={() =>
-              setData((prev) => ({ ...prev, hasPlanningPermission: null }))
-            }
-            style={{
-              appearance: "none",
-              border: data.hasPlanningPermission
-                ? "2px solid #222222"
-                : "2px solid #0653EA",
-              backgroundColor: !data.hasPlanningPermission
-                ? "#0653EA"
-                : "transparent",
-              borderRadius: "50%",
-              backgroundClip: "content-box",
-            }}
-            type="checkbox"
-            name="zone-dont-know"
-            id="zone-dont-know"
-          />
-          <label htmlFor="zone-dont-know">I don't Know</label>
-        </div>
-        <div className="flex items-center justify-center gap-[20px] text-[14px]">
-          <div
-            onClick={onCloseModal}
-            className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer"
-            style={{ border: "1px solid #0653EA" }}
-          >
-            Cancel
+          <div className="mt-4">
+            <p className="text-[16px]  md:text-[14px] font-normal text-[#838187]">
+              Do you currently have zoning or planning permission to develop
+              above your land or property?{" "}
+              <span className="italic  text-[12px] md:text-[10px]">
+                (Your answer won't affect your claim)
+                <span className="text-[#E04F64]">*</span>
+              </span>{" "}
+            </p>
           </div>
-          <button
-            onClick={onClaim}
-            className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer"
-          >
-            {
-              claimButtonLoading ? 
-              <svg className="animate-spin -ml-1 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              :
-              'Claim Airspace'
-            }
-          </button>
+          <div className="flex items-center gap-[7px] text-[#87878D] text-[14px] mt-4">
+            <input
+              className="relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]"
+              checked={data.hasPlanningPermission === "true"}
+              onChange={() =>
+                setData((prev) => ({ ...prev, hasPlanningPermission: "true" }))
+              }
+              style={{
+                appearance: "none",
+                border:
+                  data.hasPlanningPermission !== "true"
+                    ? "2px solid #222222"
+                    : "2px solid #0653EA",
+                backgroundColor:
+                  data.hasPlanningPermission === "true"
+                    ? "#0653EA"
+                    : "transparent",
+                borderRadius: "50%",
+                backgroundClip: "content-box",
+              }}
+              type="checkbox"
+              name="zone-yes"
+              id="zone-yes"
+            />
+            <label htmlFor="zone-yes">Yes</label>
+            <input
+              className="relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]"
+              checked={data.hasPlanningPermission === "false"}
+              onChange={() =>
+                setData((prev) => ({ ...prev, hasPlanningPermission: "false" }))
+              }
+              style={{
+                appearance: "none",
+                border:
+                  data.hasPlanningPermission !== "false"
+                    ? "2px solid #222222"
+                    : "2px solid #0653EA",
+                backgroundColor:
+                  data.hasPlanningPermission === "false"
+                    ? "#0653EA"
+                    : "transparent",
+                borderRadius: "50%",
+                backgroundClip: "content-box",
+              }}
+              type="checkbox"
+              name="zone-no"
+              id="zone-no"
+            />
+            <label htmlFor="zone-no">No</label>
+            <input
+              className="relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]"
+              checked={!data.hasPlanningPermission}
+              onChange={() =>
+                setData((prev) => ({ ...prev, hasPlanningPermission: null }))
+              }
+              style={{
+                appearance: "none",
+                border: data.hasPlanningPermission
+                  ? "2px solid #222222"
+                  : "2px solid #0653EA",
+                backgroundColor: !data.hasPlanningPermission
+                  ? "#0653EA"
+                  : "transparent",
+                borderRadius: "50%",
+                backgroundClip: "content-box",
+              }}
+              type="checkbox"
+              name="zone-dont-know"
+              id="zone-dont-know"
+            />
+            <label htmlFor="zone-dont-know">I don't Know</label>
+          </div>
+
+          <div className="  flex items-center md:justify-center gap-[20px] text-[14px]  my-8">
+            <div
+              onClick={onCloseModal}
+              className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer"
+              style={{ border: "1px solid #0653EA" }}
+            >
+              Cancel
+            </div>
+            <button
+              onClick={onClaim}
+              className="Claim-airspacebtn2-step w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer "
+            >
+              {claimButtonLoading ? (
+                <svg
+                  className="animate-spin -ml-1 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              ) : (
+                "Claim Airspace"
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -610,6 +673,8 @@ const Explorer = ({
   flyToAddress,
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+  const searchParams = useSearchParams();
+  const { isOpen } = useTour();
 
   return (
     <div
@@ -637,7 +702,7 @@ const Explorer = ({
         times ahead!
       </p>
       <div
-        className="relative w-full rounded-lg bg-white px-[22px] py-[16px]"
+        className="relative enter-address-step w-full rounded-lg bg-white px-[22px] py-[16px]"
         style={{ border: "1px solid #87878D" }}
       >
         <input
@@ -648,7 +713,7 @@ const Explorer = ({
           name="searchAirspaces"
           id="searchAirspaces"
           placeholder="Search Airspaces"
-          className="w-full pr-[20px] outline-none"
+          className="  w-full pr-[20px] outline-none"
         />
         <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
           <MagnifyingGlassIcon />
@@ -673,15 +738,14 @@ const Explorer = ({
           </div>
         )}
       </div>
-      {flyToAddress && (
+      {(flyToAddress || isOpen) && (
         <div
           onClick={onClaimAirspace}
-          className="w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+          className="Claim-airspacebtn-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
         >
           Claim Airspace
         </div>
       )}
-      
     </div>
   );
 };
@@ -697,7 +761,7 @@ const ExplorerMobile = ({
   onGoBack,
 }) => {
   return (
-    <div className="z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
+    <div className=" enter-address-step  z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
       <div
         onClick={onGoBack}
         className="flex h-6 w-6 items-center justify-center"
@@ -705,7 +769,7 @@ const ExplorerMobile = ({
         <ArrowLeftIcon />
       </div>
       <div
-        className="relative w-full rounded-lg bg-white px-[22px] py-[16px]"
+        className="  relative w-full rounded-lg bg-white px-[22px] py-[16px]"
         style={{ border: "1px solid #87878D" }}
       >
         <input
@@ -748,58 +812,86 @@ const ExplorerMobile = ({
 const Slider = () => {
   const [isFullyVisible, setIsFullyVisible] = useState(false);
 
-    return (
-        <div onClick={() => setIsFullyVisible(prev => !prev)} className={`cursor-pointer rounded-t-[30px] absolute ${isFullyVisible ? 'bottom-0' : '-bottom-[600px]'} right-6 flex flex-col items-center gap-[34px] py-[43px] px-[23px] bg-white max-w-[362px] duration-5000 z-20`}>
-            <div className="flex items-center gap-[4px]">
-                <div className="flex items-center justify-center w-[24px] h-[24px]"><HelpQuestionIcon /></div>
-                <p className="font-medium text-xl text-[#222222] text-center">How to Claim My Airspsace?</p>
-            </div>
-            <div className="flex flex-col px-[6px]">
-                <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={1}>
-                    <p className="">1.</p>
-                    <div className="flex flex-col">
-                        <p className="font-bold">Discover Your Address</p>
-                        <p>Enter your address using the map for accuracy.</p>
-                    </div>
-                </div>
-                <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={2}>
-                    <p className="">2.</p>
-                    <div className="flex flex-col">
-                        <p className="font-bold">Move the Pin If Needed</p>
-                        <p>Easily adjust the location pin if Google Maps is off.</p>
-                    </div>
-                </div>
-                <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={4}>
-                    <p className="">3.</p>
-                    <div className="flex flex-col">
-                        <p className="font-bold">Claim Airspace</p>
-                        <p>Click the 'Claim Airspace' button to confirm your airspace address. Your Airspace is saved. Modify your details anytime.</p>
-                    </div>
-                </div>
-                <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={5}>
-                    <p className="">4.</p>
-                    <div className="flex flex-col">
-                        <p className="font-bold">Checking the details</p>
-                        <p>We confirm official records.</p>
-                    </div>
-                </div>
-                <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={6}>
-                    <p className="">5.</p>
-                    <div className="flex flex-col">
-                        <p className="font-bold">Passive income is on the way</p>
-                        <p>We will update you as your account receives funds.</p>
-                    </div>
-                </div>
-            </div>
-            <div className="font-normal text-[15px] text-[#222222] text-center">Let's get started on creating the future and receiving passive income from your skies. 🚀✨</div>
+  return (
+    <div
+      onClick={() => setIsFullyVisible((prev) => !prev)}
+      className={`cursor-pointer rounded-t-[30px] absolute ${isFullyVisible ? "bottom-0" : "-bottom-[530px]"} right-6 flex flex-col items-center gap-[34px] py-[43px] px-[23px] bg-white max-w-[362px] duration-5000 z-20`}
+    >
+      <div className="flex items-center gap-[4px]">
+        <div className="flex items-center justify-center w-[24px] h-[24px]">
+          <HelpQuestionIcon />
         </div>
+        <p className="font-medium text-xl text-[#222222] text-center">
+          How to Claim My Airspsace?
+        </p>
+      </div>
+      <div className="flex flex-col px-[6px]">
+        <div
+          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          key={1}
+        >
+          <p className="">1.</p>
+          <div className="flex flex-col">
+            <p className="font-bold">Discover Your Address</p>
+            <p>Enter your address using the map for accuracy.</p>
+          </div>
+        </div>
+        <div
+          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          key={2}
+        >
+          <p className="">2.</p>
+          <div className="flex flex-col">
+            <p className="font-bold">Move the Pin If Needed</p>
+            <p>Easily adjust the location pin if Google Maps is off.</p>
+          </div>
+        </div>
+        <div
+          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          key={4}
+        >
+          <p className="">3.</p>
+          <div className="flex flex-col">
+            <p className="font-bold">Claim Airspace</p>
+            <p>
+              Click the 'Claim Airspace' button to confirm your airspace
+              address. Your Airspace is saved. Modify your details anytime.
+            </p>
+          </div>
+        </div>
+        <div
+          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          key={5}
+        >
+          <p className="">4.</p>
+          <div className="flex flex-col">
+            <p className="font-bold">Checking the details</p>
+            <p>We confirm official records.</p>
+          </div>
+        </div>
+        <div
+          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          key={6}
+        >
+          <p className="">5.</p>
+          <div className="flex flex-col">
+            <p className="font-bold">Passive income is on the way</p>
+            <p>We will update you as your account receives funds.</p>
+          </div>
+        </div>
+      </div>
+      <div className="font-normal text-[15px] text-[#222222] text-center">
+        Let's get started on creating the future and receiving passive income
+        from your skies. 🚀✨
+      </div>
+    </div>
   );
 };
 
 const PopUp = ({ isVisible }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={`z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
     >
       <div className="flex items-center justify-center w-[18px] h-[18px]">
         <SuccessIcon />
@@ -824,7 +916,7 @@ const FailurePopUp = ({ isVisible }) => {
 };
 
 const HowToModal = ({ goBack }) => {
-  console.log("yoo how too")
+  console.log("yoo how too");
   const [section, setSection] = useState(0);
   return (
     <div className="absolute z-50 flex h-screen w-screen flex-col items-center justify-center bg-white">
@@ -917,11 +1009,12 @@ const HowToModal = ({ goBack }) => {
 
 const Airspaces = () => {
   const [isLoading, setIsLoading] = useState(false);
-  // 
-  const [claimButtonLoading,setClaimButtonLoading] = useState(false);
+  //
+  const [claimButtonLoading, setClaimButtonLoading] = useState(false);
   const [map, setMap] = useState(null);
   const { isMobile } = useMobile();
-  const [showMobileMap, setShowMobileMap] = useState(false);
+  const { setIsOpen, currentStep, isOpen } = useTour();
+  const [showMobileMap, setShowMobileMap] = useState(isOpen);
   const [showHowToModal, setShowHowToModal] = useState(false);
   // variables
   const [address, setAddress] = useState("");
@@ -1092,7 +1185,7 @@ const Airspaces = () => {
         setMarker(newMarker);
       } catch (error) {
         setIsLoading(false);
-        console.error(err);
+        console.error(error);
       }
     };
 
@@ -1121,6 +1214,13 @@ const Airspaces = () => {
 
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
+
+  useEffect(() => {
+    if (localStorage.getItem("new")) {
+    setIsOpen(true);
+    localStorage.removeItem("new");
+    }
+  }, []);
 
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
@@ -1173,21 +1273,20 @@ const Airspaces = () => {
         ],
         weekDayRanges,
       });
-      console.log("add property results ,",addProperty)
+      console.log("add property results ,", addProperty);
       if (addProperty === undefined) {
         setShowFailurePopUp(true);
       } else {
         setShowSuccessPopUp(true);
       }
       setShowClaimModal(false);
-      setIsLoading(false)
+      setIsLoading(false);
       setData({ ...defaultData });
     } catch (error) {
       console.log(error);
-    } finally{
-      setClaimButtonLoading(false)
+    } finally {
+      setClaimButtonLoading(false);
     }
-
   };
   const flyToUserIpAddress = async (map) => {
     if (!map) {
@@ -1213,6 +1312,24 @@ const Airspaces = () => {
       console.error("Error:", error);
     }
   };
+  useEffect(() => {
+    if (currentStep === 1 && isMobile) {
+      setShowMobileMap(true);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (currentStep === 3 && isMobile) {
+      setShowClaimModal(true);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowMobileMap(false);
+      setShowClaimModal(false);
+    }
+  }, [isOpen]);
 
   return (
     <Fragment>
@@ -1226,7 +1343,8 @@ const Airspaces = () => {
         {!showMobileMap && <Sidebar />}
         <div className="flex h-full w-full flex-col">
           {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
-          {showMobileMap && isMobile && (
+          {((showMobileMap && isMobile) ||
+            (isOpen && currentStep === 1 && isMobile)) && (
             <ExplorerMobile
               onGoBack={() => setShowMobileMap(false)}
               flyToAddress={flyToAddress}
@@ -1235,7 +1353,10 @@ const Airspaces = () => {
               addresses={addresses}
               showOptions={showOptions}
               handleSelectAddress={handleSelectAddress}
-              onClaimAirspace={() => {setShowClaimModal(true);setIsLoading(true)}}
+              onClaimAirspace={() => {
+                setShowClaimModal(true);
+                setIsLoading(true);
+              }}
             />
           )}
           {showHowToModal && (
@@ -1252,25 +1373,32 @@ const Airspaces = () => {
                 zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
               }}
             />
-            {isMobile && showMobileMap && flyToAddress && (
+            {((isMobile && showMobileMap && flyToAddress) ||
+              (isOpen && currentStep === 2 && isMobile)) && (
               <div
-                onClick={() =>{ setShowClaimModal(true);setIsLoading(true)}}
-                className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+                onClick={() => {
+                  setShowClaimModal(true);
+                  setIsLoading(true);
+                }}
+                className="Claim-airspacebtn-step  absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
               >
                 Claim Airspace
               </div>
             )}
             {isMobile && (
-              <Fragment>
-                {showClaimModal && (
-                  <ClaimModal
-                    onCloseModal={() => {setShowClaimModal(false);setIsLoading(false)}}
-                    data={data}
-                    setData={setData}
-                    onClaim={onClaim}
-                    claimButtonLoading={claimButtonLoading}
-                  />
-                )}
+              <Fragment>     
+                  {(showClaimModal || (isOpen && currentStep >= 3)) && (
+                    <ClaimModal
+                      onCloseModal={() => {
+                        setShowClaimModal(false);
+                        setIsLoading(false);
+                      }}
+                      data={data}
+                      setData={setData}
+                      onClaim={onClaim}
+                      claimButtonLoading={claimButtonLoading}
+                    />
+                  )}
               </Fragment>
             )}
             {!isMobile && (
@@ -1282,15 +1410,21 @@ const Airspaces = () => {
                   addresses={addresses}
                   showOptions={showOptions}
                   handleSelectAddress={handleSelectAddress}
-                  onClaimAirspace={() => {setShowClaimModal(true);setIsLoading(true)}}
+                  onClaimAirspace={() => {
+                    setShowClaimModal(true);
+                    setIsLoading(true);
+                  }}
                 />
                 <Slider />
                 <PopUp isVisible={showSuccessPopUp} />
                 <FailurePopUp isVisible={showFailurePopUp} />
 
-                {showClaimModal && (
+                {(showClaimModal || (isOpen && currentStep >= 2)) && (
                   <ClaimModal
-                    onCloseModal={() =>{ setShowClaimModal(false);setIsLoading(false)}}
+                    onCloseModal={() => {
+                      setShowClaimModal(false);
+                      setIsLoading(false);
+                    }}
                     data={data}
                     setData={setData}
                     onClaim={onClaim}
@@ -1299,7 +1433,7 @@ const Airspaces = () => {
                 )}
               </div>
             )}
-            {!showMobileMap && (
+            {(!showMobileMap || isOpen) && (
               <div className="flex h-full w-full flex-col md:hidden">
                 <div
                   onClick={() => setShowMobileMap(true)}
@@ -1311,7 +1445,7 @@ const Airspaces = () => {
                     <br />
                     Claim your airspace 🚀✨
                   </div>
-                  <div className="w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
+                  <div className="claim-step  w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
                     Claim your airspace
                   </div>
                 </div>
@@ -1340,7 +1474,7 @@ const Airspaces = () => {
                   </div>
                   <div
                     onClick={() => setShowHowToModal(true)}
-                    className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
+                    className="  flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
                   >
                     <div className="h-[24px] w-[24px]">
                       <HelpQuestionIcon color="white" />
