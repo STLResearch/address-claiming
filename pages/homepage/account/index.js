@@ -24,6 +24,7 @@ const Portfolio = () => {
     const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState('')
     const [verificationTriggered, setVerificationTriggered] = useState(false);
+    const[isKYCCompleted,setIsKYCCompleted] = useState(false)
     useEffect(() => {
         if (!user || verificationTriggered) return;
       
@@ -46,9 +47,7 @@ const Portfolio = () => {
           }
         };
         fetchData();
-        const intervalId = setInterval(fetchData, 15000);
-        return () => clearInterval(intervalId);
-      }, [user]);
+      }, [user,isKYCCompleted]);
     useEffect(() => {
         if (selectorUser) {
             const authUser = async () => {
@@ -175,12 +174,14 @@ const Portfolio = () => {
             referenceId: user?.id.toString(),
             environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
             onReady: () => {
-              setIsLoading(false);
-              client.open();
-            },
-          });
-    }
-
+                setIsLoading(false);
+                client.open();
+              },
+              onComplete: (verificationResult) => {
+                setIsKYCCompleted(prev=>(!prev))
+              },
+            });
+        };
     return (
         <Fragment>
             {isLoading && createPortal(<Backdrop />, document?.getElementById('backdrop-root'))}
