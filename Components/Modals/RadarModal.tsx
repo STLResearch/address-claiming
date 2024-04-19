@@ -16,7 +16,7 @@ interface RadarModalProps {
 }
 const RadarModal : React.FC<RadarModalProps> = ({ onClose, DroneDataDetailSelected, isLoading }) => {
   return (
-    <div className="z-50  mt-4 md:ml-12  bg-white  md:bg-[#FFFFFFCC] no-scrollbar rounded-[30px] w-full h-full md:max-w-sm  md:max-h-[600px] max-w-[600px] px-[25px] md:py-[12px] fixed md:rounded-[30px]  mx-auto overflow-x-auto overflow-y-auto flex flex-col gap-[15px] pb-[6rem] md:pb-0 ">
+    <div className="z-50  mt-4 md:ml-12  bg-white  md:bg-semi-transparent-white no-scrollbar rounded-[30px] w-full h-full md:max-w-sm  md:max-h-[600px] max-w-[600px] px-[25px] md:py-3 fixed md:rounded-[30px]  mx-auto overflow-x-auto overflow-y-auto flex flex-col gap-md pb-24 md:pb-0 ">
       {isLoading && <Spinner />}
       <RadarModalHeader onClose={onClose} />
       <DroneIdDetail DroneDataDetailSelected={DroneDataDetailSelected} />

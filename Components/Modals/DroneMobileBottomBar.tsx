@@ -42,7 +42,7 @@ const DroneMobileBottomBar: React.FC<DroneMobileBottomBarProps> = ({ DroneDataDe
         <div className=" w-[90%] mt-[13px] flex justify-center  items-center  md:hidden">
           <RectangleIcon />
         </div>
-        <div className="mt-[21px] mb-[20px]">{DroneDataDetailSelected?.id}</div>
+        <div className="mt-[21px] mb-5">{DroneDataDetailSelected?.id}</div>
       </div>
     </div>
   );

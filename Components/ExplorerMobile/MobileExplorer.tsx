@@ -20,7 +20,7 @@ const MobileExplorer: React.FC<MobileExplorerProps> = ({
   onGoBack,
 }) => {
   return (
-    <div className="z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
+    <div className="z-40 flex items-center gap-md bg-white px-5 py-5">
       <div onClick={onGoBack} className="flex h-6 w-6 items-center justify-center">
         <ArrowLeftIcon />
       </div>

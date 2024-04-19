@@ -17,7 +17,7 @@ const MobileSearchInput: React.FC<MobileSearchInputProps> = ({
   handleSelectAddress,
 }) => {
   return (
-    <div className="relative w-full rounded-lg bg-white px-[22px] py-[16px]" style={{ border: '1px solid #87878D' }}>
+    <div className="relative w-full rounded-lg bg-white px-[22px] py-4 border border-light-grey" >
       <input
         autoComplete="off"
         value={address}
@@ -26,7 +26,7 @@ const MobileSearchInput: React.FC<MobileSearchInputProps> = ({
         name="searchLocation"
         id="searchLocation"
         placeholder="Search Location"
-        className="w-full pr-[20px] outline-none"
+        className="w-full pr-5 outline-none"
       />
       <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
         <MagnifyingGlassIcon />
@@ -38,10 +38,7 @@ const MobileSearchInput: React.FC<MobileSearchInputProps> = ({
               key={item.id}
               data-value={item.place_name}
               onClick={() => handleSelectAddress(item.place_name)}
-              className="w-full p-5 text-left text-[#222222]"
-              style={{
-                borderTop: '0.2px solid #222222',
-              }}
+              className="w-full p-5 text-left text-light-black border-t-[0.2px] border-light-black"
             >
               {item.place_name}
             </div>

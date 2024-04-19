@@ -11,9 +11,9 @@ const DroneIdDetail: React.FC<Props> = ({ DroneDataDetailSelected }) => {
       <div className="w-[20%] md:hidden">
         <ChevronLeftIcon />
       </div>
-      <div className="w-[60%] break-words text-center flex gap-[10px] justify-center items-center">
+      <div className="w-[60%] break-words text-center flex gap-2.5 justify-center items-center">
         <DroneradarIcon />
-        <h1 className="text-[20px] font-[500] overflow-auto">
+        <h1 className="text-xl font-medium overflow-auto">
           {DroneDataDetailSelected?.id}
         </h1>
       </div>

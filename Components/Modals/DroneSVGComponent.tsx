@@ -1,3 +1,5 @@
+import React from "react";
+
 interface DroneSVGComponentProps {
   droneColor: string;
   direction: number;
@@ -9,7 +11,7 @@ const DroneSVGComponent: React.FC<DroneSVGComponentProps> = ({
 }) => {
   return (
     <div
-      className={`svg-container w-[35px] h-[35px] z-[100] `}
+      className={`svg-container w-9 h-9 z-[100] `}
       style={{
         transform: direction !== 361 ? `rotate(${direction}deg)` : "none",
       }}
@@ -25,7 +27,7 @@ const DroneSVGComponent: React.FC<DroneSVGComponentProps> = ({
           >
             <path
               d="M3 0L5.59808 4.5L0.401924 4.5L3 0Z"
-              fill={droneColor ? `${droneColor} ` : "#0000FF"}
+              fill={droneColor ? `${droneColor} ` : '#0000FF'}
               stroke="white"
               strokeWidth={0.3}
             />

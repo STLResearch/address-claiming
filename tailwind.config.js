@@ -40,6 +40,12 @@ module.exports = {
         "light-yellow": "#FFF6D8",
         "light-black": "#222222",
         "light-grey": "#87878D",
+        "lavender-gray-bg":"#F0F0FA",
+        "electric-blue":"#0000FF",
+        "vivid-orange-red":"#FF3D00",
+        "slate-gray-text":"#838187",
+        "semi-transparent-white":"#FFFFFFCC",
+        "corporate-blue":"#4285F4"
       },
       fontFamily: {
         "sans": ['poppins', 'sans-serif'] 
@@ -62,7 +68,10 @@ module.exports = {
       },
       transitionDuration: {
         '2000': '5000ms',
-      }
+      },
+      spacing: {
+        'md': '15px',
+      },
     },
   },
   plugins: [ ],

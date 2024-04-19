@@ -6,24 +6,24 @@ interface Props {
 const SelfIDDetails : React.FC<Props> = ({ DroneDataDetailSelected }) => {
   return (
     <div>
-      <h1 className="text-[14px] font-semibold text-[#4285F4] mt-3 ">
+      <h1 className="text-sml font-semibold text-corporate-blue mt-3 ">
         SELF ID
       </h1>
       <div className="border-t-2 my-2"></div>
       <div>
-        <div className="flex  gap-[12px]  leading-[20px]">
+        <div className="flex gap-3 leading-5">
           <div className="w-[60%] break-words">
-            <p className="flex text-[#838187] text-[10px] gap-[10px]">
+            <p className="flex text-slate-gray-text text-xs gap-2.5">
               Operation{" "}
-              <span className="text-[#222222] overflow-auto">
+              <span className="text-light-black overflow-auto">
                 {DroneDataDetailSelected?.id}
               </span>
             </p>
           </div>
           <div className="w-[40%] break-words">
-            <p className="flex text-[#838187] text-[10px] gap-[10px]">
+            <p className="flex text-slate-gray-text text-xs gap-2.5">
               Type{" "}
-              <span className="text-[#222222] overflow-auto">
+              <span className="text-light-black overflow-auto">
                 {DroneDataDetailSelected?.remoteData?.selfId?.descriptionType}
               </span>
             </p>

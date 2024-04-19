@@ -17,7 +17,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   handleSelectAddress,
 }) => {
   return (
-    <div className="relative w-full flex items-center rounded-lg bg-white px-[10px] py-[10px]" style={{ border: '1px solid rgba(135, 135, 141, 0.3)' }}>
+    <div className="relative w-full flex items-center rounded-lg bg-white px-2.5 py-2.5 border border-light-grey/30" >
       <input
         autoComplete="off"
         value={address}
@@ -26,20 +26,19 @@ const SearchInput: React.FC<SearchInputProps> = ({
         name="searchLocation"
         id="searchLocation"
         placeholder="Search location"
-        className="w-full pr-[20px] outline-none"
+        className="w-full pr-5 outline-none"
       />
       <div className="h-[17px] w-[17px]">
         <MagnifyingGlassIcon />
       </div>
       {showOptions && (
-        <div className="absolute left-0 top-[55px] w-full flex-col bg-white">
+        <div className="absolute left-0 top-14 w-full flex-col bg-white">
           {addresses.map((item) => (
             <div
               key={item?.id}
               data-value={item?.place_name}
               onClick={() => handleSelectAddress(item.place_name)}
-              className="w-full p-5 text-left text-[#222222]"
-              style={{ borderTop: '0.2px solid #222222' }}
+              className="w-full p-5 text-left text-light-black border-t-[0.2px] border-light-black"
             >
               {item.place_name}
             </div>

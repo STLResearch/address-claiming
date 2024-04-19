@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import ReactDOMServer from "react-dom/server";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -37,7 +37,6 @@ import { JsonObject, Coordinates } from "../../../types/RemoteIdentifierDrone";
 const Radar = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [map, setMap] = useState<Map | null>(null);
-
   const { isMobile } = useMobile();
   const [showMobileMap, setShowMobileMap] = useState<boolean>(isMobile);
   const [address, setAddress] = useState<string>("");
@@ -46,12 +45,9 @@ const Radar = () => {
     { id: string; place_name: string }[]
   >([]);
   const [flyToAddress, setFlyToAddress] = useState<string>("");
-
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
-
   const [marker, setMarker] = useState<Marker | null>(null);
   const [showOptions, setShowOptions] = useState<boolean>(false);
-
   const [mobileBottomDroneDetailVisible, setMobileBottomDroneDetailVisible] =
     useState<boolean>(false);
   const [showDroneDetail, setShowDroneDetail] = useState<boolean>(false);
@@ -72,14 +68,12 @@ const Radar = () => {
     null
   );
   const [droneId, setDroneId] = useState<string | undefined>(undefined);
-
   type BoundingBox = {
     minLatitude: number;
     maxLatitude: number;
     minLongitude: number;
     maxLongitude: number;
   };
-
   const [boundingBox, setBoundingBox] = useState<BoundingBox | undefined>({
     minLatitude: 17.555484669042485,
     maxLatitude: 55.242651682301556,
@@ -90,7 +84,6 @@ const Radar = () => {
   useEffect(() => {
     setShowMobileMap(isMobile);
   }, [isMobile]);
-
   useEffect(() => {
     if (map) return;
     const createMap = () => {
@@ -103,7 +96,6 @@ const Radar = () => {
         center: [0, 40],
         zoom: 6,
       });
-
       newMap.addControl(new mapboxgl.NavigationControl());
       const nav = new mapboxgl.NavigationControl();
       newMap.addControl(nav, "top-right");
@@ -122,7 +114,6 @@ const Radar = () => {
     setDroneDataSelected,
     setIsLoading
   );
-
   useEffect(() => {
     if (!map) return;
     if (DroneDataDetailSelected) {
@@ -132,10 +123,8 @@ const Radar = () => {
       );
     }
   }, [DroneDataDetailSelected, map]);
-
   useEffect(() => {
     if (!map) return;
-
     const addEventListeners = (
       markerElement: HTMLElement,
       marker: mapboxgl.Marker,
@@ -187,14 +176,12 @@ const Radar = () => {
         );
       }
     };
-
     const addDroneMarkers = (droneData: JsonObject[] | null) => {
       droneData?.forEach((data, index) => {
         const popupName = data?.remoteData?.connection?.macAddress;
         const latitude = data?.remoteData?.location?.latitude;
         const longitude = data?.remoteData?.location?.longitude;
         const markerElement = createMarkerElement(index);
-
         const droneColor =
           isDroneSVGColor[index] || isDroneHoverSVGColor[index]
             ? "#FF3D00"
@@ -205,9 +192,7 @@ const Radar = () => {
             direction={data?.remoteData?.location?.direction}
           />
         );
-
         let marker;
-
         if (!droneMarker && latitude && longitude) {
           marker = createMarker(latitude, longitude, markerElement, map);
           setDroneMarkerArray({ ...droneMarkerArray, [index]: marker });
@@ -217,14 +202,11 @@ const Radar = () => {
           marker = createMarker(latitude, longitude, markerElement, map);
           setDroneMarkerArray({ ...droneMarkerArray, [index]: marker });
         }
-
         addEventListeners(markerElement, marker, popupName, index, data);
       });
       setDroneMarker(true);
     };
-
     addDroneMarkers(droneSocketDatas);
-
     return () => {
       map.off("click", closePopups);
     };
@@ -236,7 +218,6 @@ const Radar = () => {
     ...Object.values(isDroneHoverSVGColor),
     droneSocketDatas,
   ]);
-
   useEffect(() => {
     if (isAllPopupClosed) {
       closePopups();
@@ -250,7 +231,6 @@ const Radar = () => {
       }
     }
   }, [isAllPopupClosed, map]);
-
   useEffect(() => {
     if (!showOptions) setShowOptions(true);
     if (!address) return setShowOptions(false);
@@ -269,7 +249,6 @@ const Radar = () => {
     setCoordinates,
     setShowOptions,
   ]);
-
   useEffect(() => {
     if (!flyToAddress || !map) return;
     goToAddress(
@@ -282,17 +261,14 @@ const Radar = () => {
       marker
     );
   }, [flyToAddress, map]);
-
   useEffect(() => {
     if (flyToAddress === address) setShowOptions(false);
   }, [flyToAddress, address]);
-
   const handleSelectAddress = (placeName: string) => {
     setAddress(placeName);
     setFlyToAddress(placeName);
     setShowOptions(false);
   };
-
   const handleShowDetailFullMobile = () => {
     setMobileBottomDroneDetailVisible(false);
     setShowDroneDetail(true);
@@ -309,7 +285,7 @@ const Radar = () => {
       {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
 
-      <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA]">
+      <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-lavender-gray-bg">
         {!showMobileMap && <Sidebar />}
         <div className="flex h-full w-full flex-col">
           {!showMobileMap && <PageHeader pageTitle={"Radar"} />}
@@ -352,7 +328,7 @@ const Radar = () => {
               </div>
             )}
             {isMobile && (
-              <div className="flex flex-col z-[40]   rounded-[10px] gap-[15px] bg-white px-[21px] py-[19px] m-4 ml-auto">
+              <div className="flex flex-col z-40 rounded-[10px] gap-md bg-white px-[21px] py-[19px] m-4 ml-auto">
                 <button onClick={() => flyToUserIpAddress(map)}>
                   <RadarLocationIcon />
                 </button>
@@ -392,5 +368,4 @@ const Radar = () => {
     </Fragment>
   );
 };
-
 export default Radar;
