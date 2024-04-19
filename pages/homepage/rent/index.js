@@ -26,7 +26,7 @@ import {
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
-  Transaction,
+  Transaction,VersionedTransaction
 } from "@solana/web3.js";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -415,12 +415,15 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
           setIsLoading(false);
           return;
         }
-        const transaction = Transaction.from(Buffer.from(res, "base64"));
-        //let partialsignedTx=transaction.partialSign(solanaWallet);
-        //console.log("is solana wallet partial=",partialsignedTx)
+        const transaction = VersionedTransaction.deserialize(
+          new Uint8Array(Buffer.from(res, "base64"))
+        );
+
         const signedTx = await solanaWallet.signTransaction(transaction);
-        let serializedTx = signedTx.serialize({ requireAllSignatures: false });
-        let txToString = serializedTx.toString("base64");
+
+        let serializedTx = signedTx.serialize();
+
+        let txToString = Buffer.from(serializedTx).toString("base64");
         if (signedTx) {
           let req2body = {
             transaction: txToString,

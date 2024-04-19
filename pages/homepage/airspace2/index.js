@@ -25,6 +25,9 @@ import { useTimezoneSelect, allTimezones } from "react-timezone-select";
 import axios from "axios";
 import Head from "next/head";
 import Image from "next/image";
+import { useTour } from "@reactour/tour";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 const Toggle = ({ checked, setChecked }) => {
   return (
@@ -230,6 +233,17 @@ const ClaimModal = ({
   claimButtonLoading,
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+  const searchParams = useSearchParams();
+  const endOfDivRef = useRef(null);
+  const { currentStep } = useTour();
+
+  useEffect(() => {
+    if (endOfDivRef.current && currentStep === 3) {
+      const { scrollHeight, clientHeight } = endOfDivRef.current;
+      const maxScrollTop = scrollHeight - clientHeight;
+      endOfDivRef.current.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+    }
+  }, [currentStep]);
   useEffect(() => {
     let airSpaceName = data.address.split(",");
     setData((prev) => {
@@ -259,7 +273,7 @@ const ClaimModal = ({
     }
   };
   return (
-    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] ">
+    <div className="claim-modal-step fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] ">
       <div
         className="z-[100] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px]  md:shadow-none"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -615,7 +629,7 @@ const ClaimModal = ({
             </div>
             <button
               onClick={onClaim}
-              className=" w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer "
+              className="Claim-airspacebtn2-step w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer "
             >
               {claimButtonLoading ? (
                 <svg
@@ -659,6 +673,9 @@ const Explorer = ({
   flyToAddress
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+  const searchParams = useSearchParams();
+  const { isOpen } = useTour();
+
   return (
     <div
       className="z-20 m-[39px] hidden max-h-full max-w-[362px] flex-col items-center gap-[15px] rounded-[30px] bg-[#FFFFFFCC] px-[29px] py-[43px] md:flex"
@@ -685,7 +702,7 @@ const Explorer = ({
         times ahead!
       </p>
       <div
-        className="relative w-full rounded-lg bg-white px-[22px] py-[16px]"
+        className="relative enter-address-step w-full rounded-lg bg-white px-[22px] py-[16px]"
         style={{ border: "1px solid #87878D" }}
       >
         <input
@@ -696,7 +713,7 @@ const Explorer = ({
           name="searchAirspaces"
           id="searchAirspaces"
           placeholder="Search Airspaces"
-          className="w-full pr-[20px] outline-none"
+          className="  w-full pr-[20px] outline-none"
         />
         <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
           <MagnifyingGlassIcon />
@@ -721,15 +738,14 @@ const Explorer = ({
             </div>
         )}
       </div>
-      {flyToAddress && (
-          <div
-            onClick={onClaimAirspace}
-            className="w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
-         
-         >
-            Claim Airspace
-          </div>
-        )}
+      {(flyToAddress || isOpen) && (
+        <div
+          onClick={onClaimAirspace}
+          className="Claim-airspacebtn-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+        >
+          Claim Airspace
+        </div>
+      )}
     </div>
   );
 };
@@ -745,7 +761,7 @@ const ExplorerMobile = ({
   onGoBack,
 }) => {
   return (
-    <div className="z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
+    <div className=" enter-address-step  z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
       <div
         onClick={onGoBack}
         className="flex h-6 w-6 items-center justify-center"
@@ -753,7 +769,7 @@ const ExplorerMobile = ({
         <ArrowLeftIcon />
       </div>
       <div
-        className="relative w-full rounded-lg bg-white px-[22px] py-[16px]"
+        className="  relative w-full rounded-lg bg-white px-[22px] py-[16px]"
         style={{ border: "1px solid #87878D" }}
       >
         <input
@@ -875,7 +891,7 @@ const Slider = () => {
 const PopUp = ({ isVisible }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={`z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
     >
       <div className="flex items-center justify-center w-[18px] h-[18px]">
         <SuccessIcon />
@@ -997,7 +1013,8 @@ const Airspaces = () => {
   const [claimButtonLoading, setClaimButtonLoading] = useState(false);
   const [map, setMap] = useState(null);
   const { isMobile } = useMobile();
-  const [showMobileMap, setShowMobileMap] = useState(false);
+  const { setIsOpen, currentStep, isOpen } = useTour();
+  const [showMobileMap, setShowMobileMap] = useState(isOpen);
   const [showHowToModal, setShowHowToModal] = useState(false);
   // variables
   const [address, setAddress] = useState("");
@@ -1215,7 +1232,7 @@ const Airspaces = () => {
         setMarker(newMarker);
       } catch (error) {
         setIsLoading(false);
-        console.error(err);
+        console.error(error);
       }
     };
 
@@ -1244,6 +1261,13 @@ const Airspaces = () => {
 
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
+
+  useEffect(() => {
+    if (localStorage.getItem("new")) {
+    setIsOpen(true);
+    localStorage.removeItem("new");
+    }
+  }, []);
 
   const handleSelectAddress = (placeName) => {
     setAddress(placeName); 
@@ -1387,6 +1411,24 @@ const Airspaces = () => {
       console.error("Error:", error);
     }
   };
+  useEffect(() => {
+    if (currentStep === 1 && isMobile) {
+      setShowMobileMap(true);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (currentStep === 3 && isMobile) {
+      setShowClaimModal(true);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowMobileMap(false);
+      setShowClaimModal(false);
+    }
+  }, [isOpen]);
 
   return (
     <Fragment>
@@ -1400,7 +1442,8 @@ const Airspaces = () => {
         {!showMobileMap && <Sidebar />}
         <div className="flex h-full w-full flex-col">
           {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
-          {showMobileMap && isMobile && (
+          {((showMobileMap && isMobile) ||
+            (isOpen && currentStep === 1 && isMobile)) && (
             <ExplorerMobile
               onGoBack={() => setShowMobileMap(false)}
               flyToAddress={flyToAddress}
@@ -1429,31 +1472,32 @@ const Airspaces = () => {
                 zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
               }}
             />
-            {isMobile && showMobileMap && flyToAddress && (
+            {((isMobile && showMobileMap && flyToAddress) ||
+              (isOpen && currentStep === 2 && isMobile)) && (
               <div
                 onClick={() => {
                   setShowClaimModal(true);
                   setIsLoading(true);
                 }}
-                className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+                className="Claim-airspacebtn-step  absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
               >
                 Claim Airspace
               </div>
             )}
             {isMobile && (
-              <Fragment>
-                {showClaimModal && (
-                  <ClaimModal
-                    onCloseModal={() => {
-                      setShowClaimModal(false);
-                      setIsLoading(false);
-                    }}
-                    data={data}
-                    setData={setData}
-                    onClaim={onClaim}
-                    claimButtonLoading={claimButtonLoading}
-                  />
-                )}
+              <Fragment>     
+                  {(showClaimModal || (isOpen && currentStep >= 3)) && (
+                    <ClaimModal
+                      onCloseModal={() => {
+                        setShowClaimModal(false);
+                        setIsLoading(false);
+                      }}
+                      data={data}
+                      setData={setData}
+                      onClaim={onClaim}
+                      claimButtonLoading={claimButtonLoading}
+                    />
+                  )}
               </Fragment>
             )}
             {!isMobile && (
@@ -1533,7 +1577,7 @@ const Airspaces = () => {
                   </div>
                 )}
 
-                {showClaimModal && (
+                {(showClaimModal || (isOpen && currentStep >= 2)) && (
                   <ClaimModal
                     onCloseModal={() => {
                       setShowClaimModal(false);
@@ -1547,7 +1591,7 @@ const Airspaces = () => {
                 )}
               </div>
             )}
-            {!showMobileMap && (
+            {(!showMobileMap || isOpen) && (
               <div className="flex h-full w-full flex-col md:hidden">
                 <div
                   onClick={() => setShowMobileMap(true)}
@@ -1559,7 +1603,7 @@ const Airspaces = () => {
                     <br />
                     Claim your airspace 🚀✨
                   </div>
-                  <div className="w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
+                  <div className="claim-step  w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
                     Claim your airspace
                   </div>
                 </div>
@@ -1588,7 +1632,7 @@ const Airspaces = () => {
                   </div>
                   <div
                     onClick={() => setShowHowToModal(true)}
-                    className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
+                    className="  flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
                   >
                     <div className="h-[24px] w-[24px]">
                       <HelpQuestionIcon color="white" />

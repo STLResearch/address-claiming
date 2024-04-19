@@ -4,6 +4,7 @@ export default function Document() {
   return (
     <Html lang='en'>
       <Head>
+      <link rel="icon" href="/favicon.ico" sizes="any" />
         <link
           href='https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css'
           rel='stylesheet'
