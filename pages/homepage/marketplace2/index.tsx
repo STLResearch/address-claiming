@@ -185,7 +185,7 @@ const Marketplace = () => {
 
           const resdata = resNftJson.data;
 
-          const ans2 = resdata.map((item, idx) => {
+          const auction_card = resdata.map((item, idx) => {
             return (
               <AuctionCard
                 key={idx}
@@ -198,7 +198,7 @@ const Marketplace = () => {
               />
             );
           });
-          setAuctions(ans2);
+          setAuctions(auction_card);
         } catch (error) {
           console.error(error);
         }

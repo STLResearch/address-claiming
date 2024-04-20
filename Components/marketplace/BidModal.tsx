@@ -83,7 +83,6 @@ export const BidModal = ({
           body: JSON.stringify(reqBody)
         });
         const addBidJson = await addBid.json();
-        console.log("ans", addBid);
 
         const resTx = addBidJson?.tx;
 
