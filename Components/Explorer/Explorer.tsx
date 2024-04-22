@@ -7,7 +7,8 @@ interface ExplorerProps {
   setAddress: React.Dispatch<React.SetStateAction<string>>;
   addresses: { id: string; place_name: string; }[];
   showOptions: boolean;
-  handleSelectAddress: (address: string) => void;
+  setFlyToAddress: React.Dispatch<React.SetStateAction<string>>;
+  setShowOptions: React.Dispatch<React.SetStateAction<boolean>>;
   flyToUserIpAddress: () => void;
   setSatelliteView: () => void;
   handleZoomIn: () => void;
@@ -19,7 +20,8 @@ const Explorer: React.FC<ExplorerProps> = ({
   setAddress,
   addresses,
   showOptions,
-  handleSelectAddress,
+  setFlyToAddress,
+  setShowOptions,
   flyToUserIpAddress,
   setSatelliteView,
   handleZoomIn,
@@ -37,7 +39,8 @@ const Explorer: React.FC<ExplorerProps> = ({
             setAddress={setAddress}
             showOptions={showOptions}
             addresses={addresses}
-            handleSelectAddress={handleSelectAddress}
+            setFlyToAddress={setFlyToAddress}
+            setShowOptions={setShowOptions}
           />
           <ExplorerControls
             flyToUserIpAddress={flyToUserIpAddress}

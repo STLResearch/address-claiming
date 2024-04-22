@@ -264,11 +264,6 @@ const Radar = () => {
   useEffect(() => {
     if (flyToAddress === address) setShowOptions(false);
   }, [flyToAddress, address]);
-  const handleSelectAddress = (placeName: string) => {
-    setAddress(placeName);
-    setFlyToAddress(placeName);
-    setShowOptions(false);
-  };
   const handleShowDetailFullMobile = () => {
     setMobileBottomDroneDetailVisible(false);
     setShowDroneDetail(true);
@@ -294,9 +289,10 @@ const Radar = () => {
               onGoBack={handleGoBack}
               address={address}
               setAddress={setAddress}
+              setShowOptions={setShowOptions}
+              setFlyToAddress={setFlyToAddress}
               addresses={addresses}
               showOptions={showOptions}
-              handleSelectAddress={handleSelectAddress}
             />
           )}
           <section
@@ -319,7 +315,8 @@ const Radar = () => {
                   setAddress={setAddress}
                   addresses={addresses}
                   showOptions={showOptions}
-                  handleSelectAddress={handleSelectAddress}
+                  setFlyToAddress={setFlyToAddress}
+                  setShowOptions={setShowOptions}
                   setSatelliteView={() => toggleMapView(map)}
                   handleZoomIn={() => handleZoomIn(map)}
                   handleZoomOut={() => handleZoomOut(map)}

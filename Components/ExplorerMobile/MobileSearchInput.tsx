@@ -1,12 +1,14 @@
 import React from 'react';
 import { MagnifyingGlassIcon } from '../Icons';
+import { handleSelectAddress } from '@/utils/radarUtils';
 
 interface MobileSearchInputProps {
   address: string;
   setAddress: React.Dispatch<React.SetStateAction<string>>;
   addresses: { id: string; place_name: string }[]; 
   showOptions: boolean;
-  handleSelectAddress: (address: string) => void;
+  setFlyToAddress: React.Dispatch<React.SetStateAction<string>>;
+  setShowOptions: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MobileSearchInput: React.FC<MobileSearchInputProps> = ({
@@ -14,7 +16,8 @@ const MobileSearchInput: React.FC<MobileSearchInputProps> = ({
   setAddress,
   addresses,
   showOptions,
-  handleSelectAddress,
+  setFlyToAddress,
+  setShowOptions
 }) => {
   return (
     <div className="relative w-full rounded-lg bg-white px-[22px] py-4 border border-light-grey" >
@@ -37,7 +40,7 @@ const MobileSearchInput: React.FC<MobileSearchInputProps> = ({
             <div
               key={item.id}
               data-value={item.place_name}
-              onClick={() => handleSelectAddress(item.place_name)}
+              onClick={() => handleSelectAddress(item.place_name,setAddress,setFlyToAddress,setShowOptions)}
               className="w-full p-5 text-left text-light-black border-t-[0.2px] border-light-black"
             >
               {item.place_name}

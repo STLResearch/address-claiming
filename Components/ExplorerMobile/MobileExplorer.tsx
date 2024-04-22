@@ -7,7 +7,8 @@ interface MobileExplorerProps {
   setAddress: React.Dispatch<React.SetStateAction<string>>;
   addresses: { id: string; place_name: string; }[]; 
   showOptions: boolean;
-  handleSelectAddress: (address: string) => void;
+  setFlyToAddress: React.Dispatch<React.SetStateAction<string>>;
+  setShowOptions: React.Dispatch<React.SetStateAction<boolean>>;
   onGoBack: () => void;
 }
 
@@ -16,7 +17,8 @@ const MobileExplorer: React.FC<MobileExplorerProps> = ({
   setAddress,
   addresses,
   showOptions,
-  handleSelectAddress,
+  setFlyToAddress,
+  setShowOptions,
   onGoBack,
 }) => {
   return (
@@ -29,7 +31,8 @@ const MobileExplorer: React.FC<MobileExplorerProps> = ({
         setAddress={setAddress}
         addresses={addresses}
         showOptions={showOptions}
-        handleSelectAddress={handleSelectAddress}
+        setFlyToAddress={setFlyToAddress}
+        setShowOptions={setShowOptions}
       />
     </div>
   );
