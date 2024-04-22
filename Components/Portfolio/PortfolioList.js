@@ -17,7 +17,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
   const [allUnverifiedAirspaces, setAllUnverifiedAirspaces] = useState(null);
   const [allRentedAirspaces, setAllRentedAirspaces] = useState([]);
   const [allVerifiedAirspaces, setAllVerifiedAirspaces] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [activeTab, setActiveTab] = useState("Verified Airspaces");
   const { signatureObject } = useSignature();
@@ -63,8 +63,6 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
         10
       );
       setVerifiedAirspaces(verifiedAirspaces);
-      setAllVerifiedAirspaces(verifiedAirspaces);
-
       setLoading(false);
     }
   };
@@ -161,14 +159,15 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
   };
 
   useEffect(() => {
-    if (user) {
+    if (user?.blockchainAddress) {
       fetchAirspaces();
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     paginateAirspaces();
   }, [pageNumber, rentalPageNumber, unverifiedPageNumber]);
+
 
   return (
     <div

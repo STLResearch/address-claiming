@@ -1,12 +1,21 @@
 import { formatDate } from "@/utils";
+import { RentalCertificate } from "../Portfolio";
 
-const { Fragment } = require("react");
+const { Fragment, useState } = require("react");
 const { ArrowLeftIcon, CloseIcon, LocationPointIcon } = require("../Icons");
 
 const Modal = ({ airspace, onCloseModal, isOffer }) => {
   console.log({ airspace });
+
+  const [pdfGenerated, setPdfGenerated] = useState(false);
+
+  const generatePDF = () => {
+    setPdfGenerated(true);
+  };
   return (
-    <Fragment>
+    <>
+        {/* {pdfGenerated && <RentalCertificate />} */}
+
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
         <div
           className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
@@ -70,14 +79,14 @@ const Modal = ({ airspace, onCloseModal, isOffer }) => {
             </div>
             <div
               onClick={onCloseModal}
-              className="flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
-              style={{ border: "1px solid #0653EA" }}
+              className="flex-1 text-[#0653EA] border border-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
+
             >
               Decline
             </div>
             <div
-              className="flex-1 text-white rounded-[5px] bg-[#0653EA] text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
-              style={{ border: "1px solid #0653EA" }}
+              className="flex-1 text-white rounded-[5px] border border-[#0653EA] bg-[#0653EA] text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
+
             >
               Approve
             </div>
@@ -86,21 +95,27 @@ const Modal = ({ airspace, onCloseModal, isOffer }) => {
           <div className="flex gap-[20px] md:mt-[15px] mt-auto -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 py-[16px] md:py-0">
             <div
               onClick={onCloseModal}
-              className="flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
-              style={{ border: "1px solid #0653EA" }}
+              className="flex-1 text-[#0653EA] border border-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
+
             >
               Cancel
             </div>
-            <button
+            {
+              airspace.type === 'rental' ?  <button onClick={generatePDF}
+              className="flex-1 text-white rounded-[5px] border border-[#0653EA] bg-[#0653EA] text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
+            >
+              Download Certificate
+            </button> : <button
               disabled
               className="disabled flex-1 text-white rounded-[5px] bg-gray-300 cursor-not-allowed text-center py-[10px] px-[20px] flex items-center justify-center"
             >
               Edit
             </button>
+            }
           </div>
         )}
       </div>
-    </Fragment>
+    </>
   );
 };
 

@@ -1,12 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import Script from "next/script";
-import {
-  LocationPointIcon,
-  ChevronRightIcon,
-  CloseIcon,
-  ArrowLeftIcon,
-} from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
@@ -14,9 +7,8 @@ import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
-import { RxCaretRight, RxCaretLeft } from "react-icons/rx";
+
 import { PortfolioList, PortfolioListMobile } from "@/Components/Portfolio";
-import { formatDate } from "@/utils";
 import { Modal } from "@/Components/Wrapped";
 
 const Portfolio = () => {
@@ -28,20 +20,20 @@ const Portfolio = () => {
   const [claimedAirspaces, setClaimedAirspaces] = useState([]);
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (!user) return;
+  // useEffect(() => {
+  //   if (!user) return;
 
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [user?.blockchainAddress]);
+  //   const fetchData = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //     } catch (error) {
+  //       console.log(error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [user?.blockchainAddress]);
 
   const onCloseModal = () => {
     setSelectedAirspace(null);
