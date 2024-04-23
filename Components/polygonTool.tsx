@@ -1,8 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
 interface PolygonToolProps {
-  drawTool: any; 
+  drawTool: MapboxDraw; 
   isDrawMode: boolean; 
 }
 
