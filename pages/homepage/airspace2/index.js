@@ -1516,7 +1516,7 @@ const Airspaces = () => {
                 <FailurePopUp isVisible={showFailurePopUp} />
                 {!showSuccessPopUp && !isMobile &&(
                   <div className="relative w-full h-full  ">
-                   <PolygonTool />
+                   <PolygonTool drawTool={drawTool} isDrawMode={isDrawMode} />
                   </div>
                 )}
 
