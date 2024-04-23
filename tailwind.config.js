@@ -40,6 +40,8 @@ module.exports = {
         "light-yellow": "#FFF6D8",
         "light-black": "#222222",
         "light-grey": "#87878D",
+        "light-grey-100": "#FFFFFFCC",
+        "pure-blue": "#0000FF"
       },
       fontFamily: {
         "sans": ['poppins', 'sans-serif'] 
