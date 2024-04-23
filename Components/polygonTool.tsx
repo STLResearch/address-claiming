@@ -3,12 +3,10 @@ import Image from 'next/image';
 
 interface PolygonToolProps {
   drawTool: any; 
-  setDrawTool: any;
   isDrawMode: boolean; 
-  setIsDrawMode: React.Dispatch<React.SetStateAction<boolean>>; 
 }
 
-const PolygonTool = ({ drawTool, setDrawTool, isDrawMode, setIsDrawMode }: PolygonToolProps) => {
+const PolygonTool = ({ drawTool,isDrawMode }: PolygonToolProps) => {
  
   const deletePolygon = () => {
     const selectedFeatures = drawTool.getSelectedIds();
