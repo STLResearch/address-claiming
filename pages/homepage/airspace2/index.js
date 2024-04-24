@@ -666,6 +666,7 @@ const ClaimModal = ({
 
 const Explorer = ({
   address,
+  data,
   setAddress,
   addresses,
   showOptions,
@@ -740,13 +741,24 @@ const Explorer = ({
         )}
       </div>
       {(flyToAddress || isOpen) && (
+      <div className="mt-2 ">
+      <h1 className=" font-sans text-[20px] font-extrabold flex items-center justify-center h-full">My Airspaces</h1>
+        <div className="bg-white w-304 h-139 px-4 py-4 mt-2" >
+          <div className="flex justify-center items-center">
+        <div className="w-6 h-6">
+          <LocationPointIcon />
+        </div>
+        <p className="font-poppins font-normal text-base leading-[21px] ml-2"> {data.address}</p>
+      </div>
         <div
           onClick={onClaimAirspace}
-          className="Claim-airspacebtn-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+          className="Claim-airspacebtn-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white mt-2"
         >
           Claim Airspace
         </div>
-      )}
+    </div>
+    </div>
+    )}  
     </div>
   );
 };
@@ -907,9 +919,7 @@ const FailurePopUp = ({ isVisible }) => {
     <div
       className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
     >
-      {/* <div className='flex items-center justify-center w-[18px] h-[18px]'>
-					<FailureIcon />
-				</div> */}
+    
       🛑 Claim Failed! Please review your submission and ensure all information
       is correct.
     </div>
@@ -1120,7 +1130,6 @@ const Airspaces = () => {
         const drawnFeatures = draw.getAll();
         if (drawnFeatures.features.length > 0) {
           const coordinates = drawnFeatures.features[0].geometry.coordinates[0][0]
-          console.log('Polygon vertexes:', coordinates); 
          let el = document.createElement("div");
          el.id = "markerWithExternalCss";
           new maplibregl.Marker(el).setLngLat(coordinates).addTo(newMap);
@@ -1135,6 +1144,7 @@ const Airspaces = () => {
             setAddress(data.features[0].place_name);
             setData((prev) => {return {...prev, address: data.features[0].place_name}})
             setShowClaimModal(true);
+            setFlyToAddress(data.features[0].place_name);
           }
         }
       };
@@ -1498,6 +1508,7 @@ const Airspaces = () => {
             {!isMobile && (
               <div className="flex items-start justify-start w-full h-full">
                 <Explorer
+                 data={data}
                   flyToAddress={flyToAddress}
                   address={address}
                   showOptions={showOptions}
