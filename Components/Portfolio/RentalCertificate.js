@@ -1,83 +1,80 @@
-import React from 'react';
-import { useState, useEffect, useRef } from "react";
-import html2pdf from "html2pdf.js";
+import { useEffect } from 'react';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+import { calculateTimeDifference, formatDate, getFormattedDate } from '@/utils';
+import Image from 'next/image';
 
-import Image from "next/image";
+const generatePDF = (airspace) => {
+  const element = document.querySelector('.pdf-content');
 
-export default function RentalCertificate({ rentalData }) {
-  const componentRef = useRef(null);
 
-  const printDocument = () => {
-    const input = componentRef.current;
 
-    html2pdf()
-      .from(input)
-      .set({
-        margin: 1,
-        filename: "rental_certificate.pdf",
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { dpi: 192, letterRendering: true },
-        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
-      })
-      .save();
-  };
+
+  html2canvas(element).then((canvas) => {
+
+
+    var doc = new jsPDF();
+
+
+doc.addImage("/images/logo.png", "PNG", 80, 10, null, null, "center");
+
+
+doc.setFont("helvetica", "bold");
+doc.setTextColor('#808080'); 
+doc.text("RENTAL CERTIFICATE", 105, 40, null, null, "center");
+doc.setTextColor('#000000'); 
+
+doc.setFont("helvetica", "normal");
+doc.setFontSize(12)
+doc.text(`${getFormattedDate()}`, 20, 50);
+
+
+doc.text("This certifies that [User's Name] has successfully rented an airspace on SkyTrade for", 20, 60);
+doc.text("the following details:", 20, 65)
+
+doc.text(`Rental ID: ${airspace.id}`, 20, 75)
+doc.text(`Date of Rental: ${formatDate(airspace.metadata.startTime)}`, 20, 80)
+doc.text(`Time Frame: ${calculateTimeDifference(airspace.metadata.startTime, airspace.metadata.endTime)}`, 20, 85)
+doc.text(`Address: ${airspace.address}`, 20, 90)
+doc.text(`Transaction Hash:`, 20, 95)
+doc.text(`Transaction Date:`, 20, 100)
+doc.text(`Amount:`, 20, 105)
+
+
+
+doc.text("This rental agreement is valid for the specified date and time frame mentioned above", 20, 115);
+doc.text("and subject to SkyTrade's Rental Agreement and Terms of Service.", 20, 120);
+
+doc.text("SkyTrade Team", 20, 135);
+
+doc.setFont("helvetica", "bold");
+doc.text("www.sky.trade", 20, 140);
+
+doc.addImage("/images/cert.png", "PNG", 0, 170, null, null, "right")
+
+doc.save('rental_certificate.pdf');
+  });
+};
+
+
+const RentalCertificate = ({rentalData, onCloseModal, airspace}) => {
+  // useEffect to generate PDF on component mount
+  useEffect(() => {
+    generatePDF(airspace);
+  }, []);
+
+
+
 
   return (
-    <div
-      style={{ zIndex: 500 }}
-      className="flex flex-col  min-h-screen w-screen items-center justify-center "
-    >
-      <div className="w-[50rem] bg-white py-20 min-h-screen">
-        <div
-          ref={componentRef}
-          className="flex flex-col  items-center px-24 gap-8"
-        >
-          <div>
-            <Image
-              width={200}
-              height={100}
-              src={"/images/certLogo.png"}
-              alt="logo"
-            />
-          </div>
-          <div className="text-gray-400 text-2xl">Rental Certificate</div>
-          <div className="self-start">28th June, 2024</div>
-          <div>
-            This certifies that James Bond has successfully rented an airspace
-            on SkyTrade for the following details:
-          </div>
-          <div className="w-full">
-            <div>Rental ID:</div>
-            <div>Date of Rental:</div>
-            <div>Time Frame: </div>
-            <div>Address:</div>
-            <div>Transaction hash:</div>
-            <div>Transaction date:</div>
-            <div>Amount:</div>
-          </div>
+    <div className="pdf-content w-[36rem] bg-white py-20 min-h-screen relative text-sm">
 
-          <div className="flex flex-col gap-4">
-            <div>
-              This rental agreement is valid for the specified date and time
-              frame mentioned above. This agreement is subject to SkyTrade's
-              Rental Agreement and Terms of Service.
-            </div>
-            <div>
-              <div>SkyTrade Team </div>
-              <div>www.sky.trade</div>
-            </div>
-          </div>
-        </div>
-        <div className="w-full">
-          <button
-            onClick={printDocument}
-            className=" mx-auto  text-white rounded-[5px] bg-[#0653EA] text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
-            style={{ border: "1px solid #0653EA" }}
-          >
-            Download Certificate
-          </button>
-        </div>
-      </div>
+
+              
     </div>
   );
-}
+};
+
+export default RentalCertificate;
+
+

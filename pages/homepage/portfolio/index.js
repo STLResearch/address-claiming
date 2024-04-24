@@ -8,16 +8,19 @@ import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
 
-import { PortfolioList, PortfolioListMobile } from "@/Components/Portfolio";
+import { PortfolioList, PortfolioListMobile, RentalCertificate } from "@/Components/Portfolio";
 import { Modal } from "@/Components/Wrapped";
 
 const Portfolio = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAirspace, setSelectedAirspace] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
   const { getPropertiesByUserAddress } = useDatabase();
   const [myAirspaces, setMyAirspaces] = useState([]);
   const [rentedAirspaces, setRentedAirspaces] = useState([]);
   const [claimedAirspaces, setClaimedAirspaces] = useState([]);
+  const [pdfGenerated, setPdfGenerated] = useState(false);
+
   const { user } = useAuth();
 
   // useEffect(() => {
@@ -36,12 +39,19 @@ const Portfolio = () => {
   // }, [user?.blockchainAddress]);
 
   const onCloseModal = () => {
-    setSelectedAirspace(null);
+    setOpenModal(false);
   };
 
   const selectAirspace = (x) => {
     setSelectedAirspace(x);
+    setOpenModal(true)
   };
+
+  const handlePdfGenerated = () => {
+    setPdfGenerated(true)
+    setOpenModal(false);
+
+  }
 
   return (
     <Fragment>
@@ -57,9 +67,11 @@ const Portfolio = () => {
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
-          {selectedAirspace !== null && (
-            <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} />
+          {openModal && (
+            <Modal handlePdfGenerated={handlePdfGenerated} airspace={selectedAirspace} onCloseModal={onCloseModal} />
           )}
+
+{pdfGenerated && <RentalCertificate  onCloseModal={onCloseModal} airspace={selectedAirspace} />}
           <PageHeader pageTitle={"Portfolio"} />
           <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
             <PortfolioList

@@ -4,17 +4,16 @@ import { RentalCertificate } from "../Portfolio";
 const { Fragment, useState } = require("react");
 const { ArrowLeftIcon, CloseIcon, LocationPointIcon } = require("../Icons");
 
-const Modal = ({ airspace, onCloseModal, isOffer }) => {
-  console.log({ airspace });
+const Modal = ({ airspace, onCloseModal, isOffer, handlePdfGenerated }) => {
 
-  const [pdfGenerated, setPdfGenerated] = useState(false);
+
 
   const generatePDF = () => {
-    setPdfGenerated(true);
+    handlePdfGenerated()
   };
+  
   return (
     <>
-        {/* {pdfGenerated && <RentalCertificate />} */}
 
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
         <div

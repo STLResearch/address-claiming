@@ -40,6 +40,7 @@
     "dayjs": "^1.11.10",
     "flowbite": "^2.2.1",
     "formik": "^2.4.5",
+    "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.1",
     "jspdf": "^2.5.1",
     "mapbox-gl": "^2.15.0",
