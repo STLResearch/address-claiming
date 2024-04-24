@@ -239,7 +239,7 @@ const ReferralCodeRedirect = () => {
                 height={77}
               />
               <p className='font-normal text-xl text-[#222222] text-center'>Welcome to SkyTrade</p>
-              <p className='font-bold text-base text-[#4285F4] text-center px-[68px]'>You have an awesome friend who referred you to earn 50 extra credits!</p>
+              <p className='font-bold text-base text-[#4285F4] text-center px-[68px]'>You have an awesome friend who referred you to earn 50 extra SKY points!</p>
               <p className='font-normal text-[16px] text-[#222222] text-center'>Claim Your Airspace and Start Earning Passive Income! 🚀</p>
               <div className='text-[15px] text-light-grey font-normal my-[30px]'>
                 <p>💰 <span className='font-bold'>Monetize Your Air Rights Easily:</span> Elevate earnings without changing property ownership.</p>
