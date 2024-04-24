@@ -61,7 +61,7 @@ const AlertMessage = () => {
         boxShadow: "0px 0px 40px 0px #0813391A",
       }}
     >
-      <span className="font-bold">Refer now!</span>score a one-time bonus. Act fast!
+      <span className="font-bold">Refer now!</span> Score a one-time bonus. Act fast!
     </div>
   );
 };
@@ -80,9 +80,9 @@ const TheProgram = ({ activeSection, section, isMobile }) => {
           claim airspaces, you receive:
         </p>
         <p className="text-[#4285F4] text-[15px] font-normal">
-          <span className="font-bold text-[20px]">+50 credits to you</span> for
+          <span className="font-bold text-[20px]">+50 SKY points to you</span> for
           each successful referral registration and{" "}
-          <span className="font-bold text-[20px]">+50 credits</span> to the
+          <span className="font-bold text-[20px]">+50 SKY points</span> to the
           successfully referred person
           <br />
           <span className="font-bold text-[20px]">+10%</span> on top of the
@@ -110,7 +110,7 @@ const TheProgram = ({ activeSection, section, isMobile }) => {
         <Item
           icon={<GiftIcon isActive={true} />}
           title={"Earn"}
-          text={"You and your friends are rewarded with 50 credits and more"}
+          text={"You and your friends are rewarded with 50 SKY points and more"}
         />
       </div>
     </Fragment>

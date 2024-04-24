@@ -171,7 +171,7 @@ const Signup = () => {
         // dispatch(counterActions.userAuth(user));
         // localStorage.setItem('user', JSON.stringify(user));
         router.push("/homepage/dashboard2");
-        localStorage.set('new', true)
+        localStorage.setItem('new', true)
         return user;
       }
 
