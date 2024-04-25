@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
 import { Provider } from "react-redux";
-import store from "@/store/store";
+// import store from "@/store/store";
 import Script from "next/script";
 
 import CookieConsent from "@/Components/CookieConsent";
@@ -15,11 +15,15 @@ import { TourProvider } from "@reactour/tour";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
-import { useMediaQuery } from "@mui/material";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
+import store from "@/redux/store";
 
 export default function App({ Component, pageProps }) {
   const { isMobile } = useMobile();
   const [doItAgain, setDoItAgain] = useState(false);
+
+  const persistor = persistStore(store);
 
 
   useEffect(() => {
@@ -41,9 +45,13 @@ export default function App({ Component, pageProps }) {
     }
   }, [isMobile, global.Tawk_API, doItAgain]);
 
+
+
   return (
     <AuthProvider>
       <Provider store={store}>
+      
+      <PersistGate loading={null} persistor={persistor}>
         <>
           <Script src="https://cdn.withpersona.com/dist/persona-v4.8.0.js" />
           <Script id="show-banner" dangerouslySetInnerHTML={msclaritConfig} />
@@ -65,6 +73,7 @@ export default function App({ Component, pageProps }) {
           </SidebarProvider>
           <CookieConsent />
         </>
+      </PersistGate>
       </Provider>
     </AuthProvider>
   );

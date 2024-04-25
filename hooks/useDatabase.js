@@ -95,11 +95,8 @@ const useDatabase = () => {
                 },
             })
 
-            if (!response.ok || response.statusCode === 500) {
-                throw new Error("Error when updating referral.");
-            }
-
-            return response.json();
+            const responseToJson = await response.json();
+            return responseToJson;
         } catch (error) {
             console.log(error);
         }

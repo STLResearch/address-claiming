@@ -46,7 +46,7 @@ import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
 import { getPriorityFeeIx } from "@/hooks/utils";
-import { useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "react-redux";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -55,8 +55,11 @@ let USDollar = new Intl.NumberFormat("en-US", {
 
 const AvailableBalance = ({ balance, Solbalance, loading }) => {
 
-  const userUSDWalletBalance = useSelector(
-    (state) => state.value.userUSDWalletBalance
+  const {userUSDWalletBalance} = useSelector(
+    (state) => {
+      const {userUSDWalletBalance} = state.userReducer;
+      return {userUSDWalletBalance}
+    }, shallowEqual
   );
 
   return (

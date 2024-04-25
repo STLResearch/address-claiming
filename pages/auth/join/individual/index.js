@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import Script from 'next/script';
 
@@ -49,7 +49,12 @@ const IndividualSignup = () => {
     setPageLoad(false);
   }, []);
 
-  const category = useSelector((state) => state.value.category);
+  const {category} = useSelector((state) =>
+  {
+    const {category} = state.userReducer
+    return {category}
+  }, shallowEqual
+   );
 
   const { temporaryToken, signIn } = useAuth();
 

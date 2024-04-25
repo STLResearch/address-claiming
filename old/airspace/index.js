@@ -23,12 +23,13 @@ import Backdrop from '@/Components/Backdrop';
 import MyAirspaceOverview from '@/Components/MyAirspaces/MyAirspaceOverview';
 import Airspaces from '@/Components/Airspaces';
 import AdditionalAispaceInformation from '@/Components/Modals/AdditionalAirspaceInformation';
-import { counterActions } from '@/store/store';
+
 import Spinner from '@/Components/Spinner';
 import MyAirspaceTab from '@/Components/MyAirspaceTab';
 import EditAispaceModal from '@/Components/Modals/EditAirspaceModal';
 // import { useVerification } from '@/hooks/useVerification';
 import CollapseAirspace from '@/Components/CollapseAirspace';
+import { setAdditionalInfoModal, setAirspaceData, setNewAirspaceModal } from '@/redux/slices/userSlice';
 
 const Airspace = () => {
   // const { verificationCheck } = useVerification();
@@ -340,8 +341,9 @@ const Airspace = () => {
     getUserAirspace();
   }, [user]);
 
-  const newAirspace = useSelector((state) => {
-    return state.value.newAirspace;
+  const {newAirspaceModal} = useSelector((state) => {
+    const {newAirspaceModal} =  state.userReducer;
+    return {newAirspaceModal}
   });
 
   const additionalInfo = useSelector(
@@ -356,7 +358,7 @@ const Airspace = () => {
     setShowAddAirspaceModal(false);
     setshowAddReviewModal(false);
 
-    dispatch(counterActions.closeNewAirspaceModal());
+    dispatch(setNewAirspaceModal(false));
   };
 
   const editAirspaceHandler = () => {
@@ -443,11 +445,11 @@ const Airspace = () => {
       vertexes: vertexes,
     };
 
-    dispatch(counterActions.airspaceData(addressValue));
+    dispatch(setAirspaceData(addressValue));
 
     // verificationCheck(selectorUser);
 
-    dispatch(counterActions.additionalInfoModal());
+    dispatch(setAdditionalInfoModal(true));
     setIsLoading(false);
   };
 

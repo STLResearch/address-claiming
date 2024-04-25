@@ -1,4 +1,4 @@
-import { counterActions } from '@/store/store';
+
 import { Fragment, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -10,6 +10,7 @@ import base58 from 'bs58';
 
 import TimeSelect from '../TimeSelect';
 import TimezoneSelectComponent from '../Timezone';
+import { setAdditionalInfoModal } from '@/redux/slices/userSlice';
 
 const EditAispaceModal = (props) => {
   const router = useRouter();
@@ -56,7 +57,7 @@ const EditAispaceModal = (props) => {
 
   const closeModalHandler = (e) => {
     e.preventDefault();
-    dispatch(counterActions.closeAdditionalInfoModal());
+    dispatch(setAdditionalInfoModal(false));
   };
 
   const costCheckedHandler = (e) => {
@@ -256,8 +257,7 @@ const EditAispaceModal = (props) => {
             icon: 'success',
             button: 'Ok',
           }).then(() => {
-            // dispatch(counterActions.closeAdditionalInfoModal());
-            // props.onClose()
+
             setIsLoading(false);
             router.push('/homepage/dashboard2');
           });

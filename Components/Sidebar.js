@@ -112,14 +112,8 @@ const Sidebar = () => {
     );
   };
 
-  const SidebarItemMobile = ({
-    href,
-    text,
-    onClick,
-    children,
-    numberOfUnseenNotifications,
-  }) => {
-    const isActive = href ? asPath.includes(href) : false;
+  const SidebarItemMobile = ({ href, text, children,onClick,numberOfUnseenNotifications }) => {
+    const isActive = asPath.includes(href);
 
     if (onClick !== undefined) {
       return (
@@ -127,34 +121,21 @@ const Sidebar = () => {
           <div className='relative w-5 h-5 flex items-center justify-center'>
           {React.cloneElement(children, { isActive })}
           </div>
-          <p
-          className={`${isActive ? "font-semibold text-[#4285F4]" : "font-normal text-[#5D7285]"} text-[11px] tracking-[1%]`}
-        >
-          {text}
-        </p>
+          <p className={`${isActive ? 'font-semibold text-[#4285F4]' : 'font-normal text-[#5D7285]'} text-[11px] tracking-[1%]`}>{text}</p>
         </div>
       )
     }
 
     return (
-      <Link
-        href={href}
-        className={`${href ? "cursor-pointer" : "cursor-not-allowed"} py-[16.87px] flex flex-col items-center gap-2 px-[11.77px] w-full ${isActive && "text-[#4285F4]"} rounded-[3.66px]`}
-      >
-        <div className="relative w-5 h-5 flex items-center justify-center">
+      <Link href={href} className={`${href ? 'cursor-pointer' : 'cursor-not-allowed'} py-[16.87px] flex flex-col items-center gap-2 px-[11.77px] w-full ${isActive && 'text-[#4285F4]'} rounded-[3.66px]`}>
+        <div className='relative w-5 h-5 flex items-center justify-center'>
           {React.cloneElement(children, { isActive })}
-          {numberOfUnseenNotifications !== 0 && (
-            <div className="bg-[#E04F64] rounded-[50%] absolute -bottom-1 -right-1 w-3 h-3"></div>
-          )}
+          {numberOfUnseenNotifications !== 0 && <div className='bg-[#E04F64] rounded-[50%] absolute -bottom-1 -right-1 w-3 h-3'></div>}
         </div>
-        <p
-          className={`${isActive ? "font-semibold text-[#4285F4]" : "font-normal text-[#5D7285]"} text-[11px] tracking-[1%]`}
-        >
-          {text}
-        </p>
+        <p className={`${isActive ? 'font-semibold text-[#4285F4]' : 'font-normal text-[#5D7285]'} text-[11px] tracking-[1%]`}>{text}</p>
       </Link>
-    );
-  };
+    )
+  }
 
   const logoutHandler = async () => {
     signOut();
@@ -251,48 +232,14 @@ const Sidebar = () => {
           style={"mt-auto"}
         />
       </aside>
-      <nav className="flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar">
-        <SidebarItemMobile
-          href={"/homepage/dashboard2"}
-          text={"Dashboard"}
-          children={<DashboardIcon />}
-          numberOfUnseenNotifications={0}
-        />
-        <SidebarItemMobile
-          href={"/homepage/airspace2"}
-          text={"Airspaces"}
-          children={<EarthIcon />}
-          numberOfUnseenNotifications={0}
-        />
-        <SidebarItemMobile
-          href={"/homepage/marketplace"}
-          text={"Marketplace"}
-          children={<MapIcon />}
-          numberOfUnseenNotifications={0}
-        />
-        <SidebarItemMobile
-          href={"/homepage/portfolio"}
-          text={"Portfolio"}
-          children={<ShoppingBagsIcon />}
-          numberOfUnseenNotifications={0}
-        />
-        <SidebarItemMobile
-          href={"/homepage/referral"}
-          text={"Referral"}
-          children={<GiftIcon />}
-          numberOfUnseenNotifications={0}
-        />
-        <SidebarItemMobile 
-         href={'https://skytrade.tawk.help'} 
-         text={"HelpCenter"}
-         children={<HelpQuestionIcon />} 
-         numberOfUnseenNotifications={0}
-        />
-        <SidebarItemMobile 
-          onClick={logoutHandler}  
-          text={"Logout"} 
-          children={<LogoutIcon />} 
-        />
+      <nav className='flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
+        <SidebarItemMobile href={'/homepage/dashboard2'} text={"Dashboard"} children={<DashboardIcon />} numberOfUnseenNotifications={0} />
+        <SidebarItemMobile href={'/homepage/airspace2'} text={"Airspaces"} children={<EarthIcon />} numberOfUnseenNotifications={0} />
+        <SidebarItemMobile href={'/homepage/marketplace'} text={"Marketplace"} children={<MapIcon />} numberOfUnseenNotifications={0} />
+        <SidebarItemMobile href={'/homepage/portfolio'} text={"Portfolio"} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={0} />
+        <SidebarItemMobile href={'/homepage/referral'} text={"Referral"} children={<GiftIcon />} numberOfUnseenNotifications={0} />
+        <SidebarItemMobile href={'https://skytrade.tawk.help'} text={"HelpCenter"} children={<HelpQuestionIcon />} numberOfUnseenNotifications={0} />
+        <SidebarItemMobile onClick={logoutHandler}  text={"Logout"} children={<LogoutIcon />} />
       </nav>
     </Fragment>
   );

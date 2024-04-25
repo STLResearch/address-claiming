@@ -12,7 +12,7 @@ import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import { SolanaWallet } from "@web3auth/solana-provider";
 
-import { counterActions } from "@/store/store";
+
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 
@@ -26,6 +26,7 @@ import { useSignature } from "@/hooks/useSignature";
 import Head from "next/head";
 import Link from "next/link";
 import { toast } from "react-toastify";
+import { setCategory } from "@/redux/slices/userSlice";
 
 const chainConfig = {
   chainNamespace: "solana",
@@ -168,8 +169,7 @@ const Signup = () => {
 
       if (user.id) {
         signIn({ user });
-        // dispatch(counterActions.userAuth(user));
-        // localStorage.setItem('user', JSON.stringify(user));
+
         router.push("/homepage/dashboard2");
         localStorage.setItem('new', true)
         return user;
@@ -188,7 +188,7 @@ const Signup = () => {
         localStorage.removeItem("openlogin_store");
 
         dispatch(
-          counterActions.category({
+          setCategory({
             email: userInformation.email,
             blockchainAddress: accounts[0],
           })
@@ -304,10 +304,6 @@ const Signup = () => {
         signIn({ user });
         console.log("Login: done!");
         router.push("/homepage/dashboard2");
-        localStorage.set('new', true)
-        // dispatch(counterActions.userAuth(user));
-        // localStorage.setItem('user', JSON.stringify(user));
-        // router.push('/homepage/dashboard');
         return user;
       }
       console.log("Login: user has no ID");
@@ -315,18 +311,12 @@ const Signup = () => {
       if (user.errorMessage === "UNAUTHORIZED") {
         console.log("Login: UNAUTHORIZED");
         setTemporaryToken(JSON.parse(localStorage.getItem("openlogin_store")));
-        // const token = localStorage.getItem('openlogin_store');
 
-        // dispatch(
-        //   counterActions.web3({
-        //     token: JSON.parse(token),
-        //   })
-        // );
 
         localStorage.removeItem("openlogin_store");
 
         dispatch(
-          counterActions.category({
+          setCategory({
             email: userInformation.email,
             blockchainAddress: accounts[0],
           })

@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { useRef, useState, useEffect } from "react";
-import { createPortal } from "react-dom";
-import { useSelector } from "react-redux";
-import swal from "sweetalert";
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { shallowEqual, useSelector } from 'react-redux';
+import swal from 'sweetalert';
 import Head from "next/head";
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
@@ -82,12 +82,18 @@ export const checkPhoneIsValid = async (phone) => {
   }
 };
 const IndividualSignup = () => {
-  const [part, setPart] = useState(0);
-  const [name, setName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const newsletterRef = useRef();
-  const referralCodeRef = useRef();
-  const { getReferralByCode } = useDatabase();
+
+    const {category} = useSelector((state) =>
+    {
+      const {category} = state.userReducer
+      return {category}
+    }, shallowEqual );
+
+    const [part, setPart] = useState(0);
+    const [name,setName] = useState('');
+    const [phoneNumber,setPhoneNumber] = useState('');
+    const newsletterRef = useRef();
+    const referralCodeRef = useRef();
 
   const router = useRouter();
 
@@ -106,33 +112,19 @@ const IndividualSignup = () => {
     console.log(typeof status);
   }, [status]);
 
-  useEffect(() => {
-    setPageLoad(false);
-    if (typeof global?.window !== "undefined") {
-      const codeString = localStorage.getItem("referralCode");
-      if (!codeString) return;
-      const { id, code } = JSON.parse(codeString).response;
-      setReferralCode({ id, code });
-      setReferralDisabled(true);
-    }
-  }, [global?.window]);
+    useEffect(() => {
+        setPageLoad(false);
+        if (typeof global?.window !== 'undefined') {
+            const codeString = localStorage.getItem('referralCode');
+            if (!codeString) return;
+            const { id, code } = JSON.parse(codeString).response;
+            setReferralCode({ id, code })
+            setReferralDisabled(true)
+        }
+    }, [global?.window]);
 
-  const category = useSelector((state) => state.value.category);
-
-  useEffect(() => {
-    console.log("Category:", category);
-  }, [category]);
 
   const { temporaryToken, signIn } = useAuth();
-
-  const newsletterHandler = () => {
-    setNewsletter((prev) => !prev);
-  };
-
-  const returnHandler = (e) => {
-    e.preventDefault();
-    router.push("/auth/join");
-  };
 
   const checkNameIsValid = (name) => {
     return !!name;
@@ -159,10 +151,6 @@ const IndividualSignup = () => {
       setIsNameValid(false);
       return;
     }
-    console.log(
-      checkPhoneIsValid(phoneNumber),
-      "checkPhoneIsValid(phoneNumber)"
-    );
 
     const phoneCheck = await checkPhoneIsValid(phoneNumber);
     if (!phoneCheck.status) {
