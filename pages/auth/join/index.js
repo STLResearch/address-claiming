@@ -171,7 +171,6 @@ const Signup = () => {
         signIn({ user });
 
         router.push("/homepage/dashboard2");
-        localStorage.setItem('new', true)
         return user;
       }
 
