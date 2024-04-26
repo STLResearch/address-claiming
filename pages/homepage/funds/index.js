@@ -782,7 +782,7 @@ const Funds = () => {
   useEffect(() => {
     setBalanceLoading(true);
     if (user) {
-      setInterval(() => {
+      const tokenIntervalId=setInterval(() => {
         console.log("set interval function called");
         console.log({ user });
         const data = {
@@ -840,6 +840,9 @@ const Funds = () => {
             console.error(error);
           });
       }, 5000);
+      return ()=>{
+        clearInterval(tokenIntervalId)
+      }
     }
   }, [user, selectorUser, refetchBal]);
 

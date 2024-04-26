@@ -32,11 +32,6 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 
 
-let USDollar = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
-
 const Item = ({ children, title, icon, linkText, href, style }) => {
   return (
     <div
@@ -291,7 +286,7 @@ const Dashboard = () => {
   useEffect(() => {
     setBalanceLoading(true);
     if (user) {
-      setInterval(() => {
+      const tokenIntervalId=setInterval(() => {
         console.log("set interval function called");
         console.log({ user });
         const data = {
@@ -346,6 +341,9 @@ const Dashboard = () => {
             console.error(error);
           });
       }, 5000);
+      return ()=>{
+        clearInterval(tokenIntervalId)
+      }
     }
   }, [user]);
 
