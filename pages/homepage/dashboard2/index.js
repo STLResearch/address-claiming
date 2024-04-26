@@ -31,7 +31,6 @@ import { BalanceLoader } from "@/Components/Wrapped";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 
-
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
@@ -63,16 +62,10 @@ const Item = ({ children, title, icon, linkText, href, style }) => {
 };
 
 const AvailableBalance = ({ loading }) => {
-
-
-  const {userUSDWalletBalance} = useSelector(
-    (state) => {
-      const {userUSDWalletBalance} = state.userReducer;
-      return {userUSDWalletBalance}
-    }
-  );
-
-
+  const { userUSDWalletBalance } = useSelector((state) => {
+    const { userUSDWalletBalance } = state.userReducer;
+    return { userUSDWalletBalance };
+  });
 
   return (
     <Item
@@ -96,20 +89,25 @@ const AvailableBalance = ({ loading }) => {
 };
 
 const MyAirspaces = ({ airspaces = [], isLoading }) => {
-
   return (
     <Item
       title={
         <Fragment>
           My Airspaces{" "}
-          {!isLoading && <span className="text-[15px] font-normal">({airspaces.length})</span>}
+          {!isLoading && (
+            <span className="text-[15px] font-normal">
+              ({airspaces.length})
+            </span>
+          )}
         </Fragment>
       }
       icon={<DroneIcon isActive />}
-      linkText={`${!isLoading ? 'View all airspaces' : ''}`}
+      linkText={`${!isLoading ? "View all airspaces" : ""}`}
       href={"/homepage/portfolio"}
-    > 
-      {isLoading ? <BalanceLoader /> : (
+    >
+      {isLoading ? (
+        <BalanceLoader />
+      ) : (
         <div className="flex flex-col items-center gap-[29px]">
           <div className="w-[265.81px] h-[131.01px]">
             <WorldMap coloredCountries={["Spain"]} />
@@ -234,9 +232,10 @@ const Dashboard = () => {
   const [tokenBalance, setTokenBalance] = useState("");
   const [signature, setSignature] = useState();
   const [airspaces, setAirspaces] = useState([]);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const { getClaimedPropertiesByUserAddress } = useDatabase();
+  const { getClaimedPropertiesByUserAddress, getPropertiesByUserAddress } =
+    useDatabase();
   // GET USER AND TOKEN
   useEffect(() => {
     if (selectorUser) {
@@ -329,13 +328,17 @@ const Dashboard = () => {
             console.log(result, " this is result");
             if (result.result.value.length < 1) {
               setTokenBalance("0");
-              dispatch(setUserUSDWalletBalance('0'))
+              dispatch(setUserUSDWalletBalance("0"));
               setBalanceLoading(false);
 
               return;
             }
-            dispatch(setUserUSDWalletBalance(result.result.value[0].account.data.parsed.info.tokenAmount
-              .uiAmountString));
+            dispatch(
+              setUserUSDWalletBalance(
+                result.result.value[0].account.data.parsed.info.tokenAmount
+                  .uiAmountString
+              )
+            );
 
             setBalanceLoading(false);
           })
@@ -417,27 +420,44 @@ const Dashboard = () => {
     if (!user) return;
     (async () => {
       try {
-        setIsLoadingAirspace(true)
-        const response = await getClaimedPropertiesByUserAddress(
-          user.blockchainAddress,
-        );
-        if (response) {
-          let retrievedAirspaces = response.map((item) => {
-            return {
-              address: item.address,
-            };
-          });
-          setAirspaces(retrievedAirspaces);
+        setIsLoadingAirspace(true);
+        const [claimed, rented] = await Promise.all([
+          getClaimedPropertiesByUserAddress(user.blockchainAddress),
+          getPropertiesByUserAddress(
+            user?.blockchainAddress,
+            "rentalToken",
+            10
+          ),
+        ]);
+
+        let combinedAirspaces = [];
+
+        if (claimed) {
+          let retrievedAirspaces = claimed.map((item) => ({
+            address: item.address,
+          }));
+          combinedAirspaces = combinedAirspaces.concat(retrievedAirspaces);
+        }
+
+        if (rented) {
+          let retrievedAirspaces = rented.map((item) => ({
+            address: item.address,
+          }));
+          combinedAirspaces = combinedAirspaces.concat(retrievedAirspaces);
+        }
+
+        if (combinedAirspaces.length > 0) {
+          setAirspaces(combinedAirspaces);
+        } else {
+          console.info("No airspaces found.");
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
-        setIsLoadingAirspace(false)
+        setIsLoadingAirspace(false);
       }
     })();
   }, [user]);
-
-  console.log({ user });
 
   if (!user || !token) {
     return <Spinner />;
@@ -473,10 +493,11 @@ const Dashboard = () => {
                 <div className="flex flex-col md:flex-row justify-evenly gap-2">
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-col-reverse md:flex-col gap-[22px]">
-                      <AvailableBalance
-                        loading={balanceLoading}
+                      <AvailableBalance loading={balanceLoading} />
+                      <MyAirspaces
+                        airspaces={airspaces}
+                        isLoading={isLoadingAirspace}
                       />
-                      <MyAirspaces airspaces={airspaces} isLoading={isLoadingAirspace} />
                     </div>
                   </div>
                   <ReferralProgram />
