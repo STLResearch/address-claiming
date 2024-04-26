@@ -335,7 +335,7 @@ const Dashboard = () => {
             setBalanceLoading(false);
           })
           .catch((error) => {
-            setTokenBalance("");
+            setTokenBalance(tokenBalance);
             setBalanceLoading(false);
 
             console.error(error);
