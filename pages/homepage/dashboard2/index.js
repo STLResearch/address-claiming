@@ -226,7 +226,7 @@ const Dashboard = () => {
   const { user: selectorUser } = useAuth();
   const [user, setUser] = useState();
   const [token, setToken] = useState("");
-  const [tokenBalance, setTokenBalance] = useState("");
+  const [tokenBalance, setTokenBalance] = useState("0");
   const [signature, setSignature] = useState();
   const [airspaces, setAirspaces] = useState([]);
   const dispatch = useDispatch()
@@ -335,9 +335,7 @@ const Dashboard = () => {
             setBalanceLoading(false);
           })
           .catch((error) => {
-            setTokenBalance(tokenBalance);
             setBalanceLoading(false);
-
             console.error(error);
           });
       }, 5000);

@@ -726,7 +726,7 @@ const Funds = () => {
   const { user: selectorUser } = useAuth();
   const [user, setUser] = useState();
   const [token, setToken] = useState("");
-  const [tokenBalance, setTokenBalance] = useState("");
+  const [tokenBalance, setTokenBalance] = useState("0");
   const [balanceLoading, setBalanceLoading] = useState(false);
   const [signature, setSignature] = useState();
   const router = useRouter();
@@ -835,7 +835,6 @@ const Funds = () => {
             setBalanceLoading(false);
           })
           .catch((error) => {
-            setTokenBalance(tokenBalance);
             setBalanceLoading(false);
             console.error(error);
           });
