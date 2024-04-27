@@ -1323,7 +1323,7 @@ const Airspaces = () => {
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
             <div
-              className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-full`}
+              className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-screen`}
               id="map"
               style={{
                 opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",

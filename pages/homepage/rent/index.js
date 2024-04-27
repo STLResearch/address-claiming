@@ -1390,7 +1390,7 @@ const Rent = () => {
             className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}
           >
             <div
-              className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0 `}
+              className={`!absolute !top-0 !left-0 !w-screen !h-screen !m-0 `}
               //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
 
               id="map"
