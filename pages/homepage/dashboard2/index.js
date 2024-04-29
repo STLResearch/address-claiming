@@ -233,7 +233,10 @@ const Dashboard = () => {
   const [airspaces, setAirspaces] = useState([]);
   const dispatch = useDispatch();
 
-  const { getClaimedPropertiesByUserAddress } = useDatabase();
+  const {
+    getClaimedPropertiesByUserAddress,
+    getRentalPropertiesByUserAddress,
+  } = useDatabase();
   // GET USER AND TOKEN
   useEffect(() => {
     if (selectorUser) {
@@ -355,10 +358,9 @@ const Dashboard = () => {
         setIsLoadingAirspace(true);
         const [claimed, rented] = await Promise.all([
           getClaimedPropertiesByUserAddress(user.blockchainAddress),
-          getPropertiesByUserAddress(
+          getRentalPropertiesByUserAddress(
             user?.blockchainAddress,
-            "rentalToken",
-            10
+            "rentalToken"
           ),
         ]);
 
