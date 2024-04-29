@@ -362,11 +362,7 @@ const useDatabase = () => {
     }
   };
 
-  const getRentalPropertiesByUserAddress = async (
-    callerAddress,
-    type,
-    afterAssetId
-  ) => {
+  const getRentalPropertiesByUserAddress = async (callerAddress) => {
     try {
       const { sign, sign_nonce, sign_issue_at, sign_address } =
         await signatureObject(callerAddress);
@@ -375,7 +371,7 @@ const useDatabase = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          URI: `/private/airspace-rental/retrieve-all-tokens?callerAddress=${callerAddress}&type=${type}&afterAssetId=${afterAssetId || ""}`,
+          URI: `/private/airspace-rental/retrieve-total-airspace?callerAddress=${callerAddress}`,
           sign,
           time: sign_issue_at,
           nonce: sign_nonce,

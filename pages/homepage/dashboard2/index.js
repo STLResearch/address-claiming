@@ -277,15 +277,12 @@ const Dashboard = () => {
           return;
         }
 
-        console.log({ selectorUser });
-
         setToken(fetchedToken.sessionId);
         setUser(selectorUser);
       };
       authUser();
     }
   }, [selectorUser]);
-  console.log({ selectorUser });
 
   // GET SIGNATURE
   useEffect(() => {
@@ -356,34 +353,19 @@ const Dashboard = () => {
     (async () => {
       try {
         setIsLoadingAirspace(true);
-        const [claimed, rented] = await Promise.all([
-          getClaimedPropertiesByUserAddress(user.blockchainAddress),
-          getRentalPropertiesByUserAddress(
-            user?.blockchainAddress,
-            "rentalToken"
-          ),
-        ]);
+        const airspaces = await getRentalPropertiesByUserAddress(
+          user?.blockchainAddress
+        );
 
-        let combinedAirspaces = [];
-
-        if (claimed) {
-          let retrievedAirspaces = claimed.map((item) => ({
+        if (airspaces) {
+          let retrievedAirspaces = airspaces.map((item) => ({
             address: item.address,
           }));
-          combinedAirspaces = combinedAirspaces.concat(retrievedAirspaces);
-        }
-
-        if (rented) {
-          let retrievedAirspaces = rented.map((item) => ({
-            address: item.address,
-          }));
-          combinedAirspaces = combinedAirspaces.concat(retrievedAirspaces);
-        }
-
-        if (combinedAirspaces.length > 0) {
-          setAirspaces(combinedAirspaces);
-        } else {
-          console.info("No airspaces found.");
+          if (retrievedAirspaces.length > 0) {
+            setAirspaces(retrievedAirspaces);
+          } else {
+            console.info("No airspaces found.");
+          }
         }
       } catch (error) {
         console.log(error);
@@ -392,8 +374,6 @@ const Dashboard = () => {
       }
     })();
   }, [user]);
-
-  console.log({ user });
 
   if (!user || !token) {
     return <Spinner />;
