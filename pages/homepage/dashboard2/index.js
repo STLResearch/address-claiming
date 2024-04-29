@@ -88,16 +88,14 @@ const AvailableBalance = () => {
   );
 };
 
-const MyAirspaces = ({ airspaces = [], isLoading }) => {
+const MyAirspaces = ({ airspaces = [], totalAirspace, isLoading }) => {
   return (
     <Item
       title={
         <Fragment>
           My Airspaces{" "}
           {!isLoading && (
-            <span className="text-[15px] font-normal">
-              ({airspaces.length})
-            </span>
+            <span className="text-[15px] font-normal">({totalAirspace})</span>
           )}
         </Fragment>
       }
@@ -231,6 +229,7 @@ const Dashboard = () => {
   const [tokenBalance, setTokenBalance] = useState("");
   const [signature, setSignature] = useState();
   const [airspaces, setAirspaces] = useState([]);
+  const [totalAirspace, setTotalAirspace] = useState(0);
   const dispatch = useDispatch();
 
   const {
@@ -356,13 +355,15 @@ const Dashboard = () => {
         const airspaces = await getRentalPropertiesByUserAddress(
           user?.blockchainAddress
         );
+        console.log("Airspaces", airspaces);
 
-        if (airspaces) {
-          let retrievedAirspaces = airspaces.map((item) => ({
+        if (airspaces && airspaces.previews) {
+          let retrievedAirspaces = airspaces.previews.map((item) => ({
             address: item.address,
           }));
           if (retrievedAirspaces.length > 0) {
             setAirspaces(retrievedAirspaces);
+            setTotalAirspace(airspaces.total);
           } else {
             console.info("No airspaces found.");
           }
@@ -412,6 +413,7 @@ const Dashboard = () => {
                       <AvailableBalance />
                       <MyAirspaces
                         airspaces={airspaces}
+                        totalAirspace={totalAirspace}
                         isLoading={isLoadingAirspace}
                       />
                     </div>
