@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, forwardRef } from "react";
+import { Fragment, useState, useEffect, forwardRef ,useRef} from "react";
 import mapboxgl, { Map } from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import {
@@ -49,9 +49,25 @@ const SuccessModal = ({
   rentData,
   setShowClaimModal,
 }) => {
-  const router = useRouter();
+  const modalRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setShowSuccess(false);
+        setShowClaimModal(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [setShowSuccess, setShowClaimModal]);
+
   return (
     <div
+      ref={modalRef}
       className={`w-[100%] max-w-[20rem] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}
     >
       {/* <div className=" text-xl text-black text-center"> {finalAns?.status} </div>
@@ -801,13 +817,13 @@ const Explorer = ({
                 className={
                   item.id != selectedAddress
                     ? ` p-5 text-left text-[#913636] w-full flex justify-between text-[12px]`
-                    : `bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[10px]`
+                    : `bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[12px]`
                 }
                 style={{
                   borderTop: "5px solid #FFFFFFCC",
                 }}
               >
-                <h3 className="text-black pt-[0.6rem]">{item.address}</h3>
+                <h3 className={item.id != selectedAddress ? `text-black pt-[0.6rem] `: ` text-white `}>{item.address}</h3>
                 <h1
                   className={
                     item.id != selectedAddress
