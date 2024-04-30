@@ -144,71 +144,11 @@ const Signup = () => {
 
     let web3authProvider = null;
 
-<<<<<<< HEAD
-    let accounts;
-
-    try {
-      accounts = await solanaWallet.requestAccounts();
-    } catch (err) {
-      localStorage.removeItem("openlogin_store");
-      router.push("/");
-      return;
-    }
-
-    const { sign, sign_nonce, sign_issue_at, sign_address } =
-      await signatureObject(accounts[0]);
-
-    try {
-      const userRequest = await fetch(`/api/proxy?${Date.now()}`, {
-        headers: {
-          uri: "/private/users/session",
-          sign,
-          time: sign_issue_at,
-          nonce: sign_nonce,
-          address: sign_address,
-        },
-      });
-
-      const user = await userRequest.json();
-
-      if (user.id) {
-        signIn({ user });
-
-        router.push("/homepage/dashboard2");
-        return user;
-      }
-
-      if (user.errorMessage === "UNAUTHORIZED") {
-        setTemporaryToken(JSON.parse(localStorage.getItem("openlogin_store")));
-        // const token = localStorage.getItem('openlogin_store');
-
-        // dispatch(
-        //   counterActions.web3({
-        //     token: JSON.parse(token),
-        //   })
-        // );
-
-        localStorage.removeItem("openlogin_store");
-
-        dispatch(
-          setCategory({
-            email: userInformation.email,
-            blockchainAddress: accounts[0],
-          })
-        );
-
-        // setIsLoading(false);
-        setIsVisitYourInboxVisible(false);
-        router.replace(`/auth/join/intro`);
-
-        // router.replace('/homepage/dashboard');
-=======
     if (isEmail) {
       const email = emailRef.current.value;
   
       if (!isEmailValid(email)) {
         toast.error("Login: email is not valid", email);
->>>>>>> dev-deploy
         return;
       }
   
