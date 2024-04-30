@@ -15,6 +15,7 @@ import {
   SuccessIcon,
   FailureIcon,
   EarthIcon,
+  SuccessIconwhite,
 } from "@/Components/Icons";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,6 +27,43 @@ import Head from "next/head";
 import { useTour } from "@reactour/tour";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
+
+const SuccessModal = ({ setSuccessMobile,setShowMobileMap}) => {
+  const router = useRouter();
+  const finalAns = { status: "Rent Successful" };
+  const handleButtonClick = () => {
+    router.push("/homepage/referral");
+  };
+
+  return( 
+    <div className="claim-modal-step fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] ">
+       <div className={`w-[100%] h-screen   ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}>
+       <div className={`px-8 flex-col  items-center flex justify-center w-full h-full `}>
+        <div className="w-16 h-16 mt-6">
+        <SuccessIconwhite />
+        </div>
+        <div>
+        <div className="mt-8">
+              <h1 className="mt-6 px-8 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
+              Congratulations on claiming your piece of the sky successfully ! 
+              </h1>
+              <p className="mt-6 px-10 font-[300] text-[15px] text-center text-[#FFFFFF] font-poppins">
+              To make additional income and credits, refer your friends and colleagues by revealing your referral code below.
+              </p>
+            </div>
+        </div>
+        <button onClick={handleButtonClick} className="mt-8 py-2 w-[50%] h-[41px] border rounded-md gap-10 text-center text-[#FFFFFF] text-[14px] bg-transparent border-white hover:bg-white hover:text-green-500">
+          Referral Code
+        </button>
+
+         <button onClick={() => { setSuccessMobile(false);   router.push("/homepage/airspace2");}} className="mt-4 py-2 w-[50%] h-[41px] border rounded-md gap-10 text-center text-[#FFFFFF] text-[14px] bg-transparent border-white hover:bg-white hover:text-green-500">
+              Close
+          </button>
+       </div>
+    </div>
+    </div>
+  )
+}
 
 const Toggle = ({ checked, setChecked }) => {
   return (
@@ -1059,6 +1097,7 @@ const Airspaces = () => {
   // database
   const { createProperty } = useDatabase();
   const { user } = useAuth();
+  const [successMobile, setSuccessMobile] = useState ()
 
   useEffect(() => {
     if (map) return;
@@ -1276,8 +1315,9 @@ const Airspaces = () => {
       console.log("add property results ,", addProperty);
       if (addProperty === undefined) {
         setShowFailurePopUp(true);
-      } else {
-        setShowSuccessPopUp(true);
+      } else {   
+        isMobile ? setSuccessMobile(true) : setShowSuccessPopUp(true);
+
       }
       setShowClaimModal(false);
       setIsLoading(false);
@@ -1399,6 +1439,7 @@ const Airspaces = () => {
                       claimButtonLoading={claimButtonLoading}
                     />
                   )}
+                  {successMobile && <SuccessModal setSuccessMobile={() => { setSuccessMobile(false)}} />}
               </Fragment>
             )}
             {!isMobile && (
