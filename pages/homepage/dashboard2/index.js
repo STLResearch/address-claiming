@@ -31,7 +31,6 @@ import { BalanceLoader } from "@/Components/Wrapped";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 
-
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
@@ -63,16 +62,10 @@ const Item = ({ children, title, icon, linkText, href, style }) => {
 };
 
 const AvailableBalance = () => {
-
-
-  const {userUSDWalletBalance} = useSelector(
-    (state) => {
-      const {userUSDWalletBalance} = state.userReducer;
-      return {userUSDWalletBalance}
-    }
-  );
-
-
+  const { userUSDWalletBalance } = useSelector((state) => {
+    const { userUSDWalletBalance } = state.userReducer;
+    return { userUSDWalletBalance };
+  });
 
   return (
     <Item
@@ -95,21 +88,24 @@ const AvailableBalance = () => {
   );
 };
 
-const MyAirspaces = ({ airspaces = [], isLoading }) => {
-
+const MyAirspaces = ({ airspaces = [], totalAirspace, isLoading }) => {
   return (
     <Item
       title={
         <Fragment>
           My Airspaces{" "}
-          {!isLoading && <span className="text-[15px] font-normal">({airspaces.length})</span>}
+          {!isLoading && (
+            <span className="text-[15px] font-normal">({totalAirspace})</span>
+          )}
         </Fragment>
       }
       icon={<DroneIcon isActive />}
-      linkText={`${!isLoading ? 'View all airspaces' : ''}`}
+      linkText={`${!isLoading ? "View all airspaces" : ""}`}
       href={"/homepage/portfolio"}
-    > 
-      {isLoading ? <BalanceLoader /> : (
+    >
+      {isLoading ? (
+        <BalanceLoader />
+      ) : (
         <div className="flex flex-col items-center gap-[29px]">
           <div className="w-[265.81px] h-[131.01px]">
             <WorldMap coloredCountries={["Spain"]} />
@@ -233,9 +229,11 @@ const Dashboard = () => {
   const [tokenBalance, setTokenBalance] = useState("");
   const [signature, setSignature] = useState();
   const [airspaces, setAirspaces] = useState([]);
-  const dispatch = useDispatch()
+  const [totalAirspace, setTotalAirspace] = useState(0);
+  const dispatch = useDispatch();
 
-  const { getClaimedPropertiesByUserAddress } = useDatabase();
+  const { getClaimedPropertiesByUserAddress, getTotalAirspacesByUserAddress } =
+    useDatabase();
   // GET USER AND TOKEN
   useEffect(() => {
     if (selectorUser) {
@@ -285,7 +283,6 @@ const Dashboard = () => {
     }
   }, [selectorUser]);
   console.log({ selectorUser });
-
 
   // GET SIGNATURE
   useEffect(() => {
@@ -355,22 +352,27 @@ const Dashboard = () => {
     if (!user) return;
     (async () => {
       try {
-        setIsLoadingAirspace(true)
-        const response = await getClaimedPropertiesByUserAddress(
-          user.blockchainAddress,
+        setIsLoadingAirspace(true);
+        const airspaces = await getTotalAirspacesByUserAddress(
+          user?.blockchainAddress
         );
-        if (response) {
-          let retrievedAirspaces = response.map((item) => {
-            return {
-              address: item.address,
-            };
-          });
-          setAirspaces(retrievedAirspaces);
+        console.log("Airspaces", airspaces);
+
+        if (airspaces && airspaces.previews) {
+          let retrievedAirspaces = airspaces.previews.map((item) => ({
+            address: item.address,
+          }));
+          if (retrievedAirspaces.length > 0) {
+            setAirspaces(retrievedAirspaces);
+            setTotalAirspace(airspaces.total);
+          } else {
+            console.info("No airspaces found.");
+          }
         }
       } catch (error) {
         console.log(error);
       } finally {
-        setIsLoadingAirspace(false)
+        setIsLoadingAirspace(false);
       }
     })();
   }, [user]);
@@ -412,7 +414,11 @@ const Dashboard = () => {
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-col-reverse md:flex-col gap-[22px]">
                       <AvailableBalance />
-                      <MyAirspaces airspaces={airspaces} isLoading={isLoadingAirspace} />
+                      <MyAirspaces
+                        airspaces={airspaces}
+                        isLoading={isLoadingAirspace}
+                        totalAirspace={totalAirspace}
+                      />
                     </div>
                   </div>
                   <ReferralProgram />
