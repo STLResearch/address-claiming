@@ -2,10 +2,13 @@
 
 // Proxy URL: ${frontendHttp}/api/proxy
 const handler = async (req, res) => {
-  try {
+ try {
+
     const method = req.method;
     const { sign, time, nonce, address } = req.headers;
-
+    if(!req.headers.uri){
+      return  res.status(401).json({ ok: false, errorMessage: 'Unauthorized Access' });;
+    }
     const fetchOptions = {
       method,
       headers: {

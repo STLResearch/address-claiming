@@ -10,6 +10,7 @@ import {
   SuccessIcon,
   SuccessIconwhite,
   CloseIconWhitesm,
+  InfoIcon
 } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
@@ -592,7 +593,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
         className="touch-manipulation fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto  md:w-[689px] z-40 flex flex-col gap-[15px]"
       >
         <div
-          className="touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
+          className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
         >
           <div
@@ -603,10 +604,16 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
           >
             <ArrowLeftIcon />
           </div>
-          <h2 className="text-[#222222] text-center font-medium text-xl">
-            {" "}
-            Airspace Details
-          </h2>
+          <div className="flex items-center w-full justify-center">
+            <h2 className="text-[#222222] font-medium text-xl text-center">
+              Airspace Details
+              
+            </h2>
+            <div className="w-[20px] h-[20px] ml-3">
+            <InfoIcon/>
+             </div>
+          </div>
+
           <div
             onClick={() => {
               setShowClaimModal(false);
@@ -616,8 +623,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
             <CloseIcon />
           </div>
         </div>
-        <div
-          className="touch-manipulation flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
+        <div className="touch-manipulation flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
           style={{ border: "1px solid #4285F4" }}
         >
           <div className="w-6 h-6">
@@ -626,10 +632,6 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
           <p className="font-normal text-[#222222] text-[14px] flex-1">
             {rentData ? rentData.address : ""}
           </p>
-        </div>
-        <div className="gap-[5px] touch-manipulation">
-          <span>Owner</span>
-          <span> {owner ? owner.name : "grgr"}</span>
         </div>
         <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
           <div className="flex touch-manipulation flex-col gap-[5px] w-full">

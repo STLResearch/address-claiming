@@ -352,3 +352,17 @@ export const chevronUpIcon = () => {
 
     )
 }
+
+export const CopyIcon = () => (
+    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14 7.5V7.5C14 6.56812 14 6.10218 13.8478 5.73463C13.6448 5.24458 13.2554 4.85523 12.7654 4.65224C12.3978 4.5 11.9319 4.5 11 4.5H8C6.11438 4.5 5.17157 4.5 4.58579 5.08579C4 5.67157 4 6.61438 4 8.5V11.5C4 12.4319 4 12.8978 4.15224 13.2654C4.35523 13.7554 4.74458 14.1448 5.23463 14.3478C5.60218 14.5 6.06812 14.5 7 14.5V14.5" stroke="#0000FF" strokeWidth="2"/>
+      <rect x="10" y="10.5" width="10" height="10" rx="2" stroke="#0000FF" strokeWidth="2"/>
+    </svg>
+  );
+
+export const Tooltip = ({ isCopied }) => (
+    <div className="z-[1000] absolute -top-14 -left-6 bg-gray-900 text-white px-4 py-2 rounded-md transition duration-300  opacity-100">
+      {isCopied ? 'Copied' : 'Copy'}
+    </div>
+  );
+  

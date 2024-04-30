@@ -1,12 +1,11 @@
 "use client";
 import {
-  CloseIcon,
-  SuccessIcon,
   chevronDownIcon,
   chevronUpIcon,
+  CopyIcon,
+  Tooltip
 } from "@/Components/Icons";
 import { Fragment, useState, useEffect } from "react";
-import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
@@ -14,8 +13,7 @@ import Backdrop from "@/Components/Backdrop";
 import { useAuth } from "@/hooks/useAuth";
 import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
-import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
-import base58 from "bs58";
+
 import {
   MagnifyingGlassIcon,
   WarningIcon,
@@ -30,7 +28,6 @@ import {
   Transaction,
 } from "@solana/web3.js";
 import {
-  TokenAccountNotFoundError,
   createAssociatedTokenAccountInstruction,
   createTransferInstruction,
   getAccount,
@@ -42,25 +39,19 @@ import CopyToClipboard from "react-copy-to-clipboard";
 
 import React from "react";
 
-import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
 import { getPriorityFeeIx } from "@/hooks/utils";
 import { shallowEqual, useSelector } from "react-redux";
 
-let USDollar = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
 
-const AvailableBalance = ({ balance, Solbalance, loading }) => {
 
-  const {userUSDWalletBalance} = useSelector(
-    (state) => {
-      const {userUSDWalletBalance} = state.userReducer;
-      return {userUSDWalletBalance}
-    }, shallowEqual
-  );
+const AvailableBalance = ({ solbalance }) => {
+
+  const {userUSDWalletBalance} = useSelector((state) => {
+    const {userUSDWalletBalance} = state.userReducer;
+    return {userUSDWalletBalance}
+  }, shallowEqual);
 
   return (
     <div
@@ -69,16 +60,16 @@ const AvailableBalance = ({ balance, Solbalance, loading }) => {
     >
       <div className="flex flex-col justify-between h-full">
         <p className="text-xl font-medium text-[#222222]">Available Balance</p>
-        {loading ? (
+        {userUSDWalletBalance.isLoading ? (
           <div className="my-4">
             <BalanceLoader />
           </div>
         ) : (
           <>
             <p className="text-3xl text-[#4285F4] font-medium">
-            ${userUSDWalletBalance}
+            ${userUSDWalletBalance.amount}
             </p>
-            <p className=" text-lg text-gray-600 font-medium">{`Solana balance ${parseFloat(Solbalance / LAMPORTS_PER_SOL)}`}</p>
+            <p className=" text-lg text-gray-600 font-medium">{`Solana balance ${parseFloat(solbalance / LAMPORTS_PER_SOL)}`}</p>
           </>
         )}
       </div>
@@ -224,11 +215,12 @@ const DepositAndWithdraw = ({
   refetchBal,
   setTokenBalance,
   tokenBalance,
-  Solbalance,
+  solbalance,
 }) => {
   const router = useRouter();
   const [amount, setAmount] = useState(null);
   const [copy, setCopy] = useState(false);
+  const [isCopyTooltipVisible,setIsCopyTooltipVisible] = useState(false);
 
   const notifySuccess = () =>
     toast.success("Success !. Your funds have been withdrawn successfully");
@@ -236,7 +228,7 @@ const DepositAndWithdraw = ({
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
 
   const { user } = useAuth();
-  let userSolBalc = Solbalance;
+  let userSolBalc = solbalance;
   const handleWithdraw = async () => {
     try {
       if (
@@ -292,17 +284,13 @@ const DepositAndWithdraw = ({
       });
 
       const connection = new Connection(connectionConfig.rpcTarget);
-      const Solbalance = await connection.getBalance(
+      const solbalance = await connection.getBalance(
         new PublicKey(accounts[0])
       );
 
-      console.log("sol balance = ", Solbalance);
-      console.log("connection ", connection);
       let mintAccount = process.env.NEXT_PUBLIC_MINT_ADDRESS;
       let tx = new Transaction();
-      console.log("sender ", user.blockchainAddress);
-      console.log("reciever ", recipientWalletAddress);
-      console.log(mintAccount);
+
       let recipientUSDCAddr = await getAssociatedTokenAddress(
         new PublicKey(mintAccount),
         new PublicKey(recipientWalletAddress)
@@ -363,7 +351,7 @@ const DepositAndWithdraw = ({
           estimatedGas += process.env.NEXT_PUBLIC_ATA_RENT_FEE * LAMPORTS_PER_SOL;
         }
 
-        if (Solbalance < estimatedGas) {
+        if (solbalance < estimatedGas) {
           // normalized back to sol hence the division
           toast.error(`At least ${estimatedGas / LAMPORTS_PER_SOL} SOL required as gas fee`);
           setIsLoading(false);
@@ -430,8 +418,6 @@ const DepositAndWithdraw = ({
       setCopy(false);
     }, 2000);
   };
-
-  const displayWalletId = walletId ? `${walletId.slice(0, 7)}...` : "";
 
   return (
     <div
@@ -525,7 +511,7 @@ const DepositAndWithdraw = ({
 
       {activeSection === 0 && (
         <>
-          <div className="flex items-end gap-[11px]">
+          <div className="flex items-center justify-between w-full">
             <div className="flex flex-col items-start gap-[5px] flex-1">
               <label
                 htmlFor="walletId"
@@ -533,21 +519,7 @@ const DepositAndWithdraw = ({
               >
                 Wallet ID
               </label>
-              <div className="relative w-full">
-                <input
-                  className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]"
-                  type="text"
-                  name="walletId"
-                  id="walletId"
-                  value={walletId}
-                  disabled
-                />
-                <CopyToClipboard text={walletId} onCopy={copyTextHandler}>
-                  <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">
-                    {copy ? "Copied" : "Copy"}
-                  </p>
-                </CopyToClipboard>
-              </div>
+              
             </div>
             <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center">
               {walletId && (
@@ -564,7 +536,28 @@ const DepositAndWithdraw = ({
                 />
               )}
             </div>
+            
           </div>
+          <div className="flex bg-[#DFF1FF] w-full justify-between border-2">
+              <input
+                  className=" text-[#222222] text-[13px] rounded-lg w-full py-[14px] pl-[8px] focus:outline-none"
+                  type="text"
+                  name="walletId"
+                  id="walletId"
+                  value={walletId}
+                  disabled
+                />
+                <CopyToClipboard text={walletId} onCopy={copyTextHandler}>
+                  <div className="flex items-center text-[#0653EA] text-[14px] cursor-pointer pl-[4px] pr-[18px]">
+                    <div className="relative">
+                      {isCopyTooltipVisible && <Tooltip isCopied={copy}/> }
+                      <div className="border-2" onMouseEnter={()=>setIsCopyTooltipVisible(true)} onMouseLeave={()=>setIsCopyTooltipVisible(false)}>
+                        <CopyIcon />
+                      </div>
+                    </div>
+                  </div>
+                </CopyToClipboard>
+            </div>
           {selectedMethod.name == "Stripe" && (
             <div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg">
               COMING SOON{" "}
@@ -593,13 +586,13 @@ const DepositAndWithdraw = ({
         <div className="w-6 h-6">
           <WarningIcon />
         </div>
-        <div className="text-[#222222] text-[14px] font-normal w-full">
+        <div className="text-[#222222] text-[13px] font-normal w-full">
           To complete your deposit, please use your crypto wallet to deposit
           USDC to the following address:
-          <span style={{ color: "#0653EA", marginLeft: "4px" }}>
-            {displayWalletId}
-          </span>{" "}
-          Thank you
+          <br/>
+          <span style={{ color: "#0653EA" }}>
+            {walletId}
+          </span>
         </div>
       </div>
       <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
@@ -719,10 +712,9 @@ const Funds = () => {
   const [user, setUser] = useState();
   const [token, setToken] = useState("");
   const [tokenBalance, setTokenBalance] = useState("");
-  const [balanceLoading, setBalanceLoading] = useState(false);
-  const [signature, setSignature] = useState();
   const router = useRouter();
-  const [Solbalance, setSolBalance] = useState("0");
+  const [solbalance, setSolBalance] = useState("0");
+
   useEffect(() => {
     if (selectorUser) {
       const authUser = async () => {
@@ -770,154 +762,6 @@ const Funds = () => {
     }
   }, [selectorUser]);
 
-  // GET TOKEN BALANCE
-  useEffect(() => {
-    setBalanceLoading(true);
-    if (user) {
-      setInterval(() => {
-        console.log("set interval function called");
-        console.log({ user });
-        const data = {
-          jsonrpc: "2.0",
-          id: 1,
-          method: "getTokenAccountsByOwner",
-          params: [
-            user.blockchainAddress,
-            {
-              mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
-            },
-            {
-              encoding: "jsonParsed",
-            },
-          ],
-        };
-
-        fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              return response.json().then((errorData) => {
-                throw new Error(errorData.error);
-              });
-            }
-
-            return response.json();
-          })
-          .then((result) => {
-            console.log(result, " this is result");
-            if (result.result.value.length < 1) {
-              setTokenBalance("0");
-              setBalanceLoading(false);
-              return;
-            }
-            console.log(
-              "tokenBalance  ==  ",
-              result.result.value[0].account.data.parsed.info.tokenAmount
-                .uiAmountString
-            );
-            setTokenBalance(
-              result.result.value[0].account.data.parsed.info.tokenAmount
-                .uiAmountString
-            );
-            setBalanceLoading(false);
-          })
-          .catch((error) => {
-            setTokenBalance("");
-            setBalanceLoading(false);
-            console.error(error);
-          });
-      }, 5000);
-    }
-  }, [user, selectorUser, refetchBal]);
-
-  /*     useEffect(()=>{
-
-        setInterval(()=>{
-            console.log("set interval function called")
-        },5000)
-    },[]) */
-
-  // GET SIGNATURE
-  useEffect(() => {
-    if (user) {
-      const getSignature = async () => {
-        const signatureObj = {};
-
-        const chainConfig = {
-          chainNamespace: "solana",
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: "Solana Mainnet",
-          blockExplorer: "https://explorer.solana.com",
-          ticker: "SOL",
-          tickerName: "Solana",
-        };
-
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        const web3authProvider = await web3auth.connect();
-
-        const solanaWallet = new SolanaWallet(web3authProvider);
-
-        console.log("solana wallet ", solanaWallet);
-        const accounts = await solanaWallet.requestAccounts();
-
-        const connectionConfig = await solanaWallet.request({
-          method: "solana_provider_config",
-          params: [],
-        });
-
-        const connection = new Connection(connectionConfig.rpcTarget);
-        const Solbalance = await connection.getBalance(
-          new PublicKey(accounts[0])
-        );
-
-        console.log("sol balance = ", Solbalance);
-        // const userInfo = await web3auth.getUserInfo();
-
-        const domain = window.location.host;
-        const origin = window.location.origin;
-
-        const payload = new SIWPayload();
-        payload.domain = domain;
-        payload.uri = origin;
-        payload.address = user.blockchainAddress;
-        payload.statement = "Sign in to SkyTrade app.";
-        payload.version = "1";
-        payload.chainId = 1;
-
-        const header = { t: "sip99" };
-        const network = "solana";
-
-        let message = new SIWWeb3({ header, payload, network });
-
-        const messageText = message.prepareMessage();
-        const msg = new TextEncoder().encode(messageText);
-        const result = await solanaWallet.signMessage(msg);
-
-        const signature = base58.encode(result);
-
-        signatureObj.sign = signature;
-        signatureObj.sign_nonce = message.payload.nonce;
-        signatureObj.sign_issue_at = message.payload.issuedAt;
-        signatureObj.sign_address = user.blockchainAddress;
-        setSignature(signatureObj);
-      };
-
-      getSignature();
-    }
-  }, [user]);
 
   //get sol balance
   useEffect(() => {
@@ -954,17 +798,16 @@ const Funds = () => {
         });
 
         const connection = new Connection(connectionConfig.rpcTarget);
-        const Solbalance1 = await connection.getBalance(
+        const solbalance1 = await connection.getBalance(
           new PublicKey(accounts[0])
         );
-        setSolBalance(Solbalance1);
-        console.log("sol balance = ", Solbalance);
+        setSolBalance(solbalance1);
       }
     };
     fetchbalance()
       // make sure to catch any error
       .catch(console.error);
-  }, [Solbalance, user]);
+  }, [solbalance, user]);
 
   // GET TRANSACTION HISTORY
   useEffect(() => {
@@ -1039,9 +882,7 @@ const Funds = () => {
             <div className="flex gap-[50px] flex-wrap">
               <div className="flex flex-col gap-5">
                 <AvailableBalance
-                  loading={balanceLoading}
-                  balance={tokenBalance}
-                  Solbalance={Solbalance}
+                  solbalance={solbalance}
                 />
                 <DepositAndWithdraw
                   walletId={user?.blockchainAddress}
@@ -1052,7 +893,7 @@ const Funds = () => {
                   refetchBal={refetchBal}
                   setTokenBalance={setTokenBalance}
                   tokenBalance={tokenBalance}
-                  Solbalance={Solbalance}
+                  solbalance={solbalance}
                 />
               </div>
               <TransactionHistory transactions={transactions} user={user} />

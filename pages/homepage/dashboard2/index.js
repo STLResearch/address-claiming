@@ -62,7 +62,7 @@ const Item = ({ children, title, icon, linkText, href, style }) => {
   );
 };
 
-const AvailableBalance = ({ loading }) => {
+const AvailableBalance = () => {
 
 
   const {userUSDWalletBalance} = useSelector(
@@ -82,12 +82,12 @@ const AvailableBalance = ({ loading }) => {
       href={"/homepage/funds"}
       style="h-fit"
     >
-      {loading ? (
+      {userUSDWalletBalance.isLoading ? (
         <BalanceLoader />
       ) : (
         <div className="flex items-center justify-between">
           <p className="absolute bottom-[12px] left-[26px] text-3xl text-[#4285F4] font-medium">
-            ${userUSDWalletBalance}
+            ${userUSDWalletBalance.amount}
           </p>
         </div>
       )}
@@ -227,7 +227,6 @@ const Dashboard = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingAirspace, setIsLoadingAirspace] = useState(false);
-  const [balanceLoading, setBalanceLoading] = useState(false);
   const { user: selectorUser } = useAuth();
   const [user, setUser] = useState();
   const [token, setToken] = useState("");
@@ -287,67 +286,6 @@ const Dashboard = () => {
   }, [selectorUser]);
   console.log({ selectorUser });
 
-  // GET TOKEN BALANCE
-  useEffect(() => {
-    setBalanceLoading(true);
-    if (user) {
-      setInterval(() => {
-        console.log("set interval function called");
-        console.log({ user });
-        const data = {
-          jsonrpc: "2.0",
-          id: 1,
-          method: "getTokenAccountsByOwner",
-          params: [
-            user.blockchainAddress,
-            {
-              mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
-            },
-            {
-              encoding: "jsonParsed",
-            },
-          ],
-        };
-
-        fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              return response.json().then((errorData) => {
-                throw new Error(errorData.error);
-              });
-            }
-
-            return response.json();
-          })
-          .then((result) => {
-            console.log(result, " this is result");
-            if (result.result.value.length < 1) {
-              setTokenBalance("0");
-              dispatch(setUserUSDWalletBalance('0'))
-              setBalanceLoading(false);
-
-              return;
-            }
-            dispatch(setUserUSDWalletBalance(result.result.value[0].account.data.parsed.info.tokenAmount
-              .uiAmountString));
-
-            setBalanceLoading(false);
-          })
-          .catch((error) => {
-            setTokenBalance("");
-            setBalanceLoading(false);
-
-            console.error(error);
-          });
-      }, 5000);
-    }
-  }, [user]);
 
   // GET SIGNATURE
   useEffect(() => {
@@ -473,9 +411,7 @@ const Dashboard = () => {
                 <div className="flex flex-col md:flex-row justify-evenly gap-2">
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-col-reverse md:flex-col gap-[22px]">
-                      <AvailableBalance
-                        loading={balanceLoading}
-                      />
+                      <AvailableBalance />
                       <MyAirspaces airspaces={airspaces} isLoading={isLoadingAirspace} />
                     </div>
                   </div>
