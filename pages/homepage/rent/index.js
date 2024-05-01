@@ -83,7 +83,7 @@ const SuccessModal = ({
             setShowSuccess(false);
             setShowClaimModal(false);
           }}
-          className="w-[10px] h-[10px] absolute top-[10px] right-[10px] "
+          className="w-[26px] h-[26px] absolute top-[10px] right-[10px] "
         >
           <CloseIconWhite />
         </div>
@@ -1076,7 +1076,7 @@ const Rent = () => {
               setShowClaimModal={setShowClaimModal}
               rentData={rentData}
               setRentData={setRentData}
-              user1={user1}
+              user1={user}
             />
           )}
           <section
