@@ -4,12 +4,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 
 const initialState = {
-    category: {},
+  category: {},
   newAirspaceModal: false,
   additionalInfoModal: false,
-    airspaceData: {},
-    userUSDWalletBalance:"0"
-
+  airspaceData: {},
+  userUSDWalletBalance: { amount: "0", isLoading: true },
+  isWaitingScreenVisible: false,
 };
 
 const userSlice = createSlice({
@@ -28,14 +28,14 @@ const userSlice = createSlice({
         state.additionalInfoModal = action.payload;
       },
   
-
-  
       setAirspaceData:(state, action)=> {
         state.airspaceData = action.payload;
-        
       },
       setUserUSDWalletBalance: (state, action)=>{
         state.userUSDWalletBalance = action.payload
+      },
+      setIsWaitingScreenVisible: (state, action)=>{
+        state.isWaitingScreenVisible = action.payload
       }
   },
 });
@@ -45,6 +45,7 @@ export const {
   setNewAirspaceModal,
   setAdditionalInfoModal,
   setAirspaceData,
-  setUserUSDWalletBalance
+  setUserUSDWalletBalance,
+  setIsWaitingScreenVisible
 } = userSlice.actions;
 export default userSlice.reducer;
