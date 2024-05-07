@@ -45,7 +45,7 @@ export default function App({ Component, pageProps }) {
     <>
       <Provider store={store}> 
 
-      <PersistGate loading={"shit happens"} persistor={persistor}>
+      <PersistGate loading={"happens"} persistor={persistor}>
         <>    
           <Web3authProvider>
             <SidebarProvider>
