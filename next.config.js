@@ -1,3 +1,6 @@
+
+const path = require('path');
+
 module.exports = {
     images: {
       remotePatterns: [
@@ -16,4 +19,12 @@ module.exports = {
         
       ],
     },
-  }
+    async rewrites() {
+      return [
+        {
+          source: "/",
+          destination: "/auth/join",
+        },
+      ];
+    },
+}
