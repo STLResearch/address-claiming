@@ -1,8 +1,5 @@
 import "@/styles/globals.css";
 import { Provider } from "react-redux";
-// import store from "@/store/store";
-import Script from "next/script";
-
 import CookieConsent from "@/Components/CookieConsent";
 
 import { msclaritConfig } from "@/hooks/msclaritConfig";
@@ -25,7 +22,6 @@ export default function App({ Component, pageProps }) {
 
   const persistor = persistStore(store);
 
-
   useEffect(() => {
     var Tawk_API = global?.Tawk_API || undefined;
     if (!Tawk_API) return;
@@ -45,26 +41,12 @@ export default function App({ Component, pageProps }) {
     }
   }, [isMobile, global.Tawk_API, doItAgain]);
 
-
-
   return (
     <>
-      <Provider store={store}>
-      
-      <PersistGate loading={null} persistor={persistor}>
-        <>
-          <Script src="https://cdn.withpersona.com/dist/persona-v4.8.0.js" />
-          {/* <Script id="show-banner" dangerouslySetInnerHTML={msclaritConfig} /> */}
-          <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
-          <Script id="google-analytics">
-            {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-        
-                gtag('config', 'G-C0J4J56QW5');
-            `}
-          </Script>
+      <Provider store={store}> 
+
+      <PersistGate loading={"shit happens"} persistor={persistor}>
+        <>    
           <Web3authProvider>
             <SidebarProvider>
               <ToastContainer style={{ width: "500px" }} />
@@ -76,7 +58,7 @@ export default function App({ Component, pageProps }) {
           </Web3authProvider>
         </>
       </PersistGate>
-      </Provider>
+      </Provider>    
     </>
   );
 }

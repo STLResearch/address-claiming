@@ -34,7 +34,6 @@ const Signup = () => {
   const emailRef = useRef();
   const { init } = useInitAuth();
 
-
   const { signIn } = useAuth();
 
   const { web3auth, provider, setProvider } = useContext(Web3authContext)
@@ -46,7 +45,6 @@ const Signup = () => {
     return {isWaitingScreenVisible}
   }, shallowEqual);
 
-
   useEffect(() => {
     (async () => {
       try {
@@ -56,7 +54,7 @@ const Signup = () => {
           const userInformation = await web3auth.getUserInfo();
           const solanaWallet = new SolanaWallet(provider);
           const accounts = await solanaWallet.requestAccounts();
-
+          debugger
           const responseData = await getUser();
 
           if (responseData?.id) {
@@ -85,6 +83,7 @@ const Signup = () => {
   const loginUser = async (isEmail) => {
 
     await init();
+
     if (!web3auth) {
       toast.error("Web3auth not initialized yet");
       return;

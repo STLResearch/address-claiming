@@ -15,6 +15,8 @@ export default function Document() {
         <div id='modal-root'></div>
         <Main />
         <NextScript />
+        <script src="https://cdn.withpersona.com/dist/persona-v4.8.0.js" />
+        <script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -29,6 +31,16 @@ export default function Document() {
                 })();
               `,
           }}
+        />
+        <script id="google-analytics"
+          dangerouslySetInnerHTML={{
+            __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}}
         />
       </body>
     </Html>
