@@ -1051,11 +1051,14 @@ const Rent = () => {
       </Head>
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
+        <div className=" w-[20%] h-full">
         <Sidebar />
+        </div>
 
-        <div className="w-full h-full flex flex-col">
-      {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
+       <div className="w-[90%] h-full  ">
+       <div className="w-full h-full flex flex-col">
+          {isLoading && <Backdrop />}
+          {isLoading && <Spinner />}
           <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
           {isMobile && (
             <ExplorerMobile
@@ -1123,6 +1126,7 @@ const Rent = () => {
             )}
           </section>
         </div>
+       </div>
       </div>
     </Fragment>
   );
