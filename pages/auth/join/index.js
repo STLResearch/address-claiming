@@ -53,8 +53,7 @@ const Signup = () => {
 
           const userInformation = await web3auth.getUserInfo();
           const solanaWallet = new SolanaWallet(provider);
-          const accounts = await solanaWallet.requestAccounts();
-          debugger
+          const accounts = await solanaWallet.requestAccounts(); 
           const responseData = await getUser();
 
           if (responseData?.id) {
