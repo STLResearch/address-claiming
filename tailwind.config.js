@@ -42,7 +42,8 @@ module.exports = {
         "light-grey": "#87878D",
       },
       fontFamily: {
-        "sans": ['poppins', 'sans-serif'] 
+        "sans": ['poppins', 'sans-serif'] ,
+        'lato': ['Lato'],
       },
       fontSize: {
         'xxs': "8px",

@@ -1,7 +1,6 @@
-"use client";
+// "use client";
 
 import { Fragment, useEffect, useState } from "react";
-import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import {
@@ -16,12 +15,14 @@ import {
   PropertyIcon,
 } from "@/Components/Icons";
 import { useMobile } from "@/hooks/useMobile";
-import useDatabase from "@/hooks/useDatabase";
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from '@/hooks/useAuth';
 import useOrigin from "@/hooks/useOrigin";
 
 import Head from "next/head";
 import { toast } from "react-toastify";
+import ReferralCodeService from "@/services/ReferralCodeService";
+import UserService from "@/services/UserService";
+import { useRouter } from 'next/router';
 
 const Item = ({ icon, title, text }) => {
   return (
@@ -61,7 +62,7 @@ const AlertMessage = () => {
         boxShadow: "0px 0px 40px 0px #0813391A",
       }}
     >
-      <span className="font-bold">Refer now!</span>score a one-time bonus. Act fast!
+      <span className="font-bold">Refer now!</span> Score a one-time bonus. Act fast!
     </div>
   );
 };
@@ -80,9 +81,9 @@ const TheProgram = ({ activeSection, section, isMobile }) => {
           claim airspaces, you receive:
         </p>
         <p className="text-[#4285F4] text-[15px] font-normal">
-          <span className="font-bold text-[20px]">+50 credits to you</span> for
+          <span className="font-bold text-[20px]">+50 SKY points to you</span> for
           each successful referral registration and{" "}
-          <span className="font-bold text-[20px]">+50 credits</span> to the
+          <span className="font-bold text-[20px]">+50 SKY points</span> to the
           successfully referred person
           <br />
           <span className="font-bold text-[20px]">+10%</span> on top of the
@@ -110,7 +111,7 @@ const TheProgram = ({ activeSection, section, isMobile }) => {
         <Item
           icon={<GiftIcon isActive={true} />}
           title={"Earn"}
-          text={"You and your friends are rewarded with 50 credits and more"}
+          text={"You and your friends are rewarded with 50 SKY points and more"}
         />
       </div>
     </Fragment>
@@ -129,9 +130,9 @@ const Share = ({
   const [isCopied, setIsCopied] = useState({ code: false, link: false });
   const [temporalReferralCode, setTemporalReferralCode] =
     useState(referralCode);
-  const { updateReferral } = useDatabase();
-  const { updateProfile } = useAuth();
+  const { updateReferral } = ReferralCodeService();
   const origin = useOrigin();
+  const router = useRouter();
 
   useEffect(() => {
     if (!isCopied.code) return;
@@ -143,7 +144,7 @@ const Share = ({
     })();
 
     return () => timeoutId && clearTimeout(timeoutId);
-  }, [isCopied.code]);
+  }, [isCopied.code, user]);
 
   useEffect(() => {
     if (!isCopied.link) return;
@@ -159,7 +160,7 @@ const Share = ({
 
   useEffect(() => {
     setTemporalReferralCode(referralCode);
-  }, [referralCode]);
+  }, [referralCode, user]);
 
   const handleCopy = (e, text, isCode) => {
     e.preventDefault();
@@ -171,7 +172,7 @@ const Share = ({
   };
 
   const handleOnChange = (e) => {
-    setTemporalReferralCode(e.target.value);
+    setTemporalReferralCode(e.target.value.toUpperCase());
   };
 
   const handleUpdateReferralCode = async () => {
@@ -183,7 +184,12 @@ const Share = ({
       const {
         ownedReferralCode: { id },
       } = user;
-      const resp = await updateReferral(blockchainAddress, temporalReferralCode);
+
+      const postData = {
+        code: temporalReferralCode
+      }
+
+      const resp = await updateReferral({ postData });
       if (resp && resp.codeChanged) {
         toast.success("Referral code updated successfully");
         const user = JSON.parse(localStorage.getItem('user'));
@@ -197,7 +203,10 @@ const Share = ({
           },
         }));
 
-        window.location.reload()
+        router.reload()
+      } 
+      else if (resp && resp.errorMessage) {
+        toast.error(resp.errorMessage)
       }
       else toast.error("Error when updating referral")
     } catch (error) {
@@ -464,30 +473,22 @@ const Referral = () => {
     validatedProperties: 0,
   });
   const { isMobile } = useMobile();
-  const { user } = useAuth();
-  const { retrieveReferralData } = useDatabase();
+  const { user, web3authStatus } = useAuth();
+  const { retrieveUserReferralData } = UserService();
   const sections = ["The Program", "Share", "My Referrals"];
-  console.log("userss ", user);
   useEffect(() => {
-    if (!user) return;
-
-    const {
-      id,
-      blockchainAddress,
-      ownedReferralCode: { code },
-    } = user;
-
     (async () => {
       try {
-        const response = await retrieveReferralData(blockchainAddress);
-        console.log("from the reff page", user, response);
-        setData(response);
-        console.log("the data  ", data);
+        if (!user) return;
+        const responseData = await retrieveUserReferralData();
+        if (responseData) {
+          setData(responseData);
+        }
       } catch (error) {
         console.log(error);
       }
     })();
-  }, [user]);
+  }, [user, web3authStatus]);
 
   return (
     <Fragment>

@@ -1,5 +1,12 @@
-import { Fragment, useState, useEffect, forwardRef } from "react";
-import mapboxgl, { Map } from "mapbox-gl";
+import {
+  Fragment,
+  useState,
+  useEffect,
+  forwardRef,
+  useRef,
+  useContext
+} from "react";
+import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import {
   ArrowLeftIcon,
@@ -10,23 +17,23 @@ import {
   SuccessIcon,
   SuccessIconwhite,
   CloseIconWhitesm,
+  InfoIcon
 } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
-import useDatabase from "@/hooks/useDatabase";
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
 import DatePicker from "react-datepicker";
-import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import {
   Connection,
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
-  Transaction,VersionedTransaction
+  Transaction,
+  VersionedTransaction
 } from "@solana/web3.js";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -38,42 +45,63 @@ import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
+import Link from "next/link";
+import { getTokenLink } from "@/hooks/utils";
+import AirspaceRentalService from "@/services/AirspaceRentalService";
+import PropertiesService from "@/services/PropertiesService";
+import { Web3authContext } from "@/providers/web3authProvider";
 
 const SuccessModal = ({
   setShowSuccess,
   finalAns,
   rentData,
-  setShowClaimModal,
+  setShowClaimModal
 }) => {
-  const router = useRouter();
+  const modalRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setShowSuccess(false);
+        setShowClaimModal(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setShowSuccess, setShowClaimModal]);
+
   return (
     <div
+      ref={modalRef}
       className={`w-[100%] max-w-[20rem] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}
     >
       {/* <div className=" text-xl text-black text-center"> {finalAns?.status} </div>
             <div className=" text-xl text-black text-center"> {finalAns?.message}</div>
  */}
       <div
-        className={` w-[100%] h-[500px] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status === "Rent SuccessFull" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+        className={` w-[100%] h-[500px] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
       >
         <div
           onClick={() => {
             setShowSuccess(false);
             setShowClaimModal(false);
           }}
-          className="w-[10px] h-[10px] absolute top-[10px] right-[10px] "
+          className="w-[26px] h-[26px] absolute top-[10px] right-[10px] "
         >
           <CloseIconWhite />
         </div>
 
         <div className="w-[54.56px] h-[54.56px]">
-          {finalAns?.status === "Rent SuccessFull" ? (
+          {finalAns?.status === "Rent Successful" ? (
             <SuccessIconwhite />
           ) : (
             <CloseIconWhite />
           )}
         </div>
-        {finalAns?.status === "Rent SuccessFull" ? (
+        {finalAns?.status === "Rent Successful" ? (
           <>
             <div className="w-[70%] h-[10%] ">
               <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">
@@ -91,9 +119,9 @@ const SuccessModal = ({
           </>
         )}
 
-        <div className="w-[80%] h-[108px] mt-[2rem] ">
+        <div className="w-[80%] mt-[2rem] ">
           <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
-            {finalAns?.status === "Rent SuccessFull" && (
+            {finalAns?.status === "Rent Successful" && (
               <div>
                 'You rented'{" "}
                 <span className=" text-[14px] font-bold">{`${rentData.address}`}</span>{" "}
@@ -106,21 +134,33 @@ const SuccessModal = ({
           </div>
 
           <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
-            {finalAns?.status !== "Rent SuccessFull" && (
+            {finalAns?.status !== "Rent Successful" && (
               <div>An error occured, please try again.</div>
             )}
           </div>
         </div>
 
-        {finalAns?.status === "Rent SuccessFull" && (
-          <div className=" w-[75%] h-[10%]  ">
+        {finalAns?.status === "Rent Successful" && (
+          <div className=" w-[75%] ">
             <p className="font-[400] text-[10px] text-center text-[#FFFFFF]">
               A copy of your transaction is availble inside your Portfolio{" "}
             </p>
           </div>
         )}
 
-        {finalAns?.status === "Rent SuccessFull" ? (
+        {finalAns?.status === "Rent Successful" && (
+          <>
+            <Link
+              target="_blank"
+              href={getTokenLink(finalAns.tokenId)}
+              className="py-2 font-boldtext-center text-[#FFFFFF] text-[14px] underline"
+            >
+              Transaction Link
+            </Link>
+          </>
+        )}
+
+        {finalAns?.status === "Rent Successful" ? (
           <>
             <button
               onClick={() => router.push("/homepage/portfolio")}
@@ -161,57 +201,17 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const [finalAns, setfinalAns] = useState();
-  const { user: selectorUser } = useAuth();
-
-  useEffect(() => {
-    const authUser = async () => {
-      const chainConfig = {
-        chainNamespace: "solana",
-        chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-        rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-        displayName: "Solana Testnet",
-        blockExplorer: "https://explorer.solana.com",
-        ticker: "SOL",
-        tickerName: "Solana",
-      };
-      const web3auth = new Web3Auth({
-        clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-        web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-        chainConfig: chainConfig,
-      });
-      await web3auth.initModal();
-      // await web3auth.connect();
-      const web3authProvider = await web3auth.connect();
-
-      const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
-
-      const user = await web3auth.getUserInfo(); // web3auth instance
-      // Get user's Solana public address
-      const accounts = await solanaWallet.requestAccounts();
-      const connectionConfig = await solanaWallet.request({
-        method: "solana_provider_config",
-        params: [],
-      });
-
-      const connection = new Connection(connectionConfig.rpcTarget);
-
-      // Fetch the balance for the specified public key
-      const balance = await connection.getBalance(new PublicKey(accounts[0]));
-
-      //const transaction = Transaction.from(Buffer.from(json.transaction, 'base64'));
-      console.log("solanaWallet=", balance); // ui info wrong
-    };
-    authUser();
-  }, [selectorUser]);
+  const { user } = useAuth();
+  const { createMintRentalToken, executeMintRentalToken } =
+    AirspaceRentalService();
+  const { provider } = useContext(Web3authContext);
 
   useEffect(() => {
     async function getUsersFromBE() {
       try {
         setOwner(rentData.owner);
-        console.log("user if this land", owner);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
     getUsersFromBE();
@@ -223,22 +223,22 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
       id: 1,
       method: "getTokenAccountsByOwner",
       params: [
-        selectorUser.blockchainAddress,
+        user.blockchainAddress,
         {
-          mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
+          mint: process.env.NEXT_PUBLIC_MINT_ADDRESS
         },
         {
-          encoding: "jsonParsed",
-        },
-      ],
+          encoding: "jsonParsed"
+        }
+      ]
     };
 
     fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     })
       .then((response) => {
         if (!response.ok) {
@@ -268,271 +268,102 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
   }, []);
 
   const handleRentAirspace = async () => {
-    if (parseFloat(tokenBalance) === 0) {
-      return toast.error(
-        "Please deposit some funds into your wallet to continue"
-      );
-    }
+    try {
+      const currentDate = new Date();
+      let startDate = new Date(date.toString());
+      let endDate = new Date(startDate.getTime());
+      endDate.setMinutes(endDate.getMinutes() + 30);
+      if (currentDate > endDate) {
+        return toast.error("Rental Tokens can't be booked in the past");
+      }
+      if (parseFloat(tokenBalance) === 0) {
+        return toast.error(
+          "Please deposit some funds into your wallet to continue"
+        );
+      }
+      setIsLoading(true);
+      if (startDate.getMinutes() % 30 != 0) {
+        setfinalAns({
+          status: "Rent failed",
+          message:
+            "Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on."
+        });
+        setShowSuccess(true);
+        return;
+      } else {
+        setLandAssetIds([rentData?.layers[0].tokenId]);
 
-    setIsLoading(true);
-
-    const chainConfig = {
-      chainNamespace: "solana",
-      chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-      rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-      displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME} `,
-      blockExplorer: "https://explorer.solana.com",
-      ticker: "SOL",
-      tickerName: "Solana",
-    };
-    const web3auth = new Web3Auth({
-      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-      web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-      chainConfig: chainConfig,
-    });
-    await web3auth.initModal();
-    // await web3auth.connect();
-    const web3authProvider = await web3auth.connect();
-
-    const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
-
-    console.log("date ansd time");
-    console.log("da1", date.toString());
-    //console.log("da2",time.add(30,'minute').toString())
-    let startDate = new Date(date.toString());
-    let endDate = new Date(startDate.getTime());
-    endDate.setMinutes(endDate.getMinutes() + 30);
-    console.log("start date in date fm", startDate);
-    console.log("endtart date in date fm", endDate);
-
-    if (startDate.getMinutes() % 30 != 0) {
-      setfinalAns({
-        status: "Rent failed",
-        message:
-          "Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on.",
-      });
-      setShowSuccess(true);
-      setIsLoading(false);
-    } else {
-      setLandAssetIds([rentData?.layers[0].tokenId]);
-      console.log("landASSTId==", landAssetIds);
-      console.log("res resll", rentData.layers[0].tokenId);
-
-      let req1Body = {
-        callerAddress: selectorUser.blockchainAddress,
-        startTime: startDate.toISOString(),
-        endTime: endDate.toISOString(),
-        landAssetIds: [rentData.layers[0].tokenId],
-      };
-      console.log("reqbody", JSON.stringify(req1Body));
-      let signatureObj = {};
-      if (selectorUser) {
-        const chainConfig = {
-          chainNamespace: "solana",
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: "Solana Mainnet",
-          blockExplorer: "https://explorer.solana.com",
-          ticker: "SOL",
-          tickerName: "Solana",
+        const postData = {
+          callerAddress: user.blockchainAddress,
+          startTime: startDate.toISOString(),
+          endTime: endDate.toISOString(),
+          landAssetIds: [rentData.layers[0].tokenId]
         };
 
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+        const createMintResponse = await createMintRentalToken({ postData });
 
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        const web3authProvider = await web3auth.connect();
-
-        const solanaWallet = new SolanaWallet(web3authProvider);
-
-        // const userInfo = await web3auth.getUserInfo();
-
-        const domain = window.location.host;
-        // const domain = 'localhost:3000';
-        const origin = window.location.origin;
-        // const origin = 'http://localhost:3000';
-
-        const payload = new SIWPayload();
-        payload.domain = domain;
-        payload.uri = origin;
-        payload.address = selectorUser.blockchainAddress;
-        payload.statement = "Sign in to SkyTrade app.";
-        payload.version = "1";
-        payload.chainId = 1;
-
-        const header = { t: "sip99" };
-        const network = "solana";
-
-        let message = new SIWWeb3({ header, payload, network });
-
-        const messageText = message.prepareMessage();
-        const msg = new TextEncoder().encode(messageText);
-        const result = await solanaWallet.signMessage(msg);
-
-        const signature = base58.encode(result);
-
-        signatureObj.sign = signature;
-        signatureObj.sign_nonce = message.payload.nonce;
-        signatureObj.sign_issue_at = message.payload.issuedAt;
-        signatureObj.sign_address = selectorUser.blockchainAddress;
-      }
-
-      console.log("signature obj  ", signatureObj);
-
-      try {
-        let res = await fetch(`/api/proxy?${Date.now()}`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-
-            uri: `/private/airspace-rental/create-mint-rental-token-ix`,
-            sign: signatureObj.sign,
-            time: signatureObj.sign_issue_at,
-            nonce: signatureObj.sign_nonce,
-            address: signatureObj.sign_address,
-          },
-          body: JSON.stringify(req1Body),
-        });
-        res = await res.json();
-        if (res && res.errorMessage) {
-          toast.error(res.errorMessage);
+        if (createMintResponse && createMintResponse.errorMessage) {
+          toast.error(createMintResponse.errorMessage);
           setIsLoading(false);
           return;
         }
-        if (res.statusCode == 400) {
+        if (createMintResponse.statusCode == 400) {
           setShowSuccess(true);
           setfinalAns({
             status: "Rent failed",
-            message: res.errorMessage,
+            message: createMintResponse.errorMessage
           });
           setIsLoading(false);
           return;
         }
+
         const transaction = VersionedTransaction.deserialize(
-          new Uint8Array(Buffer.from(res, "base64"))
+          new Uint8Array(Buffer.from(createMintResponse, "base64"))
         );
 
-        const signedTx = await solanaWallet.signTransaction(transaction);
+        if (!provider) return toast.error("Session cleared, login again");
 
+        const solanaWallet = new SolanaWallet(provider);
+        const signedTx = await solanaWallet.signTransaction(transaction);
         let serializedTx = signedTx.serialize();
 
         let txToString = Buffer.from(serializedTx).toString("base64");
+
         if (signedTx) {
-          let req2body = {
+          const postExecuteMintData = {
             transaction: txToString,
             landAssetIds: [rentData?.layers[0].tokenId],
             startTime: startDate.toISOString(),
-            endTime: endDate.toISOString(),
+            endTime: endDate.toISOString()
           };
-          console.log("final exexution", JSON.stringify(req2body));
-          signatureObj = {};
-          if (selectorUser) {
-            const chainConfig = {
-              chainNamespace: "solana",
-              chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-              rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-              displayName: "Solana Mainnet",
-              blockExplorer: "https://explorer.solana.com",
-              ticker: "SOL",
-              tickerName: "Solana",
-            };
-
-            const web3auth = new Web3Auth({
-              clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-              web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-              chainConfig: chainConfig,
-            });
-
-            await web3auth.initModal();
-
-            const web3authProvider = await web3auth.connect();
-
-            const solanaWallet = new SolanaWallet(web3authProvider);
-
-            // const userInfo = await web3auth.getUserInfo();
-
-            const domain = window.location.host;
-            // const domain = 'localhost:3000';
-            const origin = window.location.origin;
-            // const origin = 'http://localhost:3000';
-
-            const payload = new SIWPayload();
-            payload.domain = domain;
-            payload.uri = origin;
-            payload.address = selectorUser.blockchainAddress;
-            payload.statement = "Sign in to SkyTrade app.";
-            payload.version = "1";
-            payload.chainId = 1;
-
-            const header = { t: "sip99" };
-            const network = "solana";
-
-            let message = new SIWWeb3({ header, payload, network });
-
-            const messageText = message.prepareMessage();
-            const msg = new TextEncoder().encode(messageText);
-            const result = await solanaWallet.signMessage(msg);
-
-            const signature = base58.encode(result);
-
-            signatureObj.sign = signature;
-            signatureObj.sign_nonce = message.payload.nonce;
-            signatureObj.sign_issue_at = message.payload.issuedAt;
-            signatureObj.sign_address = selectorUser.blockchainAddress;
-          }
-          let ans2 = await fetch(`/api/proxy?${Date.now()}`, {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-
-              uri: `/private/airspace-rental/execute-mint-rental-token-ix`,
-              sign: signatureObj.sign,
-              time: signatureObj.sign_issue_at,
-              nonce: signatureObj.sign_nonce,
-              address: signatureObj.sign_address,
-            },
-            body: JSON.stringify(req2body),
+          const executionResponse = await executeMintRentalToken({
+            postData: { ...postExecuteMintData }
           });
-          ans2 = await ans2.json();
-
-          if (ans2 && ans2.errorMessage) {
-            toast.error(ans2.errorMessage);
-            setIsLoading(false);
+          if (executionResponse && executionResponse.errorMessage) {
+            toast.error(executionResponse.errorMessage);
             return;
           }
-
-          if (ans2) {
-            if (ans2.data.status == "success") {
+          if (executionResponse) {
+            if (executionResponse.data.status == "success") {
               setfinalAns({
-                status: "Rent SuccessFull",
-                message: ans2.data.message,
+                status: "Rent Successful",
+                message: executionResponse.data.message,
+                tokenId: executionResponse.data.message
               });
             } else {
               setfinalAns({
                 status: "Rent failed",
-                message: ans2.data.message,
+                message: executionResponse.data.message
               });
             }
-
             setShowSuccess(true);
-
-            setIsLoading(false);
           }
         }
-      } catch (error) {
-        setfinalAns({ status: "Rent failed", message: error });
-
-        setIsLoading(false);
       }
+    } catch (error) {
+      setfinalAns({ status: "Rent failed", message: error });
+    } finally {
+      setIsLoading(false);
     }
   };
   if (showSuccess) {
@@ -573,24 +404,29 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-        className="touch-manipulation fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto  md:w-[689px] z-40 flex flex-col gap-[15px]"
+        className="touch-manipulation fixed top-1/2 left-1/2 sm:left-2/3 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px]  md:h-auto  md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
       >
         <div
-          className="touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
+          className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
         >
           <div
             className="w-[16px] h-[12px] md:hidden"
             onClick={() => {
-              console.log("ggdgdgdg");
+              setShowClaimModal(false);
             }}
           >
             <ArrowLeftIcon />
           </div>
-          <h2 className="text-[#222222] text-center font-medium text-xl">
-            {" "}
-            Airspace Details
-          </h2>
+          <div className="flex items-center w-full justify-center">
+            <h2 className="text-[#222222] font-medium text-xl text-center">
+              Airspace Details
+            </h2>
+            <div className="w-[20px] h-[20px] ml-3">
+              <InfoIcon />
+            </div>
+          </div>
+
           <div
             onClick={() => {
               setShowClaimModal(false);
@@ -610,10 +446,6 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
           <p className="font-normal text-[#222222] text-[14px] flex-1">
             {rentData ? rentData.address : ""}
           </p>
-        </div>
-        <div className="gap-[5px] touch-manipulation">
-          <span>Owner</span>
-          <span> {owner ? owner.name : "grgr"}</span>
         </div>
         <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
           <div className="flex touch-manipulation flex-col gap-[5px] w-full">
@@ -677,10 +509,9 @@ const Explorer = ({
   setShowClaimModal,
   rentData,
   setRentData,
-  user1,
+  user1
 }) => {
   const [selectedAddress, setSelectedAddress] = useState();
-  console.log({ loading });
   return (
     <div
       className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]"
@@ -725,7 +556,7 @@ const Explorer = ({
                   onClick={() => handleSelectAddress(item.place_name)}
                   className="w-full p-5 text-left text-[#222222]  "
                   style={{
-                    borderTop: "0.2px solid #222222",
+                    borderTop: "0.2px solid #222222"
                   }}
                 >
                   {item.place_name}
@@ -751,8 +582,6 @@ const Explorer = ({
             //add popup to black ones
             const rentCLickHandler = () => {
               let el1 = document.createElement("div");
-
-              console.log("am rrent clickedd", item.id);
               setSelectedAddress(item.id);
 
               el1.id = "marker2";
@@ -770,7 +599,6 @@ const Explorer = ({
             };
 
             const onClickRent = () => {
-              console.log("hello rent data==", rentData);
               setRentData(item);
               setShowClaimModal(true);
             };
@@ -783,13 +611,21 @@ const Explorer = ({
                 className={
                   item.id != selectedAddress
                     ? ` p-5 text-left text-[#913636] w-full flex justify-between text-[12px]`
-                    : `bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[10px]`
+                    : `bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[12px]`
                 }
                 style={{
-                  borderTop: "5px solid #FFFFFFCC",
+                  borderTop: "5px solid #FFFFFFCC"
                 }}
               >
-                <h3 className="text-black pt-[0.6rem]">{item.address}</h3>
+                <h3
+                  className={
+                    item.id != selectedAddress
+                      ? `text-black pt-[0.6rem] `
+                      : ` text-white `
+                  }
+                >
+                  {item.address}
+                </h3>
                 <h1
                   className={
                     item.id != selectedAddress
@@ -826,52 +662,142 @@ const ExplorerMobile = ({
   addresses,
   showOptions,
   handleSelectAddress,
+  regAdressShow,
+  registeredAddress,
+  map,
+  marker,
+  setMarker,
+  showClaimModal,
+  setShowClaimModal,
+  rentData,
+  setRentData,
+  user1
 }) => {
+  const [selectedAddress, setSelectedAddress] = useState();
   return (
-    <div className="flex bg-white items-center gap-[15px] pb-[19px] px-[21px] z-[40]">
-      <div
-        className="relative px-[22px] py-[16px] bg-white rounded-lg w-full"
-        style={{ border: "1px solid #87878D" }}
-      >
-        <input
-          autoComplete="off"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          type="text"
-          name="searchAirspaces"
-          id="searchAirspaces"
-          placeholder="Search Airspaces"
-          className="outline-none w-full pr-[20px]"
-        />
-        <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
-          <MagnifyingGlassIcon />
+    <div>
+      <div className="flex bg-white items-center gap-[15px] pt-[8px] pb-[10px] px-[21px] z-[40]">
+        <div
+          className="relative px-[22px] py-[16px] bg-white rounded-lg w-full"
+          style={{ border: "1px solid #87878D" }}
+        >
+          <input
+            autoComplete="off"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            type="text"
+            name="searchAirspaces"
+            id="searchAirspaces"
+            placeholder="Search Airspaces"
+            className="outline-none w-full pr-[20px]"
+          />
+          <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
+            <MagnifyingGlassIcon />
+          </div>
+          {showOptions && (
+            <div className="absolute overflow-y-auto max-h-[240px] top-[55px] left-0 bg-white w-full flex-col z-[50]">
+              {loading ? (
+                <div className="pt-8 flex justify-center items-center">
+                  <BalanceLoader />
+                </div>
+              ) : (
+                addresses.map((item) => {
+                  return (
+                    <div
+                      key={item.id}
+                      value={item.place_name}
+                      onClick={() => handleSelectAddress(item.place_name)}
+                      className="p-5 text-left text-[#222222] w-full"
+                      style={{
+                        borderTop: "0.2px solid #222222"
+                      }}
+                    >
+                      {item.place_name}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
+          <div></div>
         </div>
-        {showOptions && (
-          <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
-            {loading ? (
-              <div className="pt-8 flex justify-center items-center">
-                <BalanceLoader />
-              </div>
-            ) : (
-              addresses.map((item) => {
-                return (
-                  <div
-                    key={item.id}
-                    value={item.place_name}
-                    onClick={() => handleSelectAddress(item.place_name)}
-                    className="p-5 text-left text-[#222222] w-full"
-                    style={{
-                      borderTop: "0.2px solid #222222",
-                    }}
-                  >
-                    {item.place_name}
-                  </div>
-                );
-              })
-            )}
+      </div>
+      <div className="flex justify-center items-center mt-1">
+        {loadingReg && (
+          <div className={`flex h-8 items-center mt-${loadingReg} ? 4 : 0`}>
+            <BalanceLoader />
           </div>
         )}
       </div>
+      {regAdressShow && (
+        <div
+          style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+          className=" mt-1 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll rounded-b-3xl"
+        >
+          {registeredAddress.map((item) => {
+            //add popup to black ones
+            const rentCLickHandler = () => {
+              let el1 = document.createElement("div");
+              setSelectedAddress(item.id);
+
+              el1.id = "marker2";
+              let lat1 = item.latitude;
+              let lng1 = item.longitude;
+              let ans2 = new mapboxgl.LngLat(lng1, lat1);
+              let newMap = map;
+              if (marker) {
+                marker.remove();
+              }
+              let marker1 = new maplibregl.Marker({ color: "#0653EA" })
+                .setLngLat(ans2)
+                .addTo(map);
+              setMarker(marker1);
+            };
+
+            const onClickRent = () => {
+              setRentData(item);
+              setShowClaimModal(true);
+            };
+
+            return (
+              <div
+                key={item.id}
+                value={item.address}
+                onClick={rentCLickHandler}
+                className={
+                  item.id != selectedAddress
+                    ? ` p-5 text-left text-[#913636] w-full flex justify-between text-[12px]`
+                    : `bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[10px]`
+                }
+                style={{
+                  borderTop: "5px solid #FFFFFFCC"
+                }}
+              >
+                <h3 className="text-black pt-[0.6rem]">{item.address}</h3>
+                <h1
+                  className={
+                    item.id != selectedAddress
+                      ? " text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2"
+                      : " text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"
+                  }
+                >
+                  ${item.price}
+                </h1>
+                <span
+                  onClick={onClickRent}
+                  className={
+                    item.id != selectedAddress
+                      ? "bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2 flex flex-col item-center justify-center"
+                      : "bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2 flex flex-col item-center justify-center"
+                  }
+                >
+                  RENT
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
@@ -890,13 +816,13 @@ const Rent = () => {
   const [flyToAddress, setFlyToAddress] = useState("");
   const [coordinates, setCoordinates] = useState({
     longitude: "",
-    latitude: "",
+    latitude: ""
   });
 
-  const [token, setToken] = useState();
   const [marker, setMarker] = useState();
   const [rentData, setRentData] = useState();
   const [showClaimModal, setShowClaimModal] = useState(false);
+  const { findPropertiesByCordinates } = PropertiesService();
 
   const defaultData = {
     address: flyToAddress,
@@ -919,71 +845,13 @@ const Rent = () => {
       { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 3 },
       { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 4 },
       { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 5 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 },
-    ],
+      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 }
+    ]
   };
 
-  const { user: selectorUser } = useAuth();
-  const [user1, setUser1] = useState();
-  const [data, setData] = useState({ ...defaultData });
+  const { user } = useAuth();
   const [regAdressShow, setRegAdressShow] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (selectorUser) {
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: "solana",
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: "Solana Mainnet",
-          blockExplorer: "https://explorer.solana.com",
-          ticker: "SOL",
-          tickerName: "Solana",
-        };
-
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        // await web3auth.connect();
-
-        let userInfo;
-
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem("openlogin_store");
-          swal({
-            title: "oops!",
-            text: "Something went wrong. Kindly try again",
-          }).then(() => router.push("/auth/join"));
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem("openlogin_store")
-        );
-
-        if (!selectorUser) {
-          localStorage.removeItem("openlogin_store");
-          router.push("/auth/join");
-          return;
-        }
-
-        setToken(fetchedToken.sessionId);
-        setUser1(selectorUser);
-      };
-
-      authUser();
-    }
-  }, []);
 
   useEffect(() => {
     if (map) return;
@@ -994,7 +862,7 @@ const Rent = () => {
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
         center: [-104.718243, 40.413869],
-        zoom: 15,
+        zoom: 4
         // attributionControl: false
       });
 
@@ -1008,14 +876,14 @@ const Rent = () => {
               type: "Feature",
               geometry: {
                 type: "Polygon",
-                coordinates: [],
-              },
-            },
+                coordinates: []
+              }
+            }
           },
           layout: {},
           paint: {
-            "fill-color": "#D20C0C",
-          },
+            "fill-color": "#D20C0C"
+          }
         });
       });
 
@@ -1030,110 +898,45 @@ const Rent = () => {
           el.id = "markerWithExternalCss";
           let crds = e.target.getBounds();
 
-          const signatureObj = {};
-
-          if (user1) {
-            const chainConfig = {
-              chainNamespace: "solana",
-              chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-              rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-              displayName: "Solana Mainnet",
-              blockExplorer: "https://explorer.solana.com",
-              ticker: "SOL",
-              tickerName: "Solana",
-            };
-
-            const web3auth = new Web3Auth({
-              clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-              web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-              chainConfig: chainConfig,
-            });
-
-            await web3auth.initModal();
-
-            const web3authProvider = await web3auth.connect();
-
-            const solanaWallet = new SolanaWallet(web3authProvider);
-            const domain = window.location.host;
-            const origin = window.location.origin;
-
-            const payload = new SIWPayload();
-            payload.domain = domain;
-            payload.uri = origin;
-            payload.address = user1.blockchainAddress;
-            payload.statement = "Sign in to SkyTrade app.";
-            payload.version = "1";
-            payload.chainId = 1;
-
-            const header = { t: "sip99" };
-            const network = "solana";
-
-            let message = new SIWWeb3({ header, payload, network });
-
-            const messageText = message.prepareMessage();
-            const msg = new TextEncoder().encode(messageText);
-            const result = await solanaWallet.signMessage(msg);
-
-            const signature = base58.encode(result);
-
-            signatureObj.sign = signature;
-            signatureObj.sign_nonce = message.payload.nonce;
-            signatureObj.sign_issue_at = message.payload.issuedAt;
-            signatureObj.sign_address = user1.blockchainAddress;
-          }
-
-          let res = await fetch(`/api/proxy?${Date.now()}`, {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-
-              uri: `/public/properties/`,
-              sign: signatureObj.sign,
-              time: signatureObj.sign_issue_at,
-              nonce: signatureObj.sign_nonce,
-              address: signatureObj.sign_address,
-            },
-            body: JSON.stringify({
+          const responseData = await findPropertiesByCordinates({
+            postData: {
               minLongitude: crds._sw.lng,
               minLatitude: crds._sw.lat,
               maxLongitude: crds._ne.lng,
-              maxLatitude: crds._ne.lat,
-            }),
+              maxLatitude: crds._ne.lat
+            }
           });
-          res = await res.json();
 
-          let ans,
-            features1 = [];
-          if (res) {
-            ans = res.filter((property1) => {
+          let formattedProperties = [];
+          if (responseData) {
+            formattedProperties = responseData.filter((property) => {
               if (
-                property1.longitude >= crds._sw.lng &&
-                property1.longitude <= crds._ne.lng &&
-                property1.latitude >= crds._sw.lat &&
-                property1.latitude <= crds._ne.lat
+                property.longitude >= crds._sw.lng &&
+                property.longitude <= crds._ne.lng &&
+                property.latitude >= crds._sw.lat &&
+                property.latitude <= crds._ne.lat
               ) {
-                return property1;
+                return property;
               }
             });
           }
 
-          setRegisteredAddress(ans);
+          setRegisteredAddress(formattedProperties);
           setLoadingRegAddresses(false);
 
-          if (ans.length > 0) {
-            for (let i = 0; i < ans.length; i++) {
-              let lng1 = ans[i].longitude;
-              let lat1 = ans[i].latitude;
-              let ans2 = new mapboxgl.LngLat(lng1, lat1);
+          if (responseData.length > 0) {
+            for (let i = 0; i < responseData.length; i++) {
+              const lngLat = new mapboxgl.LngLat(
+                responseData[i].longitude,
+                responseData[i].latitude
+              );
 
-              let popup1 = new maplibregl.Popup().setHTML(
-                `<strong>${ans[i].address}</strong>`
+              const popup = new maplibregl.Popup().setHTML(
+                `<strong>${responseData[i].address}</strong>`
               );
               new maplibregl.Marker(el)
-                .setLngLat(ans2)
-                .setPopup(popup1)
+                .setLngLat(lngLat)
+                .setPopup(popup)
                 .addTo(newMap);
             }
           }
@@ -1183,7 +986,7 @@ const Rent = () => {
             setLoadingAddresses(false);
           }
         } catch (error) {
-          console.log(error);
+          console.error(error);
           setLoadingAddresses(false);
         }
       }, 500);
@@ -1223,7 +1026,7 @@ const Rent = () => {
 
         map.flyTo({
           center: endPoint,
-          zoom: 16,
+          zoom: 16
         });
 
         if (marker) {
@@ -1249,7 +1052,6 @@ const Rent = () => {
 
   useEffect(() => {
     if (flyToAddress === address) setShowOptions(false);
-    if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
   }, [flyToAddress, address]);
 
   const handleSelectAddress = (placeName) => {
@@ -1263,75 +1065,83 @@ const Rent = () => {
       <Head>
         <title>SkyTrade - Marketplace : Rent</title>
       </Head>
-      {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
 
-      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
-        <Sidebar />
+      {
+        <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
+          <Sidebar />
 
-        <div className="w-full h-full flex flex-col">
-          <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
-          {isMobile && (
-            <ExplorerMobile
-              loadingReg={loadingRegAddresses}
-              loading={loadingAddresses}
-              address={address}
-              setAddress={setAddress}
-              addresses={addresses}
-              showOptions={showOptions}
-              handleSelectAddress={handleSelectAddress}
-            />
-          )}
-          <section
-            className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}
-          >
-            <div
-              className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0 `}
-              //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
+          <div className="w-full h-full flex flex-col">
+            {isLoading && <Backdrop />}
+            {isLoading && <Spinner />}
+            <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
+            {isMobile && (
+              <ExplorerMobile
+                loadingReg={loadingRegAddresses}
+                loading={loadingAddresses}
+                address={address}
+                setAddress={setAddress}
+                addresses={addresses}
+                showOptions={showOptions}
+                handleSelectAddress={handleSelectAddress}
+                regAdressShow={regAdressShow}
+                registeredAddress={registeredAddress}
+                map={map}
+                marker={marker}
+                setMarker={setMarker}
+                showClaimModal={showClaimModal}
+                setShowClaimModal={setShowClaimModal}
+                rentData={rentData}
+                setRentData={setRentData}
+                user1={user}
+              />
+            )}
+            <section
+              className={
+                "relative flex w-full h-full justify-start items-start md:mb-0 mb-[79px] "
+              }
+            >
+              <div
+                className={"!absolute !top-0 !left-0 !m-0 !w-screen !h-screen"}
+                id="map"
+                style={{ zIndex: "20" }}
+              />
 
-              id="map"
-              style={{ zIndex: "20" }}
-            />
-
-            {!isMobile && (
-              <div className="flex justify-start items-start">
-                <Explorer
-                  loadingReg={loadingRegAddresses}
-                  loading={loadingAddresses}
-                  address={address}
-                  setAddress={setAddress}
-                  addresses={addresses}
-                  showOptions={showOptions}
-                  handleSelectAddress={handleSelectAddress}
-                  regAdressShow={regAdressShow}
-                  registeredAddress={registeredAddress}
-                  map={map}
-                  marker={marker}
-                  setMarker={setMarker}
-                  showClaimModal={showClaimModal}
-                  setShowClaimModal={setShowClaimModal}
-                  rentData={rentData}
-                  setRentData={setRentData}
-                  user1={user1}
-                />
-                {/* {showClaimModal &&  */}
-
-                {showClaimModal && (
-                  <ClaimModal
-                    setShowClaimModal={setShowClaimModal}
-                    rentData={rentData}
-                    setIsLoading={setIsLoading}
+              {!isMobile && (
+                <div className="flex justify-start items-start">
+                  <Explorer
+                    loadingReg={loadingRegAddresses}
+                    loading={loadingAddresses}
+                    address={address}
+                    setAddress={setAddress}
+                    addresses={addresses}
+                    showOptions={showOptions}
+                    handleSelectAddress={handleSelectAddress}
                     regAdressShow={regAdressShow}
                     registeredAddress={registeredAddress}
+                    map={map}
+                    marker={marker}
+                    setMarker={setMarker}
+                    showClaimModal={showClaimModal}
+                    setShowClaimModal={setShowClaimModal}
+                    rentData={rentData}
+                    setRentData={setRentData}
+                    user1={user}
                   />
-                )}
-
-                {/* } */}
-              </div>
-            )}
-          </section>
+                </div>
+              )}
+              {showClaimModal && (
+                <ClaimModal
+                  setShowClaimModal={setShowClaimModal}
+                  rentData={rentData}
+                  setIsLoading={setIsLoading}
+                  regAdressShow={regAdressShow}
+                  registeredAddress={registeredAddress}
+                />
+              )}
+            </section>
+          </div>
         </div>
-      </div>
+      }
     </Fragment>
   );
 };

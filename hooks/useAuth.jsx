@@ -1,87 +1,67 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useContext, useEffect, useState } from "react";
 
-import { useRouter } from 'next/router';
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { Web3authContext } from "@/providers/web3authProvider";
+import { useRouter } from "next/router";
+import { counterActions } from "@/store/store";
 
+const useAuth = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [web3authStatus, setWeb3authStatus] = useState();
+  const { web3auth, setProvider } = useContext(Web3authContext);
 
-const AuthContext = createContext({});
-
-
-
-const AuthProvider = ({ children }) => {
-
-
-  const [data, setData] = useState({});
-  const [temporaryToken, setTemporaryToken] = useState({});
-
-  const signIn = ({ token, user }) => {
-    if (token) {
-      localStorage.setItem(
-        'openlogin_store',
-        JSON.stringify({
-          sessionId: token.sessionId,
-        })
-      );
-    }
-
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
-    }
-
-    setData((prev) => ({
-      ...prev,
-      ...(token && { token }),
-      ...(user && { user }),
-    }));
-  };
-
-  const signOut = () => {
-    localStorage.clear();
-      window.location = '/'
-  };
-
-  const updateProfile = (updatedUser) => {
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-
-    setData((prev) => ({
-      ...prev,
-      user: updatedUser,
-    }));
-  };
+  const { userData } = useSelector((state) => {
+    const { user } = state.value;
+    return { userData: user };
+  }, shallowEqual);
 
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem('openlogin_store'));
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    if (!token?.sessionId || !user) {
-      // router.push('/auth/join');
-      return;
-    }
-
-    if (token && user) {
-      setData({ user, token });
+    const userData = localStorage.getItem("user");
+    if (userData && userData !== "undefined") {
+      const currentUser = JSON.parse(userData);
+      dispatch(counterActions.setUser(currentUser));
     }
   }, []);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user: data.user,
-        token: data.token,
-        signIn,
-        signOut,
-        updateProfile,
-        temporaryToken,
-        setTemporaryToken,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  useEffect(() => {
+    const initStatus = async () => {
+      if (web3auth && web3auth?.status === "connected") {
+        setWeb3authStatus(true);
+      } else {
+        setWeb3authStatus(false);
+      }
+    };
+    initStatus();
+  }, [web3auth?.status]);
+
+  const signIn = ({ user }) => {
+    if (user) dispatch(counterActions.setUser(user));
+    const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+    localStorage.setItem("skySessionId", JSON.stringify(fetchedToken));
+  };
+
+  const signOut = async () => {
+    setProvider(null);
+    // dispatch(counterActions.setClearState({}));
+
+    sessionStorage.clear();
+    localStorage.clear();
+    router.push("/auth/join");
+  };
+
+  const updateProfile = (updatedUser) => {
+    dispatch(counterActions.setUser(updatedUser));
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  };
+
+  return {
+    signIn,
+    signOut,
+    updateProfile,
+    user: userData,
+    web3authStatus,
+  };
 };
 
-const useAuth = () => {
-  const context = useContext(AuthContext);
-  return context;
-};
-
-export { AuthProvider, useAuth };
+export default useAuth;

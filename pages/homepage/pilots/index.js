@@ -2,11 +2,8 @@ import Image from 'next/image';
 import { createPortal } from 'react-dom';
 import { Fragment, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Web3Auth } from '@web3auth/modal';
-import swal from 'sweetalert';
-import Script from 'next/script';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 
 import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
@@ -21,65 +18,8 @@ const UAVs = () => {
   const [pilotProfile, setPilotProfile] = useState(false);
   const [addPilot, setAddPilot] = useState(false);
 
-  const [user, setUser] = useState();
-  const [token, setToken] = useState('');
+  const { user } = useAuth();
 
-  const { user: selectorUser } = useAuth();
-
-  useEffect(() => {
-    if (selectorUser) {
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: 'solana',
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
-          blockExplorer: 'https://explorer.solana.com',
-          ticker: 'SOL',
-          tickerName: 'Solana',
-        };
-
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        // await web3auth.connect();
-
-        let userInfo;
-
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem('openlogin_store');
-          swal({
-            title: 'oops!',
-            text: 'Something went wrong. Kindly try again',
-          }).then(() => router.push('/auth/join'));
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem('openlogin_store')
-        );
-
-        if (!selectorUser) {
-          localStorage.removeItem('openlogin_store');
-          router.push('/auth/join');
-          return;
-        }
-
-        setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
-      };
-
-      authUser();
-    }
-  }, [selectorUser]);
 
   const backdropCloseHandler = () => {
     setPilotProfile(false);
@@ -99,10 +39,6 @@ const UAVs = () => {
     setAddPilot(false);
   };
 
-  if (!user || !token) {
-    return <Spinner />;
-  }
-
   return (
     <Fragment>
       {(pilotProfile || addPilot) &&
@@ -121,7 +57,9 @@ const UAVs = () => {
           document.getElementById('modal-root')
         )}
       <div className='mx-auto flex flex-row'>
-        <Sidebar users={users} />
+        <Sidebar 
+        // users={users} 
+        />
         <div
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
           className='overflow-y-auto'

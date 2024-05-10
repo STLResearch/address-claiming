@@ -1,27 +1,28 @@
-"use client";
+// "use client";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import swal from "sweetalert";
 import Head from "next/head";
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 import { Fragment } from "react";
-import logo from "../../../../public/images/logo.jpg";
-import { useAuth } from "@/hooks/useAuth";
+import logo from "../../../../public/images/logo.svg";
+import useAuth from "@/hooks/useAuth";
 import * as Yup from "yup";
-import useDatabase from '@/hooks/useDatabase';
+import UserService from "@/services/UserService";
+import { counterActions } from "@/store/store";
 
 const PartOne = ({ setPart }) => {
   return (
     <Fragment>
-      <p className="text-xl font-medium text-light-black mt-[25px]">
+      <p className="text-xl font-medium text-light-black md:mt-[25px]">
         Unlock Passive Rental Income
       </p>
-      <div className="text-[15px] text-light-grey font-normal">
+      <div className="text-[15px] text-light-grey font-normal md:leading-8 md:mt-6">
         <p>
           💰 <span className="font-bold">Monetize Your Air Rights Easily:</span>{" "}
           Elevate earnings without changing property ownership.
@@ -43,13 +44,13 @@ const PartOne = ({ setPart }) => {
           receive direct fees into your account.
         </p>
       </div>
-      <p className="text-center text-base text-[#222222]">
-        Join SkyTrade today and turn your air rights into a lucrative
+      <p className="text-center text-base text-[#222222] md:mt-6">
+        Join SkyTrade today and turn your <br /> air rights into a lucrative
         opportunity! 🚀✨
       </p>
       <button
         onClick={() => setPart(1)}
-        className="rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600 py-4 px-24 text-[15px] w-full"
+        className="rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600 py-4 px-24 text-[15px] w-full md:mt-2"
       >
         Get started
       </button>
@@ -65,29 +66,46 @@ export const phoneValidationSchema = Yup.object().shape({
       "Phone number must be only digits, and should start with +"
     )
     .min(10, "Phone number must be at least 10 digits")
-    .max(15, "Phone number must be less than 15 digits"),
+    .max(15, "Phone number must be less than 15 digits")
 });
 export const checkPhoneIsValid = async (phone) => {
   try {
     await phoneValidationSchema.validate({ phone });
     return {
       status: true,
-      message: "",
+      message: ""
     };
   } catch (error) {
     return {
       status: false,
-      message: error.message,
+      message: error.message
     };
   }
 };
 const IndividualSignup = () => {
+  // const {category} = useSelector((state) =>
+  // {
+  //   const {category} = state.userReducer
+  //   return {category}
+  // }, shallowEqual );
+
+  const dispatch = useDispatch();
+
+  const category = useSelector((state) => state.value.category);
+
+  useEffect(() => {
+    const categoryData = localStorage.getItem("category");
+    if (categoryData) {
+      const currentCategory = JSON.parse(categoryData);
+      dispatch(counterActions.setCategory(currentCategory));
+    }
+  }, []);
+
   const [part, setPart] = useState(0);
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const newsletterRef = useRef();
   const referralCodeRef = useRef();
-  const { getReferralByCode } = useDatabase();
 
   const router = useRouter();
 
@@ -101,10 +119,8 @@ const IndividualSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [pageLoad, setPageLoad] = useState(true);
   const [referralDisabled, setReferralDisabled] = useState(false);
-  useEffect(() => {
-    console.log(status);
-    console.log(typeof status);
-  }, [status]);
+
+  const { createUser } = UserService();
 
   useEffect(() => {
     setPageLoad(false);
@@ -116,12 +132,6 @@ const IndividualSignup = () => {
       setReferralDisabled(true);
     }
   }, [global?.window]);
-
-  const category = useSelector((state) => state.value.category);
-
-  useEffect(() => {
-    console.log("Category:", category);
-  }, [category]);
 
   const { temporaryToken, signIn } = useAuth();
 
@@ -153,86 +163,59 @@ const IndividualSignup = () => {
   const formSubmitHandler = async (e) => {
     e.preventDefault();
 
-    const [referralCode] = [, referralCodeRef].map((ref) => ref.current?.value);
+    try {
+      const [referralCode] = [, referralCodeRef].map(
+        (ref) => ref.current?.value
+      );
 
-    if (!checkNameIsValid(name)) {
-      setIsNameValid(false);
-      return;
-    }
-    console.log(
-      checkPhoneIsValid(phoneNumber),
-      "checkPhoneIsValid(phoneNumber)"
-    );
+      if (!checkNameIsValid(name)) {
+        setIsNameValid(false);
+        return;
+      }
 
-    const phoneCheck = await checkPhoneIsValid(phoneNumber);
-    if (!phoneCheck.status) {
-      setIsPhoneNumberValid(false);
-      setErrorMessage(phoneCheck.message);
-      return;
-    }
-    const isValid = await checkReferralCodeIsValid(referralCode1?.code)
+      const phoneCheck = await checkPhoneIsValid(phoneNumber);
+      if (!phoneCheck.status) {
+        setIsPhoneNumberValid(false);
+        setErrorMessage(phoneCheck.message);
+        return;
+      }
 
-    if (referralCode1?.code && !isValid) {
-      setIsReferralCodeValid(isValid);
-      return;
-    }
-    console.log("ref code state ", referralCode1);
-    const userInfo = {
-      ...category,
-      name,
-      newsletter,
-      categoryId: status,
-      phoneNumber,
-      referralCode: referralCode1.code,
-    };
-    console.log("userInfo    ", userInfo);
+      if (!checkReferralCodeIsValid(referralCode1)) {
+        setIsReferralCodeValid(false);
+        return;
+      }
+      const userInfo = {
+        ...category,
+        name,
+        newsletter,
+        categoryId: status,
+        phoneNumber,
+        referralCode: referralCode1.code
+      };
 
-    setIsLoading(true);
+      setIsLoading(true);
 
-    fetch(`/api/proxy?${Date.now()}`, {
-      method: "POST",
-      body: JSON.stringify(userInfo),
-      headers: {
-        "Content-Type": "application/json",
-        uri: "/public/users/create",
-        proxy_to_method: "POST",
-      },
-    })
-      .then((res) => {
-        console.log({ signUpRes: res, ok: res.ok });
+      const responseData = await createUser(userInfo);
 
-        if (!res.ok) {
-          return res.json().then((errorData) => {
-            throw new Error(errorData.errorMessage);
-          });
-        }
-
-        return res.json().then((response) => {
-          if (response.statusCode === 500) {
-            throw new Error("something went wrong");
-          }
-
-          signIn({
-            token: temporaryToken,
-            user: response,
-          });
-          setName("");
-          setPhoneNumber("");
-          referralCodeRef.current.value = "";
-          localStorage.setItem("new", true);
-
-          router.replace("/homepage/dashboard2");
+      if (responseData && !responseData.errorMessage) {
+        signIn({
+          user: responseData
         });
-      })
-      .catch((error) => {
-        console.log(error);
-        swal({
-          title: "Sorry!",
-          text: error.message,
-        });
+        setName("");
+        setPhoneNumber("");
+        referralCodeRef.current.value = "";
 
-        setIsLoading(false);
+        router.replace("/homepage/dashboard2");
+      }
+    } catch (error) {
+      console.log(error);
+      swal({
+        title: "Sorry!",
+        text: error.message
       });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (pageLoad) {
@@ -250,12 +233,7 @@ const IndividualSignup = () => {
         createPortal(<Spinner />, document.getElementById("backdrop-root"))}
 
       <div className="relative rounded bg-[#F6FAFF] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden">
-        <div
-          className="mx-auto flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] rounded relative justify-center"
-          style={{
-            maxWidth: "449px",
-          }}
-        >
+        <div className="mx-auto w-[372px] md:w-[449px] flex flex-col items-center gap-[15px] bg-white md:py-[40px] px-[30px] rounded relative justify-center">
           <Image src={logo} alt="Company's logo" width={199} height={77} />
           {part === 0 && <PartOne setPart={setPart} />}
           {part === 1 && (
@@ -264,7 +242,7 @@ const IndividualSignup = () => {
                 <label
                   className="text-[14px] font-normal"
                   style={{
-                    color: isNameValid ? "rgba(0, 0, 0, 0.50)" : "#E04F64",
+                    color: isNameValid ? "rgba(0, 0, 0, 0.50)" : "#E04F64"
                   }}
                 >
                   Full Name<span className="text-[#E04F64]">*</span>
@@ -281,7 +259,7 @@ const IndividualSignup = () => {
                   style={{
                     border: isNameValid
                       ? "1px solid #87878D"
-                      : "1px solid #E04F64",
+                      : "1px solid #E04F64"
                   }}
                 />
                 {!isNameValid && (
@@ -296,7 +274,7 @@ const IndividualSignup = () => {
                   style={{
                     color: isPhoneNumberValid
                       ? "rgba(0, 0, 0, 0.50)"
-                      : "#E04F64",
+                      : "#E04F64"
                   }}
                 >
                   Phone<span className="text-[#E04F64]">*</span>
@@ -313,7 +291,7 @@ const IndividualSignup = () => {
                   style={{
                     border: isPhoneNumberValid
                       ? "1px solid #87878D"
-                      : "1px solid #E04F64",
+                      : "1px solid #E04F64"
                   }}
                 />
                 {!isPhoneNumberValid && (
@@ -333,7 +311,7 @@ const IndividualSignup = () => {
                   <label
                     className="rounded-lg py-4 px-[22px] flex gap-[14.5px] items-center text-[14px]"
                     style={{
-                      border: true ? "1px solid #87878D" : "1px solid #E04F64",
+                      border: true ? "1px solid #87878D" : "1px solid #E04F64"
                     }}
                   >
                     <input
@@ -350,7 +328,7 @@ const IndividualSignup = () => {
                         backgroundColor:
                           status === 0 ? "#0653EA" : "transparent",
                         borderRadius: "50%",
-                        backgroundClip: "content-box",
+                        backgroundClip: "content-box"
                       }}
                       type="checkbox"
                       name="individual"
@@ -361,7 +339,7 @@ const IndividualSignup = () => {
                   <label
                     className="rounded-lg py-4 px-[22px] flex gap-[14.5px] items-center text-[14px]"
                     style={{
-                      border: true ? "1px solid #87878D" : "1px solid #E04F64",
+                      border: true ? "1px solid #87878D" : "1px solid #E04F64"
                     }}
                   >
                     <input
@@ -378,7 +356,7 @@ const IndividualSignup = () => {
                         backgroundColor:
                           status === 1 ? "#0653EA" : "transparent",
                         borderRadius: "50%",
-                        backgroundClip: "content-box",
+                        backgroundClip: "content-box"
                       }}
                       type="checkbox"
                       name="corporate"
@@ -399,7 +377,7 @@ const IndividualSignup = () => {
                   style={{
                     color: isReferralCodeValid
                       ? "rgba(0, 0, 0, 0.50)"
-                      : "#E04F64",
+                      : "#E04F64"
                   }}
                 >
                   Referral Code
@@ -412,17 +390,15 @@ const IndividualSignup = () => {
                   onChange={(event) => {
                     setReferralCode({
                       ...referralCode1,
-                      code: event.target.value,
+                      code: event.target.value
                     });
-                    setIsReferralCodeValid(true)
-                    console.log("on change ref code val", referralCode1.code);
                   }}
                   disabled={referralDisabled}
                   className="rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none"
                   style={{
                     border: isReferralCodeValid
                       ? "1px solid #87878D"
-                      : "1px solid #E04F64",
+                      : "1px solid #E04F64"
                   }}
                 />
                 {!isReferralCodeValid && (
@@ -447,7 +423,7 @@ const IndividualSignup = () => {
                 style={{
                   background: index !== part ? "#D9D9D9" : "#0653EA",
                   border: index === part ? "1px solid #D9D9D9" : "#0653EA",
-                  borderRadius: "50%",
+                  borderRadius: "50%"
                 }}
               />
             ))}

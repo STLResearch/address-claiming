@@ -9,15 +9,6 @@ export const config = {
 const handler = async (req, res) => {
   if (req.method === 'POST') {
     const rawBody = await buffer(req);
-    console.log(
-      'referenceId => ',
-      JSON.parse(rawBody).data.attributes.payload.data.attributes[
-        'reference-id'
-      ]
-    );
-    console.log('event => ', JSON.parse(rawBody).data.attributes.name);
-    console.log('signature => ', req.headers['persona-signature']);
-
     try {
       const data = JSON.parse(rawBody).data.attributes;
       const reqBody = {
@@ -40,18 +31,12 @@ const handler = async (req, res) => {
         fetchOptions
       );
       const resData = await fetchRes.json();
-      console.log(
-        'This is the response from the fetch call to the backend',
-        resData
-      );
 
       if (resData?.data && resData?.data?.statusCode >= 400) {
         throw new Error(resData.data.message);
       }
     } catch (err) {
-      let message = 'Unknown Error';
-      if (err instanceof Error) message = err.message;
-      res.status(400).send(`Webhook Error: ${message}`);
+      res.status(400).send('');
       return;
     }
     res.json({ received: true });

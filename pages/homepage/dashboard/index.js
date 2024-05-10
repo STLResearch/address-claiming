@@ -1,11 +1,10 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useContext } from 'react';
 
 import { useRouter } from 'next/router';
 import Script from 'next/script';
 
 import Chart from 'chart.js/auto';
 
-import { Web3Auth } from '@web3auth/modal';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 
@@ -17,7 +16,10 @@ import Navbar from '@/Components/Navbar';
 import Sidebar from '@/Components/Sidebar';
 import Spinner from '@/Components/Spinner';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
+import PropertiesService from "@/services/PropertiesService";
+import { Web3authContext } from '@/providers/web3authProvider';
+import NewslettersService from "@/services/NewslettersService";
 
 const Dashboard = () => {
   const cData = [
@@ -154,71 +156,25 @@ const Dashboard = () => {
 
   const router = useRouter();
 
-  const [user, setUser] = useState();
-  const [token, setToken] = useState('');
   const [newsletters, setNewsletters] = useState([]);
   const [newslettersLoading, setNewslettersLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState('');
   const [airspaceLength, setAirspaceLength] = useState();
-  const [signature, setSignature] = useState();
 
-  const { user: selectorUser } = useAuth();
+  const { user, web3authStatus } = useAuth();
+  const { getNewsLetters } = NewslettersService();
+  const { provider } = useContext(Web3authContext)
+  const { getClaimedPropertiesByUserAddress } = PropertiesService();
 
-  useEffect(() => {
-    if (selectorUser) {
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: 'solana',
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
-          blockExplorer: 'https://explorer.solana.com',
-          ticker: 'SOL',
-          tickerName: 'Solana',
-        };
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-        await web3auth.initModal();
-        // await web3auth.connect();
-        let userInfo;
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem('openlogin_store');
-          router.push('/auth/join');
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem('openlogin_store')
-        );
-
-        if (!selectorUser) {
-          localStorage.removeItem('openlogin_store');
-          router.push('/auth/join');
-          return;
-        }
-
-        setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
-      };
-      authUser();
-    }
-  }, [selectorUser]);
 
   useEffect(() => {
     if (user) {
-      console.log({ user });
       const data = {
         jsonrpc: '2.0',
         id: 1,
         method: 'getTokenAccountsByOwner',
         params: [
-          user.blockchainAddress,
+          user?.blockchainAddress,
           {
             mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
           },
@@ -259,137 +215,41 @@ const Dashboard = () => {
           console.error(error);
         });
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
   useEffect(() => {
-    if (user) {
-      const getSignature = async () => {
-        const signatureObj = {};
+    const getUserAirspaceLength = async () => {
+      try {
+        const responseData = await getClaimedPropertiesByUserAddress();
 
-        const chainConfig = {
-          chainNamespace: 'solana',
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName:`Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
-          blockExplorer: 'https://explorer.solana.com',
-          ticker: 'SOL',
-          tickerName: 'Solana',
-        };
+        if (responseData) {
+          setAirspaceLength(responseData.length);
+        }
+      } catch (error) {
+        console.log(error);
+        setAirspaceLength('');
+      } 
+    };
 
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        const web3authProvider = await web3auth.connect();
-
-        const solanaWallet = new SolanaWallet(web3authProvider);
-
-        // const userInfo = await web3auth.getUserInfo();
-
-        const domain = window.location.host;
-        // const domain = 'localhost:3000';
-        const origin = window.location.origin;
-        // const origin = 'http://localhost:3000';
-
-        const payload = new SIWPayload();
-        payload.domain = domain;
-        payload.uri = origin;
-        payload.address = user.blockchainAddress;
-        payload.statement = 'Sign in to SkyTrade app.';
-        payload.version = '1';
-        payload.chainId = 1;
-
-        const header = { t: 'sip99' };
-        const network = 'solana';
-
-        let message = new SIWWeb3({ header, payload, network });
-
-        const messageText = message.prepareMessage();
-        const msg = new TextEncoder().encode(messageText);
-        const result = await solanaWallet.signMessage(msg);
-
-        const signature = base58.encode(result);
-
-        signatureObj.sign = signature;
-        signatureObj.sign_nonce = message.payload.nonce;
-        signatureObj.sign_issue_at = message.payload.issuedAt;
-        signatureObj.sign_address = user.blockchainAddress;
-        setSignature(signatureObj);
-      };
-
-      getSignature();
-    }
-  }, [user]);
+    getUserAirspaceLength();
+  }, [user, web3authStatus]);
 
   useEffect(() => {
-    if (signature) {
-      fetch(`/api/proxy?${Date.now()}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          uri: `/private/properties/user-properties/${user.id}`,
-          sign: signature.sign,
-          time: signature.sign_issue_at,
-          nonce: signature.sign_nonce,
-          address: signature.sign_address,
-        },
-      })
-        .then((res) => {
-          if (!res.ok) {
-            return res.json().then((err) => {
-              throw new Error(err.message);
-            });
-          }
-          return res.json().then((data) => {
-            setAirspaceLength(data.length);
-          });
-        })
-        .catch((err) => {
-          setAirspaceLength('');
-          console.log(err);
-        });
-    }
-  }, [signature]);
+    (async () => {
+      try {
+        setNewslettersLoading(true);
+        const response = await getNewsLetters();
 
-  useEffect(() => {
-    if (signature) {
-      setNewslettersLoading(true);
-
-      fetch(`/api/proxy?${Date.now()}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          uri: '/public/newsletters',
-          sign: signature.sign,
-          time: signature.sign_issue_at,
-          nonce: signature.sign_nonce,
-          address: signature.sign_address,
-        },
-      })
-        .then((res) => {
-          if (!res.ok) {
-            return res.json().then((errorData) => {
-              throw new Error(errorData.message);
-            });
-          }
-          return res.json();
-        })
-        .then((response) => {
-          setNewslettersLoading(false);
-          if (response.length > 0) {
-            setNewsletters(response.reverse());
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [signature]);
+        if (response && response.length > 0) {
+          setNewsletters(response.reverse());
+        }
+      } catch (error) {
+        console.error(err);
+      } finally {
+        setNewslettersLoading(false);
+      }
+    })()
+  }, [provider]);
 
   useEffect(() => {
     if (user) {
@@ -460,13 +320,13 @@ const Dashboard = () => {
         },
       });
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
   const navigationHandler = (route) => {
     router.push(route);
   };
 
-  if (!user || !token) {
+  if (!user) {
     return <Spinner />;
   }
 
@@ -480,9 +340,9 @@ const Dashboard = () => {
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
         >
           <Navbar
-            name={user.name}
-            categoryId={user.categoryId}
-          // status={user.KYCStatusId}
+            name={user?.name}
+            categoryId={user?.categoryId}
+          // status={user?.KYCStatusId}
           />
           <div className='flex w-full flex-row justify-start'>
             <div className='my-5' style={{ width: '100%', height: '100vh' }}>

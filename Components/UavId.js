@@ -11,29 +11,15 @@ import Backdrop from '@/Components/Backdrop';
 import EditUavModal from '@/Components/Modals/EditUavModal';
 import Spinner from '@/Components/Spinner';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 
 const UavProfile = () => {
   const router = useRouter();
   const [flightHistory, setFlightHistory] = useState(true);
   const [reviews, setReviews] = useState(false);
   const [showEditUavModal, setShowEditUavModal] = useState(false);
-  const [user, setUser] = useState();
-  const [token, setToken] = useState('');
 
-  const { user: selectorUser } = useAuth();
-
-  useEffect(() => {
-    const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
-
-    if (fetchedToken.sessionId.length !== 64) {
-      router.push('/auth/join');
-      return;
-    }
-
-    setToken(fetchedToken.sessionId);
-    setUser(selectorUser);
-  }, []);
+  const { user } = useAuth();
 
   const flightHistoryHandler = () => {
     setFlightHistory(true);
@@ -66,7 +52,7 @@ const UavProfile = () => {
     router.push(`/homepage/uavs/${id}/scheduleflight`);
   };
 
-  if (!user || !token) {
+  if (!user) {
     return <Spinner />;
   }
 
@@ -88,7 +74,7 @@ const UavProfile = () => {
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
           className=' overflow-y-auto bg-white'
         >
-          <Navbar name={user.name} />
+          <Navbar name={user?.name} />
           <div
             className='mx-auto bg-white px-10 py-16'
             style={{

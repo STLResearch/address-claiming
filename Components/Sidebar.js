@@ -1,12 +1,9 @@
-import React, { Fragment, useState, useContext } from "react";
-import { Web3AuthNoModal } from "@web3auth/no-modal";
+import React, { Fragment, useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { createPortal } from "react-dom";
-import Spinner from "./Spinner";
-import Backdrop from "./Backdrop";
-import logo from "../public/images/logo.jpg";
+
+import logo from "../public/images/logo.svg";
 import logoNoChars from "../public/images/logo-no-chars.png";
 import {
   ArrowCompressIcon,
@@ -19,32 +16,14 @@ import {
   LogoutIcon,
   MapIcon,
   ShoppingBagsIcon,
-  WalletIcon,
+  WalletIcon
 } from "./Icons";
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from "@/hooks/useAuth";
 import { SidebarContext } from "@/hooks/sidebarContext";
-import { useTour } from "@reactour/tour";
-
-const chainConfig = {
-  chainNamespace: "solana",
-  chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-  rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-  displayName: "Solana Mainnet",
-  blockExplorer: "https://explorer.solana.com",
-  ticker: "SOL",
-  tickerName: "Solana",
-};
-
-const web3auth = new Web3AuthNoModal({
-  clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-  web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-  chainConfig: chainConfig,
-});
 
 const Sidebar = () => {
   const router = useRouter();
   const { asPath } = router;
-  const [isLoading, setIsLoading] = useState(false);
   const { isCollapsed, setIsCollapsed } = useContext(SidebarContext);
   const { signOut } = useAuth();
   const { setIsOpen } = useTour();
@@ -55,15 +34,16 @@ const Sidebar = () => {
     children,
     style,
     onClick,
-    numberOfUnseenNotifications,
+    numberOfUnseenNotifications
   }) => {
     const isActive = href ? asPath.includes(href) : false;
 
     if (onClick !== undefined) {
       return (
         <div
+          title={text}
           onClick={onClick}
-          className={`${style || ""} ${href ? "cursor-pointer" : "cursor-not-allowed"} py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && "bg-[#E9F5FE] text-[#4285F4]"} rounded-[3.66px]`}
+          className={`${style || ""} cursor-pointer py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && "bg-[#E9F5FE] text-[#4285F4]"} rounded-[3.66px]`}
         >
           <div className="w-6 h-6 flex items-center justify-center">
             {React.cloneElement(children, { isActive })}
@@ -116,9 +96,28 @@ const Sidebar = () => {
     href,
     text,
     children,
-    numberOfUnseenNotifications,
+    onClick,
+    numberOfUnseenNotifications
   }) => {
-    const isActive = href ? asPath.includes(href) : false;
+    const isActive = asPath.includes(href);
+
+    if (onClick !== undefined) {
+      return (
+        <div
+          onClick={onClick}
+          className={`py-[16.87px] flex flex-col items-center gap-2 px-[11.77px] w-full ${isActive && "text-[#4285F4]"} rounded-[3.66px] `}
+        >
+          <div className="relative w-5 h-5 flex items-center justify-center">
+            {React.cloneElement(children, { isActive })}
+          </div>
+          <p
+            className={`${isActive ? "font-semibold text-[#4285F4]" : "font-normal text-[#5D7285]"} text-[11px] tracking-[1%]`}
+          >
+            {text}
+          </p>
+        </div>
+      );
+    }
 
     return (
       <Link
@@ -141,21 +140,17 @@ const Sidebar = () => {
   };
 
   const logoutHandler = async () => {
-    signOut();
+    await signOut();
   };
 
   return (
-    <Fragment>
-      {isLoading &&
-        createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
-      {isLoading &&
-        createPortal(<Spinner />, document.getElementById("backdrop-root"))}
+    <div className={"relative z-50"}>
       <aside
         className="md:flex overflow-y-scroll no-scrollbar hidden relative border-e-2 bg-white px-[21.95px] py-[29.27px] items-center flex-col gap-[14.64px]"
         style={{
           width: !isCollapsed ? "297.29px" : "98.2833px",
           height: "100vh",
-          transition: "width 0.3s ease",
+          transition: "width 0.3s ease"
         }}
       >
         <Link href={"/homepage/dashboard2"}>
@@ -174,7 +169,7 @@ const Sidebar = () => {
             alt="Company's logo"
             width={isCollapsed ? 0 : 147}
             height={isCollapsed ? 0 : 58}
-            className={`${isCollapsed ? "opacity-0 mb-0 w-0 h-0" : "opacity-100 mt-[-14.64px] mb-[29.27px] w-[147px] h-[58px]"}`}
+            className={`${isCollapsed ? "opacity-0 mb-0 w-0 h-0" : "opacity-100 mt-[-14.64px] mb-[29.27px] w-52 h-16 flex justify-center items-center"}`}
             style={{ transition: "all 0.3s ease" }}
           />
         </Link>
@@ -232,10 +227,9 @@ const Sidebar = () => {
           onClick={() => setIsCollapsed((prev) => !prev)}
           text={"Collapse"}
           children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />}
-          style={"mt-auto"}
         />
       </aside>
-      <nav className="flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white">
+      <nav className="flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar ">
         <SidebarItemMobile
           href={"/homepage/dashboard2"}
           text={"Dashboard"}
@@ -255,9 +249,21 @@ const Sidebar = () => {
           numberOfUnseenNotifications={0}
         />
         <SidebarItemMobile
+          href={"/homepage/rent"}
+          text={"Rent"}
+          children={<DroneIcon />}
+          numberOfUnseenNotifications={0}
+        />
+        <SidebarItemMobile
           href={"/homepage/portfolio"}
           text={"Portfolio"}
           children={<ShoppingBagsIcon />}
+          numberOfUnseenNotifications={0}
+        />
+        <SidebarItemMobile
+          href={"/homepage/funds"}
+          text={"Funds"}
+          children={<WalletIcon />}
           numberOfUnseenNotifications={0}
         />
         <SidebarItemMobile
@@ -266,8 +272,19 @@ const Sidebar = () => {
           children={<GiftIcon />}
           numberOfUnseenNotifications={0}
         />
+        <SidebarItemMobile
+          href={"https://skytrade.tawk.help"}
+          text={"HelpCenter"}
+          children={<HelpQuestionIcon />}
+          numberOfUnseenNotifications={0}
+        />
+        <SidebarItemMobile
+          onClick={logoutHandler}
+          text={"Logout"}
+          children={<LogoutIcon />}
+        />
       </nav>
-    </Fragment>
+    </div>
   );
 };
 

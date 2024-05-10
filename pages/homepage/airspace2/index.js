@@ -15,17 +15,88 @@ import {
   SuccessIcon,
   FailureIcon,
   EarthIcon,
+  SuccessIconwhite,
+  CloseIconWhite
 } from "@/Components/Icons";
-import useDatabase from "@/hooks/useDatabase";
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
 import Link from "next/link";
 import { useTimezoneSelect, allTimezones } from "react-timezone-select";
 import axios from "axios";
 import Head from "next/head";
-import { useTour } from "@reactour/tour";
-import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
+import PropertiesService from "@/services/PropertiesService";
+import { toast } from "react-toastify";
+
+const SuccessModal = ({ closePopUp, isSuccess }) => {
+  const router = useRouter();
+  const handleButtonClick = () => {
+    router.push("/homepage/referral");
+  };
+
+  return (
+    <div className="claim-modal-step fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] ">
+      <div
+        className={`w-[100%] h-screen   ${isSuccess ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+      >
+        <div
+          className={`px-8 flex-col  items-center flex justify-center w-full h-full `}
+        >
+          <div className="w-16 h-16 mt-6">
+            {isSuccess ? <SuccessIconwhite /> : <CloseIconWhite />}
+          </div>
+          <div>
+            {isSuccess ? (
+              <div className="mt-8">
+                <h1 className="mt-6 px-8 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
+                  Congratulations on claiming your piece of the sky successfully
+                  !
+                </h1>
+                <p className="mt-6 px-10 font-[300] text-[15px] text-center text-[#FFFFFF] font-poppins">
+                  To make additional income and credits, refer your friends and
+                  colleagues by revealing your referral code below.
+                </p>
+              </div>
+            ) : (
+              <div className="mt-20">
+                <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
+                  Claim Failed! Please review your submission and ensure all
+                  information is correct.
+                </h1>
+              </div>
+            )}
+          </div>
+          {isSuccess ? (
+            <>
+              <button
+                onClick={handleButtonClick}
+                className="mt-8 py-2 w-[50%] h-[41px] border rounded-md gap-10 text-center text-[#FFFFFF] text-[14px] bg-transparent border-white hover:bg-white hover:text-green-500"
+              >
+                Referral Code
+              </button>
+
+              <button
+                onClick={closePopUp}
+                className="mt-4 py-2 w-[50%] h-[41px] border rounded-md gap-10 text-center text-[#FFFFFF] text-[14px] bg-transparent border-white hover:bg-white hover:text-green-500"
+              >
+                Close
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={closePopUp}
+                className="mt-24 py-2 w-[50%] h-[41px] border rounded-md gap-10 text-center text-[#FFFFFF] text-[14px] bg-transparent border-white hover:bg-white hover:text-green-500"
+              >
+                Close
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Toggle = ({ checked, setChecked }) => {
   return (
@@ -46,12 +117,12 @@ const TimeZoneSelect = ({ timeZone, setTimeZone }) => {
   const labelStyle = "original";
   const timezones = {
     ...allTimezones,
-    "Europe/Berlin": "Frankfurt",
+    "Europe/Berlin": "Frankfurt"
   };
 
   const { options, parseTimezone } = useTimezoneSelect({
     labelStyle,
-    timezones,
+    timezones
   });
   const [selectedLabel, setSelectedLabel] = useState("Europe/London");
   const handleTimeZoneChange = (event) => {
@@ -136,7 +207,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
     "WEDNESDAYS",
     "THURSDAYS",
     "FRIDAYS",
-    "SATURDAYS",
+    "SATURDAYS"
   ];
 
   const options = Array.from({ length: 25 });
@@ -147,7 +218,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
       isAvailable: true,
       fromTime: 9,
       toTime: 21,
-      weekDayId: day.weekDayId,
+      weekDayId: day.weekDayId
     }));
     setWeekDayRanges(defaultWeekDayRanges);
   }, []);
@@ -228,7 +299,7 @@ const ClaimModal = ({
   data,
   setData,
   onClaim,
-  claimButtonLoading,
+  claimButtonLoading
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   const searchParams = useSearchParams();
@@ -247,33 +318,31 @@ const ClaimModal = ({
     setData((prev) => {
       return {
         ...prev,
-        name: airSpaceName[0],
+        name: airSpaceName[0]
       };
     });
   }, []);
   const handleSellPrice = (e) => {
     let inputVal = e.target.value;
-    console.log(inputVal);
     let parsedVal = parseFloat(inputVal);
     if (parsedVal >= 0 && parsedVal != NaN) {
-      console.log("parseVal ", parseFloat(inputVal));
       setData((prev) => {
         return {
           ...prev,
-          sellingPrice: inputVal,
+          sellingPrice: inputVal
         };
       });
     } else {
       setData((prev) => {
         return {
           ...prev,
-          sellingPrice: "0",
+          sellingPrice: "0"
         };
       });
     }
   };
   return (
-    <div className="claim-modal-step fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] ">
+    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
       <div
         className="z-[100] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px]      md:shadow-none"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -416,7 +485,7 @@ const ClaimModal = ({
                       onChange={() =>
                         setData((prev) => ({
                           ...prev,
-                          hasLandingDeck: !prev.hasLandingDeck,
+                          hasLandingDeck: !prev.hasLandingDeck
                         }))
                       }
                     />
@@ -437,7 +506,7 @@ const ClaimModal = ({
                       onChange={() =>
                         setData((prev) => ({
                           ...prev,
-                          hasChargingStation: !prev.hasChargingStation,
+                          hasChargingStation: !prev.hasChargingStation
                         }))
                       }
                     />
@@ -458,7 +527,7 @@ const ClaimModal = ({
                       onChange={() =>
                         setData((prev) => ({
                           ...prev,
-                          hasStorageHub: !prev.hasStorageHub,
+                          hasStorageHub: !prev.hasStorageHub
                         }))
                       }
                     />
@@ -564,7 +633,7 @@ const ClaimModal = ({
                     ? "#0653EA"
                     : "transparent",
                 borderRadius: "50%",
-                backgroundClip: "content-box",
+                backgroundClip: "content-box"
               }}
               type="checkbox"
               name="zone-yes"
@@ -588,7 +657,7 @@ const ClaimModal = ({
                     ? "#0653EA"
                     : "transparent",
                 borderRadius: "50%",
-                backgroundClip: "content-box",
+                backgroundClip: "content-box"
               }}
               type="checkbox"
               name="zone-no"
@@ -610,7 +679,7 @@ const ClaimModal = ({
                   ? "#0653EA"
                   : "transparent",
                 borderRadius: "50%",
-                backgroundClip: "content-box",
+                backgroundClip: "content-box"
               }}
               type="checkbox"
               name="zone-dont-know"
@@ -644,7 +713,7 @@ const ClaimModal = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -670,7 +739,7 @@ const Explorer = ({
   showOptions,
   handleSelectAddress,
   onClaimAirspace,
-  flyToAddress,
+  flyToAddress
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   const searchParams = useSearchParams();
@@ -728,7 +797,7 @@ const Explorer = ({
                   onClick={() => handleSelectAddress(item.place_name)}
                   className="w-full p-5 text-left text-[#222222]"
                   style={{
-                    borderTop: "0.2px solid #222222",
+                    borderTop: "0.2px solid #222222"
                   }}
                 >
                   {item.place_name}
@@ -758,7 +827,7 @@ const ExplorerMobile = ({
   handleSelectAddress,
   onClaimAirspace,
   flyToAddress,
-  onGoBack,
+  onGoBack
 }) => {
   return (
     <div className=" enter-address-step  z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
@@ -795,7 +864,7 @@ const ExplorerMobile = ({
                   onClick={() => handleSelectAddress(item.place_name)}
                   className="w-full p-5 text-left text-[#222222]"
                   style={{
-                    borderTop: "0.2px solid #222222",
+                    borderTop: "0.2px solid #222222"
                   }}
                 >
                   {item.place_name}
@@ -916,7 +985,6 @@ const FailurePopUp = ({ isVisible }) => {
 };
 
 const HowToModal = ({ goBack }) => {
-  console.log("yoo how too");
   const [section, setSection] = useState(0);
   return (
     <div className="absolute z-50 flex h-screen w-screen flex-col items-center justify-center bg-white">
@@ -998,7 +1066,7 @@ const HowToModal = ({ goBack }) => {
             style={{
               background: index !== section ? "#D9D9D9" : "transparent",
               border: index === section ? "1px solid #D9D9D9" : "none",
-              borderRadius: "50%",
+              borderRadius: "50%"
             }}
           />
         ))}
@@ -1023,7 +1091,7 @@ const Airspaces = () => {
   const [flyToAddress, setFlyToAddress] = useState("");
   const [coordinates, setCoordinates] = useState({
     longitude: "",
-    latitude: "",
+    latitude: ""
   });
   const [marker, setMarker] = useState();
   const defaultData = {
@@ -1047,8 +1115,8 @@ const Airspaces = () => {
       { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 3 },
       { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 4 },
       { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 5 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 },
-    ],
+      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 }
+    ]
   };
   // showing
   const [showOptions, setShowOptions] = useState(false);
@@ -1057,7 +1125,7 @@ const Airspaces = () => {
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [data, setData] = useState({ ...defaultData });
   // database
-  const { createProperty } = useDatabase();
+  const { claimProperty } = PropertiesService();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -1073,8 +1141,8 @@ const Airspaces = () => {
         zoom: 15,
         bounds: [
           [-73.9876, 40.7661],
-          [-73.9397, 40.8002],
-        ],
+          [-73.9397, 40.8002]
+        ]
         // attributionControl: false
       });
 
@@ -1088,14 +1156,14 @@ const Airspaces = () => {
               type: "Feature",
               geometry: {
                 type: "Polygon",
-                coordinates: [],
-              },
-            },
+                coordinates: []
+              }
+            }
           },
           layout: {},
           paint: {
-            "fill-color": "#D20C0C",
-          },
+            "fill-color": "#D20C0C"
+          }
         });
       });
 
@@ -1168,7 +1236,7 @@ const Airspaces = () => {
 
         map.flyTo({
           center: endPoint,
-          zoom: 16,
+          zoom: 16
         });
 
         if (marker) {
@@ -1217,8 +1285,8 @@ const Airspaces = () => {
 
   useEffect(() => {
     if (localStorage.getItem("new")) {
-    setIsOpen(true);
-    localStorage.removeItem("new");
+      setIsOpen(true);
+      localStorage.removeItem("new");
     }
   }, []);
 
@@ -1243,13 +1311,15 @@ const Airspaces = () => {
         transitFee,
         noFlyZone,
         isFixedTransitFee,
-        weekDayRanges,
+        weekDayRanges
       } = data;
       let { latitude, longitude } = coordinates;
       latitude = Number(latitude);
       longitude = Number(longitude);
+
       if (!name) return;
-      const addProperty = await createProperty(user.blockchainAddress, {
+
+      const postData = {
         address,
         ownerId: user.id,
         propertyStatusId: 0,
@@ -1269,21 +1339,22 @@ const Airspaces = () => {
           { latitude: latitude + 0.0001, longitude: longitude + 0.0001 },
           { latitude: latitude + 0.0001, longitude: longitude - 0.0001 },
           { latitude: latitude - 0.0001, longitude: longitude + 0.0001 },
-          { latitude: latitude - 0.0001, longitude: longitude - 0.0001 },
+          { latitude: latitude - 0.0001, longitude: longitude - 0.0001 }
         ],
-        weekDayRanges,
-      });
-      console.log("add property results ,", addProperty);
-      if (addProperty === undefined) {
-        setShowFailurePopUp(true);
-      } else {
-        setShowSuccessPopUp(true);
-      }
+        weekDayRanges
+      };
+
+      const responseData = await claimProperty({ postData });
+
+      if (!responseData) setShowFailurePopUp(true);
+      else setShowSuccessPopUp(true);
+
       setShowClaimModal(false);
       setIsLoading(false);
       setData({ ...defaultData });
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Error when creating property.");
     } finally {
       setClaimButtonLoading(false);
     }
@@ -1306,7 +1377,7 @@ const Airspaces = () => {
       }
       map.flyTo({
         center: [longitude, latitude],
-        zoom: 15,
+        zoom: 15
       });
     } catch (error) {
       console.error("Error:", error);
@@ -1366,11 +1437,11 @@ const Airspaces = () => {
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
             <div
-              className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-full`}
+              className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-screen`}
               id="map"
               style={{
                 opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",
-                zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
+                zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20"
               }}
             />
             {((isMobile && showMobileMap && flyToAddress) ||
@@ -1386,19 +1457,29 @@ const Airspaces = () => {
               </div>
             )}
             {isMobile && (
-              <Fragment>     
-                  {(showClaimModal || (isOpen && currentStep >= 3)) && (
-                    <ClaimModal
-                      onCloseModal={() => {
-                        setShowClaimModal(false);
-                        setIsLoading(false);
-                      }}
-                      data={data}
-                      setData={setData}
-                      onClaim={onClaim}
-                      claimButtonLoading={claimButtonLoading}
-                    />
-                  )}
+              <Fragment>
+                {showClaimModal && (
+                  <ClaimModal
+                    onCloseModal={() => {
+                      setShowClaimModal(false);
+                      setIsLoading(false);
+                    }}
+                    data={data}
+                    setData={setData}
+                    onClaim={onClaim}
+                    claimButtonLoading={claimButtonLoading}
+                  />
+                )}
+                {(showSuccessPopUp || showFailurePopUp) && (
+                  <SuccessModal
+                    isSuccess={showSuccessPopUp}
+                    closePopUp={() => {
+                      showFailurePopUp
+                        ? setShowFailurePopUp(false)
+                        : setShowSuccessPopUp(false);
+                    }}
+                  />
+                )}
               </Fragment>
             )}
             {!isMobile && (
@@ -1455,7 +1536,7 @@ const Airspaces = () => {
                       href={"/homepage/portfolio"}
                       className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
                       style={{
-                        backgroundImage: "url('/images/airspace-preview.png')",
+                        backgroundImage: "url('/images/airspace-preview.png')"
                       }}
                     >
                       <p className="text-xl font-medium text-white">Airspace</p>
@@ -1464,7 +1545,7 @@ const Airspaces = () => {
                       href={"/homepage/portfolio"}
                       className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
                       style={{
-                        backgroundImage: "url('/images/portfolio.jpg')",
+                        backgroundImage: "url('/images/portfolio.jpg')"
                       }}
                     >
                       <p className="text-xl font-medium text-white">

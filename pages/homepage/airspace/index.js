@@ -10,9 +10,8 @@ import Image from 'next/image';
 import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 
-import { Web3Auth } from '@web3auth/modal';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
@@ -23,15 +22,16 @@ import Backdrop from '@/Components/Backdrop';
 import MyAirspaceOverview from '@/Components/MyAirspaces/MyAirspaceOverview';
 import Airspaces from '@/Components/Airspaces';
 import AdditionalAispaceInformation from '@/Components/Modals/AdditionalAirspaceInformation';
-import { counterActions } from '@/store/store';
+
 import Spinner from '@/Components/Spinner';
 import MyAirspaceTab from '@/Components/MyAirspaceTab';
 import EditAispaceModal from '@/Components/Modals/EditAirspaceModal';
-// import { useVerification } from '@/hooks/useVerification';
 import CollapseAirspace from '@/Components/CollapseAirspace';
+import { setAdditionalInfoModal, setAirspaceData, setNewAirspaceModal } from '@/redux/slices/userSlice';
+import PropertiesService from "@/services/PropertiesService";
+import { counterActions } from '@/store/store';
 
 const Airspace = () => {
-  // const { verificationCheck } = useVerification();
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -58,69 +58,13 @@ const Airspace = () => {
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
 
-  const [user, setUser] = useState();
-  const [token, setToken] = useState();
+  const { user, web3authStatus } = useAuth();
+  const { getClaimedPropertiesByUserAddress } = PropertiesService();
 
-  const { user: selectorUser } = useAuth();
-
-  useEffect(() => {
-    if (selectorUser) {
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: 'solana',
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
-          blockExplorer: 'https://explorer.solana.com',
-          ticker: 'SOL',
-          tickerName: 'Solana',
-        };
-
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        // await web3auth.connect();
-
-        let userInfo;
-
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem('openlogin_store');
-          swal({
-            title: 'oops!',
-            text: 'Something went wrong. Kindly try again',
-          }).then(() => router.push('/auth/join'));
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem('openlogin_store')
-        );
-
-        if (!selectorUser) {
-          localStorage.removeItem('openlogin_store');
-          router.push('/auth/join');
-          return;
-        }
-
-        setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
-      };
-
-      authUser();
-    }
-  }, []);
 
   // CREATE MAP
   useEffect(() => {
-    if (token && user && !map) {
+    if (user && !map) {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
       const newMap = new mapboxgl.Map({
@@ -153,7 +97,9 @@ const Airspace = () => {
 
       setMap(newMap);
     }
-  }, [token, user]);
+  }, [
+    // token,
+     user, web3authStatus]);
 
   // FLY TO ADDRESS
   useEffect(() => {
@@ -254,98 +200,28 @@ const Airspace = () => {
   // GET USER PROPERTIES / AIRSPACE
   useEffect(() => {
     const getUserAirspace = async () => {
-      if (user) {
-        const signatureObj = {};
+      try {
+        const responseData = await getClaimedPropertiesByUserAddress();
 
-        const chainConfig = {
-          chainNamespace: 'solana',
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: 'Solana Mainnet',
-          blockExplorer: 'https://explorer.solana.com',
-          ticker: 'SOL',
-          tickerName: 'Solana',
-        };
-
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        const web3authProvider = await web3auth.connect();
-
-        const solanaWallet = new SolanaWallet(web3authProvider);
-
-        // const userInfo = await web3auth.getUserInfo();
-
-        const domain = window.location.host;
-        // const domain = 'localhost:3000';
-        const origin = window.location.origin;
-        // const origin = 'http://localhost:3000';
-
-        const payload = new SIWPayload();
-        payload.domain = domain;
-        payload.uri = origin;
-        payload.address = user.blockchainAddress;
-        payload.statement = 'Sign in to SkyTrade app.';
-        payload.version = '1';
-        payload.chainId = 1;
-
-        const header = { t: 'sip99' };
-        const network = 'solana';
-
-        let message = new SIWWeb3({ header, payload, network });
-
-        const messageText = message.prepareMessage();
-        const msg = new TextEncoder().encode(messageText);
-        const result = await solanaWallet.signMessage(msg);
-
-        const signature = base58.encode(result);
-
-        signatureObj.sign = signature;
-        signatureObj.sign_nonce = message.payload.nonce;
-        signatureObj.sign_issue_at = message.payload.issuedAt;
-        signatureObj.sign_address = user.blockchainAddress;
-
-        fetch(`/api/proxy?${Date.now()}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            uri: `/private/properties/user-properties/${user.id}`,
-            sign: signatureObj.sign,
-            time: signatureObj.sign_issue_at,
-            nonce: signatureObj.sign_nonce,
-            address: signatureObj.sign_address,
-          },
-        })
-          .then((res) => {
-            if (!res.ok) {
-              return res.json().then((err) => {
-                throw new Error(err.message);
-              });
-            }
-            return res.json().then((data) => {
-              setMyAirspaces(data);
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
+        if (responseData) {
+          setMyAirspaces(responseData);
+        }
+      } catch (error) {
+        console.log(error);
+      } 
     };
 
     getUserAirspace();
-  }, [user]);
+  }, [user, web3authStatus]);
 
-  const newAirspace = useSelector((state) => {
-    return state.value.newAirspace;
-  });
+
 
   const additionalInfo = useSelector(
     (state) => state.value.airspaceAdditionalInfo
+  );
+
+  const newAirspace = useSelector(
+    (state) => state.value.newAirspace
   );
 
   const showAddAirspaceModalHandler = (e) => {
@@ -356,7 +232,7 @@ const Airspace = () => {
     setShowAddAirspaceModal(false);
     setshowAddReviewModal(false);
 
-    dispatch(counterActions.closeNewAirspaceModal());
+    dispatch(counterActions.setNewAirspaceModal(false));
   };
 
   const editAirspaceHandler = () => {
@@ -408,16 +284,6 @@ const Airspace = () => {
   const confirmAddressHandler = (e) => {
     setIsLoading(true);
 
-    // if (user.categoryId === 1 && user.KYCStatusId !== 2) {
-    //   swal({
-    //     title: 'Sorry!',
-    //     text: 'Your KYB is yet to be completed. A member of our team will be in contact with you soon',
-    //   });
-
-    //   setIsLoading(false);
-    //   return;
-    // }
-
     const vertexes = [];
 
     if (addressData.geojson && addressData.geojson.type === 'Polygon') {
@@ -443,15 +309,13 @@ const Airspace = () => {
       vertexes: vertexes,
     };
 
-    dispatch(counterActions.airspaceData(addressValue));
+    dispatch(counterActions.setAirspaceData(addressValue));
 
-    // verificationCheck(selectorUser);
-
-    dispatch(counterActions.additionalInfoModal());
+    dispatch(counterActions.setAdditionalInfoModal(true));
     setIsLoading(false);
   };
 
-  if (!user || !token) {
+  if (!user) {
     return <Spinner />;
   }
 
@@ -496,10 +360,10 @@ const Airspace = () => {
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
         >
           <Navbar
-            name={user.name}
+            name={user?.name}
             onClose={() => setShowOptions(false)}
-            categoryId={user.categoryId}
-          // status={user.KYCStatusId}
+            categoryId={user?.categoryId}
+          // status={user?.KYCStatusId}
           >
             <div className='relative'>
               <svg
@@ -644,7 +508,7 @@ const Airspace = () => {
                       <MyAirspaceTab
                         key={airspace.id}
                         title={airspace.title}
-                        name={user.name}
+                        name={user?.name}
                         address={airspace.address}
                         identification={airspace.identification}
                         status={airspace.noFlyZone}
@@ -668,8 +532,8 @@ const Airspace = () => {
                 closeDetails={closeAirspaceDetailsHandler}
                 address={myFilteredAirspace.address}
                 title={myFilteredAirspace.title}
-                name={user.name}
-                email={user.email}
+                name={user?.name}
+                email={user?.email}
                 amount={myFilteredAirspace.transitFee}
                 landingDeck={myFilteredAirspace.hasLandingDeck}
                 chargingStation={myFilteredAirspace.hasChargingStation}

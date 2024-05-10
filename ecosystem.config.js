@@ -5,6 +5,7 @@ module.exports = {
     autorestart: true,
     watch: false,
     args: "start",
+    max_memory_restart: '1G',
     env_dev: {
       NODE_ENV: "development"
     },

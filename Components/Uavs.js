@@ -9,27 +9,15 @@ import AddUavModal from '@/Components/Modals/AddUavModal';
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 
 const UAVs = () => {
   const router = useRouter();
   const [addUav, setAddUav] = useState();
-  const [user, setUser] = useState();
-  const [token, setToken] = useState('');
 
-  const { user: selectorUser } = useAuth();
+  const { user } = useAuth();
 
-  useEffect(() => {
-    const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
 
-    if (fetchedToken.sessionId.length !== 64) {
-      router.push('/auth/join');
-      return;
-    }
-
-    setToken(fetchedToken.sessionId);
-    setUser(selectorUser);
-  }, []);
 
   const uavProfileHandler = () => {
     router.push('/homepage/uavs/1');
@@ -48,7 +36,7 @@ const UAVs = () => {
     setAddUav(false);
   };
 
-  if (!user || !token) {
+  if (!user) {
     return <Spinner />;
   }
 

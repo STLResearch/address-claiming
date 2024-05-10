@@ -1,39 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+
 
 import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
-import User from '@/models/User';
-import Backdrop from '@/Components/Backdrop';
-import Spinner from '@/Components/Spinner';
 
-import { useSelector } from 'react-redux';
-
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 
 const Weather = () => {
-  const router = useRouter();
 
-  const [user, setUser] = useState();
-  const [token, setToken] = useState('');
-
-  const { user: selectorUser } = useAuth();
-
-  useEffect(() => {
-    const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
-
-    if (fetchedToken.sessionId.length !== 64) {
-      router.push('/auth/join');
-      return;
-    }
-
-    setToken(fetchedToken.sessionId);
-    setUser(selectorUser);
-  }, []);
-
-  if (!user && !token) {
-    return <Spinner />;
-  }
+  const { user } = useAuth();
 
   return (
     <div className='flex w-screen flex-row'>
@@ -42,7 +16,7 @@ const Weather = () => {
         style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
         className='overflow-y-auto'
       >
-        <Navbar name={user.name} />
+        <Navbar name={user?.name} />
         <div className='flex flex-row justify-center'>
           <div
             className='mx-5 my-5 rounded bg-white p-5'

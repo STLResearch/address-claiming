@@ -6,6 +6,9 @@ const initialState = {
     airspaceAdditionalInfo: false,
     airspaceData: {},
     category: {},
+    user: {},
+    isWaitingScreenVisible: false,
+    userUSDWalletBalance: { amount: "0", isLoading: true },
   },
 };
 
@@ -13,34 +16,53 @@ const airspaceSlice = createSlice({
   name: 'airspace',
   initialState: initialState,
   reducers: {
-    newAirspaceModal(state) {
-      state.value.newAirspace = true;
+    setNewAirspaceModal(state, action) {
+      state.value.newAirspace = action.payload;
     },
 
-    closeNewAirspaceModal(state) {
-      state.value.newAirspace = false;
+        setCloseNewAirspaceModal(state, action) {
+      state.value.newAirspace = action.payload;
     },
 
-    additionalInfoModal(state) {
-      state.value.airspaceAdditionalInfo = true;
+    setAdditionalInfoModal(state, action) {
+      state.value.airspaceAdditionalInfo = action.payload;
     },
 
-    closeAdditionalInfoModal(state) {
-      state.value.airspaceAdditionalInfo = false;
+    setCloseAdditionalInfoModal(state, action) {
+      state.value.airspaceAdditionalInfo = action.payload;
     },
 
-    airspaceData(state, action) {
+    setAirspaceData(state, action) {
       state.value.airspaceData = {
         ...state.value.airspaceData,
         ...action.payload,
       };
     },
-    category(state, action) {
+    setCategory(state, action) {
       state.value.category = {
         ...state.value.category,
         ...action.payload,
       };
     },
+
+    setCategory(state, action) {
+      state.value.category = {
+        ...state.value.category,
+        ...action.payload,
+      };
+    },
+
+    setIsWaitingScreenVisible: (state, action)=>{
+        state.value.isWaitingScreenVisible = action.payload
+      },
+
+      setUser: (state, action)=>{
+        state.value.user = action.payload
+      },
+
+    setUserUSDWalletBalance: (state, action)=>{
+        state.value.userUSDWalletBalance = action.payload
+      },
   },
 });
 

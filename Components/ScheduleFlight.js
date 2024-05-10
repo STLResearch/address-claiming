@@ -1,37 +1,15 @@
 import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
 
 import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
 import map from '../../../../public/images/map-bg.png';
-import Spinner from '@/Components/Spinner';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 
 const ScheduleFlight = () => {
-  const router = useRouter();
 
-  const [user, setUser] = useState();
-  const [token, setToken] = useState('');
+  const { user } = useAuth();
 
-  const { user: selectorUser } = useAuth();
-
-  useEffect(() => {
-    const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
-
-    if (fetchedToken.sessionId.length !== 64) {
-      router.push('/auth/join');
-      return;
-    }
-
-    setToken(fetchedToken.sessionId);
-    setUser(selectorUser);
-  }, []);
-
-  if (!user || !token) {
-    return <Spinner />;
-  }
 
   return (
     <div className='flex w-screen flex-row'>
@@ -40,7 +18,7 @@ const ScheduleFlight = () => {
         style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
         className='overflow-y-auto'
       >
-        <Navbar name={user.name} />
+        <Navbar name={user?.name} />
         <div style={{ height: 'calc(100vh - 91px)' }}>
           <Image
             src={map}

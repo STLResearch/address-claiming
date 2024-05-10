@@ -1,15 +1,14 @@
-import { counterActions } from '@/store/store';
-import { Fragment, useRef, useState } from 'react';
+
+import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import swal from 'sweetalert';
-import { SolanaWallet } from '@web3auth/solana-provider';
-import { Web3Auth } from '@web3auth/modal';
-import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
-import base58 from 'bs58';
-
+import { counterActions } from '@/store/store';
 import TimeSelect from '../TimeSelect';
 import TimezoneSelectComponent from '../Timezone';
+// import { setAdditionalInfoModal } from '@/redux/slices/userSlice';
+import PropertiesService from "@/services/PropertiesService";
+import { toast } from 'react-toastify';
 
 const AdditionalAispaceInformation = (props) => {
   const router = useRouter();
@@ -48,14 +47,22 @@ const AdditionalAispaceInformation = (props) => {
   const [timezone, setTimezone] = useState('US/Central');
 
   const airspaceTitleRef = useRef();
+  const { claimProperty } = PropertiesService();
 
   const dispatch = useDispatch();
 
-  const airspaceData = useSelector((state) => state.value.airspaceData);
+  // const {airspaceData} = useSelector((state) => {
+  //   const {airspaceData} = state.userReducer;
+  //   return {airspaceData}
+  // });
+
+  const airspaceData = useSelector(
+    (state) => state.value.airspaceData
+  );
 
   const closeModalHandler = (e) => {
     e.preventDefault();
-    dispatch(counterActions.closeAdditionalInfoModal());
+    dispatch(counterActions.setAdditionalInfoModal(false));
   };
 
   const costCheckedHandler = (e) => {
@@ -92,177 +99,108 @@ const AdditionalAispaceInformation = (props) => {
 
   const formSubmitHandler = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    const airspaceTitle = airspaceTitleRef.current.value;
+    try {
+      setIsLoading(true);
+      const airspaceTitle = airspaceTitleRef.current.value;
 
-    const weekDayRanges = [
-      {
-        weekDayId: 0,
-        fromTime: +fromMonday,
-        toTime: +toMonday,
-        isAvailable:
-          monAvailable && airspaceStatus === 'Available' ? true : false,
-      },
-      {
-        weekDayId: 1,
-        fromTime: +fromTuesday,
-        toTime: +toTuesday,
-        isAvailable:
-          tueAvailable && airspaceStatus === 'Available' ? true : false,
-      },
-      {
-        weekDayId: 2,
-        fromTime: +fromWednesday,
-        toTime: +toWednesday,
-        isAvailable:
-          wedAvailable && airspaceStatus === 'Available' ? true : false,
-      },
-      {
-        weekDayId: 3,
-        fromTime: +fromThursday,
-        toTime: +toThursday,
-        isAvailable:
-          thuAvailable && airspaceStatus === 'Available' ? true : false,
-      },
-      {
-        weekDayId: 4,
-        fromTime: +fromFriday,
-        toTime: +toFriday,
-        isAvailable:
-          friAvailable && airspaceStatus === 'Available' ? true : false,
-      },
-      {
-        weekDayId: 5,
-        fromTime: +fromSaturday,
-        toTime: +toSaturday,
-        isAvailable:
-          satAvailable && airspaceStatus === 'Available' ? true : false,
-      },
-      {
-        weekDayId: 6,
-        fromTime: +fromSunday,
-        toTime: +toSunday,
-        isAvailable:
-          sunAvailable && airspaceStatus === 'Available' ? true : false,
-      },
-    ];
+      const weekDayRanges = [
+        {
+          weekDayId: 0,
+          fromTime: +fromMonday,
+          toTime: +toMonday,
+          isAvailable:
+            monAvailable && airspaceStatus === 'Available' ? true : false,
+        },
+        {
+          weekDayId: 1,
+          fromTime: +fromTuesday,
+          toTime: +toTuesday,
+          isAvailable:
+            tueAvailable && airspaceStatus === 'Available' ? true : false,
+        },
+        {
+          weekDayId: 2,
+          fromTime: +fromWednesday,
+          toTime: +toWednesday,
+          isAvailable:
+            wedAvailable && airspaceStatus === 'Available' ? true : false,
+        },
+        {
+          weekDayId: 3,
+          fromTime: +fromThursday,
+          toTime: +toThursday,
+          isAvailable:
+            thuAvailable && airspaceStatus === 'Available' ? true : false,
+        },
+        {
+          weekDayId: 4,
+          fromTime: +fromFriday,
+          toTime: +toFriday,
+          isAvailable:
+            friAvailable && airspaceStatus === 'Available' ? true : false,
+        },
+        {
+          weekDayId: 5,
+          fromTime: +fromSaturday,
+          toTime: +toSaturday,
+          isAvailable:
+            satAvailable && airspaceStatus === 'Available' ? true : false,
+        },
+        {
+          weekDayId: 6,
+          fromTime: +fromSunday,
+          toTime: +toSunday,
+          isAvailable:
+            sunAvailable && airspaceStatus === 'Available' ? true : false,
+        },
+      ];
 
-    const signatureObj = {};
+      const postData = {
+        ...airspaceData,
+        ownerId: props.user.id,
+        title: airspaceTitle,
+        transitFee: '$0.01 - $99.00',
+        hasStorageHub: storageChecked,
+        hasLandingDeck: deckChecked,
+        hasChargingStation: stationChecked,
+        isRentableAirspace: rentChecked,
+        isFixedTransitFee: costChecked,
+        noFlyZone: airspaceStatus === 'Available' ? false : true,
+        weekDayRanges,
+        timezone: airspaceStatus === 'Available' ? timezone : 'GMT',
+      }
 
-    const chainConfig = {
-      chainNamespace: 'solana',
-      chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-      rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-      displayName: 'Solana Mainnet',
-      blockExplorer: 'https://explorer.solana.com',
-      ticker: 'SOL',
-      tickerName: 'Solana',
-    };
+      const responseData = await claimProperty({ postData })
 
-    const web3auth = new Web3Auth({
-      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-      web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-      chainConfig: chainConfig,
-    });
-
-    await web3auth.initModal();
-
-    const web3authProvider = await web3auth.connect();
-
-    const solanaWallet = new SolanaWallet(web3authProvider);
-
-    // const userInfo = await web3auth.getUserInfo();
-
-    const domain = window.location.host;
-    // const domain = 'localhost:3000';
-    const origin = window.location.origin;
-    // const origin = 'http://localhost:3000';
-    
-    const payload = new SIWPayload();
-    payload.domain = domain;
-    payload.uri = origin;
-    payload.address = props.user.blockchainAddress;
-    payload.statement = 'Sign in to SkyTrade app.';
-    payload.version = '1';
-    payload.chainId = 1;
-
-    const header = { t: 'sip99' };
-    const network = 'solana';
-
-    let message = new SIWWeb3({ header, payload, network });
-
-    const messageText = message.prepareMessage();
-    const msg = new TextEncoder().encode(messageText);
-    const result = await solanaWallet.signMessage(msg);
-
-    const signature = base58.encode(result);
-
-    signatureObj.sign = signature;
-    signatureObj.sign_nonce = message.payload.nonce;
-    signatureObj.sign_issue_at = message.payload.issuedAt;
-    signatureObj.sign_address = props.user.blockchainAddress;
-
-    const airspaceInformation = {
-      ...airspaceData,
-      ownerId: props.user.id,
-      title: airspaceTitle,
-      transitFee: '$0.01 - $99.00',
-      hasStorageHub: storageChecked,
-      hasLandingDeck: deckChecked,
-      hasChargingStation: stationChecked,
-      isRentableAirspace: rentChecked,
-      isFixedTransitFee: costChecked,
-      noFlyZone: airspaceStatus === 'Available' ? false : true,
-      weekDayRanges,
-      timezone: airspaceStatus === 'Available' ? timezone : 'GMT',
-    };
-
-    fetch(`/api/proxy?${Date.now()}`, {
-      method: 'POST',
-      body: JSON.stringify(airspaceInformation),
-      headers: {
-        'Content-Type': 'application/json',
-        URI: '/private/properties/claim',
-        sign: signatureObj.sign,
-        time: signatureObj.sign_issue_at,
-        nonce: signatureObj.sign_nonce,
-        address: signatureObj.sign_address,
-      },
-    })
-      .then((res) => {
-        if (!res.ok || res.statusCode === 500) {
-          return res.json().then((err) => {
-            console.log(err);
-            throw new Error(err.errorMessage);
-          });
-        }
-        return res.json().then((response) => {
-          if (response.statusCode === 500) {
-            throw new Error('something went wrong');
-          }
-
-          swal({
-            title: 'Submitted',
-            text: 'Airspace Registered Successfully',
-            icon: 'success',
-            button: 'Ok',
-          }).then(() => {
-            dispatch(counterActions.closeAdditionalInfoModal());
-            // setIsLoading(false);
-            router.push('/homepage/dashboard2');
-          });
+      if (responseData && !responseData.errorMessage) { 
+        swal({
+          title: 'Submitted',
+          text: 'Airspace Registered Successfully',
+          icon: 'success',
+          button: 'Ok',
+        }).then(() => {
+          dispatch(counterActions.setAdditionalInfoModal(false));
+          // setIsLoading(false);
+          router.push('/homepage/dashboard2');
         });
-      })
-      .catch((error) => {
-        console.log(error);
-        const err = error.toString().split(':');
-        setIsLoading(false);
+      } else if (responseData && responseData.errorMessage) {
+        toast.error(responseData.errorMessage);
+      } else {
         swal({
           title: 'Oops!',
-          text: err[1] || 'Something went wrong. Kindly try again',
+          text: 'Something went wrong. Kindly try again',
         });
+      }
+    } catch (error) {
+      console.error(error);
+      const err = error.toString().split(':');
+      swal({
+        title: 'Oops!',
+        text: err[1] || 'Something went wrong. Kindly try again',
       });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

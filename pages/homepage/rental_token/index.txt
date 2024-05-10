@@ -8,7 +8,6 @@ import swal from 'sweetalert';
 import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 
-import { Web3Auth } from '@web3auth/modal';
 import Script from 'next/script';
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 const BN = require('bn.js');
@@ -36,7 +35,7 @@ import Sidebar from '@/Components/Sidebar';
 
 import Spinner from '@/Components/Spinner';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { PublicKey } from '@solana/web3.js';
 import geojson1 from '@/Components/static/savedGeojson';
@@ -50,8 +49,6 @@ const Rental_Airspace = () => {
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
   const [conversationsLoaded, setConversationsLoaded] = useState(false);
-  const [user, setUser] = useState();
-  const [token, setToken] = useState('');
   const [city, setcity] = useState('')
 
 
@@ -61,60 +58,11 @@ const Rental_Airspace = () => {
     setcity(e.target.value)
   }
  
-  const { user: selectorUser } = useAuth();
+  const { user, web3authStatus } = useAuth();
  
 
-
-  useEffect(() => {
-    if (selectorUser) {
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: 'solana',
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID, // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}` ,
-          blockExplorer: 'https://explorer.solana.com',
-          ticker: 'SOL',
-          tickerName: 'Solana',
-        };
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-        await web3auth.initModal();
-        // await web3auth.connect();
-        let userInfo;
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem('openlogin_store');
-          swal({
-            title: 'oops!',
-            text: 'Something went wrong. Kindly try again',
-          }).then(() => router.push('/auth/join'));
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem('openlogin_store')
-        );
-
-        if (!selectorUser) {
-          localStorage.removeItem('openlogin_store');
-          router.push('/auth/join');
-          return;
-        }
-
-        setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
-      };
-      authUser();
-    }
-  }, [selectorUser]);
 useEffect(() => {
-    if (token && user && !map) {
+    if (user && !map) {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
       const newMap = new mapboxgl.Map({
@@ -154,7 +102,7 @@ useEffect(() => {
 
       
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
 
   useEffect(()=>{
@@ -230,11 +178,9 @@ useEffect(() => {
 
 
 
-  if (!user || !token) {
+  if (!user) {
     return <Spinner />;
   }
-console.log(selectorUser)
-
 
 
 
@@ -264,9 +210,9 @@ console.log(selectorUser)
           className='overflow-y-auto overflow-x-hidden'
         >
           <Navbar
-            name={user.name}
-            categoryId={user.categoryId}
-            // status={user.KYCStatusId}
+            name={user?.name}
+            categoryId={user?.categoryId}
+            // status={user?.KYCStatusId}
           />
 
           <div

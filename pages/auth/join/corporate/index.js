@@ -1,22 +1,26 @@
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { Fragment, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { createPortal } from 'react-dom';
-import swal from 'sweetalert';
-import logo from '../../../../public/images/logo.jpg';
-import Script from 'next/script';
+// "use client";
 
-import Backdrop from '@/Components/Backdrop';
-import Spinner from '@/Components/Spinner';
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { shallowEqual, useSelector } from "react-redux";
+import { createPortal } from "react-dom";
+import swal from "sweetalert";
+import logo from '../../../../public/images/logo.svg';
+import Script from "next/script";
 
-import { useAuth } from '@/hooks/useAuth';
+import Backdrop from "@/Components/Backdrop";
+import Spinner from "@/Components/Spinner";
+
+import useAuth from "@/hooks/useAuth";
+import UserService from "@/services/UserService";
 
 const CorporateSignup = () => {
   const router = useRouter();
   const newsletterRef = useRef();
   const nameRef = useRef();
   const phoneNumberRef = useRef();
+  const { createUser } = UserService();
 
   const [newsletter, setNewsletter] = useState(false);
   const [nameValid, setNameValid] = useState(true);
@@ -25,15 +29,22 @@ const CorporateSignup = () => {
   const [pageLoad, setPageLoad] = useState(true);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (!category.categoryId) {
-        router.replace('/auth/join');
+        router.replace("/auth/join");
         return;
       }
     }
 
     setPageLoad(false);
   }, []);
+
+  // const {category} = useSelector((state) =>
+  // {
+  //   const {category} = state.userReducer
+  //   return {category}
+  // }, shallowEqual
+  //  );
 
   const category = useSelector((state) => state.value.category);
 
@@ -45,104 +56,97 @@ const CorporateSignup = () => {
 
   const returnHandler = (e) => {
     e.preventDefault();
-    router.push('/auth/join');
+    router.push("/auth/join");
   };
 
-  const formSubmitHandler = (e) => {
+  const formSubmitHandler = async (e) => {
     e.preventDefault();
+    try {
+      const name = nameRef.current.value;
+      const phoneNumber = phoneNumberRef.current.value;
 
-    const name = nameRef.current.value;
-    const phoneNumber = phoneNumberRef.current.value;
-
-    if (!name) {
-      setNameValid(false);
-      swal({
-        title: 'oops!',
-        text: 'Kindly complete all required fields',
-        timer: 2000,
-      });
-      return;
-    }
-
-    if (!phoneNumber || isNaN(+phoneNumber) || phoneNumber.charAt(0) !== '+') {
-      setPhoneNumberValid(false);
-      swal({
-        title: 'Oops!',
-        text: "Invalid phone number. Ensure to include country code starting with '+' (e.g +12124567890).",
-        // timer: 3000
-      });
-      return;
-    }
-
-    const userInfo = {
-      ...category,
-      categoryId: +category.categoryId,
-      name,
-      phoneNumber: phoneNumber,
-      newsletter,
-    };
-
-    setIsLoading(true);
-
-    fetch(`/api/proxy?${Date.now()}`, {
-      method: 'POST',
-      body: JSON.stringify(userInfo),
-      headers: {
-        'Content-Type': 'application/json',
-        uri: '/public/users/create',
-        proxy_to_method: 'POST',
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          return res.json().then((errorData) => {
-            console.log('This is the errordata', errorData);
-            swal({
-              title: '',
-              text: `${errorData.errorMessage}`,
-            });
-            throw new Error(errorData.errorMessage);
-          });
-        }
-
-        return res.json().then((response) => {
-          if (response.statusCode === 500) {
-            throw new Error('something went wrong');
-          }
-
-          swal({
-            title: 'Submitted',
-            text: 'User registered successfully. You will now be signed in',
-            icon: 'success',
-            button: 'Ok',
-          }).then(() => {
-            signIn({
-              token: temporaryToken,
-              user: response,
-            });
-
-            // localStorage.setItem(
-            //   'openlogin_store',
-            //   JSON.stringify({
-            //     sessionId: temporaryToken.sessionId,
-            //   })
-            // );
-
-            // localStorage.setItem('user', JSON.stringify(response));
-
-            // setIsLoading(false);
-            nameRef.current.value = '';
-            phoneNumberRef.current.value = '';
-            // dispatch(counterActions.userAuth(response));
-            router.replace('/homepage/dashboard');
-          });
+      if (!name) {
+        setNameValid(false);
+        swal({
+          title: "oops!",
+          text: "Kindly complete all required fields",
+          timer: 2000,
         });
-      })
-      .catch((error) => {
-        console.log(error);
-        setIsLoading(false);
+        return;
+      }
+
+      if (
+        !phoneNumber ||
+        isNaN(+phoneNumber) ||
+        phoneNumber.charAt(0) !== "+"
+      ) {
+        setPhoneNumberValid(false);
+        swal({
+          title: "Oops!",
+          text: "Invalid phone number. Ensure to include country code starting with '+' (e.g +12124567890).",
+          // timer: 3000
+        });
+        return;
+      }
+
+      const userInfo = {
+        ...category,
+        categoryId: +category.categoryId,
+        name,
+        phoneNumber: phoneNumber,
+        newsletter,
+      };
+
+      setIsLoading(true);
+
+      const responseData = await createUser(userInfo);
+
+      if (responseData && responseData.errorMessage) {
+        swal({
+          title: "Sorry!",
+          text: `${responseData.errorMessage}`,
+        });
+      } else if (responseData) {
+        swal({
+          title: "Submitted",
+          text: "User registered successfully. You will now be signed in",
+          icon: "success",
+          button: "Ok",
+        }).then(() => {
+          signIn({
+            token: temporaryToken,
+            user: response,
+          });
+
+          nameRef.current.value = "";
+          phoneNumberRef.current.value = "";
+          router.replace("/homepage/dashboard2");
+        });
+      } else {
+        swal({
+          title: "Sorry!",
+          text: `something went wrong`,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+
+      swal({
+        title: "Sorry!",
+        text: `Something went wrong, please try again.`,
       });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    const categoryData = localStorage.getItem("category");
+    if (categoryData) {
+      const currentCategory = JSON.parse(categoryData);
+      dispatch(counterActions.setCategory(currentCategory));
+    }
+  }, []);
 
   if (pageLoad) {
     return <Spinner />;
@@ -151,36 +155,36 @@ const CorporateSignup = () => {
   return (
     <Fragment>
       {isLoading &&
-        createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
+        createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
       {isLoading &&
-        createPortal(<Spinner />, document.getElementById('backdrop-root'))}
+        createPortal(<Spinner />, document.getElementById("backdrop-root"))}
       <form
         onSubmit={formSubmitHandler}
-        className='px-auto relative mx-auto bg-white font-sans'
+        className="px-auto relative mx-auto bg-white font-sans"
         style={{
-          width: '680px',
-          height: '100vh',
-          maxHeight: '607px',
-          padding: '93px 142px',
+          width: "680px",
+          height: "100vh",
+          maxHeight: "607px",
+          padding: "93px 142px",
         }}
       >
         <button
           onClick={returnHandler}
-          className='absolute left-8 top-8 flex flex-row items-center gap-2'
+          className="absolute left-8 top-8 flex flex-row items-center gap-2"
         >
           <svg
-            xmlns='http://www.w3.org/2000/svg'
-            width='14'
-            height='8'
-            viewBox='0 0 14 8'
-            fill='none'
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="8"
+            viewBox="0 0 14 8"
+            fill="none"
           >
             <path
-              d='M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4'
-              stroke='#252530'
-              strokeWidth='1.4'
-              strokeLinecap='round'
-              strokeLinejoin='round'
+              d="M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4"
+              stroke="#252530"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
           <p>Back</p>
@@ -188,78 +192,78 @@ const CorporateSignup = () => {
         {/* {error && <p className="text-sm mx-auto text-red-600">{error}</p>} */}
         <Image src={logo} alt="Company's logo" width={172} height={61} />
         <p
-          className=' w-full text-2xl font-medium text-dark'
-          style={{ marginTop: '28px' }}
+          className=" w-full text-2xl font-medium text-dark"
+          style={{ marginTop: "28px" }}
         >
           Corporate Entity Sign Up
         </p>
-        <div className='relative mt-3.5'>
-          <label className='text-sm font-normal text-light-brown'>
-            Company Name <span className='text-red-600'>*</span>
-          </label>{' '}
+        <div className="relative mt-3.5">
+          <label className="text-sm font-normal text-light-brown">
+            Company Name <span className="text-red-600">*</span>
+          </label>{" "}
           <br />
           <input
-            type='text'
+            type="text"
             ref={nameRef}
             onChange={() => setNameValid(true)}
-            className='rounded-md bg-light-grey font-sans placeholder:font-medium placeholder:text-light-brown focus:outline-blue-200'
-            placeholder='Company Name'
+            className="rounded-md bg-light-grey font-sans placeholder:font-medium placeholder:text-light-brown focus:outline-blue-200"
+            placeholder="Company Name"
             style={{
-              width: '396px',
-              height: '43px',
-              paddingLeft: '14px',
-              border: '0.5px solid rgba(0, 0, 0, 0.50)',
+              width: "396px",
+              height: "43px",
+              paddingLeft: "14px",
+              border: "0.5px solid rgba(0, 0, 0, 0.50)",
             }}
           />
           {!nameValid && (
-            <p className='absolute right-0 top-1 text-sm text-red-600'>
+            <p className="absolute right-0 top-1 text-sm text-red-600">
               name cannot be empty
             </p>
           )}
         </div>
 
         <div
-          className='relative my-3.5'
-          style={{ width: '396px', height: '43px' }}
+          className="relative my-3.5"
+          style={{ width: "396px", height: "43px" }}
         >
           <label
-            className='text-sm font-normal'
-            style={{ color: 'rgba(0, 0, 0, 0.50)' }}
+            className="text-sm font-normal"
+            style={{ color: "rgba(0, 0, 0, 0.50)" }}
           >
-            Phone Number<span className='text-red-600'>*</span>
-          </label>{' '}
+            Phone Number<span className="text-red-600">*</span>
+          </label>{" "}
           <br />
           <input
             ref={phoneNumberRef}
             onChange={() => setPhoneNumberValid(true)}
-            type='text'
-            min='0'
-            placeholder='+12124567890'
-            className='rounded-md bg-light-grey font-sans placeholder:font-medium placeholder:text-light-brown focus:outline-blue-200'
+            type="text"
+            min="0"
+            placeholder="+12124567890"
+            className="rounded-md bg-light-grey font-sans placeholder:font-medium placeholder:text-light-brown focus:outline-blue-200"
             style={{
-              width: '396px',
-              height: '43px',
-              border: '0.5px solid rgba(0, 0, 0, 0.50)',
-              paddingLeft: '14px',
+              width: "396px",
+              height: "43px",
+              border: "0.5px solid rgba(0, 0, 0, 0.50)",
+              paddingLeft: "14px",
             }}
           />
           {!phoneNumberValid && (
-            <p className='absolute right-0 top-1 text-sm text-red-600'>
+            <p className="absolute right-0 top-1 text-sm text-red-600">
               invalid phone number
             </p>
           )}
         </div>
-        <div className='mt-12 flex flex-row items-center'>
+        <div className="mt-12 flex flex-row items-center">
           <input
-            type='checkbox'
+            type="checkbox"
             onChange={newsletterHandler}
             checked={newsletter}
             ref={newsletterRef}
-            className='me-1 cursor-pointer rounded-md bg-light-grey'
+            className="me-1 cursor-pointer rounded-md bg-light-grey"
           />
           <label
             onClick={newsletterHandler}
-            className='cursor-pointer text-sm font-normal text-light-brown'
+            className="cursor-pointer text-sm font-normal text-light-brown"
           >
             Send me news letters and keep me updated on daily news
           </label>
@@ -269,31 +273,31 @@ const CorporateSignup = () => {
                 <label onClick={robotHandler} className="text-sm font-normal text-light-brown cursor-pointer">I am not a robot</label>
             </div> */}
         <div
-          className='mt-3.5 text-sm'
-          style={{ color: 'rgba(0, 0, 0, 0.50)', fontWeight: '400' }}
+          className="mt-3.5 text-sm"
+          style={{ color: "rgba(0, 0, 0, 0.50)", fontWeight: "400" }}
         >
           By clicking Create Account, you acknowledge you have read and agreed
-          to our{' '}
+          to our{" "}
           <a
-            href='https://sky.trade/terms.pdf'
-            target='_blank'
-            style={{ color: '#0653EA', textDecoration: 'underline' }}
+            href="https://sky.trade/terms.pdf"
+            target="_blank"
+            style={{ color: "#0653EA", textDecoration: "underline" }}
           >
             Terms of Use
-          </a>{' '}
-          and{' '}
+          </a>{" "}
+          and{" "}
           <a
-            href='https://sky.trade/privacy.pdf'
-            target='_blank'
-            style={{ color: '#0653EA', textDecoration: 'underline' }}
+            href="https://sky.trade/privacy.pdf"
+            target="_blank"
+            style={{ color: "#0653EA", textDecoration: "underline" }}
           >
             Privacy Policy
           </a>
           .
         </div>
         <button
-          className='mt-4 rounded-md bg-dark-blue text-white  transition-all duration-500 ease-in-out hover:bg-blue-600'
-          style={{ width: '396px', height: '46px' }}
+          className="mt-4 rounded-md bg-dark-blue text-white  transition-all duration-500 ease-in-out hover:bg-blue-600"
+          style={{ width: "396px", height: "46px" }}
         >
           Create Account
         </button>

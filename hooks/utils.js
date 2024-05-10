@@ -24,3 +24,10 @@ export const getPriorityFeeIx = async (connection) => {
 
   return PRIORITY_FEE_IX;
 };
+
+export const getTokenLink = (tokenId) => {
+  if (process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME === "devnet") {
+    return `https://solscan.io/token/${tokenId}?cluster=devnet`;
+  }
+  else return `https://solscan.io/token/${tokenId}`;
+}
