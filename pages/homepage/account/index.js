@@ -13,7 +13,6 @@ import UserService from "@/services/UserService";
 import { toast } from "react-toastify";
 
 const Portfolio = () => {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [personalInformation, setPersonalInformation] = useState({
     name: "",
