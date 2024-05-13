@@ -190,7 +190,7 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
       ) : (
         <div className="w-screen ">
           {activeTab === "Rented Airspaces" && (
-            <div className="flex flex-col gap-[2px] pb-2  min-h-[20rem] ">
+            <div className="flex flex-col gap-[2px] pb-2  min-h-[70vh] ">
               {(rentedAirspaces && rentedAirspaces[0] && rentedAirspaces[0].address) ? rentedAirspaces.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile
@@ -209,7 +209,7 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
           )}
 
           {activeTab === "Verified Airspaces" && (
-            <div className="flex flex-col gap-[2px] pb-2  min-h-[20rem]">
+            <div className="flex flex-col gap-[2px] pb-2  min-h-[70vh]">
               {(verifiedAirspaces && verifiedAirspaces[0] && verifiedAirspaces[0].address) ? verifiedAirspaces.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile
@@ -228,7 +228,7 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
           )}
 
           {activeTab === "Pending Verification" && (
-            <div className="flex flex-col gap-[2px] pb-2 min-h-[20rem]">
+            <div className="flex flex-col gap-[2px] pb-2 min-h-[70vh]">
               {(unverifiedAirspaces && unverifiedAirspaces[0] && unverifiedAirspaces[0].address) ? unverifiedAirspaces?.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile

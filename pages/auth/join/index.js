@@ -25,9 +25,12 @@ import { Web3authContext } from "@/providers/web3authProvider";
 import UserService from "@/services/UserService";
 import useInitAuth from "@/hooks/useInitAuth";
 import { counterActions } from "@/store/store";
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+
 
 const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);
+  const[isLoading,setIsLoading] = useState(false);
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -104,34 +107,43 @@ const Signup = () => {
   console.log("web3auth.status", web3auth?.status);
 
   const loginUser = async (isEmail) => {
-    await init();
-    if (!web3auth) {
-      toast.error("Web3auth not initialized yet");
-      return;
-    }
-
-    let web3authProvider = null;
-
-    if (isEmail) {
-      const email = emailRef.current.value;
-
-      if (!isEmailValid(email)) {
-        toast.error("Login: email is not valid", email);
+    
+    try {  
+      await init();
+      if (!web3auth) {
+        toast.error("Web3auth not initialized yet");
         return;
       }
 
-      web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-        loginProvider: "email_passwordless",
-        extraLoginOptions: {
-          login_hint: email
+  
+      let web3authProvider = null;
+      setIsLoading(true);
+      if (isEmail) {
+        const email = emailRef.current.value;
+  
+        if (!isEmailValid(email)) {
+          toast.error("Login: email is not valid", email);
+          return;
         }
-      });
-    } else {
-      web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-        loginProvider: "google"
-      });
+  
+        web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+          loginProvider: "email_passwordless",
+          extraLoginOptions: {
+            login_hint: email,
+          },
+        });
+      } else {
+        web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+          loginProvider: "google",
+        });
+      }
+      setProvider(web3authProvider);
+    } catch (error) {
+      console.error('Error occurred:', error);
+      toast.error("An error occurred while logging in.");
+    } finally {
+      setIsLoading(false);
     }
-    setProvider(web3authProvider);
   };
 
   const handleSwitchingBetweenLoginAndRegister = () => {
@@ -222,13 +234,10 @@ const Signup = () => {
                 Send me newsletter to keep me updated
               </label>
             )}
-            <button
-              onClick={() => loginUser(true)}
-              type="button"
-              className="w-full rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600"
-            >
+            <LoadingButton onClick={() => loginUser(true)} isLoading={isLoading} className="w-full flex justify-center rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600">
               Get started
-            </button>
+            </LoadingButton>
+            
             <div className="relative flex w-full items-center gap-[15px] text-center align-middle text-[#00000033]">
               <div
                 style={{
@@ -246,33 +255,26 @@ const Signup = () => {
                 }}
               />
             </div>
-            <button
-              onClick={() => loginUser(false)}
-              type="button"
-              className="flex w-full items-center justify-between rounded-lg py-4 pl-[18px] pr-[42px] transition-all duration-500 ease-in-out hover:bg-bleach-blue"
-              style={{
-                border: "1px solid #595959"
-              }}
-            >
-              <Image
-                src="/images/google-logo.png"
-                alt="Google's logo"
-                width={24}
-                height={24}
-                className=""
-              />
+
+            <LoadingButton onClick={() => loginUser(true)} isLoading={isLoading} className={"w-full flex justify-center"} >
+              <div
+                className="flex w-full items-center justify-between rounded-lg py-4 pl-[18px] pr-[42px] transition-all duration-500 ease-in-out hover:bg-bleach-blue border border-[#595959]">
+                <Image
+                  src="/images/google-logo.png"
+                  alt="Google's logo"
+                  width={24}
+                  height={24}
+                  className=""
+                />
               <p className="mx-auto text-[#595959]">Connect with Google</p>
-            </button>
-            <button
-              onClick={() => loginUser(false)}
-              type="button"
-              className="flex w-full items-center justify-center rounded-lg py-4 pl-[18px] text-[#595959] transition-all duration-500 ease-in-out hover:bg-bleach-blue"
-              style={{
-                border: "1px solid #595959"
-              }}
+              </div>
+            </LoadingButton>
+            <LoadingButton onClick={() => loginUser(false)} isLoading={isLoading}
+              className="flex w-full items-center justify-center rounded-lg py-4 pl-[18px] text-[#595959] transition-all duration-500 ease-in-out hover:bg-bleach-blue border border-[#595959]"
+            
             >
               More Options
-            </button>
+            </LoadingButton>
             <p className="text-center text-sm text-[#87878D]">
               By creating an account I agree with{" "}
               <Link

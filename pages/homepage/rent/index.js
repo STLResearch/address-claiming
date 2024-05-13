@@ -49,7 +49,10 @@ import Link from "next/link";
 import { getTokenLink } from "@/hooks/utils";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
-import { Web3authContext } from "@/providers/web3authProvider";
+
+import { Web3authContext } from '@/providers/web3authProvider';
+import ZoomControllers from "@/Components/ZoomControllers";
+
 
 const SuccessModal = ({
   setShowSuccess,
@@ -187,7 +190,7 @@ const SuccessModal = ({
   );
 };
 
-const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
+const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => {
   const defaultValueDate = dayjs()
     .add(1, "h")
     .set("minute", 30)
@@ -480,12 +483,13 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
           >
             Cancel
           </div>
-          <div
+          <button
+            disabled={isLoading}
             onClick={handleRentAirspace}
             className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
             Rent Airspace
-          </div>
+          </button>
         </div>
       </div>
     </LocalizationProvider>
@@ -610,22 +614,16 @@ const Explorer = ({
                 onClick={rentCLickHandler}
                 className={
                   item.id != selectedAddress
-                    ? ` p-5 text-left text-[#913636] w-full flex justify-between text-[12px]`
-                    : `bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[12px]`
+                    ? ` p-5 text-left text-[#913636] w-full flex justify-between items-center text-[12px]`
+                    : `bg-[#0653EA] p-5 text-left text-white w-full flex items-center justify-between text-[12px]`
                 }
                 style={{
                   borderTop: "5px solid #FFFFFFCC"
                 }}
               >
-                <h3
-                  className={
-                    item.id != selectedAddress
-                      ? `text-black pt-[0.6rem] `
-                      : ` text-white `
-                  }
-                >
-                  {item.address}
-                </h3>
+
+                <h3 className={`w-[65%] ${item.id != selectedAddress ? `text-black `: ` text-white `}`}>{item.address}</h3>
+
                 <h1
                   className={
                     item.id != selectedAddress
@@ -1066,23 +1064,73 @@ const Rent = () => {
         <title>SkyTrade - Marketplace : Rent</title>
       </Head>
 
-      {
-        <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
-          <Sidebar />
+      { <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
+        <Sidebar />
 
-          <div className="w-full h-full flex flex-col">
-            {isLoading && <Backdrop />}
-            {isLoading && <Spinner />}
-            <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
-            {isMobile && (
-              <ExplorerMobile
-                loadingReg={loadingRegAddresses}
-                loading={loadingAddresses}
-                address={address}
-                setAddress={setAddress}
-                addresses={addresses}
-                showOptions={showOptions}
-                handleSelectAddress={handleSelectAddress}
+        <div className="w-full h-full flex flex-col">
+      {isLoading && <Backdrop />}
+      {isLoading && <Spinner />}
+          <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
+          {isMobile && (
+            <ExplorerMobile
+            loadingReg={loadingRegAddresses}
+            loading={loadingAddresses}
+            address={address}
+            setAddress={setAddress}
+            addresses={addresses}
+              showOptions={showOptions}
+              handleSelectAddress={handleSelectAddress}
+              regAdressShow={regAdressShow}
+              registeredAddress={registeredAddress}
+              map={map}
+              marker={marker}
+              setMarker={setMarker}
+              showClaimModal={showClaimModal}
+              setShowClaimModal={setShowClaimModal}
+              rentData={rentData}
+              setRentData={setRentData}
+              user1={user}
+            />
+          )}
+          <section
+            className={'relative flex w-full h-full justify-start items-start md:mb-0 mb-[79px] '}
+          >
+            <div
+              className={'!absolute !top-0 !left-0 !m-0 !w-screen !h-screen'}
+             id="map"
+              style={{ zIndex: "20" }}
+            />
+
+            {!isMobile && (
+              <div className="flex justify-start items-start">
+                <Explorer
+                  loadingReg={loadingRegAddresses}
+                  loading={loadingAddresses}
+                  address={address}
+                  setAddress={setAddress}
+                  addresses={addresses}
+                  showOptions={showOptions}
+                  handleSelectAddress={handleSelectAddress}
+                  regAdressShow={regAdressShow}
+                  registeredAddress={registeredAddress}
+                  map={map}
+                  marker={marker}
+                  setMarker={setMarker}
+                  showClaimModal={showClaimModal}
+                  setShowClaimModal={setShowClaimModal}
+                  rentData={rentData}
+                  setRentData={setRentData}
+                  user1={user}
+                />
+              </div>
+            )}
+            {showClaimModal && (
+              <ClaimModal
+                setShowClaimModal={setShowClaimModal}
+                rentData={rentData}
+                setIsLoading={setIsLoading}
+                isLoading={isLoading}
+
                 regAdressShow={regAdressShow}
                 registeredAddress={registeredAddress}
                 map={map}
@@ -1095,16 +1143,14 @@ const Rent = () => {
                 user1={user}
               />
             )}
-            <section
-              className={
-                "relative flex w-full h-full justify-start items-start md:mb-0 mb-[79px] "
-              }
-            >
-              <div
-                className={"!absolute !top-0 !left-0 !m-0 !w-screen !h-screen"}
-                id="map"
-                style={{ zIndex: "20" }}
-              />
+
+          </section>
+          <div className="hidden sm:block">
+            <ZoomControllers map={map}/>
+          </div>
+        </div>
+      </div> }
+
 
               {!isMobile && (
                 <div className="flex justify-start items-start">
