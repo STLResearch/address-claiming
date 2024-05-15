@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import logo from '../../public/images/logo.jpg';
+import logo from '../../public/images/logo.svg';
 
 const WalletModal = (props) => {
   return (

@@ -8,6 +8,7 @@ import TimeSelect from '../TimeSelect';
 import TimezoneSelectComponent from '../Timezone';
 import { setAdditionalInfoModal } from '@/redux/slices/userSlice';
 import PropertiesService from "@/services/PropertiesService";
+import { counterActions } from '@/store/store';
 
 const EditAispaceModal = (props) => {
   const router = useRouter();
@@ -55,7 +56,7 @@ const EditAispaceModal = (props) => {
 
   const closeModalHandler = (e) => {
     e.preventDefault();
-    dispatch(setAdditionalInfoModal(false));
+    dispatch(counterActions.setAdditionalInfoModal(false));
   };
 
   const costCheckedHandler = (e) => {
@@ -177,7 +178,7 @@ const EditAispaceModal = (props) => {
           icon: 'success',
           button: 'Ok',
         }).then(() => {
-          dispatch(setAdditionalInfoModal(false));
+          dispatch(counterActions.setAdditionalInfoModal(false));
           // setIsLoading(false);
           router.push('/homepage/dashboard2');
         });

@@ -25,6 +25,7 @@ import EditAispaceModal from '@/Components/Modals/EditAirspaceModal';
 import CollapseAirspace from '@/Components/CollapseAirspace';
 import { setAdditionalInfoModal, setAirspaceData, setNewAirspaceModal } from '@/redux/slices/userSlice';
 import PropertiesService from "@/services/PropertiesService";
+import { counterActions } from '@/store/store';
 
 const Airspace = () => {
 
@@ -208,10 +209,15 @@ const Airspace = () => {
   }, [user, web3authStatus]);
 
 
-  const {newAirspaceModal} = useSelector((state) => {
-    const {newAirspaceModal} =  state.userReducer;
-    return {newAirspaceModal}
-  });
+  // const {newAirspaceModal} = useSelector((state) => {
+  //   const {newAirspaceModal} =  state.userReducer;
+  //   return {newAirspaceModal}
+  // });
+
+  const newAirspaceModal = useSelector(
+    (state) => state.value.newAirspaceModal
+  );
+
 
   const additionalInfo = useSelector(
     (state) => state.value.airspaceAdditionalInfo
@@ -225,7 +231,7 @@ const Airspace = () => {
     setShowAddAirspaceModal(false);
     setshowAddReviewModal(false);
 
-    dispatch(setNewAirspaceModal(false));
+    dispatch(counterActions.setNewAirspaceModal(false));
   };
 
   const editAirspaceHandler = () => {
@@ -302,9 +308,9 @@ const Airspace = () => {
       vertexes: vertexes,
     };
 
-    dispatch(setAirspaceData(addressValue));
+    dispatch(counterActions.setAirspaceData(addressValue));
 
-    dispatch(setAdditionalInfoModal(true));
+    dispatch(counterActions.setAdditionalInfoModal(true));
     setIsLoading(false);
   };
 

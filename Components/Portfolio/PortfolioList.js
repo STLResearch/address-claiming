@@ -168,9 +168,6 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
       paginateAirspaces();
     }
   }, [pageNumber, rentalPageNumber, unverifiedPageNumber, web3authStatus]);
-
-  console.log({ verifiedAirspaces, rentedAirspaces, unverifiedAirspaces })
-
   return (
     <div
       className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1"
@@ -251,12 +248,13 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
 
           <div className="flex flex-col w-full text-gray-600">
             <div className="flex self-end items-center gap-2 w-[5rem]">
-              <div
+              <button
                 onClick={handlePrevPage}
-                className={`${activeTab === "Verified Airspaces" && pageNumber === 1 ? "cursor-not-allowed" : activeTab === "Rented Airspaces" && rentalPageNumber === 1 ? "cursor-not-allowed" : activeTab === "Pending Verification" && unverifiedPageNumber === 1 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
+                disabled={(activeTab === "Verified Airspaces" && pageNumber === 1) || (activeTab === "Rented Airspaces" && rentalPageNumber === 1) || (activeTab === "Pending Verification" && unverifiedPageNumber === 1)}
+                className={`${(activeTab === "Verified Airspaces" && pageNumber === 1) || (activeTab === "Rented Airspaces" && rentalPageNumber === 1) || (activeTab === "Pending Verification" && unverifiedPageNumber === 1) ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
               >
                 <RxCaretLeft />
-              </div>
+              </button>
               <div>
                 {activeTab === "Verified Airspaces"
                   ? pageNumber
@@ -264,12 +262,13 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
                     ? rentalPageNumber
                     : unverifiedPageNumber}
               </div>
-              <div
+              <button
                 onClick={handleNextPage}
-                className={`${activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10 ? "cursor-not-allowed" : activeTab === "Rented Airspaces" && rentedAirspaces.length < 10 ? "cursor-not-allowed" : activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10 ? "cursor-not-allowed" : "cursor-pointer"} p-1 cursor-pointer border rounded-lg border-gray-200`}
+                disabled={(activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10) || (activeTab === "Rented Airspaces" && rentedAirspaces.length < 10) || (activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10)}
+                className={`${(activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10) || (activeTab === "Rented Airspaces" && rentedAirspaces.length < 10) || (activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10) ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
               >
                 <RxCaretRight />
-              </div>
+              </button>
             </div>
           </div>
         </>

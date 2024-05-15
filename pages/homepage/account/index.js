@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { Fragment, useState, useEffect } from "react";
 import useAuth from '@/hooks/useAuth';
@@ -12,7 +12,7 @@ import { checkPhoneIsValid } from "@/pages/auth/join/intro";
 import UserService from "@/services/UserService";
 import { toast } from "react-toastify";
 
-const Portfolio = () => {
+const Account = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [personalInformation, setPersonalInformation] = useState({ name: '', email: '', phoneNumber: '', newsletter: false, KYCStatusId: 0 })
 
@@ -109,7 +109,7 @@ const Portfolio = () => {
                                 </div>}
                             </div>
                             <p className="font-normal text-base text-[#87878D] pr-[42px]">{personalInformation.KYCStatusId !== 0 ? 'Thank you, your account is successfully verified. We verify the identity of our customers to assess potential risks, prevent fraud, and comply with legal and regulatory requirements. Note that we store your data securely with advanced encryption and strict authentication measures to ensure utmost privacy and protection.' : 'Your account is not verified. We verify the identity of our customers to assess potential risks, prevent fraud, and comply with legal and regulatory requirements. Note that we store your data securely with advanced encryption and strict authentication measures to ensure utmost privacy and protection.'}</p>
-                            {!(personalInformation.KYCStatusId !== 0) &&!isLoading && <p className="font-medium text-base text-[#0653EA] text-right flex-1 cursor-pointer" onClick={onVerifyMyAccount}>Verify my account</p>}
+                            {!(personalInformation.KYCStatusId !== 0) &&!isLoading && <div className="font-medium text-base text-[#0653EA] text-right flex-1 cursor-pointer" disabled={isLoading} onClick={onVerifyMyAccount}>Verify my account</div>}
                         </div>
                         <div className="flex flex-col py-[17px] px-[25px] rounded-[30px] gap-[15px] bg-white" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                             <h2 className="text-xl font-medium text-[#222222]">Personal Information</h2>
@@ -135,7 +135,7 @@ const Portfolio = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-end flex-1">
-                                    <p className="font-medium text-base text-[#0653EA] cursor-pointer" onClick={updateDataHandler}>Save changes</p>
+                                    <button disabled={isLoading} className="font-medium text-base text-[#0653EA] cursor-pointer" onClick={updateDataHandler}>Save changes</button>
                                 </div>
                             </div>
                         </div>
@@ -146,4 +146,4 @@ const Portfolio = () => {
     )
 }
 
-export default Portfolio;
+export default Account;

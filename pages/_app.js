@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
 import { Provider } from "react-redux";
-// import store from "@/store/store";
+import store from "@/store/store";
 import Script from "next/script";
 
 import CookieConsent from "@/Components/CookieConsent";
@@ -14,17 +14,16 @@ import { ToastContainer } from "react-toastify";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
-import { PersistGate } from "redux-persist/integration/react";
-import { persistStore } from "redux-persist";
-import store from "@/redux/store";
+// import { PersistGate } from "redux-persist/integration/react";
+// import { persistStore } from "redux-persist";
+// import store from "@/redux/store";
 import ErrorBoundary from "@/Components/ErrorBoundary";
 
 export default function App({ Component, pageProps }) {
   const { isMobile } = useMobile();
   const [doItAgain, setDoItAgain] = useState(false);
 
-  const persistor = persistStore(store);
-
+  // const persistor = persistStore(store);
 
   useEffect(() => {
     var Tawk_API = global?.Tawk_API || undefined;
@@ -45,13 +44,10 @@ export default function App({ Component, pageProps }) {
     }
   }, [isMobile, global.Tawk_API, doItAgain]);
 
-
-
   return (
     <>
       <Provider store={store}>
-      
-      <PersistGate loading={null} persistor={persistor}>
+        {/* <PersistGate loading={null} persistor={persistor}> */}
         <>
           <Script src="https://cdn.withpersona.com/dist/persona-v4.8.0.js" />
           <Script id="show-banner" dangerouslySetInnerHTML={msclaritConfig} />
@@ -69,13 +65,13 @@ export default function App({ Component, pageProps }) {
             <SidebarProvider>
               <ToastContainer style={{ width: "500px" }} />
               <ErrorBoundary>
-              <Component {...pageProps} />
+                <Component {...pageProps} />
               </ErrorBoundary>
             </SidebarProvider>
             <CookieConsent />
           </Web3authProvider>
         </>
-      </PersistGate>
+        {/* </PersistGate> */}
       </Provider>
     </>
   );

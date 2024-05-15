@@ -3,10 +3,10 @@ import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import swal from 'sweetalert';
-
+import { counterActions } from '@/store/store';
 import TimeSelect from '../TimeSelect';
 import TimezoneSelectComponent from '../Timezone';
-import { setAdditionalInfoModal } from '@/redux/slices/userSlice';
+// import { setAdditionalInfoModal } from '@/redux/slices/userSlice';
 import PropertiesService from "@/services/PropertiesService";
 import { toast } from 'react-toastify';
 
@@ -51,14 +51,18 @@ const AdditionalAispaceInformation = (props) => {
 
   const dispatch = useDispatch();
 
-  const {airspaceData} = useSelector((state) => {
-    const {airspaceData} = state.userReducer;
-    return {airspaceData}
-  });
+  // const {airspaceData} = useSelector((state) => {
+  //   const {airspaceData} = state.userReducer;
+  //   return {airspaceData}
+  // });
+
+  const airspaceData = useSelector(
+    (state) => state.value.airspaceData
+  );
 
   const closeModalHandler = (e) => {
     e.preventDefault();
-    dispatch(setAdditionalInfoModal(false));
+    dispatch(counterActions.setAdditionalInfoModal(false));
   };
 
   const costCheckedHandler = (e) => {
@@ -175,7 +179,7 @@ const AdditionalAispaceInformation = (props) => {
           icon: 'success',
           button: 'Ok',
         }).then(() => {
-          dispatch(setAdditionalInfoModal(false));
+          dispatch(counterActions.setAdditionalInfoModal(false));
           // setIsLoading(false);
           router.push('/homepage/dashboard2');
         });

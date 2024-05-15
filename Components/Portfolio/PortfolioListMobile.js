@@ -4,6 +4,7 @@ import useAuth from '@/hooks/useAuth';
 import Spinner from "../Spinner";
 import PortfolioItemMobile from "./PortfolioItemMobile";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
+import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 
 const PortfolioListMobile = ({ title, selectAirspace }) => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -189,8 +190,8 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
       ) : (
         <div className="w-screen ">
           {activeTab === "Rented Airspaces" && (
-            <div className="flex flex-col gap-[2px] pb-2  min-h-[20rem] ">
-              {rentedAirspaces && rentedAirspaces[0] && rentedAirspaces[0].address && rentedAirspaces.map(
+            <div className="flex flex-col gap-[2px] pb-2  min-h-[70vh] ">
+              {(rentedAirspaces && rentedAirspaces[0] && rentedAirspaces[0].address) ? rentedAirspaces.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
@@ -200,13 +201,16 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
                     selectAirspace={() => selectAirspace(index)}
                   />
                 )
-              )}
+              )
+              :
+              <AirspacesEmptyMessage />
+            }
             </div>
           )}
 
           {activeTab === "Verified Airspaces" && (
-            <div className="flex flex-col gap-[2px] pb-2  min-h-[20rem]">
-              {verifiedAirspaces && verifiedAirspaces[0] && verifiedAirspaces[0].address && verifiedAirspaces.map(
+            <div className="flex flex-col gap-[2px] pb-2  min-h-[70vh]">
+              {(verifiedAirspaces && verifiedAirspaces[0] && verifiedAirspaces[0].address) ? verifiedAirspaces.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
@@ -216,13 +220,16 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
                     selectAirspace={() => selectAirspace(index)}
                   />
                 )
-              )}
+              )
+              :
+              <AirspacesEmptyMessage />
+            }
             </div>
           )}
 
           {activeTab === "Pending Verification" && (
-            <div className="flex flex-col gap-[2px] pb-2 min-h-[20rem]">
-              {unverifiedAirspaces && unverifiedAirspaces[0] && unverifiedAirspaces[0].address && unverifiedAirspaces?.map(
+            <div className="flex flex-col gap-[2px] pb-2 min-h-[70vh]">
+              {(unverifiedAirspaces && unverifiedAirspaces[0] && unverifiedAirspaces[0].address) ? unverifiedAirspaces?.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
@@ -232,7 +239,10 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
                     selectAirspace={() => selectAirspace(index)}
                   />
                 )
-              )}
+              )
+              :
+              <AirspacesEmptyMessage />
+            }
             </div>
           )}
 

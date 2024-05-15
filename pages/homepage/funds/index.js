@@ -49,10 +49,16 @@ import { useMobile } from "@/hooks/useMobile";
 
 const AvailableBalance = ({ solbalance }) => {
 
-  const {userUSDWalletBalance} = useSelector((state) => {
-    const {userUSDWalletBalance} = state.userReducer;
-    return {userUSDWalletBalance}
-  }, shallowEqual);
+  // const {userUSDWalletBalance} = useSelector((state) => {
+  //   const {userUSDWalletBalance} = state.userReducer;
+  //   return {userUSDWalletBalance}
+  // }, shallowEqual);
+
+  const userUSDWalletBalance = useSelector(
+    (state) => state.value.userUSDWalletBalance
+  );
+
+
 
   return (
     <div
@@ -154,8 +160,8 @@ const { isMobile } = useMobile();
             <thead className="sticky top-0 z-[500]  bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
               <tr className="w-full">
             {["date", "transaction id", "type", "amount", "status"].map(
-              (th) => (
-                <th className="whitespace-nowrap text-start py-5 px-5 !w-[50%] min-w-[120px] sm:w-[20%]">{th}</th>
+              (th,index) => (
+                <th key={index} className="whitespace-nowrap text-start py-5 px-5 !w-[50%] min-w-[120px] sm:w-[20%]">{th}</th>
               )
             )}
               </tr>
@@ -167,7 +173,6 @@ const { isMobile } = useMobile();
               key={transaction.id}
               className={`${index % 2 === 0 ? "bg-white" : "bg-[#F0F4FA] sm:bg-[#F6FAFF]"} !rounded-lg`}
             >
-              {/* {Object.values(transaction).map((value, secondIndex, array) => { return (<td className={`${secondIndex === 0 ? 'rounded-l-lg' : ''} py-6 ${secondIndex === array.length - 1 ? 'rounded-r-lg' : ''} text-[#222222] px-5`}>{value}</td>) })} */}
               <td className={`py-6 px-2 rounded-l-lg text-[#222222]   text-start w-[200px] min-w-[120px] sm:w-[20%] `}>
                 {transaction.date}
               </td>
@@ -237,6 +242,7 @@ const DepositAndWithdraw = ({
   activeSection,
   setActiveSection,
   setIsLoading,
+  isLoading,
   setreFetchBal,
   refetchBal,
   setTokenBalance,
@@ -434,7 +440,7 @@ const DepositAndWithdraw = ({
     >
       <div className="flex gap-[5px] w-full">
         {["Deposit", "Withdraw"].map((text, index) => (
-          <div
+          <div key={index}
             onClick={() => {
               setActiveSection(index);
               setAmount("");
@@ -583,12 +589,13 @@ const DepositAndWithdraw = ({
               COMING SOON{" "}
             </div>
           ) : (
-            <div
+            <button
+              disabled={isLoading}
               className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg"
               onClick={handleWithdraw}
             >
               withdraw
-            </div>
+            </button>
           )}
         </>
       )}
@@ -745,7 +752,7 @@ const Funds = () => {
   //get sol balance
   useEffect(() => {
     let fetchbalance = async () => {
-      if (user) {
+      if (user && provider) {
         const solanaWallet = new SolanaWallet(provider);
 
         console.log("solana wallet ", solanaWallet);
@@ -836,8 +843,8 @@ const Funds = () => {
         <div className="w-full h-full flex flex-col">
           <PageHeader pageTitle={"Funds"} />
           <section className="relative  w-full h-full py-6 md:py-[37px]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll sm:pl-[68.82px] sm:pr-[55px]">
-            <div className="flex  sm:gap-[50px] flex-wrap ">
-              <div className="flex flex-col gap-5 items-center sm:items-start">
+            <div className="flex  sm:gap-[50px] flex-wrap justify-center">
+              <div className="flex flex-col gap-5 items-center sm:items-start ">
                 <AvailableBalance
                   solbalance={solbalance}
                 />
@@ -846,6 +853,7 @@ const Funds = () => {
                   activeSection={activeSection}
                   setActiveSection={setActiveSection}
                   setIsLoading={setIsLoading}
+                  isLoading={isLoading}
                   setreFetchBal={setreFetchBal}
                   refetchBal={refetchBal}
                   setTokenBalance={setTokenBalance}

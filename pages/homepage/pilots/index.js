@@ -57,7 +57,9 @@ const UAVs = () => {
           document.getElementById('modal-root')
         )}
       <div className='mx-auto flex flex-row'>
-        <Sidebar users={users} />
+        <Sidebar 
+        // users={users} 
+        />
         <div
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
           className='overflow-y-auto'

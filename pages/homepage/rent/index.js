@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect, forwardRef ,useRef, useContext} from "react";
-import mapboxgl, { Map } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import {
   ArrowLeftIcon,
@@ -10,7 +10,8 @@ import {
   SuccessIcon,
   SuccessIconwhite,
   CloseIconWhitesm,
-  InfoIcon
+  InfoIcon,
+  FailedIconwhite
 } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
@@ -43,6 +44,7 @@ import { getTokenLink } from "@/hooks/utils";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
 import { Web3authContext } from '@/providers/web3authProvider';
+import ZoomControllers from "@/Components/ZoomControllers";
 
 const SuccessModal = ({
   setShowSuccess,
@@ -69,13 +71,13 @@ const SuccessModal = ({
   return (
     <div
       ref={modalRef}
-      className={`w-[100%] max-w-[20rem] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}
+      className={`md:max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full  z-50`}
     >
       {/* <div className=" text-xl text-black text-center"> {finalAns?.status} </div>
             <div className=" text-xl text-black text-center"> {finalAns?.message}</div>
  */}
       <div
-        className={` w-[100%] h-[500px] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+        className={`w-[100%] md:h-[100%] h-screen py-10 z-40 flex flex-col gap-[15px] items-center  md:rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
       >
         <div
           onClick={() => {
@@ -84,36 +86,38 @@ const SuccessModal = ({
           }}
           className="w-[26px] h-[26px] absolute top-[10px] right-[10px] "
         >
+          <div className="hidden sm:block absolute top-[10px] right-[10px]">
           <CloseIconWhite />
+          </div>       
         </div>
 
-        <div className="w-[54.56px] h-[54.56px]">
+        <div className="w-[w-16] h-[w-16] md:mt-6 mt-32">
           {finalAns?.status === "Rent Successful" ? (
             <SuccessIconwhite />
           ) : (
-            <CloseIconWhite />
+            <FailedIconwhite />
           )}
         </div>
         {finalAns?.status === "Rent Successful" ? (
           <>
             <div className="w-[70%] h-[10%] ">
-              <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">
+              <h1 className=" font-[500]  text-3xl text-center text-[#FFFFFF] font-poppins">
                 Your rental order is complete
               </h1>
             </div>
           </>
         ) : (
           <>
-            <div className="w-[70%] h-[10%] ">
-              <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">
+            <div className="w-[70%] h-[10%] md:mt-6 mt-9">
+              <h1 className=" font-[500]  text-3xl text-center text-[#FFFFFF] font-poppins">
                 Rent failed
               </h1>
             </div>
           </>
         )}
 
-        <div className="w-[80%] mt-[2rem] ">
-          <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
+        <div className="md:w-[90%] w-[65%]  md:mt-[2rem] ">
+          <div className="font-normal text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
             {finalAns?.status === "Rent Successful" && (
               <div>
                 'You rented'{" "}
@@ -126,16 +130,16 @@ const SuccessModal = ({
             )}
           </div>
 
-          <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
+          <div className="font-normal  text-lg leading-7 text-center text-[#FFFFFF] font-poppins">
             {finalAns?.status !== "Rent Successful" && (
-              <div>An error occured, please try again.</div>
+              <div>{finalAns.message}</div>
             )}
           </div>
         </div>
 
         {finalAns?.status === "Rent Successful" && (
           <div className=" w-[75%] ">
-            <p className="font-[400] text-[10px] text-center text-[#FFFFFF]">
+            <p className="font-normal text-[10px] text-center text-[#FFFFFF]">
               A copy of your transaction is availble inside your Portfolio{" "}
             </p>
           </div>
@@ -180,7 +184,7 @@ const SuccessModal = ({
   );
 };
 
-const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
+const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => {
   const defaultValueDate = dayjs()
     .add(1, "h")
     .set("minute", 30)
@@ -261,17 +265,21 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
 
   const handleRentAirspace = async () => {
     try {
+        const currentDate = new Date();
+        let startDate = new Date(date.toString());
+        let endDate = new Date(startDate.getTime());
+        endDate.setMinutes(endDate.getMinutes() + 30);
+      if (currentDate > endDate) {
+        return toast.error(
+          "Rental Tokens can't be booked in the past"
+        );
+      }
       if (parseFloat(tokenBalance) === 0) {
         return toast.error(
           "Please deposit some funds into your wallet to continue"
         );
       }
       setIsLoading(true);
-
-      let startDate = new Date(date.toString());
-      let endDate = new Date(startDate.getTime());
-      endDate.setMinutes(endDate.getMinutes() + 30);
-
       if (startDate.getMinutes() % 30 != 0) {
         setfinalAns({
           status: "Rent failed",
@@ -358,6 +366,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
       
 
   };
+
   if (showSuccess) {
     return (
       <SuccessModal
@@ -415,9 +424,6 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
               Airspace Details
               
             </h2>
-            <div className="w-[20px] h-[20px] ml-3">
-            <InfoIcon/>
-             </div>
           </div>
 
           <div
@@ -472,12 +478,13 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
           >
             Cancel
           </div>
-          <div
+          <button
+            disabled={isLoading}
             onClick={handleRentAirspace}
             className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
             Rent Airspace
-          </div>
+          </button>
         </div>
       </div>
     </LocalizationProvider>
@@ -602,14 +609,14 @@ const Explorer = ({
                 onClick={rentCLickHandler}
                 className={
                   item.id != selectedAddress
-                    ? ` p-5 text-left text-[#913636] w-full flex justify-between text-[12px]`
-                    : `bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[12px]`
+                    ? ` p-5 text-left text-[#913636] w-full flex justify-between items-center text-[12px]`
+                    : `bg-[#0653EA] p-5 text-left text-white w-full flex items-center justify-between text-[12px]`
                 }
                 style={{
                   borderTop: "5px solid #FFFFFFCC",
                 }}
               >
-                <h3 className={item.id != selectedAddress ? `text-black pt-[0.6rem] `: ` text-white `}>{item.address}</h3>
+                <h3 className={`w-[65%] ${item.id != selectedAddress ? `text-black `: ` text-white `}`}>{item.address}</h3>
                 <h1
                   className={
                     item.id != selectedAddress
@@ -849,7 +856,7 @@ const Rent = () => {
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
         center: [-104.718243, 40.413869],
-        zoom: 15,
+        zoom: 5,
         // attributionControl: false
       });
 
@@ -872,6 +879,7 @@ const Rent = () => {
             "fill-color": "#D20C0C",
           },
         });
+        newMap.zoomOut(4);
       });
 
       let timeoutId;
@@ -1048,6 +1056,7 @@ const Rent = () => {
     <Fragment>
       <Head>
         <title>SkyTrade - Marketplace : Rent</title>
+       
       </Head>
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
@@ -1082,13 +1091,11 @@ const Rent = () => {
             />
           )}
           <section
-            className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}
+            className={'relative flex w-full h-full justify-start items-start md:mb-0 mb-[79px] '}
           >
             <div
-              className={`!absolute !top-0 !left-0 !w-screen !h-screen !m-0 `}
-              //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
-
-              id="map"
+              className={'!absolute !top-0 !left-0 !m-0 !w-screen !h-screen'}
+             id="map"
               style={{ zIndex: "20" }}
             />
 
@@ -1120,11 +1127,15 @@ const Rent = () => {
                 setShowClaimModal={setShowClaimModal}
                 rentData={rentData}
                 setIsLoading={setIsLoading}
+                isLoading={isLoading}
                 regAdressShow={regAdressShow}
                 registeredAddress={registeredAddress}
               />
             )}
           </section>
+          <div className="hidden sm:block">
+            <ZoomControllers map={map}/>
+          </div>
         </div>
        </div>
       </div>

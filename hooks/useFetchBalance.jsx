@@ -5,15 +5,23 @@ import { useDispatch } from "react-redux";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 import axios from "axios";
 import { shallowEqual, useSelector } from "react-redux";
+import { counterActions } from "@/store/store";
 
 const useFetchBalance = () => {
   const { user, web3authStatus } = useAuth();
   const dispatch = useDispatch();
 
-  const {userUSDWalletBalance} = useSelector((state) => {
-    const {userUSDWalletBalance} = state.userReducer;
-    return {userUSDWalletBalance}
-  }, shallowEqual);
+  // const {userUSDWalletBalance} = useSelector((state) => {
+  //   const {userUSDWalletBalance} = state.userReducer;
+  //   return {userUSDWalletBalance}
+  // }, shallowEqual);
+
+  const userUSDWalletBalance = useSelector(
+    (state) => state.value.userUSDWalletBalance
+  );
+
+
+  
 
   useEffect(() => {
     if (user && user.blockchainAddress) {
@@ -34,14 +42,14 @@ const useFetchBalance = () => {
             ],
           });
           const value = response.data.result.value;
-          if (value.length < 1) dispatch(setUserUSDWalletBalance({amount: '0', isLoading: false}));
-          else dispatch(setUserUSDWalletBalance({
+          if (value.length < 1) dispatch(counterActions.setUserUSDWalletBalance({amount: '0', isLoading: false}));
+          else dispatch(counterActions.setUserUSDWalletBalance({
             amount: value[0].account.data.parsed.info.tokenAmount.uiAmountString,
             isLoading: false
           }));
         } catch (error) {
           console.error(error);
-          dispatch(setUserUSDWalletBalance({
+          dispatch(counterActions.setUserUSDWalletBalance({
             amount: userUSDWalletBalance.amount,
             isLoading: false
           }));
