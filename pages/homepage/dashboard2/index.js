@@ -32,7 +32,6 @@ import { BalanceLoader } from "@/Components/Wrapped";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
-import LoginPage from "@/Components/common/LoginPage";
 
 
 let USDollar = new Intl.NumberFormat("en-US", {
@@ -278,8 +277,7 @@ const Dashboard = () => {
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
-        
-        <div className={user?.blockchainAddress?`w-full h-full flex flex-col overflow-scroll md:overflow-hidden `:`w-full h-full flex flex-col overflow-scroll md:overflow-hidden blur-sm pointer-events-none`}>
+        <div className="w-full h-full flex flex-col overflow-scroll md:overflow-hidden">
           <PageHeader pageTitle={"Dashboard"} />
           <section className=" md:flex relative w-full h-full md:pl-[53px]  ">
             <div className="flex-col-reverse flex justify-center items-align  md:flex-row">
@@ -350,7 +348,6 @@ const Dashboard = () => {
             </div>
           </section>
         </div>
-        {!user?.blockchainAddress && <LoginPage />}
       </div>
     </Fragment>
   );
