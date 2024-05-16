@@ -171,7 +171,7 @@ const Signup = () => {
         <title>SkyTrade - Login</title>
       </Head>
       {!isWaitingScreenVisible && !isRedirecting && (
-        <div className="relative flex h-screen items-center justify-center overflow-y-scroll rounded bg-[#F6FAFF] max-sm:bg-[white]">
+        <div className={router.pathname=='/auth/join'?"relative flex w-screen h-screen items-center justify-center overflow-y-scroll rounded bg-[#F6FAFF] max-sm:bg-[white]":"relative flex items-center justify-center overflow-y-scroll rounded bg-[#F6FAFF] max-sm:bg-[white]"}>
           <form
             className="relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"
             style={{
@@ -202,7 +202,7 @@ const Signup = () => {
             </>
             }
             {router.pathname!='/auth/join' && <>
-           <p className="mt-[25px] text-xl font-medium text-light-black">
+           <p className="mt-[25px] text-xl font-medium text-light-black text-center">
            Unlock the full experience! 🚀
             </p>
             <p className="text-base text-light-black">
