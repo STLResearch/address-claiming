@@ -37,7 +37,7 @@ const Signup = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
-
+  console.log(router.pathname)
   const emailRef = useRef();
   const { init } = useInitAuth();
 
@@ -171,7 +171,7 @@ const Signup = () => {
         <title>SkyTrade - Login</title>
       </Head>
       {!isWaitingScreenVisible && !isRedirecting && (
-        <div className="relative flex h-screen w-screen items-center justify-center overflow-y-scroll rounded bg-[#F6FAFF] max-sm:bg-[white]">
+        <div className="relative flex h-screen items-center justify-center overflow-y-scroll rounded bg-[#F6FAFF] max-sm:bg-[white]">
           <form
             className="relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"
             style={{
@@ -185,7 +185,9 @@ const Signup = () => {
             }}
           >
             <Image src={logo} alt="Company's logo" width={199} height={77} />
-            <p className="mt-[25px] text-xl font-medium text-light-black">
+            
+            {router.pathname=='/auth/join' && <>
+           <p className="mt-[25px] text-xl font-medium text-light-black">
               Welcome{isLogin && " back"} to SkyTrade
             </p>
             <p className="text-base text-light-black">
@@ -197,6 +199,25 @@ const Signup = () => {
                 during sign up.
               </p>
             )}
+            </>
+            }
+            {router.pathname!='/auth/join' && <>
+           <p className="mt-[25px] text-xl font-medium text-light-black">
+           Unlock the full experience! 🚀
+            </p>
+            <p className="text-base text-light-black">
+              {isLogin ? "Login" : "Register"}
+            </p>
+            {isLogin && (
+              <p className="text-center text-sm text-light-grey">
+               Log in or create an account to access this feature. Join now to enjoy seamless navigation and exclusive benefits tailored just for you. Ready to explore more? Log in or register now! 
+              </p>
+            )}
+            </>
+            }
+
+           
+           
             <div className="relative flex w-full flex-col gap-[5px]">
               <label
                 className="text-[14px] font-normal"

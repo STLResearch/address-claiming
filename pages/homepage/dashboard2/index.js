@@ -278,7 +278,7 @@ const Dashboard = () => {
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
-        //adds blur effect. this code can be made much cleaner using clx package.
+        
         <div className={user?.blockchainAddress?`w-full h-full flex flex-col overflow-scroll md:overflow-hidden `:`w-full h-full flex flex-col overflow-scroll md:overflow-hidden blur-sm pointer-events-none`}>
           <PageHeader pageTitle={"Dashboard"} />
           <section className=" md:flex relative w-full h-full md:pl-[53px]  ">
