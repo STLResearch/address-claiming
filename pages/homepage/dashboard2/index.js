@@ -4,6 +4,7 @@ import { Fragment, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Script from "next/script";
+
 import {
   DroneIcon,
   GiftIcon,
@@ -31,6 +32,7 @@ import { BalanceLoader } from "@/Components/Wrapped";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
+import LoginPage from "@/Components/common/LoginPage";
 
 
 let USDollar = new Intl.NumberFormat("en-US", {
@@ -264,7 +266,6 @@ const Dashboard = () => {
       }
     })();
   }, [user, web3authStatus]);
-
   if (!user) {
     return <Spinner />;
   }
@@ -277,7 +278,8 @@ const Dashboard = () => {
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
-        <div className="w-full h-full flex flex-col overflow-scroll md:overflow-hidden">
+        //adds blur effect. this code can be made much cleaner using clx package.
+        <div className={user?.blockchainAddress?`w-full h-full flex flex-col overflow-scroll md:overflow-hidden `:`w-full h-full flex flex-col overflow-scroll md:overflow-hidden blur-sm pointer-events-none`}>
           <PageHeader pageTitle={"Dashboard"} />
           <section className=" md:flex relative w-full h-full md:pl-[53px]  ">
             <div className="flex-col-reverse flex justify-center items-align  md:flex-row">
@@ -348,6 +350,7 @@ const Dashboard = () => {
             </div>
           </section>
         </div>
+        {!user?.blockchainAddress && <LoginPage />}
       </div>
     </Fragment>
   );

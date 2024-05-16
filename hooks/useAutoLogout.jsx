@@ -51,10 +51,10 @@ const useAutoLogout = () => {
     }else if (web3auth?.status === "ready") {
       const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
       console.log({fetchedToken})
-      if (!fetchedToken?.sessionId) {
+      /* if (!fetchedToken?.sessionId) {
         router.push("/auth/join");
         
-      } 
+      } */ 
     }
 
   }, [web3auth?.status, user,router.pathname]); //included router.pathname in the dependency array so that it checks for autologout on every page..  

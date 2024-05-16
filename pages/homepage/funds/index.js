@@ -44,6 +44,7 @@ import { getPriorityFeeIx } from "@/hooks/utils";
 import { shallowEqual, useSelector } from "react-redux";
 import { Web3authContext } from '@/providers/web3authProvider';
 import { useMobile } from "@/hooks/useMobile";
+import LoginPage from "@/Components/common/LoginPage";
 
 
 
@@ -840,7 +841,7 @@ const Funds = () => {
       {isLoading && <Spinner />}
       <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden ">
         <Sidebar />
-        <div className="w-full h-full flex flex-col">
+        <div className={user?.blockchainAddress?"w-full h-full flex flex-col":"w-full h-full flex flex-col  blur-sm pointer-events-none"}>
           <PageHeader pageTitle={"Funds"} />
           <section className="relative  w-full h-full py-6 md:py-[37px]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll sm:pl-[68.82px] sm:pr-[55px]">
             <div className="flex  sm:gap-[50px] flex-wrap justify-center">
@@ -865,6 +866,7 @@ const Funds = () => {
             </div>
           </section>
         </div>
+        {!user?.blockchainAddress && <LoginPage />}
       </div>
     </Fragment>
   );

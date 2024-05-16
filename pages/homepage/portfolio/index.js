@@ -19,6 +19,7 @@ import { RxCaretRight, RxCaretLeft } from "react-icons/rx";
 import { PortfolioList, PortfolioListMobile } from "@/Components/Portfolio";
 import { formatDate } from "@/utils";
 import { Modal } from "@/Components/Wrapped";
+import LoginPage from "@/Components/common/LoginPage";
 
 const Portfolio = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +65,7 @@ const Portfolio = () => {
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
-        <div className="w-full h-full flex flex-col">
+        <div className={user?.blockchainAddress?"w-full h-full flex flex-col":"w-full h-full flex flex-col blur-sm pointer-events-none"}>
           {selectedAirspace !== null && (
             <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} />
           )}
@@ -87,6 +88,7 @@ const Portfolio = () => {
             />
           </section>
         </div>
+        {!user?.blockchainAddress && <LoginPage />}
       </div>
     </Fragment>
   );
