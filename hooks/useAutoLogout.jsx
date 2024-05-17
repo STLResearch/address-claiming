@@ -17,7 +17,11 @@ const useAutoLogout = () => {
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    router.push("/auth/join");
+    redirectTo()
+  };
+
+  const redirectTo = () => {
+    if(router.pathname !== "/r/[referralCode]")  router.push("/auth/join");
   };
 
   useEffect(() => {
@@ -35,26 +39,16 @@ const useAutoLogout = () => {
     console.log("web3auth connected", web3auth?.connected);
     console.log("router", router);
 
-    const loadingStates = ["connecting", "not_ready"];
-    const nonLoadingStates = ["disconnected", "errored"];
 
     if (!web3auth) return;
-
-    // if (loadingStates.includes(web3auth.status)) return;
-    // if (nonLoadingStates.includes(web3auth.status)) {
-    //   logout();
-    //   return;
-    // }
 
     if(publicAccessRoutes.includes(router.pathname)){
       return
     }else if (web3auth?.status === "ready") {
       const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
-      console.log({fetchedToken})
-      /* if (!fetchedToken?.sessionId) {
-        router.push("/auth/join");
-        
-      } */ 
+      if (!fetchedToken?.sessionId) {
+        redirectTo()
+      } 
     }
 
   }, [web3auth?.status, user,router.pathname]); //included router.pathname in the dependency array so that it checks for autologout on every page..  
