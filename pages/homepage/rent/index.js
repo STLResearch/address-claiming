@@ -195,15 +195,17 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
   const [showSuccess, setShowSuccess] = useState(false);
 
   const [finalAns, setfinalAns] = useState();
-  const { user,publicAccessAuth } = useAuth();
+  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } = useAuth();
   const { createMintRentalToken, executeMintRentalToken } = AirspaceRentalService();
   const { provider } = useContext(Web3authContext)
 
 
   localStorage.setItem('rentData',JSON.stringify(rentData));
   
-
-
+  useEffect(() => {
+    setAndClearOtherPublicRouteData("rentData", rentData);
+  }, []);
+   
   // setting rentData owner
   useEffect(() => {
     async function getUsersFromBE() {
@@ -272,11 +274,14 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
 
   const handleRentAirspace = async () => {
     try {
-      publicAccessAuth()
-        const currentDate = new Date();
-        let startDate = new Date(date.toString());
-        let endDate = new Date(startDate.getTime());
-        endDate.setMinutes(endDate.getMinutes() + 30);
+      const isRedirecting = redirectIfUnauthenticated();
+      if (isRedirecting) return;
+
+      const currentDate = new Date();
+      let startDate = new Date(date.toString());
+      let endDate = new Date(startDate.getTime());
+      endDate.setMinutes(endDate.getMinutes() + 30);
+
       if (currentDate > endDate) {
         return toast.error(
           "Rental Tokens can't be booked in the past"

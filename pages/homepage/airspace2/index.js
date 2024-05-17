@@ -308,8 +308,10 @@ const ClaimModal = ({
   onClaim,
   claimButtonLoading,
 }) => {
+  const { setAndClearOtherPublicRouteData } = useAuth();
+
   const [isInfoVisible, setIsInfoVisible] = useState(false);
- localStorage.setItem('airSpaceData',JSON.stringify(data));
+
   useEffect(() => {
     let airSpaceName = data.address.split(",");
     setData((prev) => {
@@ -318,6 +320,7 @@ const ClaimModal = ({
         name: airSpaceName[0],
       };
     });
+    setAndClearOtherPublicRouteData("airSpaceData", data)
   }, []);
   const handleSellPrice = (e) => {
     let inputVal = e.target.value;
@@ -1126,7 +1129,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   // database
   const { claimProperty } = PropertiesService();
 
-  const { user,publicAccessAuth } = useAuth();
+  const { user, redirectIfUnauthenticated } = useAuth();
   const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
 
@@ -1317,7 +1320,9 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
 
   const onClaim = async () => {
     try {
-      publicAccessAuth();
+      const isRedirecting = redirectIfUnauthenticated();
+      if (isRedirecting) return;
+
       setClaimButtonLoading(true);
       const {
         address,
@@ -1394,7 +1399,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     } finally {
       setClaimButtonLoading(false);
     }
-    removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
+    removePubLicUserDetailsFromLocalStorage('airSpaceData', user)
   };
   const flyToUserIpAddress = async (map) => {
     if (!map) {

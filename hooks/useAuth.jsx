@@ -44,7 +44,6 @@ const useAuth = () => {
 
   const signOut = async () => {
     setProvider(null);
-    // dispatch(counterActions.setClearState({}));
 
     sessionStorage.clear();
     localStorage.clear();
@@ -55,38 +54,36 @@ const useAuth = () => {
     dispatch(counterActions.setUser(updatedUser));
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
- 
-  function customRedirect() {
-    let isRedirect=false
-    if(publicAccessRouteRedirection?.length > 0){
-      
-      for(let item of publicAccessRouteRedirection){
-        const initialKeyData = localStorage.getItem(item.localStorageKey)
-        if(initialKeyData?.length > 2){
-          isRedirect=true;
-          router.replace(item.redirectTo)
-          return
-        }
-      }
 
-      if(!isRedirect){
-        router.replace("/homepage/dashboard2");
-        return
+  const setAndClearOtherPublicRouteData = (localStorageKey, data) => {
+    for (const route of publicAccessRouteRedirection) {
+      if(route.localStorageKey !== localStorageKey) {
+        localStorage.removeItem(route.localStorageKey)
       }
-      
-    }else{
-      router.replace("/homepage/dashboard2");
-      return
+    }
+    localStorage.setItem(localStorageKey, JSON.stringify(data));
+  };
+
+
+  const customRedirect = () => {
+    const publicAccessRoutes = publicAccessRouteRedirection || [];
+
+    for (const item of publicAccessRoutes) {
+      const initialKeyData = localStorage.getItem(item.localStorageKey);
+      if (initialKeyData && initialKeyData?.length > 2) {
+        router.replace(item.redirectTo);
+        return;
+      }
     }
 
-}
-  //added this in for rent and airspace
-  const publicAccessAuth=()=>{
-    if(web3auth && web3auth.status==="connected"){
-      //all good
-      return
-    }else{
+    router.replace("/homepage/dashboard2");
+  };
+
+  const redirectIfUnauthenticated = () => {
+    if(web3auth && web3auth.status === "connected") return false;
+    else {
       router.push("/auth/join");
+      return true;
     }
   }
 
@@ -98,7 +95,8 @@ const useAuth = () => {
     user: userData,
     web3authStatus,
     customRedirect,
-    publicAccessAuth
+    redirectIfUnauthenticated,
+    setAndClearOtherPublicRouteData
   };
 };
 
