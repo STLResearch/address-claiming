@@ -443,17 +443,21 @@ const Switcher = ({ sections, activeSection, setActiveSection }) => {
 
 const SkyPointBalance = ({ registeredFriends}) => {
   const [hasUsedReferralCode, setHasUsedReferralCode] = useState(false);
+  const [userTotalPoint, setUserTotalPoint] = useState(0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const userData = localStorage.getItem('user');
       const userParsed = userData ? JSON.parse(userData) : {};
+      if (Object.keys(userParsed).length > 0 && userParsed.totalPoint) {
+        setUserTotalPoint(Number(userParsed?.totalPoint))
+      }
       setHasUsedReferralCode(userParsed?.usedReferralCodeId);
     }
   }, []);
 
   const hasUsedReferralCodePoint = hasUsedReferralCode ? 50 : 0;
-  const skyPoints = (50 * registeredFriends) + hasUsedReferralCodePoint;
+  const skyPoints = (50 * registeredFriends) + hasUsedReferralCodePoint + userTotalPoint;
 
   return (
     <div className="w-full md:w-[35%] px-4 md:px-[44px]">
