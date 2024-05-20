@@ -47,6 +47,7 @@ const useAuth = () => {
 
     sessionStorage.clear();
     localStorage.clear();
+    console.log('here1')
     router.push("/auth/join");
   };
 

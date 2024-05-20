@@ -9,7 +9,7 @@ const useAutoLogout = () => {
   const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
   const { user } = useAuth();
-  const publicAccessRoutes=[];
+  const publicAccessRoutes=["/auth/join"];
   for(let item of publicAccessRouteRedirection ){
     publicAccessRoutes.push(item.redirectTo)
   }
@@ -21,7 +21,7 @@ const useAutoLogout = () => {
   };
 
   const redirectTo = () => {
-    if(router.pathname !== "/r/[referralCode]")  router.push("/auth/join");
+    if(router.pathname !== "/r/[referralCode]")  router.push("/inAppSignIn");
   };
 
   useEffect(() => {

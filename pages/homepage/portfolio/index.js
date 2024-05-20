@@ -65,7 +65,7 @@ const Portfolio = () => {
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
-        <div className={user?.blockchainAddress?"w-full h-full flex flex-col":"w-full h-full flex flex-col blur-sm pointer-events-none"}>
+        <div className="w-full h-full flex flex-col">
           {selectedAirspace !== null && (
             <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} />
           )}
@@ -88,7 +88,6 @@ const Portfolio = () => {
             />
           </section>
         </div>
-        {!user?.blockchainAddress && <LoginPage />}
       </div>
     </Fragment>
   );
