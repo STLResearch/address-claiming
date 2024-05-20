@@ -23,8 +23,6 @@ import { toast } from "react-toastify";
 import ReferralCodeService from "@/services/ReferralCodeService";
 import UserService from "@/services/UserService";
 import { useRouter } from 'next/router';
-import LoginPage from "@/Components/common/LoginPage";
-
 const Item = ({ icon, title, text }) => {
   return (
     <div

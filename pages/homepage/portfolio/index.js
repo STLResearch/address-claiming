@@ -2,25 +2,15 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import Script from "next/script";
-import {
-  LocationPointIcon,
-  ChevronRightIcon,
-  CloseIcon,
-  ArrowLeftIcon,
-} from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
 import useAuth from '@/hooks/useAuth';
 import Head from "next/head";
-import { RxCaretRight, RxCaretLeft } from "react-icons/rx";
 import { PortfolioList, PortfolioListMobile } from "@/Components/Portfolio";
-import { formatDate } from "@/utils";
-import { Modal } from "@/Components/Wrapped";
-import LoginPage from "@/Components/common/LoginPage";
 
+import { Modal } from "@/Components/Wrapped";
 const Portfolio = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAirspace, setSelectedAirspace] = useState(null);

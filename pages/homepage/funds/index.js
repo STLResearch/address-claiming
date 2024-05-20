@@ -44,10 +44,6 @@ import { getPriorityFeeIx } from "@/hooks/utils";
 import { shallowEqual, useSelector } from "react-redux";
 import { Web3authContext } from '@/providers/web3authProvider';
 import { useMobile } from "@/hooks/useMobile";
-import LoginPage from "@/Components/common/LoginPage";
-
-
-
 const AvailableBalance = ({ solbalance }) => {
 
   // const {userUSDWalletBalance} = useSelector((state) => {
