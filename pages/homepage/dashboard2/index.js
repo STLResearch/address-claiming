@@ -302,10 +302,10 @@ const Dashboard = () => {
                   <ReferralProgram />
                 </div>
               </div>
-              <div className="overflow-y-scroll w-full overflow-x-hidden h-screen md:min-h-screen md:w-1/2 m-0 ">
+              <div className="md:overflow-y-scroll  md:overflow-x-hidden  md:min-h-screen md:w-1/2 m-0 ">
                 <Link
                   href={"/homepage/airspace2"}
-                  className="md:flex-1 flex flex-col items-center justify-between bg-cover bg-no-repeat bg-center -mt-[53px] md:-mr-[53px] pt-[42px] md:px-[18px] md:pb-[40px] h-full overflow-y-scroll"
+                  className="gap-20 md:flex-1 flex flex-col md:items-center md:justify-between h-[500px] md:bg-cover md:bg-no-repeat md:bg-center md:-mt-[53px] md:-mr-[53px] md:pt-[42px] px-[18px] md:pb-[40px] md:h-full md:overflow-y-scroll "
                   style={{ backgroundImage: "url('/images/map-bg.png')" }}
                 >
                   <div
@@ -340,7 +340,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px] mb-10 ">
+                  <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px] mt-10">
                     Claim Airspace
                   </div>
                 </Link>
