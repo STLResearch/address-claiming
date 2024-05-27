@@ -1,7 +1,7 @@
 import React, { Fragment, useContext } from 'react';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
-import { Web3authContext } from '../providers/web3authProvider';
+import { Web3authContext } from '../providers/web3auth';
 import axios from 'axios';
 import base58 from 'bs58';
 import { toast } from 'react-toastify';

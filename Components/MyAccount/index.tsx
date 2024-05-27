@@ -14,6 +14,7 @@ import AccountVerification from '../../Components/MyAccount/AccountVerification'
 import PersonalInformation from '../../Components/MyAccount/PersonalInformation';
 import { PersonalInformationType } from '../../types';
 import React from 'react';
+import MainLayout from '@/layout/MainLayout';
 
 const Account  = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -97,37 +98,33 @@ const Account  = () => {
     };
 
     return (
-        <Fragment>
-            {isLoading && createPortal(<Backdrop />, document?.getElementById('backdrop-root')!)}
-            {isLoading && createPortal(<Spinner />, document?.getElementById('backdrop-root')!)}
-
-            <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
-                <Sidebar />
-                <div className="w-full h-full flex flex-col">
-                    <PageHeader pageTitle={'Account'} />
-                    <section className="relative w-full h-full flex flex-col py-[29px] px-[21px] md:pl-[54.82px] md:pr-[47px] gap-[29px] md:mb-0 mb-[78.22px] overflow-y-auto">
-                        <div className="flex flex-col gap-[15px]">
-                            <h2 className="text-[#222222] font-normal text-xl">My Profile</h2>
-                            <p className="text-[#87878D] font-normal text-base">Update your account settings</p>
-                        </div>
-                        <AccountVerification
-                            KYCStatusId={personalInformation.KYCStatusId}
-                            isLoading={isLoading}
-                            onVerifyMyAccount={onVerifyMyAccount}
-                        />
-                        <PersonalInformation
-                            personalInformation={personalInformation}
-                            setPersonalInformation={setPersonalInformation}
-                            isPhoneNumberValid={isPhoneNumberValid}
-                            errorMessage={errorMessage}
-                            isLoading={isLoading}
-                            updateDataHandler={updateDataHandler}
-                            setIsPhoneNumberValid={setIsPhoneNumberValid}
-                        />
-                    </section>
+        <MainLayout
+            title="Account"
+            isLoading={isLoading}
+            showSidebar={true}
+            showPageHeader={true}
+        >
+            <section className="relative w-full h-full flex flex-col py-[29px] px-[21px] md:pl-[54.82px] md:pr-[47px] gap-[29px] md:mb-0 mb-[78.22px] overflow-y-auto">
+                <div className="flex flex-col gap-[15px]">
+                    <h2 className="text-[#222222] font-normal text-xl">My Profile</h2>
+                    <p className="text-[#87878D] font-normal text-base">Update your account settings</p>
                 </div>
-            </div>
-        </Fragment>
+                <AccountVerification
+                    KYCStatusId={personalInformation.KYCStatusId}
+                    isLoading={isLoading}
+                    onVerifyMyAccount={onVerifyMyAccount}
+                />
+                <PersonalInformation
+                    personalInformation={personalInformation}
+                    setPersonalInformation={setPersonalInformation}
+                    isPhoneNumberValid={isPhoneNumberValid}
+                    errorMessage={errorMessage}
+                    isLoading={isLoading}
+                    updateDataHandler={updateDataHandler}
+                    setIsPhoneNumberValid={setIsPhoneNumberValid}
+                />
+            </section>
+        </MainLayout>
     );
 };
 

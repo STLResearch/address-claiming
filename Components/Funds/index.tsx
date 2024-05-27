@@ -4,7 +4,6 @@ import React, { useState, useEffect, Fragment, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { PublicKey, Connection } from "@solana/web3.js";
 import useAuth from '@/hooks/useAuth';
-import { Web3authContext } from '@/providers/web3authProvider';
 import { SolanaWallet } from "@web3auth/solana-provider";
 import Sidebar from "../Sidebar";
 import PageHeader from "../PageHeader";
@@ -14,7 +13,9 @@ import AvailableBalance from "./AvailableBalance";
 import DepositAndWithdraw from "./DepositAndWithdraw";
 import TransactionHistory from "./TransactionHistory";
 import Head from "next/head";
-import { Web3authContextType,ConnectionConfig,Transaction } from "../../types";
+import { ConnectionConfig,Transaction } from "../../types";
+import { Web3authContext } from "@/providers/web3auth";
+import MainLayout from "@/layout/MainLayout";
 
 
 const Funds  = () => {
@@ -27,7 +28,7 @@ const Funds  = () => {
     const [tokenBalance, setTokenBalance] = useState<number>(0);
     const router = useRouter();
     const [solbalance, setSolBalance] = useState<number>(0);
-    const { provider } = useContext(Web3authContext)as Web3authContextType
+    const { provider } = useContext(Web3authContext);
   
   
     //get sol balance
@@ -40,15 +41,6 @@ const Funds  = () => {
           console.log("solana wallet ", solanaWallet);
           const accounts = await solanaWallet.requestAccounts();
   
-        //   const connectionConfig = await solanaWallet.request({
-        //     method: "solana_provider_config",
-        //     params: [],
-        //   });
-  
-        //   const connection = new Connection(connectionConfig.rpcTarget);
-        //   const solbalance1 = await connection.getBalance(
-        //     new PublicKey(accounts[0])
-        //   );
         const connectionConfig: ConnectionConfig = await solanaWallet.request({
             method: "solana_provider_config",
             params: [],
@@ -94,10 +86,10 @@ const Funds  = () => {
   
     useEffect(() => {
       if (transactionHistory) {
-        const collectedTransactions = [];
+        const collectedTransactions: any[] = [];
   
         for (const trans of transactionHistory) {
-            trans.data.forEach((key) => {
+            trans.data.forEach((key: any) => {
                 const date = new Date(key.timestamp * 1000);
                 const month = date.toLocaleString("default", { month: "short" });
                 const day = date.getDate();
@@ -105,7 +97,6 @@ const Funds  = () => {
                 const hour = date.getHours().toString().padStart(2, "0");
                 const minute = date.getMinutes().toString().padStart(2, "0");
                 const second = date.getSeconds().toString().padStart(2, "0");
-      
                 //   key.date = `${month} ${day}, ${year} ${hour}:${minute}:${second}`;
                 key.date = `${month} ${day}, ${year}`;
       
@@ -123,41 +114,35 @@ const Funds  = () => {
     }, [transactionHistory, user, web3authStatus]);
   
     return (
-      <Fragment>
-        <Head>
-          <title>SkyTrade - Wallet</title>
-        </Head>
-        {isLoading && <Backdrop />}
-        {isLoading && <Spinner />}
-        <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden ">
-          <Sidebar />
-          <div className="w-full h-full flex flex-col">
-            <PageHeader pageTitle={"Funds"} />
-            <section className="relative  w-full h-full py-6 md:py-[37px]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll sm:pl-[68.82px] sm:pr-[55px]">
-              <div className="flex  sm:gap-[50px] flex-wrap justify-center">
-                <div className="flex flex-col gap-5 items-center sm:items-start ">
-                  <AvailableBalance
-                    solbalance={solbalance}
-                  />
-                  <DepositAndWithdraw
-                    walletId={user?.blockchainAddress}
-                    activeSection={activeSection}
-                    setActiveSection={setActiveSection}
-                    setIsLoading={setIsLoading}
-                    isLoading={isLoading}
-                    setreFetchBal={setreFetchBal}
-                    refetchBal={refetchBal}
-                    setTokenBalance={setTokenBalance}
-                    tokenBalance={tokenBalance}
-                    solbalance={solbalance}
-                  />
-                </div>
-                <TransactionHistory transactions={transactions} user={user} />
-              </div>
-            </section>
+      <MainLayout 
+        title="Funds" 
+        isLoading={isLoading} 
+        showSidebar={true}
+        showPageHeader={true}
+      >
+        <section className="relative  w-full h-full py-6 md:py-[37px]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll sm:pl-[68.82px] sm:pr-[55px]">
+          <div className="flex  sm:gap-[50px] flex-wrap justify-center">
+            <div className="flex flex-col gap-5 items-center sm:items-start ">
+              <AvailableBalance
+                solbalance={solbalance}
+              />
+              <DepositAndWithdraw
+                walletId={user?.blockchainAddress}
+                activeSection={activeSection}
+                setActiveSection={setActiveSection}
+                setIsLoading={setIsLoading}
+                isLoading={isLoading}
+                setreFetchBal={setreFetchBal}
+                refetchBal={refetchBal}
+                setTokenBalance={setTokenBalance}
+                tokenBalance={tokenBalance}
+                solbalance={solbalance}
+              />
+            </div>
+            <TransactionHistory transactions={transactions} user={user} />
           </div>
-        </div>
-      </Fragment>
+        </section>
+      </MainLayout>
     );
   };
 

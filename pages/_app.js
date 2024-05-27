@@ -5,11 +5,11 @@ import Script from "next/script";
 
 import CookieConsent from "@/Components/CookieConsent";
 
-import { msclaritConfig } from "@/hooks/msclaritConfig";
+import { msclarit } from "@/config";
 import { useMobile } from "@/hooks/useMobile";
 import { useEffect, useState } from "react";
 import { SidebarProvider } from "@/hooks/sidebarContext";
-import { Web3authProvider } from "../providers/web3authProvider";
+import { Web3authProvider } from "../providers/web3auth";
 import { ToastContainer } from "react-toastify";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -50,7 +50,7 @@ export default function App({ Component, pageProps }) {
         {/* <PersistGate loading={null} persistor={persistor}> */}
         <>
           <Script src="https://cdn.withpersona.com/dist/persona-v4.8.0.js" />
-          <Script id="show-banner" dangerouslySetInnerHTML={msclaritConfig} />
+          <Script id="show-banner" dangerouslySetInnerHTML={msclarit} />
           <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
           <Script id="google-analytics">
             {`

@@ -4,9 +4,9 @@ import { useEffect, useContext, useState } from "react";
 
 import Spinner from "@/Components/Spinner";
 import useAutoLogout from "@/hooks/useAutoLogout";
-import { Web3authContext } from "@/providers/web3authProvider";
 import { useRouter } from "next/navigation";
 import { useMobile } from "@/hooks/useMobile";
+import { Web3authContext } from "@/providers/web3auth";
 
 export default function Home() {
   useAutoLogout();

@@ -13,6 +13,7 @@ import ExplorerMobile from "@/Components/Rent/Explorer/ExplorerMobile";
 import RentModal from "@/Components/Rent/RentModal/RentModal";
 import { getAddresses, goToAddress } from "@/utils/apiUtils/apiFunctions";
 import { Coordinates, PropertyData } from "@/types";
+import MainLayout from "@/layout/MainLayout";
 
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -120,92 +121,83 @@ const Rent = () => {
   }, [flyToAddress, address]);
 
   return (
-    <Fragment>
-      <Head>
-        <title>SkyTrade - Marketplace : Rent</title>
-      </Head>
+    <MainLayout
+      title={isMobile ? "Rent" : "Marketplace: Rent"}
+      isLoading={false}
+      showSidebar={true}
+      showPageHeader={true}
+    >
+      {isMobile && (
+        <ExplorerMobile
+          loadingReg={loadingRegAddresses}
+          loading={loadingAddresses}
+          address={address}
+          setAddress={setAddress}
+          addresses={addresses}
+          showOptions={showOptions}
+          regAdressShow={regAdressShow}
+          registeredAddress={registeredAddress}
+          map={map}
+          marker={marker}
+          setMarker={setMarker}
+          setShowClaimModal={setShowClaimModal}
+          rentData={rentData}
+          setRentData={setRentData}
+          setFlyToAddress={setFlyToAddress}
+          setShowOptions={setShowOptions}
+          setLoadingRegAddresses={setLoadingRegAddresses}
+          setRegisteredAddress={setRegisteredAddress}
+        />
+      )}
+      <section
+        className={
+          "relative flex w-full h-full justify-start items-start md:mb-0 mb-[79px] "
+        }
+      >
+        <div
+          className={"!absolute !top-0 !left-0 !m-0 !w-screen !h-screen"}
+          id="map"
+          style={{ zIndex: "20" }}
+        />
 
-      {
-        <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
-          <Sidebar />
-
-          <div className="w-full h-full flex flex-col">
-            {isLoading && <Backdrop />}
-            {isLoading && <Spinner />}
-            <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
-            {isMobile && (
-              <ExplorerMobile
-                loadingReg={loadingRegAddresses}
-                loading={loadingAddresses}
-                address={address}
-                setAddress={setAddress}
-                addresses={addresses}
-                showOptions={showOptions}
-                regAdressShow={regAdressShow}
-                registeredAddress={registeredAddress}
-                map={map}
-                marker={marker}
-                setMarker={setMarker}
-                setShowClaimModal={setShowClaimModal}
-                rentData={rentData}
-                setRentData={setRentData}
-                setFlyToAddress={setFlyToAddress}
-                setShowOptions={setShowOptions}
-                setLoadingRegAddresses={setLoadingRegAddresses}
-                setRegisteredAddress={setRegisteredAddress}
-              />
-            )}
-            <section
-              className={
-                "relative flex w-full h-full justify-start items-start md:mb-0 mb-[79px] "
-              }
-            >
-              <div
-                className={"!absolute !top-0 !left-0 !m-0 !w-screen !h-screen"}
-                id="map"
-                style={{ zIndex: "20" }}
-              />
-
-              {!isMobile && (
-                <div className="flex justify-start items-start">
-                  <Explorer
-                    setLoadingRegAddresses={setLoadingRegAddresses}
-                    loadingReg={loadingRegAddresses}
-                    setRegisteredAddress={setRegisteredAddress}
-                    loading={loadingAddresses}
-                    address={address}
-                    setAddress={setAddress}
-                    addresses={addresses}
-                    showOptions={showOptions}
-                    regAdressShow={regAdressShow}
-                    registeredAddress={registeredAddress}
-                    map={map}
-                    marker={marker}
-                    setMarker={setMarker}
-                    setShowClaimModal={setShowClaimModal}
-                    rentData={rentData}
-                    setRentData={setRentData}
-                    setFlyToAddress={setFlyToAddress}
-                    setShowOptions={setShowOptions}
-                  />
-                </div>
-              )}
-              {showClaimModal && (
-                <RentModal
-                  setShowClaimModal={setShowClaimModal}
-                  rentData={rentData}
-                  setIsLoading={setIsLoading}
-                  isLoading={isLoading}
-                />
-              )}
-            </section>
-            <div className="hidden sm:block">
-              <ZoomControllers map={map} />
-            </div>
+        {!isMobile && (
+          <div className="flex justify-start items-start">
+            <Explorer
+              setLoadingRegAddresses={setLoadingRegAddresses}
+              loadingReg={loadingRegAddresses}
+              setRegisteredAddress={setRegisteredAddress}
+              loading={loadingAddresses}
+              address={address}
+              setAddress={setAddress}
+              addresses={addresses}
+              showOptions={showOptions}
+              regAdressShow={regAdressShow}
+              registeredAddress={registeredAddress}
+              map={map}
+              marker={marker}
+              setMarker={setMarker}
+              setShowClaimModal={setShowClaimModal}
+              rentData={rentData}
+              setRentData={setRentData}
+              setFlyToAddress={setFlyToAddress}
+              setShowOptions={setShowOptions}
+            />
           </div>
-        </div>
-      }
-    </Fragment>
+        )}
+        {showClaimModal && (
+          <RentModal
+            setShowClaimModal={setShowClaimModal}
+            rentData={rentData}
+            setIsLoading={setIsLoading}
+            isLoading={isLoading}
+          />
+        )}
+      </section>
+      <div className="hidden sm:block">
+        <ZoomControllers map={map} />
+      </div>
+    </MainLayout>
+
   );
 };
 

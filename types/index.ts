@@ -1,3 +1,5 @@
+import { IProvider } from "@web3auth/base";
+import { Web3AuthNoModal } from "@web3auth/no-modal";
 import { Dispatch, SetStateAction } from "react";
 
 export type Coordinates = {
@@ -142,13 +144,6 @@ export interface PersonalInformationType {
     newsletter: boolean;
     KYCStatusId: number;
 }
-
-export interface Web3authContextType {
-    web3auth: any;
-    setWeb3auth: React.Dispatch<React.SetStateAction<any>>;
-    provider: any;
-    setProvider: React.Dispatch<React.SetStateAction<any>>;
-  }
  
  export interface AvailableBalanceProps {
     solbalance: number;

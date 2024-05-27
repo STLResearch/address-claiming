@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import { getPriorityFeeIx } from "@/hooks/utils";
-import { Web3authContext } from "@/providers/web3authProvider";
 import { getAssociatedTokenAddress, getAccount, createAssociatedTokenAccountInstruction, createTransferInstruction } from "@solana/spl-token";
 import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { SolanaWallet } from "@web3auth/solana-provider";
@@ -10,10 +9,11 @@ import { useQRCode } from "next-qrcode";
 import { toast } from "react-toastify";
 import { Tooltip, CopyIcon, WarningIcon } from "../Icons";
 import Accordion from "./Accordion";
-import { DepositAndWithdrawProps, Web3authContextType, ConnectionConfig  } from "../../types";
+import { DepositAndWithdrawProps, ConnectionConfig  } from "../../types";
 import CopyToClipboard from "react-copy-to-clipboard";
 
 import { TransactionInstruction } from "@solana/web3.js";
+import { Web3authContext } from "@/providers/web3auth";
 
 
 const DepositAndWithdraw = ({
@@ -40,11 +40,15 @@ const DepositAndWithdraw = ({
   
     const { user } = useAuth();
   
-    const { provider } = useContext(Web3authContext)as Web3authContextType
+    const { provider } = useContext(Web3authContext);
   
     let userSolBalc = solbalance;
     const handleWithdraw = async () => {
-        if(!amount) return
+      if (!provider) {
+        toast.error("Wallet not connected");
+        return
+      }
+      if(!amount) return
       try {
         if (
           activeSection == 1 &&

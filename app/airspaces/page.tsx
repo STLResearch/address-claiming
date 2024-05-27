@@ -25,6 +25,7 @@ import {
 } from "@/utils/apiUtils/apiFunctions";
 import { Coordinates, PropertyData } from "@/types";
 import MobileMapSection from "@/Components/Airspace/MobileMapSection";
+import MainLayout from "@/layout/MainLayout";
 
 const Airspaces = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -158,116 +159,110 @@ const Airspaces = () => {
 
   
   return (
-    <Fragment>
-      <Head>
-        <title>SkyTrade - Airspaces</title>
-      </Head>
-      {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
-
-      <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA]">
-        {!showMobileMap && <Sidebar />}
-        <div className="flex h-full w-full flex-col">
-          {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
-          {showMobileMap && isMobile && (
-            <ExplorerMobile
-              onGoBack={() => setShowMobileMap(false)}
+    <MainLayout
+      title="Airspaces"
+      isLoading={isLoading}
+      showSidebar={!showMobileMap}
+      showPageHeader={!showMobileMap}
+    >
+      {showMobileMap && isMobile && (
+        <ExplorerMobile
+          onGoBack={() => setShowMobileMap(false)}
+          address={address}
+          setAddress={setAddress}
+          addresses={addresses}
+          showOptions={showOptions}
+          setFlyToAddress={setFlyToAddress}
+          setShowOptions={setShowOptions}
+        />
+      )}
+      {showHowToModal && (
+        <HowToModal goBack={() => setShowHowToModal(false)} />
+      )}
+      <section
+        className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
+      >
+        <div
+          className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-screen`}
+          id="map"
+          style={{
+            opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",
+            zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
+          }}
+        />
+        {showClaimModal && (
+          <ClaimModal
+            onCloseModal={() => {
+              setShowClaimModal(false);
+              setIsLoading(false);
+            }}
+            data={data}
+            setData={setData}
+            coordinates={coordinates}
+            defaultData={defaultData}
+            setIsLoading={setIsLoading}
+            setShowClaimModal={setShowClaimModal}
+            setShowFailurePopUp={setShowFailurePopUp}
+            setShowSuccessPopUp={setShowSuccessPopUp}
+            user={user}
+          />
+        )}
+        {isMobile && showMobileMap && flyToAddress && (
+          <div
+            onClick={() => {
+              setShowClaimModal(true);
+              setIsLoading(true);
+            }}
+            className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+          >
+            Claim Airspace
+          </div>
+        )}
+        {isMobile && (
+          <Fragment>
+            {(showSuccessPopUp || showFailurePopUp) && (
+              <MobileSuccessModal
+                isSuccess={showSuccessPopUp}
+                closePopUp={() => {
+                  showFailurePopUp
+                    ? setShowFailurePopUp(false)
+                    : setShowSuccessPopUp(false);
+                }}
+              />
+            )}
+          </Fragment>
+        )}
+        {!isMobile && (
+          <div className="flex items-start justify-start">
+            <Explorer
+              flyToAddress={flyToAddress}
               address={address}
               setAddress={setAddress}
               addresses={addresses}
               showOptions={showOptions}
+              onClaimAirspace={() => {
+                setShowClaimModal(true);
+                setIsLoading(true);
+              }}
               setFlyToAddress={setFlyToAddress}
               setShowOptions={setShowOptions}
             />
-          )}
-          {showHowToModal && (
-            <HowToModal goBack={() => setShowHowToModal(false)} />
-          )}
-          <section
-            className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
-          >
-            <div
-              className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-screen`}
-              id="map"
-              style={{
-                opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",
-                zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
-              }}
-            />
-            {showClaimModal && (
-              <ClaimModal
-                onCloseModal={() => {
-                  setShowClaimModal(false);
-                  setIsLoading(false);
-                }}
-                data={data}
-                setData={setData}
-                coordinates={coordinates}
-                defaultData={defaultData}
-                setIsLoading={setIsLoading}
-                setShowClaimModal={setShowClaimModal}
-                setShowFailurePopUp={setShowFailurePopUp}
-                setShowSuccessPopUp={setShowSuccessPopUp}
-                user={user}
-              />
-            )}
-            {isMobile && showMobileMap && flyToAddress && (
-              <div
-                onClick={() => {
-                  setShowClaimModal(true);
-                  setIsLoading(true);
-                }}
-                className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
-              >
-                Claim Airspace
-              </div>
-            )}
-            {isMobile && (
-              <Fragment>
-                {(showSuccessPopUp || showFailurePopUp) && (
-                  <MobileSuccessModal
-                    isSuccess={showSuccessPopUp}
-                    closePopUp={() => {
-                      showFailurePopUp
-                        ? setShowFailurePopUp(false)
-                        : setShowSuccessPopUp(false);
-                    }}
-                  />
-                )}
-              </Fragment>
-            )}
-            {!isMobile && (
-              <div className="flex items-start justify-start">
-                <Explorer
-                  flyToAddress={flyToAddress}
-                  address={address}
-                  setAddress={setAddress}
-                  addresses={addresses}
-                  showOptions={showOptions}
-                  onClaimAirspace={() => {
-                    setShowClaimModal(true);
-                    setIsLoading(true);
-                  }}
-                  setFlyToAddress={setFlyToAddress}
-                  setShowOptions={setShowOptions}
-                />
-                <Slider />
-                <PopUp isVisible={showSuccessPopUp} />
-                <FailurePopUp isVisible={showFailurePopUp} />
-              </div>
-            )}
-            <MobileMapSection
-              setShowHowToModal={setShowHowToModal}
-              setShowMobileMap={setShowMobileMap}
-              showMobileMap={showMobileMap}
-            />
-            <div className="hidden sm:block">
-              <ZoomControllers map={map} />
-            </div>
-          </section>
+            <Slider />
+            <PopUp isVisible={showSuccessPopUp} />
+            <FailurePopUp isVisible={showFailurePopUp} />
+          </div>
+        )}
+        <MobileMapSection
+          setShowHowToModal={setShowHowToModal}
+          setShowMobileMap={setShowMobileMap}
+          showMobileMap={showMobileMap}
+        />
+        <div className="hidden sm:block">
+          <ZoomControllers map={map} />
         </div>
-      </div>
-    </Fragment>
+      </section>
+    </MainLayout>
+
   );
 };
 export default Airspaces;
