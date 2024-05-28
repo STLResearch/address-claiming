@@ -11,7 +11,7 @@ import Script from "next/script";
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 import { Fragment } from "react";
-import logo from '../../../../public/images/logo.svg';
+import logo from "../../../../public/images/logo.svg";
 
 import useAuth from "@/hooks/useAuth";
 import UserService from "@/services/UserService";
@@ -148,7 +148,7 @@ const IndividualSignup = () => {
           phoneNumberRef.current.value = "";
 
           // referralCodeRef.current.value = '';
-          router.replace("/homepage/dashboard2");
+          router.replace("/dashboard");
         });
       } else {
         swal({

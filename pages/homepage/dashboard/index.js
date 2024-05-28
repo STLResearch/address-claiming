@@ -18,7 +18,7 @@ import Spinner from '@/Components/Spinner';
 
 import useAuth from '@/hooks/useAuth';
 import PropertiesService from "@/services/PropertiesService";
-import { Web3authContext } from '@/providers/web3authProvider';
+import { Web3authContext } from "@/providers";
 import NewslettersService from "@/services/NewslettersService";
 
 const Dashboard = () => {

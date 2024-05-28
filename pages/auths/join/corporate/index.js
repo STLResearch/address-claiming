@@ -6,7 +6,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { shallowEqual, useSelector } from "react-redux";
 import { createPortal } from "react-dom";
 import swal from "sweetalert";
-import logo from '../../../../public/images/logo.svg';
+import logo from "../../../../public/images/logo.svg";
 import Script from "next/script";
 
 import Backdrop from "@/Components/Backdrop";
@@ -120,7 +120,7 @@ const CorporateSignup = () => {
 
           nameRef.current.value = "";
           phoneNumberRef.current.value = "";
-          router.replace("/homepage/dashboard2");
+          router.replace("/dashboard");
         });
       } else {
         swal({

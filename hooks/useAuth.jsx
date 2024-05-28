@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers";
 
 import { counterActions } from "@/store/store";
 import { useRouter } from "next/navigation";
@@ -48,7 +48,7 @@ const useAuth = () => {
 
     sessionStorage.clear();
     localStorage.clear();
-    router.push("/auth/join");
+    router.push("/auth");
   };
 
   const updateProfile = (updatedUser) => {

@@ -1,14 +1,13 @@
-
-import { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useRouter } from 'next/router';
-import swal from 'sweetalert';
-import { counterActions } from '@/store/store';
-import TimeSelect from '../TimeSelect';
-import TimezoneSelectComponent from '../Timezone';
+import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import swal from "sweetalert";
+import { counterActions } from "@/store/store";
+import TimeSelect from "../TimeSelect";
+import TimezoneSelectComponent from "../Timezone";
 // import { setAdditionalInfoModal } from '@/redux/slices/userSlice';
 import PropertiesService from "@/services/PropertiesService";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 const AdditionalAispaceInformation = (props) => {
   const router = useRouter();
@@ -20,9 +19,9 @@ const AdditionalAispaceInformation = (props) => {
   const [storageChecked, setStorageChecked] = useState(false);
   const [rentChecked, setRentChecked] = useState(true);
 
-  const [deck, setDeck] = useState('');
-  const [storage, setStorage] = useState('');
-  const [airspaceStatus, setAirspaceStatus] = useState('Available');
+  const [deck, setDeck] = useState("");
+  const [storage, setStorage] = useState("");
+  const [airspaceStatus, setAirspaceStatus] = useState("Available");
   const [monAvailable, setMonAvailable] = useState(true);
   const [tueAvailable, setTueAvailable] = useState(true);
   const [wedAvailable, setWedAvailable] = useState(true);
@@ -44,7 +43,7 @@ const AdditionalAispaceInformation = (props) => {
   const [toSaturday, setToSaturday] = useState(22);
   const [fromSunday, setFromSunday] = useState(7);
   const [toSunday, setToSunday] = useState(22);
-  const [timezone, setTimezone] = useState('US/Central');
+  const [timezone, setTimezone] = useState("US/Central");
 
   const airspaceTitleRef = useRef();
   const { claimProperty } = PropertiesService();
@@ -56,9 +55,7 @@ const AdditionalAispaceInformation = (props) => {
   //   return {airspaceData}
   // });
 
-  const airspaceData = useSelector(
-    (state) => state.value.airspaceData
-  );
+  const airspaceData = useSelector((state) => state.value.airspaceData);
 
   const closeModalHandler = (e) => {
     e.preventDefault();
@@ -73,9 +70,9 @@ const AdditionalAispaceInformation = (props) => {
     setDeckChecked(!deckChecked);
 
     if (!deckChecked) {
-      setDeck('Landing Deck');
+      setDeck("Landing Deck");
     } else {
-      setDeck('');
+      setDeck("");
     }
   };
 
@@ -87,9 +84,9 @@ const AdditionalAispaceInformation = (props) => {
     setStorageChecked(!storageChecked);
 
     if (!storageChecked) {
-      setStorage('Storage Hub');
+      setStorage("Storage Hub");
     } else {
-      setStorage('');
+      setStorage("");
     }
   };
 
@@ -109,49 +106,49 @@ const AdditionalAispaceInformation = (props) => {
           fromTime: +fromMonday,
           toTime: +toMonday,
           isAvailable:
-            monAvailable && airspaceStatus === 'Available' ? true : false,
+            monAvailable && airspaceStatus === "Available" ? true : false,
         },
         {
           weekDayId: 1,
           fromTime: +fromTuesday,
           toTime: +toTuesday,
           isAvailable:
-            tueAvailable && airspaceStatus === 'Available' ? true : false,
+            tueAvailable && airspaceStatus === "Available" ? true : false,
         },
         {
           weekDayId: 2,
           fromTime: +fromWednesday,
           toTime: +toWednesday,
           isAvailable:
-            wedAvailable && airspaceStatus === 'Available' ? true : false,
+            wedAvailable && airspaceStatus === "Available" ? true : false,
         },
         {
           weekDayId: 3,
           fromTime: +fromThursday,
           toTime: +toThursday,
           isAvailable:
-            thuAvailable && airspaceStatus === 'Available' ? true : false,
+            thuAvailable && airspaceStatus === "Available" ? true : false,
         },
         {
           weekDayId: 4,
           fromTime: +fromFriday,
           toTime: +toFriday,
           isAvailable:
-            friAvailable && airspaceStatus === 'Available' ? true : false,
+            friAvailable && airspaceStatus === "Available" ? true : false,
         },
         {
           weekDayId: 5,
           fromTime: +fromSaturday,
           toTime: +toSaturday,
           isAvailable:
-            satAvailable && airspaceStatus === 'Available' ? true : false,
+            satAvailable && airspaceStatus === "Available" ? true : false,
         },
         {
           weekDayId: 6,
           fromTime: +fromSunday,
           toTime: +toSunday,
           isAvailable:
-            sunAvailable && airspaceStatus === 'Available' ? true : false,
+            sunAvailable && airspaceStatus === "Available" ? true : false,
         },
       ];
 
@@ -159,44 +156,44 @@ const AdditionalAispaceInformation = (props) => {
         ...airspaceData,
         ownerId: props.user.id,
         title: airspaceTitle,
-        transitFee: '$0.01 - $99.00',
+        transitFee: "$0.01 - $99.00",
         hasStorageHub: storageChecked,
         hasLandingDeck: deckChecked,
         hasChargingStation: stationChecked,
         isRentableAirspace: rentChecked,
         isFixedTransitFee: costChecked,
-        noFlyZone: airspaceStatus === 'Available' ? false : true,
+        noFlyZone: airspaceStatus === "Available" ? false : true,
         weekDayRanges,
-        timezone: airspaceStatus === 'Available' ? timezone : 'GMT',
-      }
+        timezone: airspaceStatus === "Available" ? timezone : "GMT",
+      };
 
-      const responseData = await claimProperty({ postData })
+      const responseData = await claimProperty({ postData });
 
-      if (responseData && !responseData.errorMessage) { 
+      if (responseData && !responseData.errorMessage) {
         swal({
-          title: 'Submitted',
-          text: 'Airspace Registered Successfully',
-          icon: 'success',
-          button: 'Ok',
+          title: "Submitted",
+          text: "Airspace Registered Successfully",
+          icon: "success",
+          button: "Ok",
         }).then(() => {
           dispatch(counterActions.setAdditionalInfoModal(false));
           // setIsLoading(false);
-          router.push('/homepage/dashboard2');
+          router.push("/dashboard");
         });
       } else if (responseData && responseData.errorMessage) {
         toast.error(responseData.errorMessage);
       } else {
         swal({
-          title: 'Oops!',
-          text: 'Something went wrong. Kindly try again',
+          title: "Oops!",
+          text: "Something went wrong. Kindly try again",
         });
       }
     } catch (error) {
       console.error(error);
-      const err = error.toString().split(':');
+      const err = error.toString().split(":");
       swal({
-        title: 'Oops!',
-        text: err[1] || 'Something went wrong. Kindly try again',
+        title: "Oops!",
+        text: err[1] || "Something went wrong. Kindly try again",
       });
     } finally {
       setIsLoading(false);
@@ -205,147 +202,147 @@ const AdditionalAispaceInformation = (props) => {
 
   return (
     <div
-      className='fixed z-20 overflow-y-auto rounded bg-white py-10'
+      className="fixed z-20 overflow-y-auto rounded bg-white py-10"
       style={{
-        width: '740px',
-        height: '90vh',
-        maxHeight: '908px',
-        top: '7vh',
-        left: 'calc(50% - 370px)',
+        width: "740px",
+        height: "90vh",
+        maxHeight: "908px",
+        top: "7vh",
+        left: "calc(50% - 370px)",
       }}
     >
-      <button onClick={closeModalHandler} className='absolute right-3 top-3'>
+      <button onClick={closeModalHandler} className="absolute right-3 top-3">
         <svg
-          xmlns='http://www.w3.org/2000/svg'
-          width='34'
-          height='34'
-          viewBox='0 0 34 34'
-          fill='none'
+          xmlns="http://www.w3.org/2000/svg"
+          width="34"
+          height="34"
+          viewBox="0 0 34 34"
+          fill="none"
         >
           <path
-            d='M12.7279 12.7285L21.2132 21.2138'
-            stroke='#252530'
-            strokeWidth='1.5'
-            strokeLinecap='round'
-            strokeLinejoin='round'
+            d="M12.7279 12.7285L21.2132 21.2138"
+            stroke="#252530"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
-            d='M12.7279 21.2138L21.2132 12.7285'
-            stroke='#252530'
-            strokeWidth='1.5'
-            strokeLinecap='round'
-            strokeLinejoin='round'
+            d="M12.7279 21.2138L21.2132 12.7285"
+            stroke="#252530"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       </button>
-      <h3 className='pt-6 text-center font-semibold'>AirSpace Details</h3>
-      <form className='px-10'>
-        <div className='flex flex-row items-center justify-between gap-8 px-14 pb-5'>
-          <div style={{ width: '114px' }} className='mt-9'>
-            <p className='font-medium'>Title</p>
-            <p className='text-xs'>
+      <h3 className="pt-6 text-center font-semibold">AirSpace Details</h3>
+      <form className="px-10">
+        <div className="flex flex-row items-center justify-between gap-8 px-14 pb-5">
+          <div style={{ width: "114px" }} className="mt-9">
+            <p className="font-medium">Title</p>
+            <p className="text-xs">
               Give a unique name to the AirSpace for easy identification
             </p>
           </div>
           <input
             ref={airspaceTitleRef}
-            type='text'
-            placeholder='AirSpace Title'
-            style={{ width: '383px', height: '27px' }}
-            className='rounded-sm bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown focus:outline-blue-200'
-            name='AirSpace Title'
+            type="text"
+            placeholder="AirSpace Title"
+            style={{ width: "383px", height: "27px" }}
+            className="rounded-sm bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown focus:outline-blue-200"
+            name="AirSpace Title"
           />
         </div>
         <hr />
-        <div className='flex flex-row items-center gap-8 px-14 pb-5 pt-5'>
-          <div className='flex flex-row items-center gap-1'>
-            {airspaceStatus === 'Available' && (
+        <div className="flex flex-row items-center gap-8 px-14 pb-5 pt-5">
+          <div className="flex flex-row items-center gap-1">
+            {airspaceStatus === "Available" && (
               <input
-                name='monday'
-                type='checkbox'
+                name="monday"
+                type="checkbox"
                 onChange={costCheckedHandler}
                 checked={costChecked}
-                className='cursor-pointer'
+                className="cursor-pointer"
               />
             )}
             <label
-              htmlFor='AirSpace Title'
+              htmlFor="AirSpace Title"
               onClick={costCheckedHandler}
-              className='me-10 cursor-pointer font-medium'
+              className="me-10 cursor-pointer font-medium"
             >
               Variable Rental Range (per transit)
             </label>
           </div>
           <select
-            defaultValue='$0.01 - $99.00'
-            disabled={airspaceStatus !== 'Available' || !costChecked}
-            className='rounded-sm bg-light-blue ps-2 text-sml text-dark-brown placeholder:text-sml placeholder:text-light-brown'
-            style={{ width: '180px', height: '27px' }}
+            defaultValue="$0.01 - $99.00"
+            disabled={airspaceStatus !== "Available" || !costChecked}
+            className="rounded-sm bg-light-blue ps-2 text-sml text-dark-brown placeholder:text-sml placeholder:text-light-brown"
+            style={{ width: "180px", height: "27px" }}
           >
             <option>$0.01 - $99.00</option>
           </select>
         </div>
         <hr />
-        <div className='flex flex-row items-center justify-start gap-3 px-14 pb-5 pt-3'>
-          <div style={{ width: '147px' }} className=''>
-            <p className='font-medium'>Facilities</p>
-            <p className='text-xs'>
+        <div className="flex flex-row items-center justify-start gap-3 px-14 pb-5 pt-3">
+          <div style={{ width: "147px" }} className="">
+            <p className="font-medium">Facilities</p>
+            <p className="text-xs">
               Select the extra features your facility provides
             </p>
           </div>
-          <div className='ps-1'>
-            <div className='flex flex-row items-center justify-start gap-2'>
+          <div className="ps-1">
+            <div className="flex flex-row items-center justify-start gap-2">
               <input
-                type='checkbox'
+                type="checkbox"
                 onChange={deckCheckedHandler}
                 checked={deckChecked}
                 value={deck}
-                name='hour'
-                min='1'
-                style={{ height: '27px' }}
-                className='w-4 cursor-pointer rounded-sm bg-light-blue ps-2 checked:bg-blue-500'
+                name="hour"
+                min="1"
+                style={{ height: "27px" }}
+                className="w-4 cursor-pointer rounded-sm bg-light-blue ps-2 checked:bg-blue-500"
               />
               <label
-                htmlFor='hour'
+                htmlFor="hour"
                 onClick={deckCheckedHandler}
-                className='cursor-pointer text-sml text-dark-brown'
+                className="cursor-pointer text-sml text-dark-brown"
               >
                 Landing Deck
               </label>
             </div>
-            <div className='flex flex-row items-center justify-start gap-2'>
+            <div className="flex flex-row items-center justify-start gap-2">
               <input
-                type='checkbox'
+                type="checkbox"
                 onChange={stationHandler}
                 checked={stationChecked}
-                name='hour'
-                min='1'
-                style={{ height: '27px' }}
-                className='w-4 cursor-pointer rounded-sm bg-light-blue ps-2 checked:bg-blue-500'
+                name="hour"
+                min="1"
+                style={{ height: "27px" }}
+                className="w-4 cursor-pointer rounded-sm bg-light-blue ps-2 checked:bg-blue-500"
               />
               <label
-                htmlFor='hour'
+                htmlFor="hour"
                 onClick={stationHandler}
-                className='cursor-pointer text-sml text-dark-brown'
+                className="cursor-pointer text-sml text-dark-brown"
               >
                 Charging station
               </label>
             </div>
-            <div className='flex flex-row items-center justify-start gap-2'>
+            <div className="flex flex-row items-center justify-start gap-2">
               <input
-                type='checkbox'
+                type="checkbox"
                 onChange={storageHandler}
                 checked={storageChecked}
                 value={storage}
-                name='hour'
-                min='1'
-                style={{ height: '27px' }}
-                className='w-4 cursor-pointer rounded-sm bg-light-blue ps-2 checked:bg-blue-500'
+                name="hour"
+                min="1"
+                style={{ height: "27px" }}
+                className="w-4 cursor-pointer rounded-sm bg-light-blue ps-2 checked:bg-blue-500"
               />
               <label
-                htmlFor='hour'
+                htmlFor="hour"
                 onClick={storageHandler}
-                className='cursor-pointer text-sml text-dark-brown'
+                className="cursor-pointer text-sml text-dark-brown"
               >
                 Storage Hub
               </label>
@@ -353,56 +350,56 @@ const AdditionalAispaceInformation = (props) => {
           </div>
         </div>
         <hr />
-        <div className='flex flex-row items-start gap-36 px-14 pb-2 pt-3'>
+        <div className="flex flex-row items-start gap-36 px-14 pb-2 pt-3">
           <div>
-            <div style={{ width: '138px' }} className=''>
-              <p className='font-medium'>Status</p>
-              <p className='text-xs'>Give your AirSpace a Status</p>
+            <div style={{ width: "138px" }} className="">
+              <p className="font-medium">Status</p>
+              <p className="text-xs">Give your AirSpace a Status</p>
               <select
-                defaultValue='Available'
+                defaultValue="Available"
                 onChange={airspaceStatusHandler}
-                className='mt-2 rounded-sm bg-light-blue ps-2 text-sml text-dark-brown placeholder:text-sml placeholder:text-light-brown'
-                style={{ width: '143px', height: '27px' }}
+                className="mt-2 rounded-sm bg-light-blue ps-2 text-sml text-dark-brown placeholder:text-sml placeholder:text-light-brown"
+                style={{ width: "143px", height: "27px" }}
               >
                 <option disabled>Status</option>
                 <option>Available</option>
                 <option>No-fly zone</option>
               </select>
             </div>
-            <div style={{ width: '138px' }} className='mt-10'>
+            <div style={{ width: "138px" }} className="mt-10">
               <TimezoneSelectComponent
                 onChange={(e) => {
                   setTimezone(e.target.value);
                 }}
                 timeZone={timezone}
-                disable={airspaceStatus !== 'Available'}
+                disable={airspaceStatus !== "Available"}
               />
             </div>
           </div>
-          {airspaceStatus === 'Available' && (
+          {airspaceStatus === "Available" && (
             <div>
-              <div className='mb-1 flex flex-row items-center justify-between gap-2'>
-                <div className='flex flex-row gap-1'>
-                  {airspaceStatus === 'Available' && (
+              <div className="mb-1 flex flex-row items-center justify-between gap-2">
+                <div className="flex flex-row gap-1">
+                  {airspaceStatus === "Available" && (
                     <input
-                      name='monday'
+                      name="monday"
                       checked={monAvailable}
-                      disabled={airspaceStatus !== 'Available'}
+                      disabled={airspaceStatus !== "Available"}
                       onChange={() => setMonAvailable(!monAvailable)}
-                      type='checkbox'
-                      className='cursor-pointer'
+                      type="checkbox"
+                      className="cursor-pointer"
                     />
                   )}
                   <label
-                    htmlFor='monday'
-                    className='cursor-pointer text-sml'
+                    htmlFor="monday"
+                    className="cursor-pointer text-sml"
                     onClick={() => setMonAvailable(!monAvailable)}
                   >
                     Mon
                   </label>
                 </div>
                 <TimeSelect
-                  disable={!monAvailable || airspaceStatus !== 'Available'}
+                  disable={!monAvailable || airspaceStatus !== "Available"}
                   fromChange={(value) => {
                     setFromMonday(value);
                   }}
@@ -411,28 +408,28 @@ const AdditionalAispaceInformation = (props) => {
                   }}
                 />
               </div>
-              <div className='mb-1 flex flex-row items-center justify-between gap-2'>
-                <div className='flex flex-row gap-1'>
-                  {airspaceStatus === 'Available' && (
+              <div className="mb-1 flex flex-row items-center justify-between gap-2">
+                <div className="flex flex-row gap-1">
+                  {airspaceStatus === "Available" && (
                     <input
-                      name='tuesday'
+                      name="tuesday"
                       checked={tueAvailable}
-                      disabled={airspaceStatus !== 'Available'}
+                      disabled={airspaceStatus !== "Available"}
                       onChange={() => setTueAvailable(!tueAvailable)}
-                      type='checkbox'
-                      className='cursor-pointer'
+                      type="checkbox"
+                      className="cursor-pointer"
                     />
                   )}
                   <label
-                    htmlFor='tuesday'
+                    htmlFor="tuesday"
                     onClick={() => setTueAvailable(!tueAvailable)}
-                    className='cursor-pointer text-sml'
+                    className="cursor-pointer text-sml"
                   >
                     Tue
                   </label>
                 </div>
                 <TimeSelect
-                  disable={!tueAvailable || airspaceStatus !== 'Available'}
+                  disable={!tueAvailable || airspaceStatus !== "Available"}
                   fromChange={(value) => {
                     setFromTuesday(value);
                   }}
@@ -441,28 +438,28 @@ const AdditionalAispaceInformation = (props) => {
                   }}
                 />
               </div>
-              <div className='mb-1 flex flex-row items-center justify-between gap-2'>
-                <div className='flex flex-row gap-1'>
-                  {airspaceStatus === 'Available' && (
+              <div className="mb-1 flex flex-row items-center justify-between gap-2">
+                <div className="flex flex-row gap-1">
+                  {airspaceStatus === "Available" && (
                     <input
                       checked={wedAvailable}
-                      disabled={airspaceStatus !== 'Available'}
+                      disabled={airspaceStatus !== "Available"}
                       onChange={() => setWedAvailable(!wedAvailable)}
-                      name='wednesday'
-                      type='checkbox'
-                      className='cursor-pointer'
+                      name="wednesday"
+                      type="checkbox"
+                      className="cursor-pointer"
                     />
                   )}
                   <label
-                    htmlFor='wednesday'
+                    htmlFor="wednesday"
                     onClick={() => setWedAvailable(!wedAvailable)}
-                    className='cursor-pointer text-sml'
+                    className="cursor-pointer text-sml"
                   >
                     Wed
                   </label>
                 </div>
                 <TimeSelect
-                  disable={!wedAvailable || airspaceStatus !== 'Available'}
+                  disable={!wedAvailable || airspaceStatus !== "Available"}
                   fromChange={(value) => {
                     setFromWednesday(value);
                   }}
@@ -471,28 +468,28 @@ const AdditionalAispaceInformation = (props) => {
                   }}
                 />
               </div>
-              <div className='mb-1 flex flex-row items-center justify-between gap-2'>
-                <div className='flex flex-row gap-1'>
-                  {airspaceStatus === 'Available' && (
+              <div className="mb-1 flex flex-row items-center justify-between gap-2">
+                <div className="flex flex-row gap-1">
+                  {airspaceStatus === "Available" && (
                     <input
-                      name='thursday'
+                      name="thursday"
                       checked={thuAvailable}
-                      disabled={airspaceStatus !== 'Available'}
+                      disabled={airspaceStatus !== "Available"}
                       onChange={() => setThuAvailable(!thuAvailable)}
-                      type='checkbox'
-                      className='cursor-pointer'
+                      type="checkbox"
+                      className="cursor-pointer"
                     />
                   )}
                   <label
-                    htmlFor='thursday'
-                    className='cursor-pointer text-sml'
+                    htmlFor="thursday"
+                    className="cursor-pointer text-sml"
                     onClick={() => setThuAvailable(!thuAvailable)}
                   >
                     Thu
                   </label>
                 </div>
                 <TimeSelect
-                  disable={!thuAvailable || airspaceStatus !== 'Available'}
+                  disable={!thuAvailable || airspaceStatus !== "Available"}
                   fromChange={(value) => {
                     setFromThursday(value);
                   }}
@@ -501,28 +498,28 @@ const AdditionalAispaceInformation = (props) => {
                   }}
                 />
               </div>
-              <div className='mb-1 flex flex-row items-center justify-between gap-2'>
-                <div className='flex flex-row gap-1'>
-                  {airspaceStatus === 'Available' && (
+              <div className="mb-1 flex flex-row items-center justify-between gap-2">
+                <div className="flex flex-row gap-1">
+                  {airspaceStatus === "Available" && (
                     <input
                       checked={friAvailable}
-                      disabled={airspaceStatus !== 'Available'}
-                      name='friday'
+                      disabled={airspaceStatus !== "Available"}
+                      name="friday"
                       onChange={() => setFriAvailable(!friAvailable)}
-                      type='checkbox'
-                      className='cursor-pointer'
+                      type="checkbox"
+                      className="cursor-pointer"
                     />
                   )}
                   <label
-                    className='cursor-pointer text-sml'
-                    htmlFor='friday'
+                    className="cursor-pointer text-sml"
+                    htmlFor="friday"
                     onClick={() => setFriAvailable(!friAvailable)}
                   >
                     Fri
                   </label>
                 </div>
                 <TimeSelect
-                  disable={!friAvailable || airspaceStatus !== 'Available'}
+                  disable={!friAvailable || airspaceStatus !== "Available"}
                   fromChange={(value) => {
                     setFromFriday(value);
                   }}
@@ -531,28 +528,28 @@ const AdditionalAispaceInformation = (props) => {
                   }}
                 />
               </div>
-              <div className='mb-1 flex flex-row items-center justify-between gap-2'>
-                <div className='flex flex-row gap-1'>
-                  {airspaceStatus === 'Available' && (
+              <div className="mb-1 flex flex-row items-center justify-between gap-2">
+                <div className="flex flex-row gap-1">
+                  {airspaceStatus === "Available" && (
                     <input
-                      name='saturday'
+                      name="saturday"
                       checked={satAvailable}
-                      disabled={airspaceStatus !== 'Available'}
+                      disabled={airspaceStatus !== "Available"}
                       onChange={() => setSatAvailable(!satAvailable)}
-                      type='checkbox'
-                      className='cursor-pointer'
+                      type="checkbox"
+                      className="cursor-pointer"
                     />
                   )}
                   <label
-                    htmlFor='saturday'
+                    htmlFor="saturday"
                     onClick={() => setSatAvailable(!satAvailable)}
-                    className='cursor-pointer text-sml'
+                    className="cursor-pointer text-sml"
                   >
                     Sat
                   </label>
                 </div>
                 <TimeSelect
-                  disable={!satAvailable || airspaceStatus !== 'Available'}
+                  disable={!satAvailable || airspaceStatus !== "Available"}
                   fromChange={(value) => {
                     setFromSaturday(value);
                   }}
@@ -561,28 +558,28 @@ const AdditionalAispaceInformation = (props) => {
                   }}
                 />
               </div>
-              <div className='mb-1 flex flex-row items-center justify-between gap-2'>
-                <div className='flex flex-row gap-1'>
-                  {airspaceStatus === 'Available' && (
+              <div className="mb-1 flex flex-row items-center justify-between gap-2">
+                <div className="flex flex-row gap-1">
+                  {airspaceStatus === "Available" && (
                     <input
                       checked={sunAvailable}
-                      name='sunday'
-                      disabled={airspaceStatus !== 'Available'}
+                      name="sunday"
+                      disabled={airspaceStatus !== "Available"}
                       onChange={() => setSunAvailable(!sunAvailable)}
-                      type='checkbox'
-                      className='cursor-pointer'
+                      type="checkbox"
+                      className="cursor-pointer"
                     />
                   )}
                   <label
-                    htmlFor='sunday'
+                    htmlFor="sunday"
                     onClick={() => setSunAvailable(!sunAvailable)}
-                    className='cursor-pointer text-sml'
+                    className="cursor-pointer text-sml"
                   >
                     Sun
                   </label>
                 </div>
                 <TimeSelect
-                  disable={!sunAvailable || airspaceStatus !== 'Available'}
+                  disable={!sunAvailable || airspaceStatus !== "Available"}
                   fromChange={(value) => {
                     setFromSunday(value);
                   }}
@@ -595,16 +592,17 @@ const AdditionalAispaceInformation = (props) => {
           )}
         </div>
 
-        <div className='mt-8 flex flex-row items-center justify-center gap-5'>
+        <div className="mt-8 flex flex-row items-center justify-center gap-5">
           <button
             onClick={closeModalHandler}
             disabled={isLoading}
-            className={`${isLoading ? 'cursor-wait' : 'cursor-pointer'
-              } rounded-md text-dark-blue`}
+            className={`${
+              isLoading ? "cursor-wait" : "cursor-pointer"
+            } rounded-md text-dark-blue`}
             style={{
-              border: '1px solid #0653EA',
-              width: '120px',
-              height: '40px',
+              border: "1px solid #0653EA",
+              width: "120px",
+              height: "40px",
             }}
           >
             Cancel
@@ -612,11 +610,12 @@ const AdditionalAispaceInformation = (props) => {
           <button
             onClick={formSubmitHandler}
             disabled={isLoading}
-            className={`${isLoading ? 'cursor-wait' : 'cursor-pointer'
-              } rounded-md bg-dark-blue text-white`}
-            style={{ width: '120px', height: '40px' }}
+            className={`${
+              isLoading ? "cursor-wait" : "cursor-pointer"
+            } rounded-md bg-dark-blue text-white`}
+            style={{ width: "120px", height: "40px" }}
           >
-            {isLoading ? 'Submiting...' : 'Submit'}
+            {isLoading ? "Submiting..." : "Submit"}
           </button>
         </div>
       </form>

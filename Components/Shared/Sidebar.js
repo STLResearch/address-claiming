@@ -3,8 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
-// import logo from "../public/images/logo.svg";
-// import logoNoChars from "../public/images/logo-no-chars.png";
 import {
   ArrowCompressIcon,
   ArrowExpandIcon,
@@ -17,7 +15,8 @@ import {
   MapIcon,
   ShoppingBagsIcon,
   WalletIcon,
-} from "../Icons";
+} from "./Icons";
+
 import useAuth from "@/hooks/useAuth";
 import { SidebarContext } from "@/hooks/sidebarContext";
 
@@ -152,7 +151,7 @@ const Sidebar = () => {
           transition: "width 0.3s ease",
         }}
       >
-        <Link href={"/homepage/dashboard2"}>
+        <Link href={"/dashboard"}>
           <Image
             src={"/images/logo-no-chars.png"}
             alt="Company's logo"
@@ -162,7 +161,7 @@ const Sidebar = () => {
             style={{ transition: "all 0.3s ease" }}
           />
         </Link>
-        <Link href={"/homepage/dashboard2"}>
+        <Link href={"/dashboard"}>
           <Image
             src={"/images/logo.svg"}
             alt="Company's logo"
@@ -174,7 +173,7 @@ const Sidebar = () => {
         </Link>
 
         <SidebarItem
-          href={"/homepage/dashboard2"}
+          href={"/dashboard"}
           text={"Dashboard"}
           children={<DashboardIcon />}
         />
@@ -230,7 +229,7 @@ const Sidebar = () => {
       </aside>
       <nav className="flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar ">
         <SidebarItemMobile
-          href={"/homepage/dashboard2"}
+          href={"/dashboard"}
           text={"Dashboard"}
           children={<DashboardIcon />}
           numberOfUnseenNotifications={0}

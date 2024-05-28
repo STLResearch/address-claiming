@@ -42,7 +42,7 @@ import Link from 'next/link';
 import { getTokenLink } from "@/hooks/utils";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
-import { Web3authContext } from '@/providers/web3authProvider';
+import { Web3authContext } from "@/providers";
 import ZoomControllers from "@/Components/ZoomControllers";
 
 const SuccessModal = ({

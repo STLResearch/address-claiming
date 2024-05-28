@@ -152,7 +152,7 @@ const Sidebar = () => {
           transition: "width 0.3s ease",
         }}
       >
-        <Link href={"/homepage/dashboard2"}>
+        <Link href={"/dashboard"}>
           <Image
             src={logoNoChars}
             alt="Company's logo"
@@ -162,7 +162,7 @@ const Sidebar = () => {
             style={{ transition: "all 0.3s ease" }}
           />
         </Link>
-        <Link href={"/homepage/dashboard2"}>
+        <Link href={"/dashboard"}>
           <Image
             src={logo}
             alt="Company's logo"
@@ -174,7 +174,7 @@ const Sidebar = () => {
         </Link>
 
         <SidebarItem
-          href={"/homepage/dashboard2"}
+          href={"/dashboard"}
           text={"Dashboard"}
           children={<DashboardIcon />}
         />
@@ -230,7 +230,7 @@ const Sidebar = () => {
       </aside>
       <nav className="flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar ">
         <SidebarItemMobile
-          href={"/homepage/dashboard2"}
+          href={"/dashboard"}
           text={"Dashboard"}
           children={<DashboardIcon />}
           numberOfUnseenNotifications={0}

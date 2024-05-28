@@ -42,7 +42,7 @@ import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
 import { getPriorityFeeIx } from "@/hooks/utils";
 import { shallowEqual, useSelector } from "react-redux";
-import { Web3authContext } from '@/providers/web3authProvider';
+import { Web3authContext } from "@/providers";
 import { useMobile } from "@/hooks/useMobile";
 
 

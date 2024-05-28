@@ -26,7 +26,6 @@ export default function Home() {
       if (web3auth.status === "connected") {
         const userData = localStorage.getItem("user");
         if (userData && userData !== "undefined") {
-          //   router.push("/homepage/dashboard2");
           router.push("/dashboard");
         } else {
           logout();

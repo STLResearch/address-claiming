@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from 'react';
+import { useContext } from 'react';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import { Web3authContext } from '../providers/web3auth';
@@ -7,30 +7,31 @@ import base58 from 'bs58';
 import { toast } from 'react-toastify';
 
 const Service = () => {
-  const { provider } = useContext(Web3authContext)
+  const { provider } = useContext(Web3authContext);
 
   const toastError = (error, suppressErrorReporting) => {
     console.error(error);
-    if ( 
+    if (
       !suppressErrorReporting &&
       error.response &&
-      error.response.status === 500 && 
+      error.response.status === 500 &&
       error.response?.data?.errorMessage
     ) {
       if (error.response?.data?.errorMessage !== "UNAUTHORIZED") {
-        toast.error(error.response?.data?.errorMessage)
+        toast.error(error.response?.data?.errorMessage);
       }
     }
-  }
+  };
 
   const createHeader = async ({ uri, isPublic }) => {
     try {
       if (isPublic === true) {
         return {
           URI: uri,
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        };
       }
+      console.log({ provider });
       if (!provider) return;
 
       const solanaWallet = new SolanaWallet(provider);
@@ -43,12 +44,12 @@ const Service = () => {
       payload.domain = domain;
       payload.uri = origin;
       payload.address = accounts[0];
-      payload.statement = 'Sign in to SkyTrade app.';
-      payload.version = '1';
+      payload.statement = "Sign in to SkyTrade app.";
+      payload.version = "1";
       payload.chainId = 1;
 
-      const header = { t: 'sip99' };
-      const network = 'solana';
+      const header = { t: "sip99" };
+      const network = "solana";
 
       let message = new SIWWeb3({ header, payload, network });
 
@@ -65,7 +66,7 @@ const Service = () => {
       signatureObj.sign_address = accounts[0];
 
       return {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         URI: uri,
         sign: signatureObj.sign,
         time: signatureObj.sign_issue_at,
@@ -75,79 +76,90 @@ const Service = () => {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   const getRequest = async ({ uri, isPublic, suppressErrorReporting }) => {
     try {
-      const headers = await createHeader({ uri, isPublic })
+      const headers = await createHeader({ uri, isPublic });
 
       if (!isPublic && !headers) return null;
 
       return await axios({
         method: "get",
         url: `/api/proxy?${Date.now()}`,
-        headers
+        headers,
       });
     } catch (error) {
       toastError(error, suppressErrorReporting);
     }
-  }
+  };
 
-  const postRequest = async ({ uri, postData, isPublic, suppressErrorReporting }) => {
+  const postRequest = async ({
+    uri,
+    postData,
+    isPublic,
+    suppressErrorReporting,
+  }) => {
     try {
-      const headers = await createHeader({ uri, isPublic })
+      const headers = await createHeader({ uri, isPublic });
 
       if (!isPublic && !headers) return null;
 
       return await axios({
         method: "post",
         url: `/api/proxy?${Date.now()}`,
-        data: {...postData},
-        headers
+        data: { ...postData },
+        headers,
       });
-
     } catch (error) {
       toastError(error, suppressErrorReporting);
     }
-  }
+  };
 
-  const patchRequest = async ({ uri, postData, isPublic, suppressErrorReporting }) => {
+  const patchRequest = async ({
+    uri,
+    postData,
+    isPublic,
+    suppressErrorReporting,
+  }) => {
     try {
-      const headers = await createHeader({ uri, isPublic })
+      const headers = await createHeader({ uri, isPublic });
 
       if (!isPublic && !headers) return null;
 
       return await axios({
         method: "patch",
         url: `/api/proxy?${Date.now()}`,
-        data: {...postData},
-        headers
+        data: { ...postData },
+        headers,
       });
-
     } catch (error) {
       toastError(error, suppressErrorReporting);
     }
-  }
+  };
 
-  const deleteRequest = async ({ uri, postData, isPublic, suppressErrorReporting }) => {
+  const deleteRequest = async ({
+    uri,
+    postData,
+    isPublic,
+    suppressErrorReporting,
+  }) => {
     try {
-      const headers = await createHeader({ uri, isPublic })
+      const headers = await createHeader({ uri, isPublic });
 
       if (!isPublic && !headers) return null;
 
       return await axios({
         method: "delete",
         url: `/api/proxy?${Date.now()}`,
-        data: {...postData},
-        headers
+        data: { ...postData },
+        headers,
       });
-
     } catch (error) {
       toastError(error, suppressErrorReporting);
     }
-  }
+  };
   return { getRequest, postRequest, patchRequest, deleteRequest };
-}
-
+};
 
 export default Service;

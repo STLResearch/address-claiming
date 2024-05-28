@@ -1,6 +1,6 @@
 import { useEffect, useContext } from "react";
 
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
@@ -12,7 +12,7 @@ const useAutoLogout = () => {
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    router.push("/auth/join");
+    router.push("/auth");
   };
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const useAutoLogout = () => {
       const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
       console.log({ fetchedToken });
       if (!fetchedToken?.sessionId) {
-        router.push("/auth/join");
+        router.push("/auth");
       }
     }
   }, [web3auth?.status, user]);

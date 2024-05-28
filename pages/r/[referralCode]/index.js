@@ -12,15 +12,18 @@ import { SolanaWallet } from "@web3auth/solana-provider";
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 
-import useAuth from '@/hooks/useAuth';
+import useAuth from "@/hooks/useAuth";
 
 import logo from "../../../public/images/logo.svg";
 
-import { setCategory, setIsWaitingScreenVisible } from "@/redux/slices/userSlice";
+import {
+  setCategory,
+  setIsWaitingScreenVisible,
+} from "@/redux/slices/userSlice";
 import ReferralCodeService from "@/services/ReferralCodeService";
-import { Web3authContext } from '@/providers/web3authProvider';
+import { Web3authContext } from "@/providers";
 import UserService from "@/services/UserService";
-import useInitAuth from '@/hooks/useInitAuth';
+import useInitAuth from "@/hooks/useInitAuth";
 import { counterActions } from "@/store/store";
 
 const ReferralCodeRedirect = () => {
@@ -36,8 +39,8 @@ const ReferralCodeRedirect = () => {
 
   const { signIn } = useAuth();
   const { getReferralByCode } = ReferralCodeService();
-  const { web3auth, provider, setProvider } = useContext(Web3authContext)
-  const { getUser } = UserService()
+  const { web3auth, provider, setProvider } = useContext(Web3authContext);
+  const { getUser } = UserService();
   const { init } = useInitAuth();
 
   useEffect(() => {
@@ -46,7 +49,10 @@ const ReferralCodeRedirect = () => {
       try {
         const responseData = await getReferralByCode(referralCode);
         if (!responseData) setDoesCodeExist(false);
-        localStorage.setItem("referralCode", JSON.stringify({ response: responseData }));
+        localStorage.setItem(
+          "referralCode",
+          JSON.stringify({ response: responseData })
+        );
       } catch (error) {
         console.log("response: error", error);
       } finally {
@@ -64,40 +70,39 @@ const ReferralCodeRedirect = () => {
     (state) => state.value.isWaitingScreenVisible
   );
 
-
   useEffect(() => {
     (async () => {
       try {
         if (web3auth?.status === "connected" && provider) {
-          dispatch(counterActions.setIsWaitingScreenVisible(true))
+          dispatch(counterActions.setIsWaitingScreenVisible(true));
 
           const userInformation = await web3auth.getUserInfo();
           const solanaWallet = new SolanaWallet(provider);
           const accounts = await solanaWallet.requestAccounts();
 
-          const responseData = await getUser()
+          const responseData = await getUser();
 
           if (responseData?.id) {
             signIn({ user: responseData });
-            router.push("/homepage/dashboard2");
+            router.push("/dashboard");
           } else {
-            dispatch(counterActions.
-              setCategory({
+            dispatch(
+              counterActions.setCategory({
                 email: userInformation.email,
                 blockchainAddress: accounts[0],
               })
             );
 
-            router.replace(`/auth/join/intro`);
+            router.replace(`/auth/join`);
           }
-          dispatch(counterActions.setIsWaitingScreenVisible(false))
+          dispatch(counterActions.setIsWaitingScreenVisible(false));
         }
       } catch (error) {
-        console.error(error)
-        dispatch(counterActions.setIsWaitingScreenVisible(false))
-      } 
-    })()
-  },[web3auth?.status])
+        console.error(error);
+        dispatch(counterActions.setIsWaitingScreenVisible(false));
+      }
+    })();
+  }, [web3auth?.status]);
 
   const loginUser = async (isEmail) => {
     await init();
@@ -111,12 +116,12 @@ const ReferralCodeRedirect = () => {
 
     if (isEmail) {
       const email = emailRef.current.value;
-  
+
       if (!isEmailValid(email)) {
         toast.error("Login: email is not valid", email);
         return;
       }
-  
+
       web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
         loginProvider: "email_passwordless",
         extraLoginOptions: {
@@ -344,12 +349,12 @@ const ReferralCodeRedirect = () => {
               Welcome to SkyTrade
             </p>
             <p className="text-center text-[14px] font-normal text-light-grey">
-              Thanks for waiting. We're moving you to a new page. Please don't refresh while we do this.
+              Thanks for waiting. We're moving you to a new page. Please don't
+              refresh while we do this.
             </p>
           </div>
         </div>
       )}
-
     </Fragment>
   );
 };

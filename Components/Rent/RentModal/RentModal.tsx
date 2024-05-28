@@ -1,6 +1,5 @@
 import { CloseIcon, InfoIcon, LocationPointIcon } from "@/Components/Icons";
 import useAuth from "@/hooks/useAuth";
-import { Web3authContext } from "@/providers/web3authProvider";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import {
   ArrowLeftIcon,
@@ -19,6 +18,7 @@ import { executeTransaction } from "@/utils/rent/transactionExecutor";
 import { handleExecuteResponse } from "@/utils/rent/executeResponseHandler";
 import { PropertyData } from "@/types";
 import { toast } from "react-toastify";
+import { Web3authContext } from "@/providers/web3auth";
 
 interface RentModalProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;

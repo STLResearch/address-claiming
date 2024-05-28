@@ -1,29 +1,16 @@
 "use client";
 
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, FC } from "react";
 import ErrorBoundary from "@/Components/ErrorBoundary";
-
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Script from "next/script";
-import {
-  DroneIcon,
-  GiftIcon,
-  WalletIcon,
-  LocationPointIcon,
-  ChevronRightIcon,
-  InfoIcon,
-  MagnifyingGlassIcon,
-  ShareIcon,
-  EarthIcon,
-} from "@/Components/Icons";
 
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
 import WorldMap from "@/Components/WorldMap";
 import useAuth from "@/hooks/useAuth";
-
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
@@ -34,203 +21,22 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import Sidebar from "@/Components/Shared/Sidebar";
+import {
+  AvailableBalance,
+  MyAirspaces,
+  ReferralProgram,
+} from "@/Components/Dashboard";
+import { InfoIcon, MagnifyingGlassIcon } from "@/components/Icons";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 
-const Item = ({ children, title, icon, linkText, href, style }) => {
-  return (
-    <div
-      className={`${style || ""} relative flex flex-col pt-[17px] pb-[21px] pr-[18px] pl-[25px] rounded-[30px] bg-white gap-[15px] md:w-[343px] w-full`}
-      style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-    >
-      <div className="flex justify-between items-center">
-        <p className="text-xl font-medium text-[#222222]">{title} </p>
-        <Link
-          href={href}
-          className="rounded-[50%] bg-[#CCE3FC] flex items-center justify-center p-[10px] "
-        >
-          <div className="h-6 w-6">{icon}</div>
-        </Link>
-      </div>
-      {children}
-      <Link href={href}>
-        <p className="font-medium text-base text-[#0653ea] cursor-pointer text-right">
-          {linkText}
-        </p>
-      </Link>
-    </div>
-  );
-};
-
-const AvailableBalance = () => {
-  // const {userUSDWalletBalance} = useSelector(
-  //   (state) => {
-  //     const {userUSDWalletBalance} = state.userReducer;
-  //     return {userUSDWalletBalance}
-  //   }
-  // );
-
-  const userUSDWalletBalance = useSelector(
-    (state) => state.value.userUSDWalletBalance
-  );
-
-  return (
-    <Item
-      title={"Available Balance"}
-      icon={<WalletIcon isActive />}
-      linkText={"View funds"}
-      href={"/homepage/funds"}
-      style="h-fit"
-    >
-      {userUSDWalletBalance.isLoading ? (
-        <BalanceLoader />
-      ) : (
-        <div className="flex items-center justify-between">
-          <p className="absolute bottom-[12px] left-[26px] text-3xl text-[#4285F4] font-medium">
-            ${userUSDWalletBalance.amount}
-          </p>
-        </div>
-      )}
-    </Item>
-  );
-};
-
-const MyAirspaces = ({ airspaces = [], totalAirspace, isLoading }) => {
-  return (
-    <Item
-      title={
-        <Fragment>
-          My Airspaces{" "}
-          {!isLoading && (
-            <span className="text-[15px] font-normal">({totalAirspace})</span>
-          )}
-        </Fragment>
-      }
-      icon={<DroneIcon isActive />}
-      linkText={`${!isLoading ? "View all airspaces" : ""}`}
-      href={"/homepage/portfolio"}
-    >
-      {isLoading ? (
-        <BalanceLoader />
-      ) : (
-        <div className="flex flex-col items-center gap-[29px]">
-          <div className="w-[265.81px] h-[131.01px]">
-            <WorldMap coloredCountries={["Spain"]} />
-          </div>
-          <div className="flex flex-col items-center gap-[7px] w-full">
-            {airspaces.length === 0 && (
-              <p className="text-[17px] text-[#222222] font-normal px-[55px] text-center">
-                Claim your first piece of sky now!
-              </p>
-            )}
-            {airspaces.length !== 0 &&
-              airspaces.slice(0, 3).map((airspace, i) => (
-                <div
-                  key={i}
-                  className="rounded-lg w-full py-[16px] px-[22px] flex items-center gap-[10px]"
-                  style={{ border: "1px solid #4285F4" }}
-                >
-                  <div className="w-[24px] h-[24px] flex justify-center items-center">
-                    <LocationPointIcon />
-                  </div>
-                  <p className="flex-1">{airspace.title || airspace.address}</p>
-                  <div className="w-[18px] h-[18px] flex items-center justify-center">
-                    <ChevronRightIcon />
-                  </div>
-                </div>
-              ))}
-          </div>
-        </div>
-      )}
-    </Item>
-  );
-};
-
-const Path = () => {
-  return (
-    <div
-      className="md:h-[7.95px] md:w-0 h-1 w-[7.85px] rotate-90"
-      style={{ borderRight: "1px dashed #4285F4" }}
-    />
-  );
-};
-
-const ReferralProgramItem = ({ icon, title, text }) => {
-  return (
-    <div
-      className="py-[15px] flex-1 text-center md:px-[38px] rounded-[30px] bg-white flex flex-col gap-[7.85px] items-center"
-      style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-    >
-      <div
-        className="w-[33px] h-[33px] bg-[#E9F5FE] flex items-center justify-center"
-        style={{ borderRadius: "50%" }}
-      >
-        <Link
-          href={"/homepage/referral"}
-          className="w-[19px] h-[19px] flex items-center justify-center"
-        >
-          {icon}
-        </Link>
-      </div>
-      <p className="text-[#4285F4] font-semibold text-[12px]">{title}</p>
-      <p className="text-[#1E1E1E] font-normal text-[10px] text-center hidden md:block">
-        {text}
-      </p>
-    </div>
-  );
-};
-
-const ReferralProgram = () => {
-  return (
-    <Item
-      title={"Referral Program"}
-      icon={<GiftIcon isActive />}
-      linkText={"View referral program"}
-      href={"/homepage/referral"}
-      style={"h-fit"}
-    >
-      <div className="flex md:flex-col items-center justify-center gap-[8.37px] md:px-[17px]">
-        <ReferralProgramItem
-          icon={<ShareIcon />}
-          title={"Share"}
-          text={
-            "Send your invite link or code to your friends and explain them how cool is SkyTrade"
-          }
-        />
-        <Path />
-        <ReferralProgramItem
-          icon={<EarthIcon isActive={true} />}
-          title={"Register & Claim"}
-          text={
-            "Let them register and claim their airspaces using your referral link or code"
-          }
-        />
-        <Path />
-        <ReferralProgramItem
-          icon={<GiftIcon isActive={true} />}
-          title={"Earn"}
-          text={
-            <Fragment>
-              You and your friends are rewarded with{" "}
-              <span className="font-bold">50 SKY points</span> and{" "}
-              <span className="font-bold">+10%</span> on top of the passive
-              income generated by those you refer{" "}
-              <span className="font-bold">FOREVER</span>
-            </Fragment>
-          }
-        />
-      </div>
-    </Item>
-  );
-};
-
-const Dashboard = () => {
+const Dashboard: FC = () => {
   const [isLoadingAirspace, setIsLoadingAirspace] = useState(false);
   const { user, web3authStatus } = useAuth();
-  const [airspaces, setAirspaces] = useState([]);
+  const [airspaces, setAirspaces] = useState<any[]>([]);
   const [totalAirspace, setTotalAirspace] = useState(0);
 
   const { getTotalAirspacesByUserAddress } = AirspaceRentalService();
@@ -245,7 +51,7 @@ const Dashboard = () => {
         );
 
         if (airspaces && airspaces.previews) {
-          let retrievedAirspaces = airspaces.previews.map((item) => ({
+          let retrievedAirspaces = airspaces.previews.map((item: any) => ({
             address: item.address,
           }));
           if (retrievedAirspaces.length > 0) {

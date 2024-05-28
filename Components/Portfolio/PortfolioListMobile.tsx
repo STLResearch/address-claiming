@@ -6,13 +6,22 @@ import PortfolioItemMobile from "./PortfolioItemMobile";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 
-const PortfolioListMobile = ({ title, selectAirspace }) => {
+interface AirspaceType {
+  id?:string
+  address?:string,
+   expirationDate?:string,
+    name?:string,
+   type?:string,
+}
+
+
+const PortfolioListMobile = ({  selectAirspace }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [rentalPageNumber, setRentalPageNumber] = useState(1);
   const [unverifiedPageNumber, setUnverifiedPageNumber] = useState(1);
-  const [rentedAirspaces, setRentedAirspaces] = useState([]);
-  const [verifiedAirspaces, setVerifiedAirspaces] = useState([]);
-  const [unverifiedAirspaces, setUnverifiedAirspaces] = useState([]);
+  const [rentedAirspaces, setRentedAirspaces] = useState<Array<AirspaceType & any>>([]);
+  const [verifiedAirspaces, setVerifiedAirspaces] = useState<Array<AirspaceType & any>>([]);
+  const [unverifiedAirspaces, setUnverifiedAirspaces] = useState<Array<AirspaceType & any>>([]);
   const [allUnverifiedAirspaces, setAllUnverifiedAirspaces] = useState([]);
   const [allRentedAirspaces, setAllRentedAirspaces] = useState([]);
   const [allVerifiedAirspaces, setAllVerifiedAirspaces] = useState([]);
@@ -93,13 +102,13 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
           );
           setVerifiedAirspaces(verified);
         } else if (pageNumber > 1) {
-          const verifiedAirspaces = await getPropertiesByUserAddress(
+          const _verifiedAirspaces = await getPropertiesByUserAddress(
             user?.blockchainAddress,
             "landToken",
             10,
             verifiedAirspaces[verifiedAirspaces.length - 1].id
           );
-          setVerifiedAirspaces(verifiedAirspaces);
+          setVerifiedAirspaces(_verifiedAirspaces);
         }
       } else if (activeTab === "Rented Airspaces") {
         if (rentalPageNumber === 1) {
@@ -111,13 +120,13 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
           );
           setRentedAirspaces(rented);
         } else if (rentalPageNumber > 1) {
-          const rentedAirspaces = await getPropertiesByUserAddress(
+          const _rentedAirspaces = await getPropertiesByUserAddress(
             user?.blockchainAddress,
             "rentalToken",
             10,
             rentedAirspaces[rentedAirspaces.length - 1].id
           );
-          setRentedAirspaces(rentedAirspaces);
+          setRentedAirspaces(_rentedAirspaces);
         }
       } else if (activeTab === "Pending Verification") {
         if (unverifiedPageNumber === 1) {

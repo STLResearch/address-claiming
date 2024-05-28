@@ -21,7 +21,7 @@ import {
   setIsWaitingScreenVisible,
 } from "@/redux/slices/userSlice";
 import { shallowEqual, useSelector } from "react-redux";
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers";
 import UserService from "@/services/UserService";
 import useInitAuth from "@/hooks/useInitAuth";
 import { counterActions } from "@/store/store";
@@ -78,7 +78,7 @@ const Signup = () => {
             console.log({ responseData });
             localStorage.setItem("user", JSON.stringify(responseData));
             signIn({ user: responseData });
-            router.push("/homepage/dashboard2");
+            router.push("/dashboard");
           } else {
             const categoryData = {
               email: userInformation.email,
@@ -89,7 +89,7 @@ const Signup = () => {
 
             localStorage.setItem("category", JSON.stringify(categoryData));
 
-            router.replace(`/auth/join/intro`);
+            router.replace(`/auth/join`);
           }
           setIsRedirecting(true);
           dispatch(counterActions.setIsWaitingScreenVisible(false));

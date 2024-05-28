@@ -24,6 +24,7 @@
     "@solana/web3.js": "^1.87.0",
     "@stripe/crypto": "^0.0.4",
     "@stripe/stripe-js": "^2.1.9",
+    "@types/yup": "^0.32.0",
     "@walletconnect/sign-client": "^2.10.4",
     "@web3auth/base": "^8.4.0",
     "@web3auth/no-modal": "^8.4.0",
