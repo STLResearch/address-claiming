@@ -175,7 +175,7 @@ const DepositAndWithdraw = ({
           setTimeout(() => {
             setIsLoading(false);
             console.log("timeout over");
-            router.prefetch("/homepage/funds");
+            router.prefetch("/funds");
           }, 10000);
           notifySuccess();
         } catch (err) {

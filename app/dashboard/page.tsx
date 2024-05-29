@@ -26,7 +26,7 @@ import {
   MyAirspaces,
   ReferralProgram,
 } from "@/Components/Dashboard";
-import { InfoIcon, MagnifyingGlassIcon } from "@/components/Icons";
+import { InfoIcon, MagnifyingGlassIcon } from "@/Components/Icons";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -114,7 +114,7 @@ const Dashboard: FC = () => {
                 </div>
                 <div className="overflow-y-scroll w-full overflow-x-hidden h-screen md:min-h-screen md:w-1/2 m-0 ">
                   <Link
-                    href={"/homepage/airspace2"}
+                    href={"/airspaces"}
                     className="md:flex-1 flex flex-col items-center justify-between bg-cover bg-no-repeat bg-center -mt-[53px] md:-mr-[53px] pt-[42px] md:px-[18px] md:pb-[40px] h-full overflow-y-scroll"
                     style={{ backgroundImage: "url('/images/map-bg.png')" }}
                   >

@@ -1,5 +1,4 @@
 "use client";
-
 import { Fragment, useEffect, useState } from 'react';
 import useAuth from '../../hooks/useAuth';
 import { createPortal } from 'react-dom';
@@ -7,7 +6,8 @@ import Sidebar from "../../Components/Sidebar";
 import PageHeader from '../../Components/PageHeader';
 import Spinner from '../../Components/Backdrop';
 import Backdrop from '../../Components/Backdrop';
-import { checkPhoneIsValid } from '../../pages/auth/join/intro';
+// import { checkPhoneIsValid } from '../../pages/auth/join/intro';
+import { checkPhoneIsValid } from "@/Components/Auth/PhoneValidation";
 import UserService from '../../services/UserService';
 import { toast } from 'react-toastify';
 import AccountVerification from '../../Components/MyAccount/AccountVerification';

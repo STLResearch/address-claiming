@@ -1,6 +1,6 @@
 import useOrigin from "@/hooks/useOrigin";
 import ReferralCodeService from "@/services/ReferralCodeService";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, MouseEvent, ChangeEvent } from "react";
 import { toast } from "react-toastify";
 import { FacebookIcon,LinkedInIcon,XIcon } from "@/Components/Icons";
@@ -73,7 +73,7 @@ const Share: React.FC<ShareProps> = ({ activeSection, section, isMobile, referra
           ...storedUser,
           ownedReferralCode: { id, code: temporalReferralCode, codeChanged: true },
         }));
-        router.reload();
+        router.refresh()
       } else if (resp?.errorMessage) {
         toast.error(resp.errorMessage);
       } else {

@@ -22,7 +22,7 @@ const ReferralProgramItem: FC<ReferralProgramItemProps> = ({
         style={{ borderRadius: "50%" }}
       >
         <Link
-          href={"/homepage/referral"}
+          href={"/referral"}
           className="w-[19px] h-[19px] flex items-center justify-center"
         >
           {icon}

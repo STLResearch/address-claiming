@@ -24,7 +24,7 @@ const MobileMapSection = ({ setShowHowToModal,showMobileMap,setShowMobileMap }) 
           <div className="flex flex-1 flex-col gap-[23px] px-[13px] py-[29px]">
             <div className="flex flex-1 items-center gap-[14px]">
               <Link
-                href={"/homepage/portfolio"}
+                href={"/portfolio"}
                 className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
                 style={{
                   backgroundImage: "url('/images/airspace-preview.png')",
@@ -33,7 +33,7 @@ const MobileMapSection = ({ setShowHowToModal,showMobileMap,setShowMobileMap }) 
                 <p className="text-xl font-medium text-white">Airspace</p>
               </Link>
               <Link
-                href={"/homepage/portfolio"}
+                href={"/portfolio"}
                 className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
                 style={{
                   backgroundImage: "url('/images/portfolio.jpg')",

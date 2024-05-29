@@ -1,3 +1,4 @@
+"use client";
 import { Fragment, useState, useEffect } from "react";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
 import Sidebar from "@/Components/Sidebar";

@@ -1,4 +1,4 @@
-import "@/styles/global.css";
+import '@/styles/globals.css'
 import { Provider } from "react-redux";
 import store from "@/store/store";
 import Script from "next/script";
@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import type { Metadata } from "next";
 import { msclarit } from "@/config";
 import { Web3auth } from "@/providers";
+import { SidebarProvider } from '@/hooks/sidebarContext';
 
 export const metadata: Metadata = {
   title: "Sky Trade",
@@ -70,7 +71,9 @@ export default function RootLayout({
             }}
           />
           <Web3auth>
+          <SidebarProvider>
             {children}
+          </SidebarProvider>
           </Web3auth>
         </>
       </body>

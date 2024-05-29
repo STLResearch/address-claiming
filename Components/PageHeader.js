@@ -15,7 +15,7 @@ const PageHeader = ({ pageTitle }) => {
           {pageTitle}
         </p>
         <Link
-          href={"/homepage/account"}
+          href={"/my-account"}
           className="gap-[14px] items-center absolute md:flex md:relative left-[19px]"
         >
           <div className="w-6 h-6">

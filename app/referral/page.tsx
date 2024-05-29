@@ -1,3 +1,4 @@
+"use client";
 import { Fragment, useEffect, useState } from "react";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";

@@ -31,7 +31,7 @@ const MyAirspaces: FC<MyAirspacesProps> = ({
       }
       icon={<DroneIcon isActive />}
       linkText={`${!isLoading ? "View all airspaces" : ""}`}
-      href={"/homepage/portfolio"}
+      href={"/portfolio"}
     >
       {isLoading ? (
         <BalanceLoader />

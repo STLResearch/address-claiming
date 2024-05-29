@@ -178,12 +178,12 @@ const Sidebar = () => {
           children={<DashboardIcon />}
         />
         <SidebarItem
-          href={"/homepage/airspace2"}
+          href={"/airspaces"}
           text={"Airspaces"}
           children={<EarthIcon />}
         />
         <SidebarItem
-          href={"/homepage/referral"}
+          href={"/referral"}
           text={"Referral Program"}
           children={<GiftIcon />}
         />
@@ -195,18 +195,18 @@ const Sidebar = () => {
         )}
         <SidebarItem href={""} text={"Buy Airspace"} children={<MapIcon />} />
         <SidebarItem
-          href={"/homepage/rent"}
+          href={"/rent"}
           text={"Rent Airspace"}
           children={<DroneIcon />}
         />
         <SidebarItem
-          href={"/homepage/portfolio"}
+          href={"/portfolio"}
           text={"Portfolio"}
           children={<ShoppingBagsIcon />}
           numberOfUnseenNotifications={0}
         />
         <SidebarItem
-          href={"/homepage/funds"}
+          href={"/funds"}
           text={"Funds"}
           children={<WalletIcon />}
         />
@@ -235,7 +235,7 @@ const Sidebar = () => {
           numberOfUnseenNotifications={0}
         />
         <SidebarItemMobile
-          href={"/homepage/airspace2"}
+          href={"/airspaces"}
           text={"Airspaces"}
           children={<EarthIcon />}
           numberOfUnseenNotifications={0}
@@ -247,25 +247,25 @@ const Sidebar = () => {
           numberOfUnseenNotifications={0}
         />
         <SidebarItemMobile
-          href={"/homepage/rent"}
+          href={"/rent"}
           text={"Rent"}
           children={<DroneIcon />}
           numberOfUnseenNotifications={0}
         />
         <SidebarItemMobile
-          href={"/homepage/portfolio"}
+          href={"/portfolio"}
           text={"Portfolio"}
           children={<ShoppingBagsIcon />}
           numberOfUnseenNotifications={0}
         />
         <SidebarItemMobile
-          href={"/homepage/funds"}
+          href={"/funds"}
           text={"Funds"}
           children={<WalletIcon />}
           numberOfUnseenNotifications={0}
         />
         <SidebarItemMobile
-          href={"/homepage/referral"}
+          href={"/referral"}
           text={"Referral"}
           children={<GiftIcon />}
           numberOfUnseenNotifications={0}

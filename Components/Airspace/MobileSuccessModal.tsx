@@ -10,7 +10,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ closePopUp, isSuccess }) =>
   const router = useRouter();
 
   const handleButtonClick = () => {
-    router.push("/homepage/referral");
+    router.push("/referral");
   };
 
   return ( 

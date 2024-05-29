@@ -11,7 +11,7 @@ const ReferralProgram: FC = () => {
       title={"Referral Program"}
       icon={<GiftIcon isActive />}
       linkText={"View referral program"}
-      href={"/homepage/referral"}
+      href={"/referral"}
       style={"h-fit"}
     >
       <div className="flex md:flex-col items-center justify-center gap-[8.37px] md:px-[17px]">
