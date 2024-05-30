@@ -4,7 +4,11 @@ import { Map, Marker } from "mapbox-gl";
 import RentableAirspace from "./RentableAirspace";
 import { useRentableAirspaces } from "@/hooks/useRentableAirspaces";
 import { PropertyData } from "@/types";
+import { RectangleIcon } from "@/Components/Icons";
 interface RentableAirspaceListsProps {
+  isFullyVisible?:boolean;
+  isMobile?:boolean;
+  showClaimModal?:boolean;
   loadingReg: boolean;
   regAdressShow: boolean;
   registeredAddress: PropertyData[];
@@ -18,6 +22,9 @@ interface RentableAirspaceListsProps {
   setRegisteredAddress: React.Dispatch<React.SetStateAction<PropertyData[]>>;
 }
 const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
+  isFullyVisible,
+  isMobile,
+  showClaimModal,
   setRegisteredAddress,
   setLoadingRegAddresses,
   loadingReg,
@@ -38,13 +45,25 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
 
   return (
     <div className="w-full">
+        {!showClaimModal && isMobile && (
+          <div className=" flex flex-col justify-end items-center mt-4 md:mt-0 ">
+            <div className=" w-[90%] flex justify-center  items-center  md:hidden">
+              <RectangleIcon />
+            </div>
+            {!loadingReg && (
+              <div className="mt-[21px] text-light-black text-xl font-medium leading-[30px]">
+                {registeredAddress?.length} airspaces to rent
+              </div>
+            )}
+          </div>
+        )}
       {loadingReg && (
         <div className="mt-4 w-full flex justify-center">
           <BalanceLoader />
         </div>
       )}
 
-      {regAdressShow && (
+      {regAdressShow && (isFullyVisible && isMobile) && (
         <div
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
           className=" mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll"

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import SearchInput from "./SearchInput";
 import { Map, Marker } from "mapbox-gl";
-import RentableAirspaceLists from "./RentableAirspaceLists/RentableAirspaceLists";
 import { PropertyData } from "@/types";
+import RentAirspaceLists from "./MobileBottomRentSlider";
 interface ExplorerMobileProps {
+  isMobile: boolean;
+  onGoBack: () => void;
   address: string;
   setAddress: React.Dispatch<React.SetStateAction<string>>;
   addresses: { id: string; place_name: string }[];
@@ -22,8 +24,11 @@ interface ExplorerMobileProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
   setRentData: React.Dispatch<React.SetStateAction<PropertyData>>;
+  showClaimModal: boolean;
 }
 const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
+  showClaimModal,
+  isMobile,
   loadingReg,
   loading,
   address,
@@ -42,11 +47,15 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
   setShowOptions,
   setLoadingRegAddresses,
   setRegisteredAddress,
+  onGoBack,
 }) => {
+  const [toggle, setToggle] = useState<boolean>(false);
   return (
     <div>
       <div className="flex bg-white items-center gap-[15px] pt-[8px] pb-[10px] px-[21px] z-[40]">
         <SearchInput
+          onGoBack={onGoBack}
+          isMobile={isMobile}
           address={address}
           addresses={addresses}
           loading={loading}
@@ -56,7 +65,11 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
           showOptions={showOptions}
         />
       </div>
-      <RentableAirspaceLists
+      <RentAirspaceLists
+        isMobile={true}
+        setToggle={setToggle}
+        toggle={toggle}
+        showClaimModal={showClaimModal}
         loadingReg={loadingReg}
         map={map}
         marker={marker}
