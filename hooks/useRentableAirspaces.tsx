@@ -10,12 +10,16 @@ interface UseRentableAirspacesProps {
   map: Map;
   setLoadingRegAddresses: React.Dispatch<React.SetStateAction<boolean>>;
   setRegisteredAddress: React.Dispatch<React.SetStateAction<PropertyData[]>>;
+  setRentData: React.Dispatch<React.SetStateAction<PropertyData>>;
+  setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const useRentableAirspaces = ({
   map,
   setLoadingRegAddresses,
   setRegisteredAddress,
+  setRentData,
+  setShowClaimModal,
 }: UseRentableAirspacesProps) => {
   const { findPropertiesByCoordinates } = PropertiesService();
   useEffect(() => {
@@ -46,7 +50,10 @@ export const useRentableAirspaces = ({
             formattedProperties.forEach((property) => {
                 const el = document.createElement("div");
                 el.id = "markerWithExternalCss";
-                createRentMarkerWithPopup(map, property, el);
+                createRentMarkerWithPopup(map, property, el, () => {
+                  setRentData(property);
+                  setShowClaimModal(true);
+                });
             });
         }
     };
@@ -70,5 +77,5 @@ export const useRentableAirspaces = ({
     return () => {
       map.off("move", handleMove);
     };
-  }, [map, setLoadingRegAddresses, setRegisteredAddress]);
+  }, [map, setLoadingRegAddresses, setRegisteredAddress,setRentData,setShowClaimModal,]);
 };

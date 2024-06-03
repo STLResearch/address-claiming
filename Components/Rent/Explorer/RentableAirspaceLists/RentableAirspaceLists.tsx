@@ -34,6 +34,8 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
     map,
     setLoadingRegAddresses,
     setRegisteredAddress,
+    setRentData,
+    setShowClaimModal,
   });
 
   return (
