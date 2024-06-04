@@ -2,13 +2,13 @@ import { useEffect, useRef } from "react";
 import { CloseIconWhite, SuccessIconwhite } from "../Icons";
 import { getTokenLink } from "@/hooks/utils";
 import Link from "next/link";
-import router from "next/router";
+
 import { PropertyData } from "@/types";
 
 interface SuccessModalProps {
   setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>;
   finalAns:
-    | { status: string; message: string | undefined; tokenId?: string }
+    | { status: string; message?: string | undefined; tokenId?: string }
     | null
     | undefined;
   rentData: PropertyData | undefined | null;

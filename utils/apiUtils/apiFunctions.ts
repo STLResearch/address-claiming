@@ -96,6 +96,7 @@ export const goToAddress = async (
 export const getAddresses = async (
     setAddresses: Dispatch<SetStateAction<{ id: string; place_name: string; }[]>>,
     setCoordinates: Dispatch<SetStateAction<Coordinates | null>>,
+    setLoadingAddresses: Dispatch<SetStateAction<boolean>>,
     timeoutId: NodeJS.Timeout | null,
     address: string
 ): Promise<void> => {
@@ -107,17 +108,24 @@ export const getAddresses = async (
             const response = await fetch(mapboxGeocodingUrl);
 
             if (!response.ok) throw new Error("Error while getting addresses");
-
             const data = await response.json();
-            if (data.features && data.features.length > 0) {
-                setAddresses(data.features);
-            } else {
-                setAddresses([]);
+            if (!response.ok) {
+            setLoadingAddresses(false);
+            throw new Error("Error while getting addresses");
             }
-        } catch (error) {
-            console.log(error);
-        }
-    }, 500);
+
+            if (data.features && data.features.length > 0) {
+            setAddresses(data.features);
+            setLoadingAddresses(false);
+            } else {
+            setAddresses([]);
+            setLoadingAddresses(false);
+            }
+            } catch (error) {
+            console.error(error);
+            setLoadingAddresses(false);
+            }
+        }, 500);
 };
 
 export const getTokenBalance = (user, setTokenBalance) => {

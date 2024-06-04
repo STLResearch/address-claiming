@@ -51,7 +51,7 @@ export const useRentableAirspaces = ({
                 const el = document.createElement("div");
                 el.id = "markerWithExternalCss";
                const rentMarker =  createRentMarkerWithPopup(map,property, el);
-               rentMarker.getElement().addEventListener('click', function() {
+               rentMarker?.getElement().addEventListener('click', function() {
                 setRentData(property);
                 setShowClaimModal(true);
             });

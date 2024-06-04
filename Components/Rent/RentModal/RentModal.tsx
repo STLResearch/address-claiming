@@ -45,9 +45,9 @@ const RentModal: React.FC<RentModalProps> = ({
   
 
   const [finalAns, setFinalAns] = useState<
-    { status: string; message: string | undefined; tokenId?: string } | null | undefined
+    { status: string; message?: string | undefined; tokenId?: string } | null | undefined
   >();
-  const { user } = useAuth();
+  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData  } = useAuth();
   const { createMintRentalToken, executeMintRentalToken } =
     AirspaceRentalService();
   const { provider } = useContext(Web3authContext);
@@ -58,6 +58,8 @@ const RentModal: React.FC<RentModalProps> = ({
 
   const handleRentAirspace = async () => {
     try {
+      const isRedirecting = redirectIfUnauthenticated();
+      if (isRedirecting) return;
       const currentDate = new Date();
       const startDate = new Date(date.toString());
       const endDate = new Date(startDate.getTime() + 30 * 60000);

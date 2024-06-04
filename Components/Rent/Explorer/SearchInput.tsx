@@ -37,14 +37,14 @@ const SearchInput: React.FC<SearchInputProps> = ({
           name="searchAirspaces"
           id="searchAirspaces"
           placeholder="Search Airspaces"
-          className="outline-none w-full"
+          className="outline-none w-full pr-[20px]"
         />
         <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
           <MagnifyingGlassIcon />
         </div>
       </div>
       {showOptions && (
-        <div className=" overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white">
+        <div className="overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white">
           {loading ? (
             <div className="pt-8 flex justify-center items-center">
               <BalanceLoader />
