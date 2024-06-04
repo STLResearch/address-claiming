@@ -8,6 +8,7 @@ const ReferralCodeService = () => {
       const response = await getRequest({
         uri: `/public/referral-code/${referralCode}`,
         isPublic: true,
+        suppressErrorReporting: true
       })
       return response?.data;
     } catch (error) {

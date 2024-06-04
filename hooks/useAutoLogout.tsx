@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 const useAutoLogout = () => {
   const router = useRouter()
-  const asPath = usePathname()
+  const pathname = usePathname()
   
   const { web3auth } = useContext(Web3authContext);
   const { user } = useAuth();
@@ -17,13 +17,14 @@ const useAutoLogout = () => {
     redirectTo()
   };
 
-  console.log({ asPath })
-
   const redirectTo = () => {
-    if (asPath !== "/r/[referralCode]" && asPath !== "/") {
-      router.push("/auth/inAppSignIn");
-    } else {
-      router.push("/airspaces");
+    if (pathname) {
+      const isReferralPage = pathname.includes("/auth/r/");
+      if (!isReferralPage && pathname !== "/") {
+        router.push("/auth/inAppSignIn");
+      } else {
+        router.push("/airspaces");
+      }
     }
   };
 
@@ -38,12 +39,12 @@ const useAutoLogout = () => {
     console.log("web3auth status", web3auth?.status);
     console.log("web3auth connected", web3auth?.connected);
 
-
     if (!web3auth) return;
 
     const routes = publicAccessRoutes.map(x => x.redirectTo).concat(["/auth/join", "/auth"]);
+    const isReferralPage = pathname?.includes("/auth/r/");
 
-    if (routes.includes(String(asPath))) return;
+    if (routes.includes(String(pathname)) || isReferralPage) return;
     else if (web3auth?.status === "ready") {
       const fetchedToken = JSON.parse(String(localStorage.getItem('openlogin_store')));
       if (!fetchedToken?.sessionId) {
@@ -51,7 +52,7 @@ const useAutoLogout = () => {
         localStorage.removeItem("user");
       }
     }
-  }, [web3auth?.status, user, asPath]); //included router.pathname in the dependency array so that it checks for autologout on every page..  
+  }, [web3auth?.status, user, pathname]); //included router.pathname in the dependency array so that it checks for autologout on every page..  
 
   return null;
 };

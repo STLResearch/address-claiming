@@ -146,11 +146,11 @@ const Share: React.FC<ShareProps> = ({
             <CopyableInput
               isLoading={isLoading}
               isReferralLink={false}
-              value={`${origin}/r/${referralCode}`}
+              value={`${origin}/auth/r/${referralCode}`}
               canCopy={canCopy}
               isCopied={isCopied.link}
               handleCopy={(e) =>
-                handleCopy(e, `${origin}/r/${referralCode}`, false)
+                handleCopy(e, `${origin}/auth/r/${referralCode}`, false)
               }
               disabled={true}
             />
@@ -158,7 +158,7 @@ const Share: React.FC<ShareProps> = ({
               platform="facebook"
               onClick={() =>
                 window.open(
-                  `https://www.facebook.com/sharer/sharer.php?u=${origin}/r/${referralCode}`,
+                  `https://www.facebook.com/sharer/sharer.php?u=${origin}/auth/r/${referralCode}`,
                   "_blank"
                 )
               }
@@ -169,7 +169,7 @@ const Share: React.FC<ShareProps> = ({
               platform="linkedin"
               onClick={() =>
                 window.open(
-                  `https://www.linkedin.com/sharing/share-offsite/?url=${origin}/r/${referralCode}`,
+                  `https://www.linkedin.com/sharing/share-offsite/?url=${origin}/auth/r/${referralCode}`,
                   "_blank"
                 )
               }
@@ -180,7 +180,7 @@ const Share: React.FC<ShareProps> = ({
               platform="twitter"
               onClick={() =>
                 window.open(
-                  `https://twitter.com/intent/tweet?text=${origin}/r/${referralCode}`,
+                  `https://twitter.com/intent/tweet?text=${origin}/auth/r/${referralCode}`,
                   "_blank"
                 )
               }

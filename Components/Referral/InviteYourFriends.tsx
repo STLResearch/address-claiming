@@ -28,7 +28,7 @@ const InviteYourFriends:React.FC<InviteYourFriendsProps> = ({ referralCode }) =>
           />
           <div className="absolute right-[5px] top-1/2 -translate-y-1/2 w-[38px] h-[41px] bg-[#0653EA] flex items-center justify-center cursor-pointer rounded-lg">
             <a
-              href={`mailto:${friendEmail}?body=${origin}/r/${referralCode}`}
+              href={`mailto:${friendEmail}?body=${origin}/auth/r/${referralCode}`}
               target="_blank"
             >
               <div className="w-[15px] h-[15px] ">
