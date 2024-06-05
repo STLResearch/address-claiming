@@ -166,7 +166,7 @@ const Airspaces = () => {
       <Head>
         <title>SkyTrade - Airspaces</title>
       </Head>
-      {isLoading && <Backdrop />}
+      {isLoading && <Backdrop  onClick={() => {}}/>}
       {isLoading && <Spinner />}
 
       <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA]">
