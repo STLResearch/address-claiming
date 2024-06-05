@@ -1,9 +1,9 @@
 import { EarthIcon, FriendsIcon, PropertyIcon } from "@/Components/Icons";
 import YourReferralsItem from "./YourReferralsItem";
+import { useMobile } from "@/hooks/useMobile";
 interface YourReferralsProps {
   activeSection:number;
   section:number;
-  isMobile:boolean;
   registeredFriends:number;
   registeredAirspaces:number;
   validatedProperties:number;
@@ -12,11 +12,12 @@ interface YourReferralsProps {
 const YourReferrals:React.FC<YourReferralsProps> = ({
     activeSection,
     section,
-    isMobile,
     registeredFriends,
     registeredAirspaces,
     validatedProperties,
   }) => {
+    const { isMobile } = useMobile();
+
     if (activeSection !== section && isMobile) return;
     return (
       <div className="flex flex-col gap-[15px] px-[51px]">

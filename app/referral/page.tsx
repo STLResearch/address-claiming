@@ -2,7 +2,6 @@
 import { Fragment, useEffect, useState } from "react";
 
 import PageHeader from "@/Components/PageHeader";
-import { useMobile } from "@/hooks/useMobile";
 import useAuth from "@/hooks/useAuth";
 import Head from "next/head";
 import UserService from "@/services/UserService";
@@ -24,7 +23,6 @@ const Referral = () => {
     registeredAirspaces: 0,
     validatedProperties: 0,
   });
-  const { isMobile } = useMobile();
   const { user, web3authStatus } = useAuth();
   const { retrieveUserReferralData } = UserService();
   const sections = ["The Program", "Share", "My Referrals"];
@@ -67,20 +65,17 @@ const Referral = () => {
 
             <ReferralProgramOverview
               activeSection={activeSection}
-              isMobile={isMobile}
               section={0}
             />
-            <Share
-              isLoading={fetchingCode}
-              activeSection={activeSection}
-              isMobile={isMobile}
-              section={1}
-              referralCode={data?.referralCode}
-            />
+            {activeSection === 1  && (
+              <Share
+                isLoading={fetchingCode}
+                referralCode={data?.referralCode}
+              />
+            )}
             <InviteYourFriends referralCode={data?.referralCode} />
             <YourReferrals
               activeSection={activeSection}
-              isMobile={isMobile}
               section={2}
               registeredFriends={data?.registeredFriends}
               registeredAirspaces={data?.registeredAirspaces}

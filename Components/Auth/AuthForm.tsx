@@ -152,7 +152,7 @@ const AuthForm: FC<AuthFormProps> = ({
       </div>
       <LoadingButton
         color={""}
-        onClick={() => loginUser(true)}
+        onClick={() => loginUser(false)}
         isLoading={isLoading}
         className="w-full flex justify-center"
       >

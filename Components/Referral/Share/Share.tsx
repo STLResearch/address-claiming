@@ -10,22 +10,16 @@ import { User } from "@/types";
 import useAuth from "@/hooks/useAuth";
 
 interface ShareProps {
-  activeSection: number;
-  section: number;
-  isMobile: boolean;
   referralCode: string;
   isLoading: boolean;
 }
 
 const Share: React.FC<ShareProps> = ({
-  activeSection,
-  section,
-  isMobile,
   referralCode,
   isLoading,
 }) => {
+
   const { user } = useAuth();
-  if (activeSection !== section && isMobile) return;
   const [isCopied, setIsCopied] = useState({ code: false, link: false });
   const [temporalReferralCode, setTemporalReferralCode] =
     useState(referralCode);

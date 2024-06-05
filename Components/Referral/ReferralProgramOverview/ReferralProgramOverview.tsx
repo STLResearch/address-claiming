@@ -2,16 +2,17 @@ import { EarthIcon, GiftIcon, ShareIcon } from "@/Components/Shared/Icons";
 import { Fragment } from "react";
 import Item from "./Item";
 import HorizontalSeparatorLine from "./HorizontalSeparatorLine";
+import { useMobile } from "@/hooks/useMobile";
 interface ReferralProgramOverviewProps {
   activeSection: number;
   section: number;
-  isMobile: boolean;
 }
 const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
   activeSection,
   section,
-  isMobile,
 }) => {
+  const { isMobile } = useMobile();
+
   if (activeSection !== section && isMobile) return;
   return (
     <Fragment>

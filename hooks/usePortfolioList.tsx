@@ -96,18 +96,12 @@ const usePortfolioList = () => {
     setActiveTab(tab);
   };
 
-  const highlightActiveTab = (
-    tab: PortfolioTabEnum, 
-    className = 'px-8 py-2 cursor-pointer transition ease-linear delay-75'
-  ) => {
-    return `${activeTab === tab ? "border-b-4  border-[#6CA1F7]" : ""} ${className}`
-  }
 
   return {
+    activeTab,
     loading,
     airspaceList,
     pageNumber,
-    highlightActiveTab,
     handleTabSwitch,
     handlePrevPage,
     handleNextPage

@@ -7,13 +7,13 @@ import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 
 const PortfolioListMobile = ({ selectAirspace }) => {
   const {
-    highlightActiveTab,
     handleTabSwitch,
     handlePrevPage,
     handleNextPage,
     loading,
     airspaceList,
-    pageNumber
+    pageNumber,
+    activeTab
   } = usePortfolioList();
   
   return (
@@ -23,25 +23,25 @@ const PortfolioListMobile = ({ selectAirspace }) => {
         style={{ scrollbarWidth: "none", scrollbarColor: "none" }}
       >
         <div
-          className={highlightActiveTab(PortfolioTabEnum.VERIFIED, 'px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap')}
+          className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.VERIFIED)}
         >
           Verified Airspaces
         </div>
         <div
-          className={highlightActiveTab(PortfolioTabEnum.RENTED, 'px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap')}
+          className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
         >
           Rented Airspaces
         </div>
         <div
-          className={highlightActiveTab(PortfolioTabEnum.UNVERIFIED, 'px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap')}
+          className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
         >
           Pending Verification
         </div>
         <div
-          className={highlightActiveTab(PortfolioTabEnum.REJECTED, 'px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap')}
+          className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
         >
           Rejected Airspaces

@@ -9,13 +9,13 @@ import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 const PortfolioList = ({ title, selectAirspace }) => {
 
   const { 
-    highlightActiveTab, 
     handleTabSwitch, 
     handlePrevPage, 
     handleNextPage,
     loading, 
     airspaceList,
-    pageNumber
+    pageNumber,
+    activeTab
   } = usePortfolioList()
   
   return (
@@ -28,25 +28,25 @@ const PortfolioList = ({ title, selectAirspace }) => {
       </h2>
       <div className="flex items-center gap-16">
         <div
-          className={highlightActiveTab(PortfolioTabEnum.VERIFIED)}
+          className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.VERIFIED)}
         >
           Verified Airspaces
         </div>
         <div
-          className={highlightActiveTab(PortfolioTabEnum.RENTED)}
+          className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
         >
           Rented Airspaces
         </div>
         <div
-          className={highlightActiveTab(PortfolioTabEnum.UNVERIFIED)}
+          className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
         >
           Pending Verification
         </div>
         <div
-          className={highlightActiveTab(PortfolioTabEnum.REJECTED)}
+          className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
         >
           Rejected Airspaces
