@@ -9,7 +9,7 @@ import { msclaritConfig } from "@/hooks/msclaritConfig";
 import { useMobile } from "@/hooks/useMobile";
 import { useEffect, useState } from "react";
 import { SidebarProvider } from "@/hooks/sidebarContext";
-import { Web3authProvider } from "@/providers/web3authProvider";
+import { Web3authProvider } from "../providers/web3authProvider";
 import { ToastContainer } from "react-toastify";
 
 import "react-datepicker/dist/react-datepicker.css";

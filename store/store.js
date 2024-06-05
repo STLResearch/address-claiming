@@ -1,11 +1,11 @@
-import { configureStore, createSlice } from '@reduxjs/toolkit';
+import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = {
   value: {
     newAirspace: false,
     airspaceAdditionalInfo: false,
     airspaceData: {},
-    category: {},
+    category: { email: "", blockchainAddress: "" },
     user: {},
     isWaitingScreenVisible: false,
     userUSDWalletBalance: { amount: "0", isLoading: true },
@@ -13,25 +13,21 @@ const initialState = {
 };
 
 const airspaceSlice = createSlice({
-  name: 'airspace',
+  name: "airspace",
   initialState: initialState,
   reducers: {
     setNewAirspaceModal(state, action) {
       state.value.newAirspace = action.payload;
     },
-
-        setCloseNewAirspaceModal(state, action) {
+    setCloseNewAirspaceModal(state, action) {
       state.value.newAirspace = action.payload;
     },
-
     setAdditionalInfoModal(state, action) {
       state.value.airspaceAdditionalInfo = action.payload;
     },
-
     setCloseAdditionalInfoModal(state, action) {
       state.value.airspaceAdditionalInfo = action.payload;
     },
-
     setAirspaceData(state, action) {
       state.value.airspaceData = {
         ...state.value.airspaceData,
@@ -44,25 +40,15 @@ const airspaceSlice = createSlice({
         ...action.payload,
       };
     },
-
-    setCategory(state, action) {
-      state.value.category = {
-        ...state.value.category,
-        ...action.payload,
-      };
+    setIsWaitingScreenVisible(state, action) {
+      state.value.isWaitingScreenVisible = action.payload;
     },
-
-    setIsWaitingScreenVisible: (state, action)=>{
-        state.value.isWaitingScreenVisible = action.payload
-      },
-
-      setUser: (state, action)=>{
-        state.value.user = action.payload
-      },
-
-    setUserUSDWalletBalance: (state, action)=>{
-        state.value.userUSDWalletBalance = action.payload
-      },
+    setUser(state, action) {
+      state.value.user = action.payload;
+    },
+    setUserUSDWalletBalance(state, action) {
+      state.value.userUSDWalletBalance = action.payload;
+    },
   },
 });
 
@@ -71,5 +57,4 @@ const store = configureStore({
 });
 
 export const counterActions = airspaceSlice.actions;
-
 export default store;

@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { LoadingSpinner } from "../Icons";
+import { LoadingSpinner } from "../Shared/Icons";
 
 const LoadingButton = ({ children, onClick, isLoading, color, className }) => {
   const [loading, setLoading] = useState(isLoading);

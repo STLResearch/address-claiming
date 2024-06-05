@@ -1,7 +1,7 @@
 import { formatDate } from "@/utils";
 
 const { Fragment } = require("react");
-const { ArrowLeftIcon, CloseIcon, LocationPointIcon } = require("../Icons");
+const { ArrowLeftIcon, CloseIcon, LocationPointIcon } = require("../Shared/Icons");
 
 const Modal = ({ airspace, onCloseModal, isOffer }) => {
   console.log({ airspace });
