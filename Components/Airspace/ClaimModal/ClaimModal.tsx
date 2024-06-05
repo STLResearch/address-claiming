@@ -45,11 +45,11 @@ const ClaimModal: React.FC<ClaimModalProps> = ({
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   useEffect(() => { 
     let airSpaceName = data.address.split(",");
-    console.log('name chamge',airSpaceName)
+
     setData((prev) => {
       return {
         ...prev,
-        name: airSpaceName[0],
+        title: airSpaceName[0],
       };
     });
     setAndClearOtherPublicRouteData("airSpaceData", data)
@@ -83,7 +83,7 @@ const ClaimModal: React.FC<ClaimModalProps> = ({
         <div className="px-[29px]">
           <AirspaceInfo
             address={data?.address}
-            title={data?.title}
+            title={data?.title }
             setData={setData}
           />
           <AirspaceOptions
