@@ -39,17 +39,21 @@ const ClaimModal: React.FC<ClaimModalProps> = ({
   setErrorMessages
 }) => {
   const { claimProperty } = PropertiesService();
+
   const [claimButtonLoading, setClaimButtonLoading] = useState<boolean>(false);
-  const{redirectIfUnauthenticated}=useAuth()
-  useEffect(() => {
+  const{redirectIfUnauthenticated,setAndClearOtherPublicRouteData}=useAuth()
+  const [isInfoVisible, setIsInfoVisible] = useState(false);
+  useEffect(() => { 
     let airSpaceName = data.address.split(",");
+    console.log('name chamge',airSpaceName)
     setData((prev) => {
       return {
         ...prev,
-        title: airSpaceName[0],
+        name: airSpaceName[0],
       };
     });
-  }, []);
+    setAndClearOtherPublicRouteData("airSpaceData", data)
+  }, [data.address]);
   const onClaim = async () => {
     await claimAirspaceProperty(
       claimProperty,

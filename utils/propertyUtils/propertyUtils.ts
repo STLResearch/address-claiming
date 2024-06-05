@@ -5,7 +5,7 @@ export const claimAirspaceProperty = async (claimProperty: ( postData:any ) => P
     try {
         const isRedirecting = redirectIfUnauthenticated();
       if (isRedirecting) return;
-
+      
       setClaimButtonLoading(true);
         const {
             address,
