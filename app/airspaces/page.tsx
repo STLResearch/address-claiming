@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useContext,useLayoutEffect } from "react";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
 import ZoomControllers from "@/Components/ZoomControllers";
 
@@ -26,6 +26,10 @@ import {
 import { Coordinates, PropertyData } from "@/types";
 import MobileMapSection from "@/Components/Airspace/MobileMapSection";
 import Sidebar from "@/Components/Shared/Sidebar";
+import PropertiesService from "../../services/PropertiesService";
+import { Web3authContext } from "../../providers/web3authProvider";
+import { useRouter,useSearchParams  } from "next/navigation";
+import { removePubLicUserDetailsFromLocalStorageOnClose,removePubLicUserDetailsFromLocalStorage } from "../../helpers/localStorage";
 
 const Airspaces = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -72,9 +76,27 @@ const Airspaces = () => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [showSuccessPopUp, setShowSuccessPopUp] = useState<boolean>(false);
   const [showFailurePopUp, setShowFailurePopUp] = useState<boolean>(false);
+  const [errorMessages,setErrorMessages] = useState<Array<string>>([]);
   const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
   const [data, setData] = useState<PropertyData>({ ...defaultData });
-  const { user } = useAuth();
+  const { claimProperty } = PropertiesService();
+
+  const { user, redirectIfUnauthenticated } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams()
+  const { web3auth } = useContext(Web3authContext);
+
+  //removes cached airspaceData when address is in coOrdinates
+
+  useLayoutEffect(()=>{
+    //const {propertyAddress,geoLocation}=router.query;
+    const propertyAddress=searchParams?.get('propertyAddress')
+    const geoLocation=searchParams?.get('geoLocation')
+    if (propertyAddress || geoLocation){
+      localStorage.removeItem('airSpaceData');      
+    }
+  },[searchParams])
+
   useEffect(() => {
     if (map) return;
     const createMap = () => {
@@ -110,13 +132,18 @@ const Airspaces = () => {
         });
       });
       setMap(newMap);
-      flyToUserIpAddress(newMap);
+       //doesnt move the map to iplocation when user persisted initial state in 
+       let inintialAirSpaceData=localStorage.getItem('airSpaceData')
+       if(!inintialAirSpaceData){
+         flyToUserIpAddress(newMap);
+       }
     };
     createMap();
   }, []);
 
+  //gets address suggestions 
   useEffect(() => {
-    if (!showOptions) setShowOptions(true);
+    console.log('here',addresses,address)
     if (!address) return setShowOptions(false);
     let timeoutId: NodeJS.Timeout | null = null;
     getAddresses(setAddresses, setCoordinates, timeoutId, address);
@@ -127,6 +154,7 @@ const Airspaces = () => {
     };
   }, [address]);
 
+  //flies to the new address
   useEffect(() => {
     if (!flyToAddress) return;
     goToAddress(
@@ -136,30 +164,64 @@ const Airspaces = () => {
       setIsLoading,
       setMarker,
       map,
-      marker
+      marker,
+      setAddress
     );
   }, [flyToAddress, map]);
 
+
+   //adds address for the new address
   useEffect(() => {
+    let propertyAddress=searchParams?.get('propertyAddress')
+    let geoLocation=searchParams?.get('geoLocation')
+
+    if((propertyAddress || geoLocation) && !address){// this condition prevent rerenderings,
+      
+      if(((propertyAddress && propertyAddress.length>2)|| (geoLocation && geoLocation.length>2))){
+        if(geoLocation){   // prioritizing the geolocation over Property Address as it is more consistant             
+            setFlyToAddress(geoLocation)
+           propertyAddress=address                  
+        }else{
+          setFlyToAddress(propertyAddress as string)
+        }  
+      }
+    }
     if (flyToAddress === address) setShowOptions(false);
-    if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
+    if (flyToAddress) setData((prev) => ({ ...prev, address: address }));
   }, [flyToAddress, address]);
 
   useEffect(() => {
     if (!showSuccessPopUp) return;
-    const timeoutId = setTimeout(() => {
-      setShowSuccessPopUp(false);
-    }, 4000);
-    return () => clearTimeout(timeoutId);
   }, [showSuccessPopUp]);
+
 
   useEffect(() => {
     if (!showFailurePopUp) return;
     const timeoutId = setTimeout(() => {
       setShowFailurePopUp(false);
-    }, 4000);
+      setErrorMessages([]);
+    }, 6000);
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
+
+  useEffect(() => {
+    const inintialAirSpaceDataString=localStorage.getItem('airSpaceData')
+    const parsedInitialAirspaceData=inintialAirSpaceDataString?JSON.parse(inintialAirSpaceDataString):null;
+    if(parsedInitialAirspaceData && parsedInitialAirspaceData?.address?.length>2){
+      setData(parsedInitialAirspaceData);
+      setFlyToAddress(parsedInitialAirspaceData.address)
+      setAddress(parsedInitialAirspaceData.address)
+      setShowClaimModal(true)
+    }else{
+      console.log('no initial datta')
+    }
+  
+  
+  }, [])
+  const handleSetAddress = (value) => {
+    setAddress(value)
+    if (!showOptions) setShowOptions(true)
+  }
 
   return (
     <Fragment>
@@ -177,7 +239,7 @@ const Airspaces = () => {
             <ExplorerMobile
               onGoBack={() => setShowMobileMap(false)}
               address={address}
-              setAddress={setAddress}
+              setAddress={handleSetAddress}
               addresses={addresses}
               showOptions={showOptions}
               setFlyToAddress={setFlyToAddress}
@@ -201,6 +263,7 @@ const Airspaces = () => {
             {showClaimModal && (
               <ClaimModal
                 onCloseModal={() => {
+                  removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData')
                   setShowClaimModal(false);
                   setIsLoading(false);
                 }}
@@ -213,9 +276,10 @@ const Airspaces = () => {
                 setShowFailurePopUp={setShowFailurePopUp}
                 setShowSuccessPopUp={setShowSuccessPopUp}
                 user={user}
+                setErrorMessages={setErrorMessages}
               />
             )}
-            {isMobile && showMobileMap && flyToAddress && (
+            {isMobile && showMobileMap && flyToAddress  && address && (
               <div
                 onClick={() => {
                   setShowClaimModal(true);
@@ -245,7 +309,7 @@ const Airspaces = () => {
                 <Explorer
                   flyToAddress={flyToAddress}
                   address={address}
-                  setAddress={setAddress}
+                  setAddress={handleSetAddress}
                   addresses={addresses}
                   showOptions={showOptions}
                   onClaimAirspace={() => {
@@ -256,7 +320,7 @@ const Airspaces = () => {
                   setShowOptions={setShowOptions}
                 />
                 <Slider />
-                <PopUp isVisible={showSuccessPopUp} />
+                <PopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp}/>
                 <FailurePopUp isVisible={showFailurePopUp} />
               </div>
             )}

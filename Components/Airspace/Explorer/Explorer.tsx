@@ -60,7 +60,7 @@ const Explorer: React.FC<ExplorerProps> = ({
             setShowOptions={setShowOptions}
           />
 
-      {flyToAddress && flyToAddress !== "" && (
+      {flyToAddress && address  && (
         <div
           onClick={onClaimAirspace}
           className="w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"

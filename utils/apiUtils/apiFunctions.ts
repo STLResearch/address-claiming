@@ -3,6 +3,7 @@ import { Map, Marker } from "mapbox-gl";
 import { Dispatch, SetStateAction } from "react";
 import { Coordinates } from "@/types/index";
 import maplibregl from "maplibre-gl";
+import { toast } from "react-toastify";
 
 export const flyToUserIpAddress = async (map: Map | null): Promise<void> => {
     if (!map) return;
@@ -41,7 +42,8 @@ export const goToAddress = async (
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
     setMarker: React.Dispatch<React.SetStateAction< | maplibregl.Marker | null>>,
     map: Map | maplibregl.Map | null,
-    marker: Marker |maplibregl.Marker| null
+    marker: Marker |maplibregl.Marker| null,
+    setAddress: Dispatch<SetStateAction<string>>
 ): Promise<void> => {
     try {
         setIsLoading(true);
@@ -65,7 +67,7 @@ export const goToAddress = async (
         setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
         setAddressData(data.features[0].properties);
         setIsLoading(false);
-
+        setAddress(data.features[0]?.place_name)
         if (map) {
             map.flyTo({
                 center: endPoint,
@@ -88,6 +90,7 @@ export const goToAddress = async (
     } catch (error) {
         setIsLoading(false);
         console.error(error);
+        toast.error("invalid address")
     }
 };
 

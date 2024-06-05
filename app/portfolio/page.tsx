@@ -47,7 +47,7 @@ const Portfolio = () => {
       </Head>
       {isLoading &&
         createPortal(
-          <Backdrop onClick={() => {}} />,
+          <Backdrop />,
           document?.getElementById("backdrop-root") as HTMLElement
         )}
       {isLoading &&

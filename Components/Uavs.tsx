@@ -6,6 +6,7 @@ import { Fragment, useState, MouseEvent } from "react";
 import Sidebar from "@/Components/Shared/Sidebar";
 import Navbar from "@/Components/Navbar";
 import AddUavModal from "@/Components/Modals/AddUavModal";
+
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 
@@ -42,7 +43,7 @@ const UAVs: React.FC = () => {
     <Fragment>
       {addUav &&
         createPortal(
-          <Backdrop onClick={backdropCloseHandler} />,
+          <Backdrop />,
           document.getElementById("backdrop-root")!
         )}
       {addUav &&

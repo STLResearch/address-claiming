@@ -157,7 +157,7 @@ const IndividualSignup: React.FC = () => {
       </Head>
       {isLoading &&
         createPortal(
-          <Backdrop onClick={() => {}} />,
+          <Backdrop  />,
           document.getElementById("backdrop-root")!
         )}
       {isLoading &&

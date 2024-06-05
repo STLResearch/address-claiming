@@ -114,7 +114,7 @@ const Funds = () => {
       <Head>
         <title>SkyTrade - Wallet</title>
       </Head>
-      {isLoading && <Backdrop onClick={() => {}} />}
+      {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
       <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden ">
         <Sidebar />

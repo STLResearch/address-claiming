@@ -9,6 +9,7 @@ import ClaimAirspaceHeader from "./ClaimAirspaceHeader";
 import { claimAirspaceProperty } from "@/utils/propertyUtils/propertyUtils";
 import PropertiesService from "@/services/PropertiesService";
 import { Coordinates,User,PropertyData } from "@/types";
+import useAuth from "../../../hooks/useAuth";
 
 interface ClaimModalProps {
   onCloseModal: () => void;
@@ -21,6 +22,7 @@ interface ClaimModalProps {
   setShowClaimModal: (value: boolean) => void;
   setIsLoading: (value: boolean) => void;
   defaultData: PropertyData;
+  setErrorMessages:React.Dispatch<React.SetStateAction<string[]>>
 }
 
 const ClaimModal: React.FC<ClaimModalProps> = ({
@@ -34,9 +36,11 @@ const ClaimModal: React.FC<ClaimModalProps> = ({
   setShowClaimModal,
   setIsLoading,
   defaultData,
+  setErrorMessages
 }) => {
   const { claimProperty } = PropertiesService();
   const [claimButtonLoading, setClaimButtonLoading] = useState<boolean>(false);
+  const{redirectIfUnauthenticated}=useAuth()
   useEffect(() => {
     let airSpaceName = data.address.split(",");
     setData((prev) => {
@@ -58,7 +62,9 @@ const ClaimModal: React.FC<ClaimModalProps> = ({
       setIsLoading,
       setData,
       setClaimButtonLoading,
-      defaultData
+      defaultData,
+      redirectIfUnauthenticated,
+      setErrorMessages
     );
   };
   return (
