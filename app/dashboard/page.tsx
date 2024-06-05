@@ -97,7 +97,7 @@ const Dashboard: FC = () => {
                 </div>
                 <div className="md:overflow-y-scroll  md:overflow-x-hidden  md:min-h-screen md:w-1/2 m-0 ">
                 <Link
-                  href={"/airspace2"}
+                  href={"/airspace"}
                   className="gap-20 md:flex-1 flex flex-col md:items-center md:justify-between h-[500px] md:bg-cover md:bg-no-repeat md:bg-center md:-mt-[53px] md:-mr-[53px] md:pt-[42px] px-[18px] md:pb-[40px] md:h-full md:overflow-y-scroll "
                   style={{ backgroundImage: "url('/images/map-bg.png')" }}
                 >
