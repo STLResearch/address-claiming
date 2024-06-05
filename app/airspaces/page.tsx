@@ -300,6 +300,7 @@ const Airspaces = () => {
                         ? setShowFailurePopUp(false)
                         : setShowSuccessPopUp(false);
                     }}
+                    errorMessages={errorMessages}
                   />
                 )}
               </Fragment>
@@ -321,7 +322,7 @@ const Airspaces = () => {
                 />
                 <Slider />
                 <PopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp}/>
-                <FailurePopUp isVisible={showFailurePopUp} />
+                <FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages}/>
               </div>
             )}
             <MobileMapSection
