@@ -977,3 +977,84 @@ export const LoadingSpinner = ({ color }) => {
     </svg>
   );
 };
+
+export const RadarLocationIcon = () => {
+  return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="6.75" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 5.25V3" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M18.75 12H21" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 18.75V21" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5.25 12H3" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+  )
+}
+
+export const ChevronLeftIcon = () => {
+  return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14.5 19L8.20711 12.7071C7.81658 12.3166 7.81658 11.6834 8.20711 11.2929L14.5 5" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+  );
+};
+export const RectangleIcon = () => {
+  return (
+      <svg width="70" height="9" viewBox="0 0 70 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="70" height="9" rx="4.5" fill="#D9D9D9"/>
+      </svg>
+
+  );
+};
+export const RadarZoomOutIcon = () => {
+  return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="10" cy="10" r="6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14.5 14.5L19 19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8 10H10H12" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+  );
+};
+export const RadarZoomInIcon = () => {
+  return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="10" cy="10" r="6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14.5 14.5L19 19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8 10H10M12 10H10M10 10V8M10 10V12" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      )
+}
+export const ClearIcon = () => {
+  return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 8L16 16" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M16 8L8 16" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+  );
+};
+export const RadarLayerIcon = () => {
+  return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 10L12 5L4 10L12 15L20 10Z" fill="black" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M20 14L12 19L4 14" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+  );
+};
+export const DroneradarIcon = () => {
+  return (
+      <svg width="40" height="39" viewBox="0 0 40 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 17.3164H22V21.3164H18V17.3164Z" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M18 17.3164L14.5 13.8164" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M17.9599 13.3173C17.8679 12.6739 17.5986 12.0687 17.1821 11.5697C16.7656 11.0708 16.2184 10.6976 15.6018 10.4921C14.9852 10.2866 14.3235 10.2568 13.6909 10.4061C13.0583 10.5555 12.4798 10.878 12.0202 11.3376C11.5606 11.7972 11.2381 12.3757 11.0888 13.0083C10.9394 13.6409 10.9692 14.3026 11.1747 14.9192C11.3802 15.5358 11.7534 16.083 12.2524 16.4995C12.7514 16.916 13.3565 17.1853 13.9999 17.2773" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M22 17.3164L25.5 13.8164" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M26 17.2773C26.6435 17.1853 27.2486 16.916 27.7476 16.4995C28.2466 16.083 28.6197 15.5358 28.8253 14.9192C29.0308 14.3026 29.0605 13.6409 28.9112 13.0083C28.7618 12.3757 28.4393 11.7972 27.9797 11.3376C27.5201 10.878 26.9416 10.5555 26.309 10.4061C25.6764 10.2568 25.0148 10.2866 24.3981 10.4921C23.7815 10.6976 23.2343 11.0708 22.8178 11.5697C22.4013 12.0687 22.132 12.6739 22.04 13.3173" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M22 21.3164L25.5 24.8164" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M22.04 25.3155C22.132 25.9589 22.4013 26.564 22.8178 27.063C23.2343 27.562 23.7815 27.9352 24.3981 28.1407C25.0148 28.3462 25.6764 28.376 26.309 28.2266C26.9416 28.0773 27.5201 27.7547 27.9797 27.2951C28.4393 26.8355 28.7618 26.257 28.9112 25.6245C29.0605 24.9919 29.0308 24.3302 28.8253 23.7136C28.6197 23.097 28.2466 22.5497 27.7476 22.1332C27.2486 21.7167 26.6435 21.4474 26 21.3555" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M18 21.3164L14.5 24.8164" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M13.9999 21.3555C13.3565 21.4474 12.7514 21.7167 12.2524 22.1332C11.7534 22.5497 11.3802 23.097 11.1747 23.7136C10.9692 24.3302 10.9394 24.9919 11.0888 25.6245C11.2381 26.257 11.5606 26.8355 12.0202 27.2951C12.4798 27.7547 13.0583 28.0773 13.6909 28.2266C14.3235 28.376 14.9852 28.3462 15.6018 28.1407C16.2184 27.9352 16.7656 27.562 17.1821 27.063C17.5986 26.564 17.8679 25.9589 17.9599 25.3155" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+  );
+};

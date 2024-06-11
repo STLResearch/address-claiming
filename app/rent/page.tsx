@@ -154,7 +154,7 @@ const Rent = () => {
     if (!address) return setShowOptions(false);
 
     let timeoutId: NodeJS.Timeout | null = null;
-    getAddresses(setAddresses, setCoordinates,setLoadingAddresses, timeoutId, address);
+    getAddresses(setAddresses, setCoordinates, timeoutId, address,setLoadingAddresses);
     return () => {
       if (timeoutId !== null) {
         clearTimeout(timeoutId);

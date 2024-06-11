@@ -3,6 +3,7 @@ import {  DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, Logou
 import useAuth from '@/hooks/useAuth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { RadarIcon } from './Shared/Icons';
 
 interface PropsI {
   setShowMobileNavbar: React.Dispatch<React.SetStateAction<boolean>>
@@ -70,6 +71,8 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
             <SidebarItem href={'/dashboard'} text={'Dashboard'} children={<DashboardIcon isActive={false} />} />
            <SidebarItem href={'/airspaces'} text={'Airspaces'} children={<EarthIcon isActive={false} />} />
            <SidebarItem href={'/referral'} text={'Referral Program'} children={<GiftIcon isActive={false} />} />
+           <SidebarItem href={'/radar'} text={'Radar'} children={<RadarIcon isActive={false} />} />
+            
             <div className='bg-[#00000012] w-full h-[1px]' />
             <p className='font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]'>MARKETPLACE</p>
            <SidebarItem href={''} text={'Buy Airspace'} children={<MapIcon isActive={false} />} />

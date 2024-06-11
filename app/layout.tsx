@@ -40,6 +40,10 @@ export default function RootLayout({
           href="https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css"
           rel="stylesheet"
         />
+        <link
+          href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css"
+          rel="stylesheet"
+        />
       </head>
       <body>
         <div id="backdrop-root"></div>
@@ -99,6 +103,7 @@ export default function RootLayout({
           {/* </Provider> */}
         </>
         {/* </PersistGate> */}
+        <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
       </body>
     </html>
   );

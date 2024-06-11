@@ -39,9 +39,9 @@ export const goToAddress = async (
     setCoordinates: React.Dispatch<Coordinates | null>,
     setAddressData: React.Dispatch<React.SetStateAction<AddressData | null | undefined>>,
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    setMarker: React.Dispatch<React.SetStateAction< | maplibregl.Marker | null>>,
+    setMarker: React.Dispatch<React.SetStateAction<| maplibregl.Marker | null>>,
     map: Map | maplibregl.Map | null,
-    marker: Marker |maplibregl.Marker| null
+    marker: Marker | maplibregl.Marker | null
 ): Promise<void> => {
     try {
         setIsLoading(true);
@@ -81,9 +81,9 @@ export const goToAddress = async (
         el.id = "markerWithExternalCss";
 
         const newMarker = new maplibregl.Marker(el)
-          .setLngLat(endPoint)
-          .addTo(map);
-            newMarker.addTo(map);
+            .setLngLat(endPoint)
+            .addTo(map);
+        newMarker.addTo(map);
         setMarker(newMarker);
     } catch (error) {
         setIsLoading(false);
@@ -96,9 +96,9 @@ export const goToAddress = async (
 export const getAddresses = async (
     setAddresses: Dispatch<SetStateAction<{ id: string; place_name: string; }[]>>,
     setCoordinates: Dispatch<SetStateAction<Coordinates | null>>,
-    setLoadingAddresses: Dispatch<SetStateAction<boolean>>,
     timeoutId: NodeJS.Timeout | null,
-    address: string
+    address: string,
+    setLoadingAddresses?: Dispatch<SetStateAction<boolean>>,
 ): Promise<void> => {
     setCoordinates(null);
     timeoutId = setTimeout(async () => {
@@ -109,23 +109,25 @@ export const getAddresses = async (
 
             if (!response.ok) throw new Error("Error while getting addresses");
             const data = await response.json();
-            if (!response.ok) {
+            if (!response.ok && setLoadingAddresses) {
                 setLoadingAddresses(false);
-            throw new Error("Error while getting addresses");
+                throw new Error("Error while getting addresses");
             }
 
-            if (data.features && data.features.length > 0) {
-            setAddresses(data.features);
-            setLoadingAddresses(false);
+            if (data.features && data.features.length > 0 && setLoadingAddresses) {
+                setAddresses(data.features);
+                setLoadingAddresses(false);
             } else {
-            setAddresses([]);
-            setLoadingAddresses(false);
+                setAddresses([]);
+                if (setLoadingAddresses) {
+                    setLoadingAddresses(false);
+                }
             }
-            } catch (error) {
+        } catch (error) {
             console.error(error);
             //setLoadingAddresses(false);
-            }
-        }, 500);
+        }
+    }, 500);
 };
 
 export const getTokenBalance = (user, setTokenBalance) => {
