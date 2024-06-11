@@ -41,7 +41,9 @@ module.exports = {
         "light-black": "#222222",
         "light-grey": "#87878D",
         "dark-grey":"#D9D9D9",
-        "light-green": "#1FD387"
+        "light-green": "#1FD387",
+        "light-grey-100": "#FFFFFFCC",
+        "pure-blue": "#0000FF",
       },
       fontFamily: {
         "sans": ['poppins', 'sans-serif'] ,

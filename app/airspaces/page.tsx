@@ -26,6 +26,8 @@ import FailurePopUp from "@/Components/Airspace/FailurePopUp";
 import Link from "next/link";
 import { HelpQuestionIcon } from "@/Components/Icons";
 import ZoomControllers from "@/Components/ZoomControllers";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import PolygonTool from "@/Components/polygonTool"
 
 const Airspaces: React.FC = () => {
 
@@ -82,6 +84,8 @@ const Airspaces: React.FC = () => {
   const { user, redirectIfUnauthenticated,setAndClearOtherPublicRouteData } = useAuth();
   const searchParams = useSearchParams()
   const pathname = usePathname()
+  const [drawTool, setDrawTool] = useState(null);
+  const [isDrawMode, setIsDrawMode] = useState(false);
 
   //removes cached airspaceData when address is in coOrdinates
   useLayoutEffect(() => {
@@ -96,6 +100,7 @@ const Airspaces: React.FC = () => {
   // new map is created if not rendered
   useEffect(() => {
     if (map) return;
+    if (!user) return;
 
     const createMap = () => {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
@@ -111,6 +116,17 @@ const Airspaces: React.FC = () => {
         ],
         // attributionControl: false
       });
+
+      const draw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+          polygon: true,
+          trash: true,
+        },
+        defaultMode: "draw_polygon",
+      });
+      setDrawTool(draw);
+      newMap.addControl(draw);
 
       newMap.on("load", function () {
         newMap.addLayer({
@@ -133,6 +149,34 @@ const Airspaces: React.FC = () => {
         });
       });
 
+      const handleCoordinates = async (e) => {
+        setIsDrawMode(true);
+        setIsLoading(true);
+        const drawnFeatures = draw.getAll();
+        if (drawnFeatures.features.length > 0) {
+          const coordinates = drawnFeatures.features[0].geometry.coordinates[0][0]
+         let el = document.createElement("div");
+         el.id = "markerWithExternalCss";
+          new maplibregl.Marker(el).setLngLat(coordinates).addTo(newMap);
+          const longitude = coordinates[0];
+          const latitude = coordinates[1];
+          setCoordinates({ longitude, latitude });
+          const response = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`
+          );
+          const data = await response.json();
+          if (data.features && data.features.length > 0) {
+            setAddress(data.features[0].place_name);
+            setData((prev) => {return {...prev, address: data.features[0].place_name}})
+            setShowClaimModal(true);
+            setFlyToAddress(data.features[0].place_name);
+          }
+        }
+      };
+
+      newMap.on("draw.create", handleCoordinates);
+      newMap.on("draw.update", handleCoordinates);
+
       setMap(newMap);
 
       //doesnt move the map to iplocation when user persisted initial state in 
@@ -143,11 +187,15 @@ const Airspaces: React.FC = () => {
 
     };
     createMap();
-  }, []);
+  }, [user]);
 
 
   //gets address suggestions 
   useEffect(() => {
+    if(isDrawMode){
+      setIsDrawMode(false)
+      return
+    }
     if (!address) return setShowOptions(false);
 
     let timeoutId: NodeJS.Timeout;
@@ -504,7 +552,11 @@ const Airspaces: React.FC = () => {
                 <Slider />
                 <SuccessPopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} />
                 <FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />
-
+                {!showSuccessPopUp && !isMobile &&(
+                  <div>
+                   <PolygonTool drawTool={drawTool} isDrawMode={isDrawMode} />
+                  </div>
+                )}
                 {showClaimModal && (
                   <ClaimModal
                     onCloseModal={() => {
