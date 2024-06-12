@@ -63,10 +63,10 @@ const PortfolioList = ({ title, selectAirspace }) => {
           <div className="flex flex-col gap-[15px] min-h-[20rem]">
             {airspaceList &&
               airspaceList[0] &&
-              airspaceList[0].address ? (
+              airspaceList[0].title ? (
               airspaceList?.map((airspace, index) => (
                 <PortfolioItem
-                  airspaceName={airspace?.address}
+                  airspaceName={airspace?.title}
                   key={index}
                   tags={[true, false, false, false]}
                   type={airspace?.type}
