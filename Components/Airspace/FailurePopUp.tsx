@@ -7,7 +7,7 @@ interface PropsI {
 const FailurePopUp = ({ isVisible, errorMessages }: PropsI) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] w-[500px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={` z-[700] absolute top-[14px] w-[500px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
     >
       🛑
       <div>

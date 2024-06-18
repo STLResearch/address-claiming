@@ -268,8 +268,8 @@ const Rent = () => {
                   setShowClaimModal={setShowClaimModal}
                   rentData={rentData}
                   setIsLoading={setIsLoading}
-                  isLoading={isLoading}
-                />
+                  isLoading={isLoading} 
+                   />
               )}
             </section>
             <div className="hidden sm:block">

@@ -6,6 +6,7 @@ import Link from "next/link";
 import VariableFeeRentalRangesSelect from "./RentalDetails/VariableFeeRentalRangesSelect";
 import TimeZoneSelect from "./RentalDetails/TimeZoneSelect";
 import WeekDayRangesForm from "./RentalDetails/WeekDayRangesForm";
+import Backdrop from "@/Components/Backdrop";
 
 interface PropsI {
   onCloseModal: () => void;
@@ -55,7 +56,9 @@ const ClaimModal = ({
       });
     }
   };
-  return (
+  return ( 
+    <div>
+    <Backdrop onClick={() => {}} />
     <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
       <div
         className="z-[100] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px] md:shadow-none"
@@ -427,6 +430,7 @@ const ClaimModal = ({
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };
