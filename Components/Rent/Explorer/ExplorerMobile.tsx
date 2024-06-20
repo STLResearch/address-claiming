@@ -5,7 +5,6 @@ import { PropertyData } from "@/types";
 import RentAirspaceLists from "./MobileBottomRentSlider";
 interface ExplorerMobileProps {
   isMobile: boolean;
-  onGoBack: () => void;
   address: string;
   setAddress: React.Dispatch<React.SetStateAction<string>>;
   addresses: { id: string; place_name: string }[];
@@ -47,14 +46,12 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
   setShowOptions,
   setLoadingRegAddresses,
   setRegisteredAddress,
-  onGoBack,
 }) => {
   const [toggle, setToggle] = useState<boolean>(false);
   return (
     <div>
       <div className="flex bg-white items-center gap-[15px] pt-[8px] pb-[10px] px-[21px] z-[40]">
         <SearchInput
-          onGoBack={onGoBack}
           isMobile={isMobile}
           address={address}
           addresses={addresses}

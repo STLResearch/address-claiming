@@ -43,7 +43,6 @@ const Rent = () => {
   const { user } = useAuth();
   const [regAdressShow, setRegAdressShow] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
-  const [showMobileHeader, setShowMobileHeader] = useState<boolean>(false);
 
   useEffect(() => {
     if (map) return;
@@ -130,19 +129,18 @@ const Rent = () => {
 
       {
         <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
-          {(showMobileHeader || !isMobile) && <Sidebar />}
+          {!isMobile && <Sidebar />}
 
           <div className="w-full h-full flex flex-col">
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
-            {(showMobileHeader || !isMobile) && (
+            {!isMobile && (
               <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
             )}
-            {!showMobileHeader && isMobile && (
+            {isMobile && (
               <ExplorerMobile
                 showClaimModal={showClaimModal}
                 isMobile={isMobile}
-                onGoBack={() => setShowMobileHeader(true)}
                 loadingReg={loadingRegAddresses}
                 loading={loadingAddresses}
                 address={address}
@@ -198,14 +196,14 @@ const Rent = () => {
                   />
                 </div>
               )}
-              {showClaimModal && !showMobileHeader && (
+              {showClaimModal && (
                 <RentModal
                   isMobile={isMobile}
                   setShowClaimModal={setShowClaimModal}
                   rentData={rentData}
                   setIsLoading={setIsLoading}
                   isLoading={isLoading}
-                />
+                />  
               )}
             </section>
             <div className="hidden sm:block">

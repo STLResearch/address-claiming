@@ -2,9 +2,8 @@ import React from "react";
 import { ArrowLeftIcon, MagnifyingGlassIcon } from "@/Components/Icons";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { handleSelectAddress } from '@/utils/addressUtils/addressFunction';
-
+import { useRouter } from "next/navigation";
 interface SearchInputProps {
-  onGoBack?:() => void;
   isMobile?:boolean;
   address: string;
   loading:boolean;
@@ -16,7 +15,6 @@ interface SearchInputProps {
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({
-  onGoBack,
   isMobile=false,
   address,
   loading,
@@ -26,11 +24,12 @@ const SearchInput: React.FC<SearchInputProps> = ({
   setFlyToAddress,
   setShowOptions,
 }) => {
+  const router = useRouter();
   return (
     <div>
       <div className={`flex bg-white items-center ${isMobile ? 'gap-[15px] pt-[8px]  px-[21px]' :'pt-0 px-0'}`}>
         {isMobile && <div
-          onClick={onGoBack}
+          onClick={()=>router.push('/marketplace')}
           className="flex h-6 w-6 items-center justify-center"
         >
           <ArrowLeftIcon />
