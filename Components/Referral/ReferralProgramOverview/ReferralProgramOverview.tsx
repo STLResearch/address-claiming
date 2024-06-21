@@ -2,16 +2,17 @@ import { EarthIcon, GiftIcon, ShareIcon } from "@/Components/Shared/Icons";
 import { Fragment } from "react";
 import Item from "./Item";
 import HorizontalSeparatorLine from "./HorizontalSeparatorLine";
+import { useMobile } from "@/hooks/useMobile";
 interface ReferralProgramOverviewProps {
   activeSection: number;
   section: number;
-  isMobile: boolean;
 }
 const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
   activeSection,
   section,
-  isMobile,
 }) => {
+  const { isMobile } = useMobile();
+
   if (activeSection !== section && isMobile) return;
   return (
     <Fragment>
@@ -24,8 +25,8 @@ const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
           claim airspaces, you receive:
         </p>
         <p className="text-[#4285F4] text-[15px] font-normal">
-          <span className="font-bold text-[20px]">+50 SKY points to you</span>{" "}
-          for each successful referral registration and{" "}
+          <span className="font-bold text-[20px]">+50 SKY points to you</span> for
+          each successful referral registration and{" "}
           <span className="font-bold text-[20px]">+50 SKY points</span> to the
           successfully referred person
           <br />

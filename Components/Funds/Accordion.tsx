@@ -1,8 +1,26 @@
+"use client"
+
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { AccordionProps, PaymentMethod } from "../../types";
+import { chevronDownIcon,chevronUpIcon } from '../Icons';
 
-const Accordion = ({ selectedMethod, setSelectedMethod }: AccordionProps) => {
+const supportedMethods = [
+  {
+    icon: "/images/bank-note-arrow.svg",
+    name: "Native",
+  },
+  {
+    icon: "/images/ramp.svg",
+    name: "Ramp",
+  },
+  {
+    icon: "/images/Stripe.svg",
+    name: "Stripe",
+  },
+];
+
+const Accordion = ({ selectedMethod, setSelectedMethod, activeSection }: AccordionProps) => {
     const [isOpen, setIsOpen] = useState(false);
   
     const handleSelection = (method: PaymentMethod) => {
@@ -13,17 +31,7 @@ const Accordion = ({ selectedMethod, setSelectedMethod }: AccordionProps) => {
     const toggleAccordion = () => {
       setIsOpen(!isOpen);
     };
-  
-    const supportedMethods = [
-      {
-        icon: "/images/Stripe.svg",
-        name: "Stripe",
-      },
-      {
-        icon: "/images/bank-note-arrow.svg",
-        name: "Native",
-      },
-    ];
+
     return (
       <div className="border rounded-lg ">
         <div
@@ -44,7 +52,7 @@ const Accordion = ({ selectedMethod, setSelectedMethod }: AccordionProps) => {
           ) : (
             <div className="font-medium  text-[#838187] text-[12px]">Select</div>
           )}
-  
+
           <div className="transform transition-transform duration-300">
             {isOpen ? chevronDownIcon() : chevronUpIcon()}
           </div>
@@ -52,22 +60,27 @@ const Accordion = ({ selectedMethod, setSelectedMethod }: AccordionProps) => {
         {isOpen && (
           <div className=" p-4">
             <ul>
-              {supportedMethods.map((method, index) => (
-                <li
-                  key={index}
-                  onClick={() => handleSelection(method)}
-                  className="flex items-center cursor-pointer hover:bg-gray-100 p-2"
-                >
-                  <Image
-                    src={method.icon}
-                    alt="Placeholder"
-                    className="w-8 h-8 mr-2"
-                    width={12}
-                    height={12}
-                  />
-                  <p>{method.name}</p>
-                </li>
-              ))}
+              {supportedMethods.map((method, index) => {
+                if (activeSection === 1 && method.name === "Ramp") return null;
+                else {
+                  return (
+                    <li
+                      key={index}
+                      onClick={() => handleSelection(method)}
+                      className="flex items-center cursor-pointer hover:bg-gray-100 p-2"
+                    >
+                      <Image
+                        src={method.icon}
+                        alt="Placeholder"
+                        className="w-8 h-8 mr-2"
+                        width={12}
+                        height={12}
+                      />
+                      <p>{method.name}</p>
+                    </li>
+                  )
+                }
+              })}
             </ul>
           </div>
         )}
@@ -77,14 +90,3 @@ const Accordion = ({ selectedMethod, setSelectedMethod }: AccordionProps) => {
 
 export default Accordion ;
 
-const chevronDownIcon = () => (
-    <svg width="24" height="24" fill="currentColor" className="bi bi-chevron-down">
-      <path fillRule="evenodd" d="M1.646 4.646a.5.5 0 011.708-.708L12 13.293l8.646-8.646a.5.5 0 01.708.708l-9 9a.5.5 0 01-.708 0l-9-9z" />
-    </svg>
-  );
-  
-  const chevronUpIcon = () => (
-    <svg width="24" height="24" fill="currentColor" className="bi bi-chevron-up">
-      <path fillRule="evenodd" d="M1.646 15.354a.5.5 0 01.708-.708L12 20.293l8.646-8.647a.5.5 0 01.708.708l-9 9a.5.5 0 01-.708 0l-9-9z" />
-    </svg>
-  );

@@ -2,7 +2,6 @@
 import { Fragment, useEffect, useState } from "react";
 
 import PageHeader from "@/Components/PageHeader";
-import { useMobile } from "@/hooks/useMobile";
 import useAuth from "@/hooks/useAuth";
 import Head from "next/head";
 import UserService from "@/services/UserService";
@@ -11,14 +10,11 @@ import InviteYourFriends from "@/Components/Referral/InviteYourFriends";
 import YourReferrals from "@/Components/Referral/YourReferrals/YourReferrals";
 import Share from "@/Components/Referral/Share/Share";
 import AlertMessage from "@/Components/Referral/AlertMessage";
-import Backdrop from "@/Components/Backdrop";
-import Spinner from "@/Components/Spinner";
-import { createPortal } from "react-dom";
 import ReferralProgramOverview from "@/Components/Referral/ReferralProgramOverview/ReferralProgramOverview";
 import Sidebar from "@/Components/Shared/Sidebar";
+import PointBalance from "@/Components/Referral/PointBalance";
 
 const Referral = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fetchingCode, setFetchingCode] = useState<boolean>(false);
   const [activeSection, setActiveSection] = useState<number>(0);
   const [data, setData] = useState({
@@ -27,7 +23,6 @@ const Referral = () => {
     registeredAirspaces: 0,
     validatedProperties: 0,
   });
-  const { isMobile } = useMobile();
   const { user, web3authStatus } = useAuth();
   const { retrieveUserReferralData } = UserService();
   const sections = ["The Program", "Share", "My Referrals"];
@@ -47,20 +42,13 @@ const Referral = () => {
       }
     })();
   }, [user, web3authStatus]);
-  const renderPortal = (component: JSX.Element) => {
-    if (typeof document !== "undefined") {
-      const backdropRoot = document.getElementById("backdrop-root");
-      return backdropRoot ? createPortal(component, backdropRoot) : null;
-    }
-    return null;
-  };
+
   return (
     <Fragment>
       <Head>
         <title>SkyTrade - Referral Program</title>
       </Head>
-      {isLoading && renderPortal(<Backdrop />)}
-      {isLoading && renderPortal(<Spinner />)}
+
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
@@ -72,24 +60,22 @@ const Referral = () => {
               setActiveSection={setActiveSection}
             />
             <AlertMessage />
+
+            <PointBalance registeredFriends={data?.registeredFriends} />
+
             <ReferralProgramOverview
               activeSection={activeSection}
-              isMobile={isMobile}
               section={0}
             />
+            
             <Share
               isLoading={fetchingCode}
-              activeSection={activeSection}
-              isMobile={isMobile}
-              section={1}
               referralCode={data?.referralCode}
-              blockchainAddress={user?.blockchainAddress}
-              user={user}
             />
+   
             <InviteYourFriends referralCode={data?.referralCode} />
             <YourReferrals
               activeSection={activeSection}
-              isMobile={isMobile}
               section={2}
               registeredFriends={data?.registeredFriends}
               registeredAirspaces={data?.registeredAirspaces}

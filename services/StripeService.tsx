@@ -3,7 +3,7 @@ import Service from "./Service"
 const StripeService = () => {
   const { postRequest } = Service();
 
-  const createStripe = async (postData) => {
+  const createStripe = async (postData: any) => {
     try {
       const response = await postRequest({
         uri: '/public/stripe/create',

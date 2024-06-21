@@ -3,7 +3,7 @@ import Service from "./Service"
 const UserService = () => {
   const { getRequest, postRequest, patchRequest, deleteRequest } = Service();
 
-  const createUser = async (user) => {
+  const createUser = async (user: any) => {
     try {
       const response = await postRequest({
         uri: '/public/users/create',
@@ -16,7 +16,7 @@ const UserService = () => {
     }
   }
 
-  const updateUser = async (user) => {
+  const updateUser = async (user: any) => {
     try {
       const response = await patchRequest({
         uri: `/private/users/update`,

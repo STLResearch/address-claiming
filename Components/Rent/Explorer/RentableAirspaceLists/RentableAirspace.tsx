@@ -45,7 +45,7 @@ const RentableAirspace: React.FC<RentableAirspaceProps> = ({
         className={
           item.id !== selectedAddress
             ? ` p-5 text-left text-[#913636] w-full flex justify-between items-center text-[12px]`
-            : `bg-[#0653EA] p-5 text-left text-white w-full flex items-center justify-between text-[12px]`
+            : `bg-[#0653EA] p-5 text-left text-white w-full flex items-center justify-between text-[10px]`
         }
         style={{
           borderTop: "5px solid #FFFFFFCC",

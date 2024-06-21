@@ -8,12 +8,16 @@ import { toast } from "react-toastify";
 
 interface UseRentableAirspacesProps {
   map: Map;
+  setRentData: React.Dispatch<React.SetStateAction<PropertyData>>;
+  setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   setLoadingRegAddresses: React.Dispatch<React.SetStateAction<boolean>>;
   setRegisteredAddress: React.Dispatch<React.SetStateAction<PropertyData[]>>;
 }
 
 export const useRentableAirspaces = ({
   map,
+  setRentData,
+  setShowClaimModal,
   setLoadingRegAddresses,
   setRegisteredAddress,
 }: UseRentableAirspacesProps) => {
@@ -46,8 +50,12 @@ export const useRentableAirspaces = ({
             formattedProperties.forEach((property) => {
                 const el = document.createElement("div");
                 el.id = "markerWithExternalCss";
-                createRentMarkerWithPopup(map, property, el);
+               const rentMarker =  createRentMarkerWithPopup(map,property, el);
+               rentMarker?.getElement().addEventListener('click', function() {
+                setRentData(property);
+                setShowClaimModal(true);
             });
+              });
         }
     };
 

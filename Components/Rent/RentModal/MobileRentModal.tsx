@@ -29,7 +29,9 @@ const MobileRentModal: React.FC<MobileRentModalProps> = ({
   return (
     <div className="z-[60] fixed bottom-0 mt-4 md:ml-12  bg-white  md:bg-[#FFFFFFCC] no-scrollbar rounded-[30px] w-full md:max-w-sm  md:max-h-[600px] max-w-[600px]  md:py-[12px] md:rounded-[30px]  mx-auto overflow-x-auto  flex flex-col sm:hidden gap-[15px]  md:pb-0 ">
       <div className="px-[25px] ">
-        <div className=" flex flex-col justify-end items-center mt-4 md:mt-0 ">
+        <div className=" flex flex-col justify-end items-center mt-4 md:mt-0 "onClick={() => {
+              setShowClaimModal(false);
+            }}>
           <div className=" w-[90%] flex justify-center  items-center">
             <RectangleIcon />
           </div>
@@ -117,12 +119,12 @@ const MobileRentModal: React.FC<MobileRentModalProps> = ({
         )}
       </div>
       {!showRentalPreview ? (
-        <div className="py-[10px] px-[29px] shadow-[0_0px_4.2px_0px_rgba(0,0,0,0.25)] touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
+        <div className="py-[18px] px-[29px] shadow-[0_0px_4.2px_0px_rgba(0,0,0,0.25)] touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
           <div
             onClick={() => {
               setShowClaimModal(false);
             }}
-            className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2"
+            className="touch-manipulation rounded-[5px] py-[10px] text-[#0653EA] cursor-pointer w-1/2"
           >
             Cancel
           </div>
@@ -136,7 +138,7 @@ const MobileRentModal: React.FC<MobileRentModalProps> = ({
           </div>
         </div>
       ) : (
-        <div className="flex px-[29px] justify-evenly items-center py-[10px]  shadow-[0_0px_4.2px_0px_rgba(0,0,0,0.25)] touch-manipulation gap-[20px] text-[14px]">
+        <div className="flex px-[29px] justify-evenly items-center py-[18px]  shadow-[0_0px_4.2px_0px_rgba(0,0,0,0.25)] touch-manipulation gap-[20px] text-[14px]">
           <div className="font-bold text-2xl leading-9">
             &#36; {rentData?.price}
           </div>

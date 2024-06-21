@@ -14,7 +14,7 @@ const RentService = () => {
     }
   }
 
-  const getRentById = async (rentId) => {
+  const getRentById = async (rentId: string | number) => {
     try {
       const response = await getRequest({
         uri: `/private/rents/find-one/${rentId}`
@@ -25,7 +25,7 @@ const RentService = () => {
     }
   }
 
-  const updateRent = async (rent) => {
+  const updateRent = async (rent: any) => {
     try {
       const response = await patchRequest({
         uri: `/private/rents/update`,
@@ -37,7 +37,7 @@ const RentService = () => {
     }
   }
 
-  const createRent = async (rent) => {
+  const createRent = async (rent: any) => {
     try {
       const response = await postRequest({
         uri: `/private/rents/create`,
@@ -49,7 +49,7 @@ const RentService = () => {
     }
   }
 
-  const deleteRent = async (rentId) => {
+  const deleteRent = async (rentId: string | number) => {
     try {
       const response = await deleteRequest({
         uri: `/private/rents/delete`,

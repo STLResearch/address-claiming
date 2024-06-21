@@ -3,8 +3,7 @@ import useAuth from "@/hooks/useAuth";
 
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 import axios from "axios";
-import { shallowEqual, useSelector } from "react-redux";
-import { counterActions } from "@/store/store";
+import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 
 const useFetchBalance = () => {
@@ -14,14 +13,14 @@ const useFetchBalance = () => {
   const { userUSDWalletBalance } = useAppSelector((state) => {
     const { userUSDWalletBalance } = state.userReducer;
     return { userUSDWalletBalance };
-  });
+  }, shallowEqual);
 
   useEffect(() => {
     if (user && user.blockchainAddress) {
       const interval = setInterval(async () => {
         try {
           const response = await axios.post(
-            process.env.NEXT_PUBLIC_SOLANA_API,
+            String(process.env.NEXT_PUBLIC_SOLANA_API),
             {
               jsonrpc: "2.0",
               id: 1,

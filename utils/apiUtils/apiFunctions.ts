@@ -2,6 +2,7 @@ import axios from "axios";
 import { Map, Marker } from "mapbox-gl";
 import { Dispatch, SetStateAction } from "react";
 import { Coordinates } from "@/types/index";
+import maplibregl from "maplibre-gl";
 
 export const flyToUserIpAddress = async (map: Map | null): Promise<void> => {
     if (!map) return;
@@ -38,9 +39,9 @@ export const goToAddress = async (
     setCoordinates: React.Dispatch<Coordinates | null>,
     setAddressData: React.Dispatch<React.SetStateAction<AddressData | null | undefined>>,
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    setMarker: React.Dispatch<React.SetStateAction<Marker | null>>,
-    map: Map | null,
-    marker: Marker | null
+    setMarker: React.Dispatch<React.SetStateAction< | maplibregl.Marker | null>>,
+    map: Map | maplibregl.Map | null,
+    marker: Marker |maplibregl.Marker| null
 ): Promise<void> => {
     try {
         setIsLoading(true);
@@ -79,11 +80,10 @@ export const goToAddress = async (
         let el = document.createElement("div");
         el.id = "markerWithExternalCss";
 
-        const newMarker = new Marker(el).setLngLat(endPoint)
-        if (map) {
+        const newMarker = new maplibregl.Marker(el)
+          .setLngLat(endPoint)
+          .addTo(map);
             newMarker.addTo(map);
-        }
-
         setMarker(newMarker);
     } catch (error) {
         setIsLoading(false);
@@ -96,6 +96,7 @@ export const goToAddress = async (
 export const getAddresses = async (
     setAddresses: Dispatch<SetStateAction<{ id: string; place_name: string; }[]>>,
     setCoordinates: Dispatch<SetStateAction<Coordinates | null>>,
+    setLoadingAddresses: Dispatch<SetStateAction<boolean>>,
     timeoutId: NodeJS.Timeout | null,
     address: string
 ): Promise<void> => {
@@ -107,17 +108,24 @@ export const getAddresses = async (
             const response = await fetch(mapboxGeocodingUrl);
 
             if (!response.ok) throw new Error("Error while getting addresses");
-
             const data = await response.json();
-            if (data.features && data.features.length > 0) {
-                setAddresses(data.features);
-            } else {
-                setAddresses([]);
+            if (!response.ok) {
+                setLoadingAddresses(false);
+            throw new Error("Error while getting addresses");
             }
-        } catch (error) {
-            console.log(error);
-        }
-    }, 500);
+
+            if (data.features && data.features.length > 0) {
+            setAddresses(data.features);
+            setLoadingAddresses(false);
+            } else {
+            setAddresses([]);
+            setLoadingAddresses(false);
+            }
+            } catch (error) {
+            console.error(error);
+            //setLoadingAddresses(false);
+            }
+        }, 500);
 };
 
 export const getTokenBalance = (user, setTokenBalance) => {
@@ -126,7 +134,7 @@ export const getTokenBalance = (user, setTokenBalance) => {
         id: 1,
         method: "getTokenAccountsByOwner",
         params: [
-            user.blockchainAddress,
+            user?.blockchainAddress,
             {
                 mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
             },

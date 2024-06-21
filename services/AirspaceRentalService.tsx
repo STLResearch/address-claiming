@@ -3,7 +3,7 @@ import Service from "./Service"
 const AirspaceRentalService = () => {
   const { getRequest, postRequest } = Service();
 
-  const getPropertiesByUserAddress = async (callerAddress, type, limit, afterAssetId)=>{
+  const getPropertiesByUserAddress = async (callerAddress: string | undefined, type: string, limit: string | number, afterAssetId?: string)=>{
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
@@ -19,7 +19,7 @@ const AirspaceRentalService = () => {
     }
   }
 
-  const getUnverifiedAirspaces = async (callerAddress, limit, page)=>{
+  const getUnverifiedAirspaces = async (callerAddress: string | undefined, page: string | number, limit: string | number)=>{
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
@@ -35,7 +35,22 @@ const AirspaceRentalService = () => {
     }
   }
 
-  const getTotalAirspacesByUserAddress = async (callerAddress)=>{
+  const getRejectedAirspaces = async (callerAddress: string | undefined, page: string | number, limit: string | number)=>{
+    try {
+      if (!callerAddress) return [];
+      const response = await getRequest({
+        uri: `/private/airspace-rental/retrieve-rejected-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`
+      })
+      if (!response) {
+        return [];
+      }
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+  const getTotalAirspacesByUserAddress = async (callerAddress: string | undefined)=>{
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
@@ -48,7 +63,20 @@ const AirspaceRentalService = () => {
     }
   }
 
-  const createMintRentalToken = async ({ postData })=>{
+  const getSingleAsset = async (assetId: string) => {
+    try {
+      if (!assetId) return null;
+      const response = await getRequest({
+        uri: `/private/airspace-rental/retrieve-single-asset/${assetId}`,
+      })
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  const createMintRentalToken = async ({ postData }: {postData: any})=>{
     try {
       const response = await postRequest({
         uri: `/private/airspace-rental/create-mint-rental-token-ix`,
@@ -57,10 +85,11 @@ const AirspaceRentalService = () => {
       return response?.data;
     } catch (error) {
       console.error(error);
+      throw new Error(error.message)
     }
   }
 
-  const executeMintRentalToken = async ({ postData })=>{
+  const executeMintRentalToken = async ({ postData }: { postData: any }) => {
     try {
       const response = await postRequest({
         uri: `/private/airspace-rental/execute-mint-rental-token-ix`,
@@ -76,9 +105,11 @@ const AirspaceRentalService = () => {
   return { 
     getPropertiesByUserAddress,
     getUnverifiedAirspaces,
+    getRejectedAirspaces,
     createMintRentalToken,
     executeMintRentalToken,
-    getTotalAirspacesByUserAddress
+    getTotalAirspacesByUserAddress, 
+    getSingleAsset
   };
 };
 

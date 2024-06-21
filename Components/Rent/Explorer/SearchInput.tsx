@@ -27,7 +27,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   const router = useRouter();
   return (
     <div>
-      <div className={`flex bg-white items-center ${isMobile ? 'gap-[15px] pt-[8px]  px-[21px]' :'pt-0 px-0'}`}>
+      <div className={`flex bg-white items-center ${isMobile ? 'gap-[15px] pt-[8px] ' :'pt-0'}`}>
         {isMobile && <div
           onClick={()=>router.push('/marketplace')}
           className="flex h-6 w-6 items-center justify-center"
@@ -54,7 +54,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
       </div>
       </div>
       {showOptions && (
-        <div className=" overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white">
+        <div className="overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white">
           {loading ? (
             <div className="pt-8 flex justify-center items-center">
               <BalanceLoader />

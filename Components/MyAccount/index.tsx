@@ -5,7 +5,7 @@ import useAuth from "../../hooks/useAuth";
 import { createPortal } from "react-dom";
 
 import PageHeader from "../../Components/PageHeader";
-import Spinner from "../../Components/Backdrop";
+import Spinner from "../../Components/Spinner";
 import Backdrop from "../../Components/Backdrop";
 
 import UserService from "../../services/UserService";
@@ -47,6 +47,7 @@ const Account = () => {
 
   const updateDataHandler = async (e) => {
     e.preventDefault();
+    if (!user) return toast.error("User not logged in");
 
     const { name, email, phoneNumber, newsletter } = personalInformation;
     // TODO: check if data has changed
@@ -76,6 +77,7 @@ const Account = () => {
           name,
           phoneNumber,
           newsletter,
+          email,
         };
 
         updateProfile(updatedUser);
@@ -93,15 +95,16 @@ const Account = () => {
 
   const onVerifyMyAccount = () => {
     setIsLoading(true);
-    // const client = new Persona.Client({
-    //     templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
-    //     referenceId: user?.id.toString(),
-    //     environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
-    //     onReady: () => {
-    //         setIsLoading(false);
-    //         client.open();
-    //     },
-    // });
+    // @ts-ignore
+    const client = new Persona.Client({
+        templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
+        referenceId: user?.id.toString(),
+        environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
+        onReady: () => {
+            setIsLoading(false);
+            client.open();
+        },
+    });
   };
 
   return (

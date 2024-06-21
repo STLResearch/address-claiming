@@ -1,33 +1,30 @@
-"use client";
+"use client"
 
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext } from 'react';
+import { useRouter } from 'next/navigation';
+import Spinner from '@/Components/Spinner';
+import useAutoLogout from '@/hooks/useAutoLogout';
+import { Web3authContext } from '@/providers/web3authProvider';
 
-import Spinner from "@/Components/Spinner";
-import useAutoLogout from "@/hooks/useAutoLogout";
-import { Web3authContext } from "@/providers/web3authProvider";
-import { useRouter } from "next/navigation";
-import { useMobile } from "@/hooks/useMobile";
-import useInitAuth from "@/hooks/useInitAuth";
 
 export default function Home() {
-  // useInitAuth();
   useAutoLogout();
-
   const router = useRouter();
+
   const { web3auth } = useContext(Web3authContext);
 
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    router.push("/auth");
-  };
+    router.push('/airspaces');
+  }
 
   useEffect(() => {
     if (web3auth) {
       if (web3auth.status === "connected") {
         const userData = localStorage.getItem("user");
         if (userData && userData !== "undefined") {
-          router.push("/dashboard");
+          router.push('/dashboard');
         } else {
           logout();
         }
@@ -35,27 +32,6 @@ export default function Home() {
     }
   }, [web3auth?.status]);
 
-  const { isMobile } = useMobile();
-  const [doItAgain, setDoItAgain] = useState(false);
 
-  useEffect(() => {
-    var Tawk_API = global?.Tawk_API || undefined;
-    if (!Tawk_API) return;
-
-    if (isMobile) {
-      if (Tawk_API.hideWidget !== undefined) {
-        Tawk_API.hideWidget();
-      } else if (!doItAgain) {
-        setDoItAgain(true);
-      }
-    } else {
-      if (Tawk_API.showWidget !== undefined) {
-        Tawk_API.showWidget();
-      } else if (doItAgain) {
-        setDoItAgain(false);
-      }
-    }
-  }, [isMobile, global.Tawk_API, doItAgain]);
-
-  return <Spinner />;
+  return <Spinner />
 }

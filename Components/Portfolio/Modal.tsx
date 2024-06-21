@@ -10,11 +10,10 @@ interface ModalProps {
 }
 
 
-const  Modal = ({ airspace, onCloseModal, isOffer }:ModalProps) => {
-  console.log({ airspace });
+const  Modal = ({ airspace, onCloseModal, isOffer }: ModalProps) => {
   return (
     <Fragment>
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-[500] md:z-50 flex flex-col gap-[15px]">
         <div
           className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -46,7 +45,7 @@ const  Modal = ({ airspace, onCloseModal, isOffer }:ModalProps) => {
 
         <div className="flex gap-[15px]">
           <p className="text-[14px] font-normal text-[#222222]">ID:</p>
-          <p className="text-[14px] font-normal text-[#87878D]">
+          <p className="text-[14px] font-normal text-[#87878D] break-all">
             {airspace?.id}
           </p>
         </div>

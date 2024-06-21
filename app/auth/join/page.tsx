@@ -31,7 +31,7 @@ const IndividualSignup: React.FC = () => {
   }, shallowEqual);
 
   const { createUser } = UserService();
-  const { temporaryToken, signIn } = useAuth();
+  const { signIn } = useAuth();
 
   const [part, setPart] = useState(0);
   const [name, setName] = useState("");

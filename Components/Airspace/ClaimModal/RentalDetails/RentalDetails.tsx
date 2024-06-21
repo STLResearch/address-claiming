@@ -39,7 +39,6 @@ interface RentalDetailsProps {
         </div>
         <div className="flex-1 mt-4 md:mt-0">
           <TimeZoneSelect
-            timeZone={timezone}
             setTimeZone={(timezone) => setData((prev) => ({ ...prev, timezone }))}
           />
         </div>

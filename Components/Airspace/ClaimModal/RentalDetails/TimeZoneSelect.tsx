@@ -2,20 +2,15 @@ import React, { Fragment, useState } from "react";
 import {
   useTimezoneSelect,
   allTimezones,
-  ITimezoneOption,
 } from "react-timezone-select";
 
-interface TimeZoneSelectProps {
-  timeZone: string;
+interface PropsI {
   setTimeZone: (timeZone: string) => void;
 }
 
-const TimeZoneSelect: React.FC<TimeZoneSelectProps> = ({
-  timeZone,
-  setTimeZone,
-}) => {
+const TimeZoneSelect = ({ setTimeZone }: PropsI) => {
   const labelStyle = "original";
-  const timezones: { [key: string]: string } = {
+  const timezones = {
     ...allTimezones,
     "Europe/Berlin": "Frankfurt",
   };
@@ -25,21 +20,16 @@ const TimeZoneSelect: React.FC<TimeZoneSelectProps> = ({
     timezones,
   });
   const [selectedLabel, setSelectedLabel] = useState("Europe/London");
-  const handleTimeZoneChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleTimeZoneChange = (event) => {
     const selectedTimeZone = event.target.value;
     const parsedTimeZone = parseTimezone(selectedTimeZone);
     const gmtOffset = parsedTimeZone.offset;
-    let gmtString;
     if (gmtOffset) {
-      gmtString =
-        parseInt(gmtOffset?.toString()) >= 0
-          ? `GMT+${gmtOffset}`
-          : `GMT${gmtOffset}`;
+      const gmtString =
+        parseInt(String(gmtOffset)) >= 0 ? `GMT+${gmtOffset}` : `GMT${gmtOffset}`;
+  
+      setTimeZone(gmtString);
     }
-
-    setTimeZone(gmtString);
     setSelectedLabel(selectedTimeZone);
   };
 
@@ -59,7 +49,7 @@ const TimeZoneSelect: React.FC<TimeZoneSelectProps> = ({
         className="w-full appearance-none rounded-lg px-[22px] py-[16px] text-[14px] font-normal text-[#222222] focus:outline-none"
         style={{ border: "1px solid #87878D" }}
       >
-        {options.map((geographicTimeZone: ITimezoneOption) => (
+        {options.map((geographicTimeZone) => (
           <option
             key={geographicTimeZone.value}
             value={geographicTimeZone.value}

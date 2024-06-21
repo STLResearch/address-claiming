@@ -1,12 +1,12 @@
 import React, { Fragment, ChangeEvent } from "react";
 
-interface VariableFeeRentalRangesSelectProps {
+interface PropsI {
   fee: string;
   setFee: (fee: string) => void;
 }
 
-const VariableFeeRentalRangesSelect: React.FC<VariableFeeRentalRangesSelectProps> = ({ fee, setFee }) => {
-  const handleVariableFeeRentalRangeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+const VariableFeeRentalRangesSelect = ({ fee, setFee }: PropsI) => {
+  const handleVariableFeeRentalRangeChange = (event) => {
     const selectedFee = event.target.value;
     setFee(selectedFee);
   };
@@ -38,5 +38,6 @@ const VariableFeeRentalRangesSelect: React.FC<VariableFeeRentalRangesSelectProps
     </Fragment>
   );
 };
+
 
 export default VariableFeeRentalRangesSelect;

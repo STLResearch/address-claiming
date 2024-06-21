@@ -11,7 +11,9 @@ export const SidebarProvider = ({ children }) => {
   useTawk();
   useInitAuth();
   useFetchBalance();
+
   useAutoLogout();
+
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 

@@ -20,11 +20,12 @@ export const createRentMarkerWithPopup = (map, property, markerElement) => {
     `<strong>${property.address}</strong>`
   );
 
-  new maplibregl.Marker(markerElement)
+  const marker = new maplibregl.Marker(markerElement)
     .setLngLat(lngLat)
     .setPopup(popup)
     .addTo(map);
-};
+    return marker;
+}
 
 export const changeRentMarkerColor = (map,setSelectedAddress,marker,setMarker,item) => {
   let el1 = document.createElement("div");

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import WeekDayRangeItem from "./WeekDayRangeItem";
+import React from "react";
+import Toggle from "./Toggle";
 
 interface WeekDayRange {
   fromTime: number;
@@ -8,12 +8,12 @@ interface WeekDayRange {
   weekDayId: number;
 }
 
-interface WeekDayRangesFormProps {
+interface PropsI {
   weekDayRanges: WeekDayRange[];
   setWeekDayRanges: React.Dispatch<React.SetStateAction<WeekDayRange[]>>;
 }
 
-const WeekDayRangesForm: React.FC<WeekDayRangesFormProps> = ({ weekDayRanges, setWeekDayRanges }) => {
+const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }: PropsI) => {
   const weekDays = [
     "SUNDAYS",
     "MONDAYS",
@@ -24,50 +24,78 @@ const WeekDayRangesForm: React.FC<WeekDayRangesFormProps> = ({ weekDayRanges, se
     "SATURDAYS",
   ];
 
-  useEffect(() => {
-    const defaultWeekDayRanges = weekDayRanges.map((day) => ({
-      isAvailable: true,
-      fromTime: 9,
-      toTime: 21,
-      weekDayId: day.weekDayId,
-    }));
-    setWeekDayRanges(defaultWeekDayRanges);
-  }, []);
+  const options = Array.from({ length: 25 });
 
-  const handleToggle = (day: number) => {
+  const handleToggle = (day) => {
     const weekDayRangesCopy = [...weekDayRanges];
     weekDayRangesCopy[day].isAvailable = !weekDayRangesCopy[day].isAvailable;
     setWeekDayRanges(weekDayRangesCopy);
   };
 
-  const handleFromTimeChange = (day: number, time: number) => {
+  const handleFromTimeChange = (day, time) => {
     const weekDayRangesCopy = [...weekDayRanges];
     weekDayRangesCopy[day].fromTime = time;
     setWeekDayRanges(weekDayRangesCopy);
   };
 
-  const handleToTimeChange = (day: number, time: number) => {
+  const handleToTimeChange = (day, time) => {
     const weekDayRangesCopy = [...weekDayRanges];
     weekDayRangesCopy[day].toTime = time;
     setWeekDayRanges(weekDayRangesCopy);
   };
 
-  return (
-    <>
-      {weekDays.map((day, index) => (
-        <WeekDayRangeItem
-          key={index}
-          day={day}
-          isDayAvailable={weekDayRanges[index].isAvailable}
-          fromTime={weekDayRanges[index].fromTime}
-          toTime={weekDayRanges[index].toTime}
-          handleToggle={() => handleToggle(index)}
-          handleFromTimeChange={(time) => handleFromTimeChange(index, time)}
-          handleToTimeChange={(time) => handleToTimeChange(index, time)}
-        />
-      ))}
-    </>
-  );
+  return weekDays.map((day, index) => {
+    const isDayAvailable = weekDayRanges[index].isAvailable;
+
+    return (
+      <div
+        className="flex-none md:flex items-center justify-between"
+        key={index}
+      >
+        <div className="flex items-center gap-[15px] pr-[32px]">
+          <Toggle
+            checked={isDayAvailable}
+            setChecked={() => handleToggle(index)}
+          />
+          <p>{day}</p>
+        </div>
+        <div className="flex items-center gap-[66px] mt-2">
+          <select
+            disabled={!isDayAvailable}
+            value={weekDayRanges[index].fromTime}
+            onChange={(e) => handleFromTimeChange(index, +e.target.value)}
+            name={`${index}/start`}
+            id={`${index}/start`}
+            className="appearance-none rounded-lg px-[22px] py-[5px] text-[14px] font-normal text-[#87878D] focus:outline-none"
+            style={{ border: "1px solid #87878D" }}
+          >
+            {options.map((_, index) => (
+              <option key={`start-${index}`} value={index}>
+                {index.toString().padStart(2, "0")}:00
+              </option>
+            ))}
+          </select>
+          <p>to</p>
+          <select
+            disabled={!isDayAvailable}
+            value={weekDayRanges[index].toTime}
+            onChange={(e) => handleToTimeChange(index, +e.target.value)}
+            name={`${index}/end`}
+            id={`${index}/end`}
+            className="appearance-none rounded-lg px-[22px] py-[5px] text-[14px] font-normal text-[#87878D] focus:outline-none"
+            style={{ border: "1px solid #87878D" }}
+          >
+            {options.map((_, index) => (
+              <option key={`end-${index}`} value={index}>
+                {index.toString().padStart(2, "0")}:00
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    );
+  });
 };
+
 
 export default WeekDayRangesForm;

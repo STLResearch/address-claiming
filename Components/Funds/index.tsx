@@ -21,6 +21,7 @@ import {
   KeyI,
 } from "../../types";
 import Sidebar from "../Shared/Sidebar";
+import { useMobile } from "@/hooks/useMobile";
 
 const Funds = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -33,16 +34,12 @@ const Funds = () => {
   const router = useRouter();
   const [solbalance, setSolBalance] = useState<number>(0);
   const { provider } = useContext(Web3authContext) as Web3authContextType;
-
-  //get sol balance
+  const { isMobile } = useMobile();
   useEffect(() => {
     let fetchbalance = async () => {
       if (user && provider) {
         const solanaWallet = new SolanaWallet(provider);
-
-        console.log("solana wallet ", solanaWallet);
         const accounts = await solanaWallet.requestAccounts();
-
         const connectionConfig: ConnectionConfig = await solanaWallet.request({
           method: "solana_provider_config",
           params: [],
@@ -56,11 +53,9 @@ const Funds = () => {
       }
     };
     fetchbalance()
-      // make sure to catch any error
       .catch(console.error);
   }, [solbalance, user, web3authStatus]);
 
-  // GET TRANSACTION HISTORY
   useEffect(() => {
     if (user) {
       fetch(
@@ -111,7 +106,6 @@ const Funds = () => {
         });
       }
 
-      console.log(collectedTransactions);
       setTransactions(collectedTransactions);
     }
   }, [transactionHistory, user, web3authStatus]);
@@ -121,15 +115,15 @@ const Funds = () => {
       <Head>
         <title>SkyTrade - Wallet</title>
       </Head>
-      {isLoading && <Backdrop onClick={() => {}} />}
+      {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
       <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden ">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
           <PageHeader pageTitle={"Funds"} />
           <section className="relative  w-full h-full py-6 md:py-[37px]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll sm:pl-[68.82px] sm:pr-[55px]">
-            <div className="flex  sm:gap-[50px] flex-wrap justify-center">
-              <div className="flex flex-col gap-5 items-center sm:items-start ">
+            <div className="flex sm:gap-[50px] flex-wrap justify-center">
+              <div className={`${isMobile ? "w-full flex flex-col gap-5 items-center sm:items-start" : "flex flex-col gap-5 items-center sm:items-start"}`}>
                 <AvailableBalance solbalance={solbalance} />
                 <DepositAndWithdraw
                   walletId={user?.blockchainAddress || ""}
@@ -137,11 +131,8 @@ const Funds = () => {
                   setActiveSection={setActiveSection}
                   setIsLoading={setIsLoading}
                   isLoading={isLoading}
-                  setreFetchBal={setreFetchBal}
-                  refetchBal={refetchBal}
                   setTokenBalance={setTokenBalance}
                   tokenBalance={tokenBalance}
-                  solbalance={solbalance}
                 />
               </div>
               <TransactionHistory transactions={transactions} user={user} />

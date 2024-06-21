@@ -3,7 +3,7 @@ import Service from "./Service"
 const PropertiesService = () => {
   const { getRequest, postRequest, patchRequest, deleteRequest } = Service();
 
-  const getPropertyById = async (propertyId)=>{
+  const getPropertyById = async (propertyId: string | number)=>{
     try {
       const response = await getRequest({
         uri: `/private/properties/find-one/${propertyId}`
@@ -27,7 +27,7 @@ const PropertiesService = () => {
     }
   }
 
-  const findPropertiesByCoordinates = async ({ postData })=>{
+  const findPropertiesByCoordinates = async ({ postData }: {postData: any})=>{
     try {
       const response = await postRequest({
         uri: `/public/properties/`,
@@ -40,7 +40,7 @@ const PropertiesService = () => {
     }
   }
 
-  const updateClaimedProperty = async ({ postData })=>{
+  const updateClaimedProperty = async ({ postData }: { postData: any }) => {
     try {
       const response = await patchRequest({
         uri:  '/private/properties/update',
@@ -52,7 +52,7 @@ const PropertiesService = () => {
     }
   }
 
-  const claimProperty = async ({ postData })=>{
+  const claimProperty = async ({ postData }: { postData: any }) => {
     try {
       const response = await postRequest({
         uri: '/private/properties/claim',
@@ -64,7 +64,7 @@ const PropertiesService = () => {
     }
   }
 
-  const deleteProperty = async ({ postData })=>{
+  const deleteProperty = async ({ postData }: { postData: any }) => {
     try {
       const response = await deleteRequest({
         uri: `/private/properties/delete`,

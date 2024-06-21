@@ -19,17 +19,19 @@ import { executeTransaction } from "@/utils/rent/transactionExecutor";
 import { handleExecuteResponse } from "@/utils/rent/executeResponseHandler";
 import { PropertyData } from "@/types";
 import { toast } from "react-toastify";
-import MobileRentModal from '@/Components/Rent/RentModal/MobileRentModal'
+import MobileRentModal from "@/Components/Rent/RentModal/MobileRentModal";
+import Backdrop from "@/Components/Backdrop";
+import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
+import { useMobile } from "@/hooks/useMobile";
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
 interface RentModalProps {
-  isMobile:boolean;
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
 }
 const RentModal: React.FC<RentModalProps> = ({
-  isMobile,
   setShowClaimModal,
   rentData,
   setIsLoading,
@@ -42,25 +44,34 @@ const RentModal: React.FC<RentModalProps> = ({
   const maxDate = dayjs().add(29, "day");
   const [tokenBalance, setTokenBalance] = useState<string>("0");
   const [date, setDate] = useState(defaultValueDate);
-
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
-
+  const { isMobile } = useMobile();
   const [finalAns, setFinalAns] = useState<
-    | { status: string; message: string | undefined; tokenId?: string }
+    | { status: string; message?: string | undefined; tokenId?: string }
     | null
     | undefined
   >();
-  const { user } = useAuth();
+  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } =
+    useAuth();
   const { createMintRentalToken, executeMintRentalToken } =
     AirspaceRentalService();
   const { provider } = useContext(Web3authContext);
 
+  localStorage.setItem("rentData", JSON.stringify(rentData));
+
   useEffect(() => {
-    getTokenBalance(user, setTokenBalance);
-  }, []);
+    if (user) {
+      getTokenBalance(user, setTokenBalance);
+    }
+  }, [user]);
 
   const handleRentAirspace = async () => {
     try {
+      const isRedirecting = redirectIfUnauthenticated();
+      if (isRedirecting) {
+        setAndClearOtherPublicRouteData("rentData", rentData);
+        return;
+      }
       const currentDate = new Date();
       const startDate = new Date(date.toString());
       const endDate = new Date(startDate.getTime() + 30 * 60000);
@@ -80,7 +91,7 @@ const RentModal: React.FC<RentModalProps> = ({
       setIsLoading(true);
       if (rentData?.layers) {
         const postData = {
-          callerAddress: user.blockchainAddress,
+          callerAddress: user?.blockchainAddress,
           startTime: startDate.toISOString(),
           endTime: endDate.toISOString(),
           landAssetIds: [rentData.layers[0].tokenId],
@@ -148,93 +159,102 @@ const RentModal: React.FC<RentModalProps> = ({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-    <>{
-      isMobile ? 
-      <MobileRentModal setShowClaimModal={setShowClaimModal} date={date} maxDate={maxDate} rentData={rentData} setDate={setDate} shouldDisableTime={shouldDisableTime} handleRentAirspace={handleRentAirspace}/>  :
-         <div
-          style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-          className="touch-manipulation fixed top-1/2 left-1/2 sm:left-2/3 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px]  md:h-auto  md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
-        >
+      <>
+        {isMobile ? (
+          <MobileRentModal
+            setShowClaimModal={setShowClaimModal}
+            date={date}
+            maxDate={maxDate}
+            rentData={rentData}
+            setDate={setDate}
+            shouldDisableTime={shouldDisableTime}
+            handleRentAirspace={handleRentAirspace}
+          />
+        ) : (
           <div
-            className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
-            style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+            style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
+            className="touch-manipulation fixed top-1/2 left-1/2 sm:left-2/3 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px]  md:h-auto  md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
           >
             <div
-              className="w-[16px] h-[12px] md:hidden"
-              onClick={() => {
-                setShowClaimModal(false);
-              }}
+              className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
+              style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
             >
-              <ArrowLeftIcon />
+              <div
+                className="w-[16px] h-[12px] md:hidden"
+                onClick={() => {
+                  removePubLicUserDetailsFromLocalStorageOnClose("rentData");
+                  setShowClaimModal(false);
+                }}
+              >
+                <ArrowLeftIcon />
+              </div>
+              <div className="flex items-center w-full justify-center">
+                <h2 className="text-[#222222] font-medium text-xl text-center">
+                  Airspace Details
+                </h2>
+              </div>
+
+              <div
+                onClick={() => {
+                  setShowClaimModal(false);
+                  removePubLicUserDetailsFromLocalStorageOnClose("rentData");
+                }}
+                className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
+              >
+                <CloseIcon />
+              </div>
             </div>
-            <div className="flex items-center w-full justify-center">
-              <h2 className="text-[#222222] font-medium text-xl text-center">
-                Airspace Details
-              </h2>
-              <div className="w-[20px] h-[20px] ml-3">
-                <InfoIcon />
+            <div
+              className="touch-manipulation flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
+              style={{ border: "1px solid #4285F4" }}
+            >
+              <div className="w-6 h-6">
+                <LocationPointIcon />
+              </div>
+              <p className="font-normal text-[#222222] text-[14px] flex-1">
+                {rentData ? rentData.address : ""}
+              </p>
+            </div>
+            <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
+              <div className="flex touch-manipulation flex-col gap-[5px] w-full">
+                <label htmlFor="rentalDate">
+                  Rental Date and Time
+                  <span className="text-[#E04F64] touch-manipulation">*</span>
+                </label>
+                <DateTimePicker
+                  value={date}
+                  onChange={(e) => {
+                    setDate(e);
+                  }}
+                  disablePast
+                  maxDate={maxDate}
+                  shouldDisableTime={shouldDisableTime}
+                />
               </div>
             </div>
 
-            <div
-              onClick={() => {
-                setShowClaimModal(false);
-              }}
-              className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
-            >
-              <CloseIcon />
-            </div>
-          </div>
-          <div
-            className="touch-manipulation flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
-            style={{ border: "1px solid #4285F4" }}
-          >
-            <div className="w-6 h-6">
-              <LocationPointIcon />
-            </div>
-            <p className="font-normal text-[#222222] text-[14px] flex-1">
-              {rentData ? rentData.address : ""}
-            </p>
-          </div>
-          <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
-            <div className="flex touch-manipulation flex-col gap-[5px] w-full">
-              <label htmlFor="rentalDate">
-                Rental Date and Time
-                <span className="text-[#E04F64] touch-manipulation">*</span>
-              </label>
-              <DateTimePicker
-                value={date}
-                onChange={(e) => {
-                  setDate(e);
+            <div className="touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
+              <div
+                onClick={() => {
+                  setShowClaimModal(false);
+                  removePubLicUserDetailsFromLocalStorageOnClose("rentData");
                 }}
-                disablePast
-                maxDate={maxDate}
-                shouldDisableTime={shouldDisableTime}
-              />
+                className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2"
+                style={{ border: "1px solid #0653EA" }}
+              >
+                Cancel
+              </div>
+              <button
+                disabled={isLoading}
+                onClick={handleRentAirspace}
+                className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
+              >
+                Rent Airspace
+              </button>
             </div>
           </div>
-
-          <div className="touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
-            <div
-              onClick={() => {
-                setShowClaimModal(false);
-              }}
-              className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2"
-              style={{ border: "1px solid #0653EA" }}
-            >
-              Cancel
-            </div>
-            <button
-              disabled={isLoading}
-              onClick={handleRentAirspace}
-              className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
-            >
-              Rent Airspace
-            </button>
-          </div>
-        </div>
-    }
-    </>
+        )}
+      </>
     </LocalizationProvider>
   );
 };

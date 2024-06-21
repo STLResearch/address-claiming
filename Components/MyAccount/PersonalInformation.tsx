@@ -1,5 +1,5 @@
 
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { PersonalInformationType } from '../../types';
 
 interface PersonalInformationProps {
@@ -21,21 +21,23 @@ const PersonalInformation= ({
     updateDataHandler,
     setIsPhoneNumberValid
 }:PersonalInformationProps) => {
+  const [isChanged, setIsChanged] = useState(false);
+  
     return (
         <div className="flex flex-col py-[17px] px-[25px] rounded-[30px] gap-[15px] bg-white" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
         <h2 className="text-xl font-medium text-[#222222]">Personal Information</h2>
         <div className="flex flex-wrap gap-[10px]">
             <div className="flex flex-col gap-[5px] basis-full">
                 <label className="font-normal text-[14px] text-[#838187]" htmlFor="name">Name</label>
-                <input value={personalInformation.name} onChange={(e) => setPersonalInformation(prev => ({ ...prev, name: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="name" id="name" />
+                <input value={personalInformation.name} onChange={(e) => {setIsChanged(true); setPersonalInformation(prev => ({ ...prev, name: e.target.value }))}} className="md:py-[16px] py-3 px-2 md:px-[22px] w-full rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="name" id="name" />
             </div>
             <div className="flex flex-col gap-[5px] basis-full md:basis-1/3 flex-1">
                 <label className="font-normal text-[14px] text-[#838187]" htmlFor="name">Email</label>
-                <input value={personalInformation.email} onChange={(e) => setPersonalInformation(prev => ({ ...prev, email: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="email" id="email" />
+                <input value={personalInformation.email} readOnly={true} onChange={(e) => setPersonalInformation(prev => ({ ...prev, email: e.target.value }))} className="md:py-[16px] py-3 px-2 md:px-[22px] w-full rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="email" id="email" />
             </div>
             <div className="flex flex-col gap-[5px] basis-full md:basis-1/3 flex-1">
                 <label className="font-normal text-[14px] text-[#838187]" htmlFor="phone">Phone</label>
-                <input value={personalInformation.phoneNumber} onChange={(e) => {setIsPhoneNumberValid(true ); setPersonalInformation(prev => ({ ...prev, phoneNumber: e.target.value }))}} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: isPhoneNumberValid ? '1px solid #87878D' : '1px solid #E04F64' }} type="text" name="phone" id="phone" />
+                <input value={personalInformation.phoneNumber} onChange={(e) => {setIsChanged(true) ; setIsPhoneNumberValid(true ) ; setPersonalInformation(prev => ({ ...prev, phoneNumber: e.target.value }))}} className="md:py-[16px] py-3 px-2 md:px-[22px] w-full rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: isPhoneNumberValid ? '1px solid #87878D' : '1px solid #E04F64' }} type="text" name="phone" id="phone" />
                 {!isPhoneNumberValid && (<p className='text-[11px] italic text-red-600'>{errorMessage}</p> )}
             </div>
             <div className="flex flex-col gap-[10px] basis-full">
@@ -46,7 +48,7 @@ const PersonalInformation= ({
                 </div>
             </div>
             <div className="flex items-center justify-end flex-1">
-                <p className="font-medium text-base text-[#0653EA] cursor-pointer" onClick={ ()=> updateDataHandler}>Save changes</p>
+             <button  disabled={isLoading || !isChanged}  className={`font-medium text-base ${!isChanged ? 'text-gray-400 cursor-not-allowed' : 'text-[#0653EA] cursor-pointer'  }`}  onClick={updateDataHandler} > Save changes </button>
             </div>
         </div>
     </div>

@@ -1,18 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { hasCookie, setCookie } from "cookies-next";
 
 const CookieConsent: React.FC = () => {
-  const [showConsent, setShowConsent] = useState(true);
+  const [showConsent, setShowConsent] = useState(false);
 
   useEffect(() => {
-    setShowConsent(!hasCookie("localConsent"));
+    const localConsent = localStorage.getItem("localConsent");
+    if (!localConsent) setShowConsent(true)
   }, []);
 
   const acceptCookie = () => {
     setShowConsent(false);
-    setCookie("localConsent", "true", {});
+    localStorage.setItem("localConsent", "false");
   };
 
   if (!showConsent) {

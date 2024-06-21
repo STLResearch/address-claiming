@@ -16,7 +16,7 @@ const AvailableBalance: FC = () => {
       title={"Available Balance"}
       icon={<WalletIcon isActive />}
       linkText={"View funds"}
-      href={"/homepage/funds"}
+      href={"/funds"}
       style="h-fit"
     >
       {userUSDWalletBalance.isLoading ? (
