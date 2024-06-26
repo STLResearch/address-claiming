@@ -159,6 +159,8 @@ const Sidebar = () => {
         {user?.blockchainAddress && <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon isActive={false} />} />}
         <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon isActive={false} /> : <ArrowCompressIcon isActive={false} />} />
       </aside>
+      {
+      !showMobileNavbar &&
       <nav className='flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
         <SidebarItemMobile href={'/dashboard'} text={"Dashboard"} children={<DashboardIcon isActive={false} />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/airspaces'} text={"Airspaces"} children={<EarthIcon isActive={false} />} numberOfUnseenNotifications={0} />
@@ -166,6 +168,7 @@ const Sidebar = () => {
         <SidebarItemMobile href={'/portfolio'} text={"Portfolio"} children={<ShoppingBagsIcon isActive={false}  />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile onClick={handleMenuClick} text={"Menu"} children={<MenuIcon isActive={false} />} numberOfUnseenNotifications={0} />
       </nav>
+      }
 
       {showMobileNavbar && isMobile && (
         <MobileNavbar setShowMobileNavbar={setShowMobileNavbar} />

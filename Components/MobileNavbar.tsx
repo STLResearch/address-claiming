@@ -60,7 +60,7 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
 
    return (
     <div className="fixed inset-0 z-60 flex items-end">
-    <div className="bg-white w-full flex flex-col rounded-t-3xl overflow-y-auto" style={{ height: '90%' }}>
+    <div className="bg-white w-full flex flex-col rounded-t-3xl overflow-y-auto" style={{ height: '86%' }}>
         <div className='mt-4 flex flex-col justify-center items-center gap-4'>
             <p onClick={() => setShowMobileNavbar(false)} className='border-4 border-dark-grey w-[20%] rounded-md'></p>
             <p className='font-medium text-xl'>Menu
