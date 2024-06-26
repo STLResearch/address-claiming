@@ -63,7 +63,7 @@ const TransactionHistory = ({ transactions, user }:TransactionHistoryProps) => {
               <div className="overflow-x-auto fund-table-scrollbar">
     
               <table className="w-[100%]" >
-                <thead className="sticky top-0 z-[500]  bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
+                <thead className="sticky top-0 z-10 bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
                   <tr className="w-full">
                 {["date", "transaction id", "type", "amount", "status"].map(
                   (th,index) => (
