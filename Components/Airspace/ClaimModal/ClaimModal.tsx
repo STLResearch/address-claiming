@@ -29,13 +29,16 @@ const ClaimModal = ({
   useEffect(() => {
 
     let airSpaceName = data.address.split(",");
-    console.log('name chamge', airSpaceName)
-    setData((prev) => {
-      return {
-        ...prev,
-        name: airSpaceName[0],
-      };
-    });
+    
+     if(data.title==""){
+      setData((prev) => {
+        return {
+          ...prev,
+          title: airSpaceName[0],
+        };
+      });
+    }
+    
   }, [data.address]);
   const handleSellPrice = (e) => {
     let inputVal = e.target.value;
@@ -111,9 +114,9 @@ const ClaimModal = ({
               Name of airspace<span className="text-[#E04F64]">*</span>
             </label>
             <input
-              value={data?.name}
+              value={data?.title}
               onChange={(e) =>
-                setData((prev) => ({ ...prev, name: e.target.value }))
+                setData((prev) => ({ ...prev, title: e.target.value }))
               }
               className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222] mt-0.5 md:mt-1"
               style={{ border: "1px solid #87878D" }}
@@ -186,6 +189,7 @@ const ClaimModal = ({
                   setTimeZone={(timezone) =>
                     setData((prev) => ({ ...prev, timezone }))
                   }
+                  data={data}
                 />
               </div>
             </div>
