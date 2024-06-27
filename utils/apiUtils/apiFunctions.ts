@@ -1,8 +1,7 @@
 import axios from "axios";
-import { Map, Marker } from "mapbox-gl";
+import mapboxgl, { Map, Marker } from "mapbox-gl";
 import { Dispatch, SetStateAction } from "react";
 import { Coordinates } from "@/types/index";
-import maplibregl from "maplibre-gl";
 
 export const flyToUserIpAddress = async (map: Map | null): Promise<void> => {
     if (!map) return;
@@ -39,9 +38,9 @@ export const goToAddress = async (
     setCoordinates: React.Dispatch<Coordinates | null>,
     setAddressData: React.Dispatch<React.SetStateAction<AddressData | null | undefined>>,
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    setMarker: React.Dispatch<React.SetStateAction< | maplibregl.Marker | null>>,
-    map: Map | maplibregl.Map | null,
-    marker: Marker |maplibregl.Marker| null
+    setMarker: React.Dispatch<React.SetStateAction< | mapboxgl.Marker | null | undefined>>,
+    map: Map | mapboxgl.Map | null,
+    marker: Marker |mapboxgl.Marker| null | undefined
 ): Promise<void> => {
     try {
         setIsLoading(true);
@@ -80,10 +79,10 @@ export const goToAddress = async (
         let el = document.createElement("div");
         el.id = "markerWithExternalCss";
 
-        const newMarker = new maplibregl.Marker(el)
+        const newMarker = new mapboxgl.Marker(el)
           .setLngLat(endPoint)
-          .addTo(map);
-            newMarker.addTo(map);
+          .addTo(map as Map);
+            newMarker.addTo(map as Map);
         setMarker(newMarker);
     } catch (error) {
         setIsLoading(false);

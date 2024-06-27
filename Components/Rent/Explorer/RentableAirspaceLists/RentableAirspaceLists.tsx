@@ -9,7 +9,7 @@ interface RentableAirspaceListsProps {
   regAdressShow: boolean;
   registeredAddress: PropertyData[];
   map: Map | null;
-  marker: Marker;
+  marker: Marker | null | undefined;
   rentData: PropertyData | undefined | null;
   setMarker: React.Dispatch<React.SetStateAction<Marker>>;
   setRentData: React.Dispatch<React.SetStateAction<PropertyData>>;

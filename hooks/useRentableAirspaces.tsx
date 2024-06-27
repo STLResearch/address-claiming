@@ -7,7 +7,7 @@ import { Bounds, PropertyData } from "@/types";
 import { toast } from "react-toastify";
 
 interface UseRentableAirspacesProps {
-  map: Map;
+  map: Map | null;
   setRentData: React.Dispatch<React.SetStateAction<PropertyData>>;
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   setLoadingRegAddresses: React.Dispatch<React.SetStateAction<boolean>>;

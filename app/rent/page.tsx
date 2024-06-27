@@ -46,7 +46,7 @@ const Rent = () => {
   useEffect(() => {
     if (map) return;
     const createMap = () => {
-      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
 
       const newMap = new mapboxgl.Map({
         container: "map",
@@ -54,6 +54,9 @@ const Rent = () => {
         center: [-104.718243, 40.413869],
         zoom: 5,
         // attributionControl: false
+      });
+      newMap.on("render", function () {
+        newMap.resize()
       });
 
       newMap.on("load", function () {
@@ -64,6 +67,7 @@ const Rent = () => {
             type: "geojson",
             data: {
               type: "Feature",
+              properties:[],
               geometry: {
                 type: "Polygon",
                 coordinates: [],
@@ -75,7 +79,7 @@ const Rent = () => {
             "fill-color": "#D20C0C",
           },
         });
-        newMap.zoomOut(4);
+        newMap.zoomOut({duration:4});
       });
 
       let timeoutId;
@@ -85,8 +89,6 @@ const Rent = () => {
 
         clearTimeout(timeoutId);
         timeoutId = setTimeout(async () => {
-          let el = document.createElement("div");
-          el.id = "markerWithExternalCss";
           let crds = e.target.getBounds();
 
           const responseData = await findPropertiesByCoordinates({
@@ -119,18 +121,32 @@ const Rent = () => {
             for (let i = 0; i < responseData.length; i++) {
               const lngLat = new mapboxgl.LngLat(responseData[i].longitude, responseData[i].latitude);
 
-              const popup = new maplibregl.Popup().setHTML(
+              const popup = new mapboxgl.Popup({offset: 25,closeOnClick: false}).trackPointer().setHTML(
                 `<strong>${responseData[i].address}</strong>`
               );
-              const marker = new maplibregl.Marker(el)
-                .setLngLat(lngLat)
-                .setPopup(popup)
-                .addTo(newMap);
+
+              popup.on('open', () => {
+                const popupElement = popup.getElement();
+                if (popupElement) {
+                  popupElement.style.zIndex ='40';
+                  popupElement.addEventListener('click', function() {
+                    setRentData(responseData[i]);;
+                    setShowClaimModal(true);
+                  });
+                }
+              });
+
+              const marker = new mapboxgl.Marker({
+                color: "#3FB1CE",
+              }).setLngLat(lngLat)
+              .setPopup(popup)
+              .addTo(newMap);
+               
                 const filteredData = responseData.filter(item => item.type === 'rent');
                 marker.getElement().addEventListener('click', function() {
                   setRentData(responseData[i]);
                   setShowClaimModal(true);
-              });
+               });
             }
           }
         }, 3000);
@@ -236,7 +252,6 @@ const Rent = () => {
               <div
                 className={"!absolute !top-0 !left-0 !m-0 !w-screen !h-screen"}
                 id="map"
-                style={{ zIndex: "10" }}
               />
 
               {!isMobile && (

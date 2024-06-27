@@ -58,37 +58,36 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
       await signOut()
     };
 
-   return (
-    <div className="fixed inset-0 z-60 flex items-end">
-    <div className="bg-white w-full flex flex-col rounded-t-3xl overflow-y-auto" style={{ height: '90%' }}>
-        <div className='mt-4 flex flex-col justify-center items-center gap-4'>
-            <p onClick={() => setShowMobileNavbar(false)} className='border-4 border-dark-grey w-[20%] rounded-md'></p>
-            <p className='font-medium text-xl'>Menu
-            </p>
+   return ( 
+    <div className=" w-full h-[70%] z-50">
+    <div className=" w-full h-[80%] fixed bottom-0">
+    <div className=" w-full h-full bg-white rounded-t-3xl overflow-y-scroll">
+        <div onClick={() => setShowMobileNavbar(false)}  className='mt-4 flex flex-col justify-center items-center gap-4'>
+            <p className='mt-4 border-4 border-dark-grey w-[20%] rounded-md'></p>
+            <p className='font-medium text-xl'>Menu</p>
         </div>
-        <div className='mt-4 px-6 flex flex-col gap-4 text-lg'>
+        <div className='bg-white mt-4 px-6 flex flex-col gap-4 text-lg'>
             <SidebarItem href={'/dashboard'} text={'Dashboard'} children={<DashboardIcon isActive={false} />} />
-           <SidebarItem href={'/airspaces'} text={'Airspaces'} children={<EarthIcon isActive={false} />} />
-           <SidebarItem href={'/referral'} text={'Referral Program'} children={<GiftIcon isActive={false} />} />
+            <SidebarItem href={'/airspaces'} text={'Airspaces'} children={<EarthIcon isActive={false} />} />
+            <SidebarItem href={'/referral'} text={'Referral Program'} children={<GiftIcon isActive={false} />} />
             <div className='bg-[#00000012] w-full h-[1px]' />
             <p className='font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]'>MARKETPLACE</p>
-           <SidebarItem href={''} text={'Buy Airspace'} children={<MapIcon isActive={false} />} />
-           <SidebarItem href={'/rent'} text={'Rent Airspace'} children={<DroneIcon isActive={false} />} />
-           <SidebarItem href={'/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon isActive={false} />} numberOfUnseenNotifications={0} />
-           <SidebarItem href={'/funds'} text={'Funds'} children={<WalletIcon isActive={false} />} />
+            <SidebarItem href={''} text={'Buy Airspace'} children={<MapIcon isActive={false} />} />
+            <SidebarItem href={'/rent'} text={'Rent Airspace'} children={<DroneIcon isActive={false} />} />
+            <SidebarItem href={'/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon isActive={false} />} numberOfUnseenNotifications={0} />
+            <SidebarItem href={'/funds'} text={'Funds'} children={<WalletIcon isActive={false} />} />
             <div className='bg-[#00000012] w-full h-[1px]' />
-           <SidebarItem href={'https://skytrade.tawk.help'} text={'Help Center'} children={<HelpQuestionIcon isActive={false} color={undefined} />} />
+            <SidebarItem href={'https://skytrade.tawk.help'} text={'Help Center'} children={<HelpQuestionIcon isActive={false} color={undefined} />} />
             <div onClick={logoutHandler} className='cursor-pointer mb-8 flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold rounded-[3.66px]'>
                 <div className='w-6 h-6 flex items-center justify-center'>
-                  <LogoutIcon isActive={false} />
+                    <LogoutIcon isActive={false} />
                 </div>
                 <p className='font-normal text-[#5D7285] text-[14.64px] tracking-[1%]'>Logout</p>
             </div>
         </div>
     </div>
-</div>
-
-   
+     </div>
+     </div>
   )
 }
 

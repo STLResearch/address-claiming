@@ -19,7 +19,7 @@ const InAppSignIn = () => {
         <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
           {!isMobile && <Sidebar />}
           <div className={`w-full h-full flex flex-col overflow-scroll md:overflow-hidden pointer-events-none`}>
-            <section className=" md:flex relative w-full h-full md:pl-[53px] " style={{ backgroundImage: "url('/images/map-bg.png')",backgroundSize: "cover"}}
+            <section className=" md:flex relative w-full h-full md:pl-[53px] "
             ></section>
           </div>
           {<LoginPage />}

@@ -6,7 +6,7 @@ import { changeRentMarkerColor } from "@/utils/maputils";
 interface RentableAirspaceProps {
   item: PropertyData;
   map: Map | null;
-  marker: Marker;
+  marker: Marker| null | undefined;
   setSelectedAddress: React.Dispatch<React.SetStateAction<number>>;
   selectedAddress: number | null |undefined;
   setMarker: React.Dispatch<React.SetStateAction<Marker>>;

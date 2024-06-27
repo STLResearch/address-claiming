@@ -9,8 +9,8 @@ const TransactionHistory = ({ transactions, user }:TransactionHistoryProps) => {
       const TRANSACTIONS_PER_PAGE = 8;
       const initialIndex = (currentPage - 1) * TRANSACTIONS_PER_PAGE;
       const finalIndex = currentPage * TRANSACTIONS_PER_PAGE;
-      const paginatedData = transactions.slice(initialIndex, finalIndex);
-      const totalPages = Math.ceil(transactions.length / TRANSACTIONS_PER_PAGE);
+      const paginatedData = transactions?.slice(initialIndex, finalIndex);
+      const totalPages = Math.ceil(transactions?.length / TRANSACTIONS_PER_PAGE);
     
       useEffect(() => {
         setCurrentPage(1);
@@ -63,7 +63,7 @@ const TransactionHistory = ({ transactions, user }:TransactionHistoryProps) => {
               <div className="overflow-x-auto fund-table-scrollbar">
     
               <table className="w-[100%]" >
-                <thead className="sticky top-0 z-[500]  bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
+                <thead className="sticky top-0 z-10 bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
                   <tr className="w-full">
                 {["date", "transaction id", "type", "amount", "status"].map(
                   (th,index) => (
@@ -74,7 +74,7 @@ const TransactionHistory = ({ transactions, user }:TransactionHistoryProps) => {
                 </thead>
               <tbody>
     
-              {paginatedData.map((transaction, index) => (
+              {paginatedData?.map((transaction, index) => (
                 <tr
                   key={transaction.id}
                   className={`${index % 2 === 0 ? "bg-white" : "bg-[#F0F4FA] sm:bg-[#F6FAFF]"} !rounded-lg`}

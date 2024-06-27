@@ -14,6 +14,7 @@ import { DepositAndWithdrawProps, Web3authContextType, ConnectionConfig, Payment
 import CopyToClipboard from "react-copy-to-clipboard";
 import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk"
 import { TransactionInstruction } from "@solana/web3.js";
+import assert from "assert";
 
 const defaultPaymentMethod = {
   icon: "/images/bank-note-arrow.svg",
@@ -192,13 +193,26 @@ const DepositAndWithdraw = ({
 
 
   const handleOnAndOffRamp = () => {
+    assert(user?.blockchainAddress, "user === undefined");
+    console.log({
+      hostAppName: 'SKYTRADE APP',
+      hostLogoUrl: 'https://app.sky.trade/images/logo.svg',
+      hostApiKey: String(process.env.NEXT_PUBLIC_RAMP_TEST_API_KEY),
+      defaultAsset: 'SOLANA_USDC',
+      userAddress: user.blockchainAddress,
+      enabledFlows: ['ONRAMP'],
+      ...(process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME === "devnet" && {
+        url: "https://app.demo.ramp.network",
+      })
+    })
+
     new RampInstantSDK({
       hostAppName: 'SKYTRADE APP',
       hostLogoUrl: 'https://app.sky.trade/images/logo.svg',
       hostApiKey: String(process.env.NEXT_PUBLIC_RAMP_TEST_API_KEY),
       defaultAsset: 'SOLANA_USDC',
-      userAddress: user?.blockchainAddress,
-      enabledFlows: [activeSection === 0 ? 'ONRAMP' : 'OFFRAMP'],
+      userAddress: user.blockchainAddress,
+      enabledFlows: ['ONRAMP'],
       ...(process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME === "devnet" && {
         url: "https://app.demo.ramp.network",
       })

@@ -8,6 +8,12 @@
   font-family: "Poppins", sans-serif;
 }
 
+.mapboxgl-canvas-container {
+
+  height: 100vh;
+
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -29,8 +35,8 @@ button {
 #markerWithExternalCss {
   background-image: url("https://maps.locationiq.com/v3/samples/marker50px.png");
   background-size: cover;
-  width: 100px;
-  height: 100px;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
 }
 #marker2 {
