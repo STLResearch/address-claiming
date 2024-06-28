@@ -51,7 +51,7 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
           className=" mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll"
         >
-          {registeredAddress.map((item) => (
+          { registeredAddress.length ? registeredAddress.map((item) => (
             <RentableAirspace
               item={item}
               map={map}
@@ -62,7 +62,11 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
               setSelectedAddress={setSelectedAddress}
               setShowClaimModal={setShowClaimModal}
             />
-          ))}
+          )) : (
+            <div className="bg-white">
+            <p className="text-[15px]">no Airspaces available in the searched area</p>
+           </div>
+          )}
         </div>
       )}
     </div>

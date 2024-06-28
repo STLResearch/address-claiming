@@ -116,6 +116,7 @@ const Rent = () => {
 
           setRegisteredAddress(formattedProperties);
           setLoadingRegAddresses(false);
+          setRegAdressShow(true)
 
           if (responseData.length > 0) {
             for (let i = 0; i < responseData.length; i++) {
@@ -156,14 +157,6 @@ const Rent = () => {
     };
     createMap();
   }, []);
-
-  useEffect(() => {
-    if (registeredAddress.length > 0) {
-      setRegAdressShow(true);
-    } else {
-      setRegAdressShow(false);
-    }
-  }, [registeredAddress]);
 
   useEffect(() => {
     if (!showOptions) setShowOptions(true);
