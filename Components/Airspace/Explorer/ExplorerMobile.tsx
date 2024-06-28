@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowLeftIcon, MagnifyingGlassIcon } from "../../Icons";
-
+import { useTour } from "@reactour/tour";
+import { useSearchParams } from "next/navigation";
 interface Address {
   id: string;
   place_name: string;
@@ -23,8 +24,10 @@ const ExplorerMobile = ({
   handleSelectAddress,
   onGoBack,
 }: PropsI) => {
+  const searchParams = useSearchParams();
+  const { isOpen } = useTour();
   return (
-    <div className="z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
+    <div className="enter-address-step z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
       <div
         onClick={onGoBack}
         className="flex h-6 w-6 items-center justify-center"

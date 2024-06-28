@@ -1,11 +1,22 @@
 "use client";
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState } from "react";
 import useFetchBalance from "./useFetchBalance";
 import useInitAuth from "@/hooks/useInitAuth";
 import useAutoLogout from "@/hooks/useAutoLogout";
 import useTawk from "@/hooks/useTawk";
 
-export const SidebarContext = createContext();
+
+interface ContextI {
+  isCollapsed: boolean;
+  setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const defaultValue: ContextI = {
+  isCollapsed: false,
+  setIsCollapsed: () => { },
+};
+
+export const SidebarContext = createContext<ContextI>(defaultValue);
 
 export const SidebarProvider = ({ children }) => {
   useTawk();

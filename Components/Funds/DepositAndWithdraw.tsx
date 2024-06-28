@@ -196,7 +196,7 @@ const DepositAndWithdraw = ({
     assert(user?.blockchainAddress, "user === undefined");
     console.log({
       hostAppName: 'SKYTRADE APP',
-      hostLogoUrl: 'https://app.sky.trade/images/logo.svg',
+      hostLogoUrl: 'https://app.sky.trade/images/logo-1.svg',
       hostApiKey: String(process.env.NEXT_PUBLIC_RAMP_TEST_API_KEY),
       defaultAsset: 'SOLANA_USDC',
       userAddress: user.blockchainAddress,
@@ -208,7 +208,7 @@ const DepositAndWithdraw = ({
 
     new RampInstantSDK({
       hostAppName: 'SKYTRADE APP',
-      hostLogoUrl: 'https://app.sky.trade/images/logo.svg',
+      hostLogoUrl: 'https://app.sky.trade/images/logo-1.svg',
       hostApiKey: String(process.env.NEXT_PUBLIC_RAMP_TEST_API_KEY),
       defaultAsset: 'SOLANA_USDC',
       userAddress: user.blockchainAddress,

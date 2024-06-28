@@ -4,12 +4,14 @@ export default function Document() {
   return (
     <Html lang='en'>
       <Head>
+        <link rel="preload" href="/styles/globals.css" as="style" />
+          <link rel="stylesheet" href="/styles/globals.css" />
       
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
       rel="stylesheet"
     />
-        <link rel="icon" href="/favicon.ico" sizes="any" type="image/x-icon" />
+        <link rel="icon" href="/favicon-1.ico" sizes="any" type="image/x-icon" />
         <link
           href='https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css'
           rel='stylesheet'

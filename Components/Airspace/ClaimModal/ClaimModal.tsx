@@ -1,11 +1,13 @@
-import React, { Fragment, useEffect, useState } from "react";
-import LoadingButton from "@/Components/LoadingButton/LoadingButton";
-import useAuth from "@/hooks/useAuth";
-import { ArrowLeftIcon, CloseIcon, InfoIcon, LocationPointIcon } from "@/Components/Icons";
+import React, { Fragment, useEffect, useState, useRef } from "react";
+import LoadingButton from "../../../Components/LoadingButton/LoadingButton";
+import useAuth from "../../../hooks/useAuth";
+import { ArrowLeftIcon, CloseIcon, InfoIcon, LocationPointIcon } from "../../../Components/Icons";
 import Link from "next/link";
 import VariableFeeRentalRangesSelect from "./RentalDetails/VariableFeeRentalRangesSelect";
 import TimeZoneSelect from "./RentalDetails/TimeZoneSelect";
 import WeekDayRangesForm from "./RentalDetails/WeekDayRangesForm";
+import { useTour } from "@reactour/tour";
+import { useSearchParams } from "next/navigation";
 import Backdrop from "@/Components/Backdrop";
 
 interface PropsI {
@@ -16,7 +18,7 @@ interface PropsI {
   claimButtonLoading: boolean;
 }
 
-const ClaimModal = ({
+export const ClaimModal = ({
   onCloseModal,
   data,
   setData,
@@ -25,6 +27,17 @@ const ClaimModal = ({
 }: PropsI) => {
 
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+  const searchParams = useSearchParams();
+  const endOfDivRef = useRef(null);
+  const { currentStep } = useTour();
+
+  useEffect(() => {
+    if (endOfDivRef.current && currentStep === 3) {
+      const { scrollHeight, clientHeight } = endOfDivRef.current;
+      const maxScrollTop = scrollHeight - clientHeight;
+      (endOfDivRef.current as any ).scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+    }
+  }, [currentStep]);
 
   useEffect(() => {
 
@@ -62,7 +75,7 @@ const ClaimModal = ({
   return ( 
     <div>
     <Backdrop onClick={() => {}} />
-    <div className="fixed top-0 left-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
+    <div className="claim-modal-step fixed top-0 left-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
       <div
         className="z-[100] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px] md:shadow-none"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -189,14 +202,11 @@ const ClaimModal = ({
                   setTimeZone={(timezone) =>
                     setData((prev) => ({ ...prev, timezone }))
                   }
-                  data={data}
                 />
               </div>
             </div>
             <div
-              className="
-          flex flex-col gap-[10px] "
-            >
+              className="flex flex-col gap-[10px]">
               <p className="text-[14px] font-normal text-[#838187] mt-4">
                 Select extra features your facility provides
               </p>
@@ -424,7 +434,7 @@ const ClaimModal = ({
               Cancel
             </div>
 
-            <div className="w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">
+            <div className="Claim-airspacebtn2-step w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">
               <div className="flex justify-center items-center w-full ">
                 <LoadingButton onClick={onClaim} isLoading={claimButtonLoading} color={'white'}>
                   Claim Airspace

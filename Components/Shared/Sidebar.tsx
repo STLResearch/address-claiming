@@ -1,3 +1,5 @@
+'use client'
+
 import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -29,8 +31,8 @@ interface SidebarItemMobileProps {
 }
 
 const Sidebar = () => {
-  // const router = useRouter();
   const pathname = usePathname()
+
   const { isCollapsed, setIsCollapsed } = useContext(SidebarContext)
   const { signOut } = useAuth();
   const [showMobileNavbar, setShowMobileNavbar] = useState(false);
@@ -47,7 +49,17 @@ const Sidebar = () => {
 
   const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications}: SidebarItemProps) => {
     const [isActive, setIsActive] = useState(false);
-  
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setIsLoaded(true);
+      }, 1000);
+
+      // Cleanup the timeout on component unmount
+      return () => clearTimeout(timer);
+    }, []);
+
     useEffect(() => {
       const currentTab = localStorage.getItem('currentTab');
       const isActiveVal = href ? href.includes(currentTab || window.location.pathname) : false;
@@ -71,6 +83,8 @@ const Sidebar = () => {
         )}
       </>
     );
+
+    if (!isLoaded) return <></>
   
     if (onClick) {
       return (
@@ -139,7 +153,7 @@ const Sidebar = () => {
       >
         <Link href={'/dashboard'}>
           <Image
-            src={'/images/logo-no-chars.png'}
+            src={'/images/logo-no-chars-1.png'}
             alt="Company's logo"
             width={isCollapsed ? 44.62 : 0}
             height={isCollapsed ? 51 : 0}
@@ -149,7 +163,7 @@ const Sidebar = () => {
         </Link>
         <Link href={'/dashboard'}>
           <Image
-            src={'/images/logo.svg'}
+            src={'/images/logo-1.svg'}
             alt="Company's logo"
             width={isCollapsed ? 0 : 147}
             height={isCollapsed ? 0 : 58}
@@ -173,16 +187,14 @@ const Sidebar = () => {
         <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon isActive={false} /> : <ArrowCompressIcon isActive={false} />} />
       </aside>
       {isMobile && !showMobileNavbar && (
-       <nav className='flex fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
-       <SidebarItemMobile href={'/dashboard'} text={"Dashboard"} children={<DashboardIcon isActive={false} />} numberOfUnseenNotifications={0} />
-       <SidebarItemMobile href={'/airspaces'} text={"Airspaces"} children={<EarthIcon isActive={false} />} numberOfUnseenNotifications={0} />
-       <SidebarItemMobile href={'/marketplace'} text={"Marketplace"} children={<MapIcon isActive={false} />} numberOfUnseenNotifications={0} />
-       <SidebarItemMobile href={'/portfolio'} text={"Portfolio"} children={<ShoppingBagsIcon isActive={false}  />} numberOfUnseenNotifications={0} />
-       <SidebarItemMobile onClick={handleMenuClick} text={"Menu"} children={<MenuIcon isActive={false} />} numberOfUnseenNotifications={0} />
-     </nav>
+        <nav className='flex fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
+          <SidebarItemMobile href={'/dashboard'} text={"Dashboard"} children={<DashboardIcon isActive={false} />} numberOfUnseenNotifications={0} />
+          <SidebarItemMobile href={'/airspaces'} text={"Airspaces"} children={<EarthIcon isActive={false} />} numberOfUnseenNotifications={0} />
+          <SidebarItemMobile href={'/marketplace'} text={"Marketplace"} children={<MapIcon isActive={false} />} numberOfUnseenNotifications={0} />
+          <SidebarItemMobile href={'/portfolio'} text={"Portfolio"} children={<ShoppingBagsIcon isActive={false} />} numberOfUnseenNotifications={0} />
+          <SidebarItemMobile onClick={handleMenuClick} text={"Menu"} children={<MenuIcon isActive={false} />} numberOfUnseenNotifications={0} />
+        </nav>
       )}
-     
-
       {showMobileNavbar && isMobile && (
         <MobileNavbar setShowMobileNavbar={setShowMobileNavbar} />
       )}

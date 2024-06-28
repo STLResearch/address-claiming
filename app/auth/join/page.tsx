@@ -14,6 +14,7 @@ import { checkPhoneIsValid } from "@/Components/Auth/PhoneValidation";
 import PartOne from "@/Components/Auth/PartOne";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setCategory } from "@/redux/slices/userSlice";
+import { toast } from "react-toastify";
 
 interface RootState {
   value: {
@@ -69,18 +70,6 @@ const IndividualSignup: React.FC = () => {
     }
   }, []);
 
-  const newsletterHandler = () => {
-    setNewsletter((prev) => !prev);
-  };
-
-  const returnHandler = (e: FormEvent) => {
-    e.preventDefault();
-    router.push("/auth/join");
-  };
-
-  const checkNameIsValid = (name: string) => {
-    return !!name;
-  };
 
   const checkReferralCodeIsValid = (referralCode1: {
     id: string;
@@ -89,13 +78,18 @@ const IndividualSignup: React.FC = () => {
     return true;
   };
 
+  const isEmailValid = (email: string) => {
+    const regex = /^\S+@\S+\.\S+$/;
+    return regex.test(email);
+  };
+
   const formSubmitHandler = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
       const referralCode = referralCodeRef.current?.value;
 
-      if (!checkNameIsValid(name)) {
+      if (name === "") {
         setIsNameValid(false);
         return;
       }
@@ -109,6 +103,16 @@ const IndividualSignup: React.FC = () => {
 
       if (!checkReferralCodeIsValid(referralCode1)) {
         setIsReferralCodeValid(false);
+        return;
+      }
+
+      if (!checkReferralCodeIsValid(referralCode1)) {
+        setIsReferralCodeValid(false);
+        return;
+      }
+
+      if (!isEmailValid(category.email)) {
+        toast.error("Login: email is not valid");
         return;
       }
 
@@ -132,6 +136,8 @@ const IndividualSignup: React.FC = () => {
         setName("");
         setPhoneNumber("");
         if (referralCodeRef.current) referralCodeRef.current.value = "";
+
+        localStorage.setItem("showTour", "true");
 
         router.replace("/dashboard");
       }
@@ -166,7 +172,7 @@ const IndividualSignup: React.FC = () => {
       <div className="relative rounded bg-[#F6FAFF] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden">
         <div className="mx-auto w-[372px] md:w-[449px] flex flex-col items-center gap-[15px] bg-white md:py-[40px] px-[30px] rounded relative justify-center">
           <Image
-            src={"/images/logo.svg"}
+            src={"/images/logo-1.svg"}
             alt="Company's logo"
             width={199}
             height={77}

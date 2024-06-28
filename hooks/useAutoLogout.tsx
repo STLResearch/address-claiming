@@ -21,7 +21,7 @@ const useAutoLogout = () => {
     if (pathname) {
       const isReferralPage = pathname.includes("/r/");
       if (!isReferralPage && pathname !== "/") {
-        router.push("/auth/inAppSignIn");
+        router.push("/auth");
       } else {
         router.push("/airspaces");
       }

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { InfoIcon, MagnifyingGlassIcon } from "../../Icons";
+import { useSearchParams } from "next/navigation";
+import { useTour } from "@reactour/tour";
 
 interface PropsI {
   address: string; 
@@ -21,6 +23,8 @@ const Explorer = ({
   flyToAddress,
 }: PropsI) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+  const searchParams = useSearchParams();
+  const { isOpen } = useTour();
 
   return (
     <div
@@ -48,7 +52,7 @@ const Explorer = ({
         times ahead!
       </p>
       <div
-        className="relative w-full rounded-lg bg-white px-[22px] py-[16px]"
+        className="enter-address-step relative w-full rounded-lg bg-white px-[22px] py-[16px]"
         style={{ border: "1px solid #87878D" }}
       >
         <input
@@ -84,10 +88,10 @@ const Explorer = ({
           </div>
         )}
       </div>
-      {flyToAddress && address && (
+      {(flyToAddress && address  || isOpen )&& (
         <div
           onClick={onClaimAirspace}
-          className="w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+          className="Claim-airspacebtn-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
         >
           Claim Airspace
         </div>

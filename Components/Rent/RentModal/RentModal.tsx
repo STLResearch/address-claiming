@@ -163,7 +163,7 @@ const RentModal: React.FC<RentModalProps> = ({
 
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+         {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}> */}
         {!isMobile && (<Backdrop />)}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
@@ -264,7 +264,7 @@ const RentModal: React.FC<RentModalProps> = ({
           </LoadingButton>
         </div>
       </div>
-      </Box>
+      {/* </Box> */}
     </LocalizationProvider>
   );
 };
