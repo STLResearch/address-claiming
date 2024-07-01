@@ -59,7 +59,7 @@ export const useDrawBidPolygons = ({
       let el = document.createElement("div");
       el.id = "markerWithExternalCss";
       map.on("load", () => {
-        if (auctions.length > 0) {
+        if (auctions && auctions.length > 0) {
           for (let i = 0; i < auctions.length; i++) {
             const lngLat = new mapboxgl.LngLat(
               auctions[i]?.properties[0]?.longitude,

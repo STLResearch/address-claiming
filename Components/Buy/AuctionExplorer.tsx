@@ -86,25 +86,29 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
                   No auctions found
                 </div>
               )} */}
-
-              <InfiniteScroll
-                dataLength={data.length}
-                next={loadMore}
-                hasMore={hasMore}
-                loader={undefined}
-              >
-                {data.length > 0 ? (
-                  data.map((item, index) => (
-                    <div key={index} onClick={() => handleShowBidDetail(index)}>
-                      <AuctionCard data={item} />
+              {data && data?.length > 0 && (
+                <InfiniteScroll
+                  dataLength={data.length}
+                  next={loadMore}
+                  hasMore={hasMore}
+                  loader={undefined}
+                >
+                  {data.length > 0 ? (
+                    data.map((item, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleShowBidDetail(index)}
+                      >
+                        <AuctionCard data={item} />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center col-span-2 text-light-grey">
+                      No auctions found
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center col-span-2 text-light-grey">
-                    No auctions found
-                  </div>
-                )}
-              </InfiniteScroll>
+                  )}
+                </InfiniteScroll>
+              )}
             </div>
           </div>
         </div>
