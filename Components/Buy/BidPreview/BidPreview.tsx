@@ -7,14 +7,16 @@ import {
 import Image from "next/image";
 import Image1 from "@/public/images/AHImage.png";
 import { useMobile } from "@/hooks/useMobile";
+import MarketPlaceService from "@/services/MarketPlaceService";
 interface BidPreviewProps {
   // setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   // onCloseModal: any;
+  setShowSuccessAndErrorPopup:any;
   auctionDetailData: any;
   // isMobile: boolean;
   currentUserBid: number;
   onClose: any;
-  handleBid: any;
+  // handleBid: any;
 }
 const BidPreview: React.FC<BidPreviewProps> = ({
   auctionDetailData,
@@ -23,10 +25,20 @@ const BidPreview: React.FC<BidPreviewProps> = ({
   // setShowClaimModal,
   // onCloseModal,
   onClose,
-  handleBid,
+  setShowSuccessAndErrorPopup,
 }) => {
+  console.log(auctionDetailData,"auctionDetailData preview");
   const { isMobile } = useMobile();
-
+  const {createBid} = MarketPlaceService()
+  const handleBid = async () =>{
+    const response = await createBid(
+      auctionDetailData?.assetId,
+      currentUserBid,
+      'Auction'
+    );
+    console.log(response,auctionDetailData?.assetId,currentUserBid,"the bid response")
+    // setShowSuccessAndErrorPopup(true)
+  }
   return (
     <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[490px] md:h-[471px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
       <div className="px-[25px] ">
@@ -65,7 +77,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
             <LocationPointIcon />
           </div>
           <p className="font-normal text-[#222222] text-[14px] flex-1">
-            {auctionDetailData?.address}
+            {auctionDetailData?.properties[0]?.address}
           </p>
         </div>
         <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">

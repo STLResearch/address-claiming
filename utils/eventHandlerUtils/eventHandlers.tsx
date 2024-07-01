@@ -2,15 +2,13 @@ import MarkerPopup from "@/Components/Buy/MarkerPopup";
 import ReactDom from "next/dist/compiled/react-dom/cjs/react-dom-server-legacy.browser.production";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
 
-export const handleMouseEvent = (isMobile, markerElement, marker, map) => {
+export const handleMouseEvent = (isMobile, markerElement, marker, map,auction) => {
   
   if (!isMobile) {
     markerElement.addEventListener("mouseenter", () => {
       const tooltipContent = ReactDom.renderToString(
         <MarkerPopup
-          name={"guinfruoigài’çfjojvopijd"}
-          highestBid={200.0}
-          timeLeft={"2 min 07"}
+          auction={auction}
         />
       );
 
@@ -37,9 +35,8 @@ export const handleMouseEvent = (isMobile, markerElement, marker, map) => {
       if (elementToRemove) elementToRemove.remove();
       const tooltipContent = ReactDom.renderToString(
         <MarkerPopup
-          name={"guinfruoigài’çfjojvopijd"}
-          highestBid={200.0}
-          timeLeft={"2 min 07"}
+        auction={auction}
+
         />
       );
 

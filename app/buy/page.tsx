@@ -24,6 +24,8 @@ import { shallowEqual } from "react-redux";
 import BidPreview from "@/Components/Buy/BidPreview/BidPreview";
 import SuccessFailPopup from "@/Components/Buy/SuccessFailPopup";
 import { useDrawBidPolygons } from "@/hooks/useDrawBidPolygons";
+import MarketPlaceService from "@/services/MarketPlaceService";
+import useFetchAuctions from "@/hooks/useFetchAuctions";
 
 const DUMMY_AUCTIONS = [
   {
@@ -91,7 +93,8 @@ const Buy = () => {
   >("FAIL");
   const [auctionDetailData, setAuctionDetailData] = useState<any>();
   const [showAuctionList, setShowAuctionList] = useState<boolean>(true);
-
+  const [nftList,setNftList]=useState([]);
+// const {getNfts} = MarketPlaceService()
   useEffect(() => {
     if (map) return;
     const createMap = () => {
@@ -142,11 +145,11 @@ const Buy = () => {
       imageUrl: "",
       longitude: -122.4,
       area: [
-        [-121.977199, 38.975108],
-        [-122.105019, 39.995138],
+        [-122.977199, 37.975108],
+        [-122.105019, 37.995138],
         [-122.078486, 37.017605],
-        [-119.083333, 37.017605],
-        [-118.977199, 39.975108],
+        [-122.083333, 37.017605],
+        [-122.977199, 37.975108],
       ],
     },
     {
@@ -162,11 +165,11 @@ const Buy = () => {
 
       longitude: -122.4,
       area: [
-        [-108.977199, 46.975108],
-        [-102.105019, 45.995138],
-        [-102.078486, 47.017605],
-        [-109.083333, 47.017605],
-        [-108.977199, 50.975108],
+        [-122.977199, 47.975108],
+        [-122.105019, 47.995138],
+        [-122.078486, 47.017605],
+        [-122.083333, 47.017605],
+        [-122.977199, 47.975108],
       ],
     },
     {
@@ -180,13 +183,13 @@ const Buy = () => {
       imageUrl: "",
       latitude: 27.79,
 
-      longitude: -122.4,
+      longitude: -102.4,
       area: [
-        [-108.977199, 27.975108],
-        [-102.105019, 26.995138],
+        [-102.977199, 27.975108],
+        [-102.105019, 27.995138],
         [-102.078486, 27.017605],
-        [-109.083333, 27.017605],
-        [-108.977199, 20.975108],
+        [-102.083333, 27.017605],
+        [-102.977199, 27.975108],
       ],
     },
     {
@@ -196,24 +199,24 @@ const Buy = () => {
       imageUrl: "",
       highestBid: 123,
       timeLeft: "1min 	2sec",
-      latitude: 17.79,
+      latitude: 30.79,
       transitFee: 100,
       owner: "someone",
 
-      longitude: -122.4,
+      longitude: -102.4,
       area: [
-        [-108.977199, 17.975108],
-        [-102.105019, 18.995138],
-        [-102.078486, 17.017605],
-        [-109.083333, 17.017605],
+        [-102.977199, 30.975108],
+        [-102.105019, 30.995138],
+        [-102.078486, 30.017605],
+        [-102.083333, 30.017605],
       ],
     },
   ];
-  useEffect(() => {
-    setAuctionDetailData(DUMMY_AUCTIONS_2);
-  }, []);
-  const auctions = DUMMY_AUCTIONS_2;
-  useDrawBidPolygons({ map, isMobile, auctions });
+  // useEffect(() => {
+  //   setAuctionDetailData(DUMMY_AUCTIONS_2);
+  // }, []);
+  // const auctions = DUMMY_AUCTIONS_2;
+  // useDrawBidPolygons({ map, isMobile, auctions });
 
   useEffect(() => {
     if (!flyToAddress) return;
@@ -228,8 +231,9 @@ const Buy = () => {
     );
   }, [flyToAddress, map]);
 
-  const handleShowBidDetail = () => {
+  const handleShowBidDetail = (index) => {
     setShowBidDetail(true);
+    setAuctionDetailData(auctions[index]);
   };
   const handleOpenBidPreview = () => {
     setShowBidPreview(true);
@@ -245,6 +249,9 @@ const Buy = () => {
     //if condition here for the success or fail using bidResponseStatus
   };
 
+  const { auctions, hasMore, loadMore } = useFetchAuctions();
+
+    useDrawBidPolygons({ map, isMobile, auctions });
   return (
     <Fragment>
       <Head>
@@ -295,14 +302,14 @@ const Buy = () => {
               {!isMobile && (
                 <div className="flex justify-start items-start">
                   <AuctionExplorer
-                    data={DUMMY_AUCTIONS}
+                    data={auctions}
                     handleShowBidDetail={handleShowBidDetail}
                   />
                 </div>
               )}
               {showAuctionList && (
                 <AuctionExplorerMobile
-                  data={filteredAuctions}
+                  data={auctions}
                   handleShowBidDetail={handleShowBidDetail}
                 />
               )}
@@ -321,15 +328,16 @@ const Buy = () => {
                 <BidDetails
                   currentUserBid={currentUserBid}
                   setCurrentUserBid={setCurrentUserBid}
-                  auctionDetailData={auctionDetailData?.[0]}
+                  auctionDetailData={auctionDetailData}
                   onCloseModal={() => setShowBidDetail(false)}
                   onPlaceBid={handleOpenBidPreview}
                 />
               )}
               {showBidPreview && (
                 <BidPreview
-                  handleBid={handleBid}
-                  auctionDetailData={auctionDetailData?.[0]}
+                  // handleBid={handleBid}
+                  setShowSuccessAndErrorPopup={setShowSuccessAndErrorPopup}
+                  auctionDetailData={auctionDetailData}
                   currentUserBid={currentUserBid}
                   onClose={handleClosePreview}
                 />

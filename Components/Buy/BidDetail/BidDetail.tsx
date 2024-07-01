@@ -7,6 +7,7 @@ import Accordion from "./Accordion";
 import CustomTable from "./CustomTable";
 import AirspaceHistory from "./AirspaceHistory";
 import { useMobile } from "@/hooks/useMobile";
+import { getTimeLeft } from "@/utils/marketplaceUtils/getTimeLeft";
 interface BidDetailsProps {
   auctionDetailData:any;
   onCloseModal: () => void;
@@ -58,6 +59,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
       from: "adncjdjf, chzjneofjiochui",
     },
   ];
+  console.log(auctionDetailData,"auction detail")
   const handleCurrentBidInputChanged = (e) => {
     let inputValue = e.target.value;
     inputValue = inputValue.replace(/[^0-9.]/g, "");
@@ -69,6 +71,9 @@ const BidDetails: React.FC<BidDetailsProps> = ({
     setCurrentUserBid(inputValue);
   };
   const totalBId = 3;
+  // const endDate = new Date('2024-06-28T16:48:21.658Z');
+  const endDate = new Date(auctionDetailData?.endDate);
+  const timeLeft = getTimeLeft(endDate)
   return (
     <div>
       <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[82%] md:h-[640px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
@@ -94,7 +99,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
               <LocationPointIcon />
             </div>
             <p className="font-normal text-[#222222] text-[14px] flex-1">
-              {auctionDetailData?.address}
+              {auctionDetailData?.properties[0]?.address}
             </p>
           </div>
           <div>
@@ -119,7 +124,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
             <div className="flex flex-col gap-[2px]">
               <p className="text-[14px]  text-[#727272]">Time left</p>
               <h1 className="text-[14px] font-bold text-[#050505]">
-                {auctionDetailData?.timeLeft}
+                {timeLeft}
               </h1>
             </div>
           </div>
@@ -152,15 +157,15 @@ const BidDetails: React.FC<BidDetailsProps> = ({
           <div className="w-full bg-[#0653EA] text-white rounded-lg ">
             <button className="w-full h-[42px]" onClick={onPlaceBid}>Place a Bid</button>
           </div>
-          <hr />
+          {/* <hr />
           <div>
             <Accordion
               title={`Previous Bid (${totalBId})`}
               content={<CustomTable header={["Price", "Date", "From"]} body={previousBidData} />}
             />
           </div>
-          <hr />
-          <div>
+          <hr /> */}
+          {/* <div>
             <Accordion
               title={"Airspace History"}
               content={
@@ -172,7 +177,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 />
               }
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

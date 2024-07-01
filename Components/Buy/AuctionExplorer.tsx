@@ -6,13 +6,18 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setIsCreateAuctionModalOpen } from "@/redux/slices/userSlice";
 import CreateAuctionModa from "./CreateAuctionModal";
 import CreateAuctionModal from "./CreateAuctionModal";
-
+import useFetchAuctions from "@/hooks/useFetchAuctions";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { LoadingSpinner } from "../Icons";
 interface AuctionExplorerProps {
   data: AuctionPropertyI[];
-  handleShowBidDetail:() => void;
+  handleShowBidDetail: (index: number) => void;
 }
 
-const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data,handleShowBidDetail }) => {
+const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
+  data,
+  handleShowBidDetail,
+}) => {
   const { isCreateAuctionModalOpen } = useAppSelector((state) => {
     const { isCreateAuctionModalOpen } = state.userReducer;
     return { isCreateAuctionModalOpen };
@@ -20,10 +25,14 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data,handleShowBidDet
 
   const dispatch = useAppDispatch();
   const [searchTerm, setSearchTerm] = useState("");
-
-  const filteredAuctions = data.filter((auction) =>
-    auction.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  console.log(data, "the list nft");
+  let filteredAuctions = data;
+  // if(data?.length>0){
+  //   const filteredAuctions = data.filter((auction) =>
+  //     auction?.properties[0]?.title.toLowerCase().includes(searchTerm.toLowerCase())
+  //   );
+  // }
+  const { loading, hasMore, loadMore } = useFetchAuctions();
 
   return (
     <>
@@ -60,10 +69,15 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data,handleShowBidDet
           </div>
           <div className="h-[410px] overflow-y-auto thin-scrollbar">
             {" "}
+            {loading && (
+              <div className="w-full h-full flex justify-center items-center">
+                <LoadingSpinner color={"#0653EA"} />
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-4">
-              {filteredAuctions?.length > 0 ? (
+              {/* {filteredAuctions?.length > 0 ? (
                 filteredAuctions.map((item, index) => (
-                  <div key={index} onClick={handleShowBidDetail}>
+                  <div key={index} onClick={()=>handleShowBidDetail(index)}>
                     <AuctionCard data={item} />
                   </div>
                 ))
@@ -71,7 +85,26 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data,handleShowBidDet
                 <div className="text-center col-span-2 text-light-grey">
                   No auctions found
                 </div>
-              )}
+              )} */}
+
+              <InfiniteScroll
+                dataLength={data.length}
+                next={loadMore}
+                hasMore={hasMore}
+                loader={undefined}
+              >
+                {data.length > 0 ? (
+                  data.map((item, index) => (
+                    <div key={index} onClick={() => handleShowBidDetail(index)}>
+                      <AuctionCard data={item} />
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center col-span-2 text-light-grey">
+                    No auctions found
+                  </div>
+                )}
+              </InfiniteScroll>
             </div>
           </div>
         </div>

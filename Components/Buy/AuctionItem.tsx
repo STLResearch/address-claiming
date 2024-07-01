@@ -29,7 +29,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({ data }) => {
           <div>
             <input type="checkbox" onClick={handleCheckboxClick} />
           </div>
-          <div>{data.name}</div>
+          <div>{data.address}</div>
         </div>
         <div className="">{isOpen ? <FiChevronDown /> : <FiChevronUp />}</div>
       </div>

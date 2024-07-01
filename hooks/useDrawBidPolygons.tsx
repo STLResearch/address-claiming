@@ -54,16 +54,16 @@ export const useDrawBidPolygons = ({
   } else {
     console.error("Cannot create style element: document is not defined.");
   }
-  useEffect(() => {
-    if (map) {
+  useEffect(() => { 
+    if (map ) {
       let el = document.createElement("div");
       el.id = "markerWithExternalCss";
       map.on("load", () => {
         if (auctions.length > 0) {
           for (let i = 0; i < auctions.length; i++) {
             const lngLat = new mapboxgl.LngLat(
-              auctions[i].longitude,
-              auctions[i].latitude
+              auctions[i]?.properties[0]?.longitude,
+              auctions[i]?.properties[0]?.latitude
             );
             //create markers here
             const marker = new maplibregl.Marker(el)
@@ -73,11 +73,9 @@ export const useDrawBidPolygons = ({
             const markerElement = marker.getElement();
 
             if (markerElement && marker && map) {
-              //add event listener for markers here
-              handleMouseEvent(isMobile, markerElement, marker, map);
+              handleMouseEvent(isMobile, markerElement, marker, map,auctions[i]);
             }
-            //draw polygon around the markers from the api of available
-            drawPolygons(map, i, auctions[i]?.area);
+            drawPolygons(map, i, auctions[i]?.properties[0]?.vertexes);
           }
         }
       });
