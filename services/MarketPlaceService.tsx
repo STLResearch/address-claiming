@@ -23,21 +23,21 @@ const MarketPlaceService = () => {
     }
   }
 
-  const createBid = async (assetId: string, bidOffer:  number,bidType:string)=>{
+  const createBid = async (assetId: string,callerBlockchainAddress:string, bidOffer:  number,bidType:string)=>{
     try {
-        console.log(assetId,bidOffer,bidType,'why')
+        console.log(assetId,callerBlockchainAddress,bidOffer,bidType,'why')
       const response = await postRequest({
-        uri: `/market/nft/bid?assetId=${assetId}&bidOffer=${bidOffer}&bidType=${bidType}`,
+        uri: `/market/nft/bid?assetId=${assetId}&callerBlockchainAddress=${callerBlockchainAddress}&bidOffer=${Number(bidOffer)}`,
 
       });
       if (!response) {
         return [];
       }
-      console.log(response?.data,"hello part 2");
-      return response?.data;
+      console.log(response,"thanks");
+      return response;
     } catch (error) {
       console.error(error);
-      console.log('error here 2',error)
+      console.log('error here 2 thanks',error)
       return [];
     }
   }

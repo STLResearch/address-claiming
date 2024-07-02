@@ -13,6 +13,12 @@ module.exports = {
           port: '',
           pathname: '/v3/**',
         },
+        {
+          protocol: 'https',
+          hostname: 'ipfs.sky.trade',
+          port: '',
+          pathname: '/ipfs/**',
+        },
         
       ],
     },

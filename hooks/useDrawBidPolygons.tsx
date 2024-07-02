@@ -3,19 +3,20 @@ import mapboxgl, { Map } from "mapbox-gl";
 import { drawPolygons } from "@/utils/maputils";
 import maplibregl from "maplibre-gl";
 import { handleMouseEvent } from "@/utils/eventHandlerUtils/eventHandlers";
+import useFetchAuctions from "./useFetchAuctions";
+import { useMobile } from "./useMobile";
 interface useDrawBidPolygonsProps {
   map: Map | null;
-  isMobile: boolean;
-  auctions: any[];
 }
 
 export const useDrawBidPolygons = ({
-  map,
-  isMobile,
-  auctions,
+  map
 }: useDrawBidPolygonsProps) => {
+  const { auctions} = useFetchAuctions();
+  const { isMobile } = useMobile();
   const customPopupStyles = `
     .mapboxgl-popup-close-button {
+    display:${isMobile ? "block" : "none"};
     position:absolute;
     top:9px;
     right:11px;
@@ -55,15 +56,16 @@ export const useDrawBidPolygons = ({
     console.error("Cannot create style element: document is not defined.");
   }
   useEffect(() => { 
-    if (map ) {
+    if (map) {
       let el = document.createElement("div");
       el.id = "markerWithExternalCss";
       map.on("load", () => {
         if (auctions && auctions.length > 0) {
-          for (let i = 0; i < auctions.length; i++) {
+          console.log(auctions,"data received")
+          for (let index = 0; index < auctions.length; index++) {
             const lngLat = new mapboxgl.LngLat(
-              auctions[i]?.properties[0]?.longitude,
-              auctions[i]?.properties[0]?.latitude
+              auctions[index]?.properties[0]?.longitude,
+              auctions[index]?.properties[0]?.latitude
             );
             //create markers here
             const marker = new maplibregl.Marker(el)
@@ -73,9 +75,10 @@ export const useDrawBidPolygons = ({
             const markerElement = marker.getElement();
 
             if (markerElement && marker && map) {
-              handleMouseEvent(isMobile, markerElement, marker, map,auctions[i]);
+              handleMouseEvent(isMobile, markerElement, marker, map,auctions[index]);
             }
-            drawPolygons(map, i, auctions[i]?.properties[0]?.vertexes);
+            if(!map?.getSource(`auction-polygon-${index}`) && !map.getSource(`auction-polygon-layer-${index}`))
+            drawPolygons(map, index, auctions[index]?.properties[0]?.vertexes);
           }
         }
       });

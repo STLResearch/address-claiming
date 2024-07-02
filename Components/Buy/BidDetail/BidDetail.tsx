@@ -74,6 +74,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
   // const endDate = new Date('2024-06-28T16:48:21.658Z');
   const endDate = new Date(auctionDetailData?.endDate);
   const timeLeft = getTimeLeft(endDate)
+  console.log(auctionDetailData,"hello 2")
   return (
     <div>
       <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[82%] md:h-[640px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
@@ -105,8 +106,8 @@ const BidDetails: React.FC<BidDetailsProps> = ({
           <div>
             <div className="relative border-2 h-[130px]">
               <Image
-                src={auctionDetailData?.imageUrl ? auctionDetailData?.imageUrl : Image1}
-                alt="test"
+                src={auctionDetailData?.metadata?.data?.uri ? auctionDetailData?.metadata?.data?.uri : Image1}
+                alt="airspace image"
                 layout="fill"
                 objectFit="cover"
               />
@@ -148,14 +149,16 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 type="text"
                 name="currentBid"
                 id="currentBid"
+                placeholder="place your bid here"
                 value={currentUserBid}
+                required
                 onChange={handleCurrentBidInputChanged}
                 className="appearance-none outline-none border-none flex-1 text-[14px] leading-[21px] "
               />
             </div>
           </div>
           <div className="w-full bg-[#0653EA] text-white rounded-lg ">
-            <button className="w-full h-[42px]" onClick={onPlaceBid}>Place a Bid</button>
+            <button disabled={!currentUserBid} className="w-full h-[42px]" onClick={onPlaceBid}>Place a Bid</button>
           </div>
           {/* <hr />
           <div>

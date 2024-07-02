@@ -220,13 +220,13 @@ export interface AuctionPropertyI {
   address?:string;
   latitude?:number;
   longitude?:number;
-  transitFee:number;
+  transitFee?:number;
   owner?:string;
-  imageUrl:string;
+  imageUrl?:string;
   area?:number[][];
-  name: string;
-  highest_bid: string;
-  time_left: string;
+  name?: string;
+  highest_bid?: string;
+  time_left?: string;
   price?:number;
   currentUserBid?:number;
 }

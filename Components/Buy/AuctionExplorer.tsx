@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MagnifyingGlassIcon } from "../Shared/Icons";
 import AuctionCard from "./AuctionCard";
 import { AuctionPropertyI } from "@/types";
@@ -10,13 +10,17 @@ import useFetchAuctions from "@/hooks/useFetchAuctions";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { LoadingSpinner } from "../Icons";
 interface AuctionExplorerProps {
-  data: AuctionPropertyI[];
-  handleShowBidDetail: (index: number) => void;
+  // data: AuctionPropertyI[];
+  // handleShowBidDetail: (index: number) => void;
+  setShowBidDetail:any;
+  setAuctionDetailData:any;
 }
 
 const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
-  data,
-  handleShowBidDetail,
+  // data,
+  // handleShowBidDetail,
+  setShowBidDetail,
+  setAuctionDetailData
 }) => {
   const { isCreateAuctionModalOpen } = useAppSelector((state) => {
     const { isCreateAuctionModalOpen } = state.userReducer;
@@ -25,15 +29,21 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
 
   const dispatch = useAppDispatch();
   const [searchTerm, setSearchTerm] = useState("");
-  console.log(data, "the list nft");
-  let filteredAuctions = data;
+  const { auctions,loading,page, hasMore, loadMore } = useFetchAuctions();
+  // console.log(data, "the list nft");
+  // let filteredAuctions = data;
   // if(data?.length>0){
   //   const filteredAuctions = data.filter((auction) =>
   //     auction?.properties[0]?.title.toLowerCase().includes(searchTerm.toLowerCase())
   //   );
   // }
-  const { loading, hasMore, loadMore } = useFetchAuctions();
-
+useEffect(()=>{
+  console.log(page,"the pagehere")
+},[page])
+const handleShowBidDetail = (index) => {
+  setShowBidDetail(true);
+  setAuctionDetailData(auctions[index]);
+};
   return (
     <>
       <div className="hidden md:block w-[518px] h-[668px] z-20 bg-white m-8 rounded-[30px] p-6 shadow-md overflow-hidden ">
@@ -67,7 +77,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
               <MagnifyingGlassIcon />
             </div>
           </div>
-          <div className="h-[410px] overflow-y-auto thin-scrollbar">
+          <div id="scrollableDiv" className="h-[410px] overflow-y-auto thin-scrollbar">
             {" "}
             {loading && (
               <div className="w-full h-full flex justify-center items-center">
@@ -86,15 +96,16 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
                   No auctions found
                 </div>
               )} */}
-              {data && data?.length > 0 && (
+              {auctions && auctions?.length > 0 && (
                 <InfiniteScroll
-                  dataLength={data.length}
+                  dataLength={auctions.length}
                   next={loadMore}
                   hasMore={hasMore}
                   loader={undefined}
+                  scrollableTarget="scrollableDiv"
                 >
-                  {data.length > 0 ? (
-                    data.map((item, index) => (
+                  {auctions.length > 0 ? (
+                    auctions.map((item, index) => (
                       <div
                         key={index}
                         onClick={() => handleShowBidDetail(index)}

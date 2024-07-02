@@ -8,18 +8,22 @@ import Image from "next/image";
 import Image1 from "@/public/images/AHImage.png";
 import { useMobile } from "@/hooks/useMobile";
 import MarketPlaceService from "@/services/MarketPlaceService";
+import useAuth from "@/hooks/useAuth";
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 interface BidPreviewProps {
   // setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   // onCloseModal: any;
-  setShowSuccessAndErrorPopup:any;
+  setShowSuccessAndErrorPopup: any;
   auctionDetailData: any;
   // isMobile: boolean;
   currentUserBid: number;
   onClose: any;
+  setBidResponseStatus:any;
   // handleBid: any;
 }
 const BidPreview: React.FC<BidPreviewProps> = ({
   auctionDetailData,
+  setBidResponseStatus,
   // isMobile,
   currentUserBid,
   // setShowClaimModal,
@@ -27,18 +31,38 @@ const BidPreview: React.FC<BidPreviewProps> = ({
   onClose,
   setShowSuccessAndErrorPopup,
 }) => {
-  console.log(auctionDetailData,"auctionDetailData preview");
+  // console.log(auctionDetailData, "auctionDetailData preview");
   const { isMobile } = useMobile();
-  const {createBid} = MarketPlaceService()
-  const handleBid = async () =>{
-    const response = await createBid(
-      auctionDetailData?.assetId,
-      currentUserBid,
-      'Auction'
-    );
-    console.log(response,auctionDetailData?.assetId,currentUserBid,"the bid response")
+  const { user } = useAuth();
+  const { createBid } = MarketPlaceService();
+  const handleBid = async () => {
+    try {
+      const response = await createBid(
+        auctionDetailData?.assetId,
+        user?.blockchainAddress,
+        currentUserBid,
+        "Auction"
+      );
+      console.log(
+        response,
+        auctionDetailData?.assetId,
+        currentUserBid,
+        "the bid response thanks"
+      );
+      if(!response || (response?.data?.statusCode != 200)){
+        setBidResponseStatus('FAIL');
+      setShowSuccessAndErrorPopup(true);
+      }
+      else{
+       setBidResponseStatus('SUCCESS');
+      setShowSuccessAndErrorPopup(true);
+      }
+    } catch (error) {
+        console.log('error:',error)
+    } finally{
+    }
     // setShowSuccessAndErrorPopup(true)
-  }
+  };
   return (
     <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[490px] md:h-[471px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
       <div className="px-[25px] ">
@@ -84,21 +108,21 @@ const BidPreview: React.FC<BidPreviewProps> = ({
           <div className="relative h-[130px]">
             <Image
               src={
-                auctionDetailData?.imageUrl
-                  ? auctionDetailData?.mageUrl
+                auctionDetailData?.metadata?.data?.uri
+                  ? auctionDetailData?.metadata?.data?.uri
                   : Image1
               }
-              alt="test"
+              alt="airspace image"
               layout="fill"
               objectFit="cover"
             />
           </div>
         </div>
         <div className="flex justify-between w-full">
-          <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">
-            <div className="flex ">
+          <div className="flex flex-col gap-y-[15px] mt-[15px] truncate text-[14px] text-light-black leading-[21px]">
+            <div className="flex">
               <div>Owner:</div>
-              <div className="text-light-grey pl-[15px]">
+              <div className="text-light-grey pl-[15px] truncate ">
                 {auctionDetailData?.owner}
               </div>
             </div>
@@ -111,7 +135,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
             <div className="flex">
               <div>Fees:</div>
               <div className="text-light-grey pl-[15px]">
-                {auctionDetailData?.transitFee}
+                {auctionDetailData?.price}
               </div>
             </div>
           </div>
@@ -150,12 +174,17 @@ const BidPreview: React.FC<BidPreviewProps> = ({
             </div>
           )}
         </div>
-        <div
+        {/* <div
           onClick={handleBid}
           className="touch-manipulation rounded-[5px]  text-white bg-[#0653EA] cursor-pointer w-1/2 flex justify-center px-[17px] py-[10px]"
         >
           Confirm Bid
+        </div> */}
+        <LoadingButton isLoading={false} onClick={handleBid} className="touch-manipulation rounded-[5px]  text-white bg-[#0653EA] cursor-pointer w-1/2 flex justify-center px-[17px] py-[10px]" >
+        <div>
+          Confirm Bid
         </div>
+        </LoadingButton>
       </div>
     </div>
   );

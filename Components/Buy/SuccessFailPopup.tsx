@@ -9,14 +9,14 @@ import { useMobile } from "@/hooks/useMobile";
 interface SuccessFailPopupProps {
   setShowSuccessAndErrorPopup: React.Dispatch<React.SetStateAction<boolean>>;
   bidResponseStatus: "SUCCESS" | "FAIL";
-  bidData: AuctionPropertyI;
+  successBidData?: AuctionPropertyI;
   setShowBidDetail: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
   setShowSuccessAndErrorPopup,
   bidResponseStatus,
-  bidData,
+  successBidData,
   setShowBidDetail,
 }) => {
   const router = useRouter();
@@ -39,7 +39,7 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
   return (
     <div
       ref={modalRef}
-      className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[500]`}
+      className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[600]`}
     >
       <div
         className={`w-[100vw] h-[100vh] sm:w-[422px] sm:h-[525px]  z-40 flex flex-col items-center justify-center sm:rounded-3xl ${bidResponseStatus === "SUCCESS" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
@@ -90,9 +90,9 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
               You bid{" "}
               <span className="font-bold text-[18px]">
                 {" "}
-                &#36;{bidData?.currentUserBid}{" "}
+                &#36;{successBidData?.currentUserBid}{" "}
               </span>{" "}
-              <br /> for <b>{bidData?.address} </b>
+              <br /> for <b>{successBidData?.address} </b>
             </p>
             <div className="font-normal mt-[36px] text-[14px] leading-[21px] text-center text-[#FFFFFF]">
               <p>Wait for your bid to be reviewed by the owner.</p>

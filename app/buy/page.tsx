@@ -87,7 +87,7 @@ const Buy = () => {
   const [showBidPreview, setShowBidPreview] = useState<boolean>(false);
   const [showSuccessAndErrorPopup, setShowSuccessAndErrorPopup] =
     useState<boolean>(false);
-  const [currentUserBid, setCurrentUserBid] = useState<number>(0);
+  const [currentUserBid, setCurrentUserBid] = useState<number>();
   const [bidResponseStatus, setBidResponseStatus] = useState<
     "SUCCESS" | "FAIL"
   >("FAIL");
@@ -231,10 +231,7 @@ const Buy = () => {
     );
   }, [flyToAddress, map]);
 
-  const handleShowBidDetail = (index) => {
-    setShowBidDetail(true);
-    setAuctionDetailData(auctions[index]);
-  };
+
   const handleOpenBidPreview = () => {
     setShowBidPreview(true);
     setShowBidDetail(false);
@@ -251,7 +248,7 @@ const Buy = () => {
 
   const { auctions, hasMore, loadMore } = useFetchAuctions();
 
-    useDrawBidPolygons({ map, isMobile, auctions });
+    useDrawBidPolygons({ map });
   return (
     <Fragment>
       <Head>
@@ -303,14 +300,18 @@ const Buy = () => {
                 <div className="flex justify-start items-start">
                   <AuctionExplorer
                     data={auctions}
-                    handleShowBidDetail={handleShowBidDetail}
+                    setShowBidDetail={setShowBidDetail}
+                    setAuctionDetailData={setAuctionDetailData}
+                    // handleShowBidDetail={handleShowBidDetail}
                   />
                 </div>
               )}
               {showAuctionList && (
                 <AuctionExplorerMobile
                   data={auctions}
-                  handleShowBidDetail={handleShowBidDetail}
+                  setShowBidDetail={setShowBidDetail}
+                    setAuctionDetailData={setAuctionDetailData}
+                  // handleShowBidDetail={handleShowBidDetail}
                 />
               )}
               {showSuccessAndErrorPopup && (
@@ -318,8 +319,8 @@ const Buy = () => {
                   setShowSuccessAndErrorPopup={setShowSuccessAndErrorPopup}
                   setShowBidDetail={setShowBidDetail}
                   bidResponseStatus={bidResponseStatus}
-                  bidData={{
-                    address: "Address 17, Houston Texas",
+                  successBidData={{
+                    address: auctionDetailData?.properties[0]?.address,
                     currentUserBid: currentUserBid,
                   }}
                 />
@@ -336,6 +337,7 @@ const Buy = () => {
               {showBidPreview && (
                 <BidPreview
                   // handleBid={handleBid}
+                  setBidResponseStatus={setBidResponseStatus}
                   setShowSuccessAndErrorPopup={setShowSuccessAndErrorPopup}
                   auctionDetailData={auctionDetailData}
                   currentUserBid={currentUserBid}

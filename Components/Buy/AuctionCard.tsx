@@ -7,6 +7,7 @@ interface AuctionCardProps {
 }
 
 const AuctionCard: React.FC<AuctionCardProps> = ({ data }) => {
+  console.log(data?.metadata?.data?.uri,"the data test")
   const endDate = new Date(data?.endDate);
   const timeLeft = getTimeLeft(endDate)
   return (
@@ -16,13 +17,13 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ data }) => {
           className="w-full h-[130px] bg-contain"
           width={220}
           height={130}
-          src={"/images/map.png"}
-          alt={""}
+          src={data?.metadata?.data?.uri}
+          alt={"airspace image"}
         />
       </div>
       <div className="px-4 py-2 flex flex-col items-start">
         <div className="text-[12px] text-black font-bold">Name</div>
-        <div className="text-[12px] text-[#727272]">{data?.properties[0]?.title.slice(0, 30)}</div>
+        <div className="text-[12px] text-[#727272] truncate w-[95%]">{data?.properties[0]?.title}</div>
       </div>
       <div className="flex justify-between px-4 pb-2 bg-[#4285F4]/5 pt-1">
         <div className="flex flex-col items-start">
