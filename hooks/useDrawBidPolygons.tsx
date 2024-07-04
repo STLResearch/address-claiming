@@ -1,28 +1,34 @@
-import { useEffect } from "react";
-import mapboxgl, { Map } from "mapbox-gl";
-import { drawPolygons } from "@/utils/maputils";
+import { useState, useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
+import mapboxgl, { Map } from "mapbox-gl";
+import { useMobile } from "@/hooks/useMobile";
+import { drawPolygons } from "@/utils/maputils";
 import { handleMouseEvent } from "@/utils/eventHandlerUtils/eventHandlers";
+import { AuctionDataI } from "@/types";
 interface useDrawBidPolygonsProps {
   map: Map | null;
-  isMobile: boolean;
-  auctions: any[];
+  auctions: AuctionDataI[];
 }
 
 export const useDrawBidPolygons = ({
   map,
-  isMobile,
   auctions,
 }: useDrawBidPolygonsProps) => {
+  const { isMobile } = useMobile();
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const markersRef = useRef({});
+  const polygonsRef = useRef({});
+
   const customPopupStyles = `
     .mapboxgl-popup-close-button {
-    position:absolute;
-    top:9px;
-    right:11px;
-    font-size:x-large;
-  }
+      display: ${isMobile ? "block" : "none"};
+      position: absolute;
+      top: 9px;
+      right: 11px;
+      font-size: x-large;
+    }
     .mapboxgl-popup {
-      position:relative;
+      position: relative;
       background-color: #ffffff !important;
     }
     .mapboxgl-popup-content {
@@ -54,33 +60,43 @@ export const useDrawBidPolygons = ({
   } else {
     console.error("Cannot create style element: document is not defined.");
   }
+
   useEffect(() => {
     if (map) {
-      let el = document.createElement("div");
-      el.id = "markerWithExternalCss";
-      map.on("load", () => {
-        if (auctions.length > 0) {
-          for (let i = 0; i < auctions.length; i++) {
-            const lngLat = new mapboxgl.LngLat(
-              auctions[i].longitude,
-              auctions[i].latitude
-            );
-            //create markers here
-            const marker = new maplibregl.Marker(el)
-              .setLngLat(lngLat)
-              .addTo(map);
+      const handleMapLoad = () => setMapLoaded(true);
+      map.on("load", handleMapLoad);
+      return () => map.off("load", handleMapLoad);
+    }
+  }, [map]);
 
-            const markerElement = marker.getElement();
+  useEffect(() => {
+    if (mapLoaded && map && auctions && auctions?.length > 0) {
+      auctions.forEach((auction, index) => {
+        const id = auction?.properties[0]?.id;
+        const lngLat = new mapboxgl.LngLat(
+          auction?.properties[0]?.longitude,
+          auction?.properties[0]?.latitude
+        );
 
-            if (markerElement && marker && map) {
-              //add event listener for markers here
-              handleMouseEvent(isMobile, markerElement, marker, map);
-            }
-            //draw polygon around the markers from the api of available
-            drawPolygons(map, i, auctions[i]?.area);
+        if (!markersRef.current[id]) {
+          let el = document.createElement("div");
+          el.id = `markerWithExternalCss-${id}`;
+          const marker = new maplibregl.Marker(el).setLngLat(lngLat).addTo(map);
+          markersRef.current[id] = marker;
+
+          const markerElement = marker.getElement();
+          if (markerElement && marker && map) {
+            handleMouseEvent(isMobile, markerElement, marker, map, auction);
           }
+        } else {
+          markersRef.current[id].setLngLat(lngLat);
+        }
+
+        if (!polygonsRef.current[id]) {
+          drawPolygons(map, id, auction?.properties[0]?.vertexes);
+          polygonsRef.current[id] = true;
         }
       });
     }
-  }, [map, auctions, isMobile]);
+  }, [mapLoaded, map, auctions, isMobile]);
 };

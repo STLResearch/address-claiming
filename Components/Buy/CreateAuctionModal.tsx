@@ -1,4 +1,4 @@
-"use client";
+  "use client";
 
 import { useContext, useState } from "react";
 import { AuctionPropertyI, AuctionSubmitI, PropertyData } from "@/types";
@@ -15,11 +15,11 @@ import { VersionedTransaction } from "@solana/web3.js";
 import SuccessFailPopup from "./SuccessFailPopup";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-interface CreateAuctionModalProps {
-  onClose: any;
-  data: AuctionPropertyI[];
-  mobile?: boolean;
-}
+  interface CreateAuctionModalProps {
+    onClose: ()=>void;
+    data: AuctionPropertyI[];
+    mobile?: boolean;
+  }
 
 const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
   onClose,
@@ -45,19 +45,19 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
 
   console.log({ airspaceList });
 
-  if (mobile) {
-    return (
-      <div className="fixed bottom-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-end">
-        <div className="relative w-full md:w-[689px] h-[685px] bg-white rounded-t-[30px] p-8">
-          <div
-            onClick={onClose}
-            className="absolute right-[1rem] top-[1rem] cursor-pointer"
-          >
-            <IoClose className="w-4 h-4" />
-          </div>
+    if (mobile) {
+      return (
+        <div className="fixed bottom-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-end">
+          <div className="relative w-full md:w-[689px] h-[685px] bg-white rounded-t-[30px] p-8">
+            <div
+              onClick={onClose}
+              className="absolute right-[1rem] top-[1rem] cursor-pointer"
+            >
+              <IoClose className="w-4 h-4" />
+            </div>
 
-          <div className="text-center">Create Auction</div>
-          <div>Select the properties you want to auction</div>
+            <div className="text-center">Create Auction</div>
+            <div>Select the properties you want to auction</div>
 
           <InfiniteScroll
             dataLength={airspaceList.length}
@@ -187,4 +187,4 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
   );
 };
 
-export default CreateAuctionModal;
+  export default CreateAuctionModal;

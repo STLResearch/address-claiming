@@ -249,3 +249,15 @@ export enum ToastEnum {
   ERROR,
   SUCCESS,
 }
+export interface AuctionDataI {
+  assetId:string;
+  bidder:string;
+  endDate:Date;
+  highestBid:number;
+  id:number;
+  listType:string;
+  metadata:any;
+  owner:string;
+  price:number;
+  properties:PropertyData
+}

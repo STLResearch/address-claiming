@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   RectangleIcon,
   LocationPointIcon,
@@ -7,26 +7,75 @@ import {
 import Image from "next/image";
 import Image1 from "@/public/images/AHImage.png";
 import { useMobile } from "@/hooks/useMobile";
+import MarketPlaceService from "@/services/MarketPlaceService";
+import useAuth from "@/hooks/useAuth";
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+import { VersionedTransaction } from "@solana/web3.js";
+import { executeTransaction } from "@/utils/rent/transactionExecutor";
+import { Web3authContext } from "@/providers/web3authProvider";
+import { AuctionDataI } from "@/types";
+
 interface BidPreviewProps {
-  // setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
-  // onCloseModal: any;
-  auctionDetailData: any;
-  // isMobile: boolean;
-  currentUserBid: number;
-  onClose: any;
-  handleBid: any;
+  setShowSuccessAndErrorPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  auctionDetailData: AuctionDataI | undefined;
+  currentUserBid: number | null;
+  onClose: ()=>void;
+  setBidResponseStatus: React.Dispatch<React.SetStateAction<"SUCCESS" | "FAIL">>;
 }
 const BidPreview: React.FC<BidPreviewProps> = ({
   auctionDetailData,
-  // isMobile,
+  setBidResponseStatus,
   currentUserBid,
-  // setShowClaimModal,
-  // onCloseModal,
   onClose,
-  handleBid,
+  setShowSuccessAndErrorPopup,
 }) => {
   const { isMobile } = useMobile();
+  const { user } = useAuth();
+  const { provider } = useContext(Web3authContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const { createBid, submitSignature } = MarketPlaceService();
 
+  const handleBid = async () => {
+    try {
+      setIsLoading(true);
+      const postData = {
+        assetId: auctionDetailData?.assetId,
+        callerBlockchainAddress: user?.blockchainAddress,
+        bidOffer: currentUserBid,
+        bidType: "Auction",
+      };
+      const response = await createBid({ postData });
+      if (response && response?.data && response?.data?.tx) {
+        const transaction = VersionedTransaction.deserialize(
+          new Uint8Array(Buffer.from(response?.data?.tx, "base64"))
+        );
+        const signature = await executeTransaction(transaction, provider);
+        if (signature) {
+          const postData = {
+            signature: signature,
+            assetId: auctionDetailData?.assetId,
+          };
+          const result = await submitSignature({ postData });
+          if(result == undefined || result?.data?.message == 'failed to submit transaction'){
+            setBidResponseStatus("FAIL");
+        setShowSuccessAndErrorPopup(true);
+          }
+          else if(result?.data?.message == 'Transaction submitted'){
+            setBidResponseStatus("SUCCESS");
+        setShowSuccessAndErrorPopup(true);
+          }
+        }
+      } else {
+        setBidResponseStatus("FAIL");
+        setShowSuccessAndErrorPopup(true);
+      }
+
+    } catch (error) {
+      console.error("error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[490px] md:h-[471px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
       <div className="px-[25px] ">
@@ -65,28 +114,28 @@ const BidPreview: React.FC<BidPreviewProps> = ({
             <LocationPointIcon />
           </div>
           <p className="font-normal text-[#222222] text-[14px] flex-1">
-            {auctionDetailData?.address}
+            {auctionDetailData?.properties[0]?.address}
           </p>
         </div>
         <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">
           <div className="relative h-[130px]">
             <Image
               src={
-                auctionDetailData?.imageUrl
-                  ? auctionDetailData?.mageUrl
+                auctionDetailData?.metadata?.data?.uri
+                  ? auctionDetailData?.metadata?.data?.uri
                   : Image1
               }
-              alt="test"
+              alt="airspace image"
               layout="fill"
               objectFit="cover"
             />
           </div>
         </div>
         <div className="flex justify-between w-full">
-          <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">
-            <div className="flex ">
+          <div className="flex flex-col gap-y-[15px] mt-[15px] truncate text-[14px] text-light-black leading-[21px]">
+            <div className="flex">
               <div>Owner:</div>
-              <div className="text-light-grey pl-[15px]">
+              <div className="text-light-grey pl-[15px] truncate ">
                 {auctionDetailData?.owner}
               </div>
             </div>
@@ -99,7 +148,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
             <div className="flex">
               <div>Fees:</div>
               <div className="text-light-grey pl-[15px]">
-                {auctionDetailData?.transitFee}
+                {auctionDetailData?.price}
               </div>
             </div>
           </div>
@@ -138,12 +187,14 @@ const BidPreview: React.FC<BidPreviewProps> = ({
             </div>
           )}
         </div>
-        <div
+
+        <LoadingButton
+          isLoading={false}
           onClick={handleBid}
           className="touch-manipulation rounded-[5px]  text-white bg-[#0653EA] cursor-pointer w-1/2 flex justify-center px-[17px] py-[10px]"
         >
-          Confirm Bid
-        </div>
+          <button onClick={() => handleBid()}>Confirm Bid</button>
+        </LoadingButton>
       </div>
     </div>
   );

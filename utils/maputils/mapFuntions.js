@@ -24,12 +24,18 @@ export const createRentMarkerWithPopup = (map, property, markerElement) => {
     .setLngLat(lngLat)
     .setPopup(popup)
     .addTo(map);
-    return marker;
-}
+  return marker;
+};
 
-export const changeRentMarkerColor = (map,setSelectedAddress,marker,setMarker,item) => {
+export const changeRentMarkerColor = (
+  map,
+  setSelectedAddress,
+  marker,
+  setMarker,
+  item
+) => {
   let el1 = document.createElement("div");
-  console.log(item.id,"selected")
+  console.log(item.id, "selected");
   setSelectedAddress(item.id);
   el1.id = "marker2";
   let lat1 = item.latitude;
@@ -44,24 +50,22 @@ export const changeRentMarkerColor = (map,setSelectedAddress,marker,setMarker,it
   setMarker(marker1);
 };
 
-export const drawPolygons = (newMap, index,area) => {
-  if (!newMap.getSource(`myPolygon-${index}`)) {
-    newMap.addSource(`myPolygon-${index}`, {
-      type: "geojson",
-      data: {
-        type: "Feature",
-        properties: {},
-        geometry: {
-          type: "Polygon",
-          coordinates: [area],
-        },
+export const drawPolygons = (map, index, area) => {
+  map.addSource(`auction-polygon-${index}`, {
+    type: "geojson",
+    data: {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "Polygon",
+        coordinates: [area],
       },
-    });
-  }
-  newMap.addLayer({
-    id: `myPolygon-layer-${index}`,
+    },
+  });
+  map.addLayer({
+    id: `auction-polygon-layer-${index}`,
     type: "fill",
-    source: `myPolygon-${index}`,
+    source: `auction-polygon-${index}`,
     paint: {
       "fill-color": "rgba(0, 0, 255, 0.5)",
       "fill-outline-color": "rgba(0, 0, 255, 0.5)",
