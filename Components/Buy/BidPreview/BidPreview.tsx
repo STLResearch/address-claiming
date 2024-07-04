@@ -20,7 +20,7 @@ interface BidPreviewProps {
   auctionDetailData: AuctionDataI | undefined;
   currentUserBid: number | null;
   onClose: ()=>void;
-  setBidResponseStatus: React.Dispatch<React.SetStateAction<boolean>>;
+  setBidResponseStatus: React.Dispatch<React.SetStateAction<"SUCCESS" | "FAIL">>;
 }
 const BidPreview: React.FC<BidPreviewProps> = ({
   auctionDetailData,
@@ -45,39 +45,36 @@ const BidPreview: React.FC<BidPreviewProps> = ({
         bidType: "Auction",
       };
       const response = await createBid({ postData });
-      console.log(response?.data?.tx, "tx hash");
       if (response && response?.data && response?.data?.tx) {
         const transaction = VersionedTransaction.deserialize(
           new Uint8Array(Buffer.from(response?.data?.tx, "base64"))
         );
         const signature = await executeTransaction(transaction, provider);
-        console.log(signature, "signature");
         if (signature) {
           const postData = {
             signature: signature,
             assetId: auctionDetailData?.assetId,
           };
           const result = await submitSignature({ postData });
-          console.log(result, "hello result");
+          if(result == undefined || result?.data?.message == 'failed to submit transaction'){
+            setBidResponseStatus("FAIL");
+        setShowSuccessAndErrorPopup(true);
+          }
+          else if(result?.data?.message == 'Transaction submitted'){
+            setBidResponseStatus("SUCCESS");
+        setShowSuccessAndErrorPopup(true);
+          }
         }
       } else {
         setBidResponseStatus("FAIL");
         setShowSuccessAndErrorPopup(true);
       }
-      // if(!response || (response?.data?.statusCode != 200)){
-      //   setBidResponseStatus('FAIL');
-      // setShowSuccessAndErrorPopup(true);
-      // }
-      // else{
-      //  setBidResponseStatus('SUCCESS');
-      // setShowSuccessAndErrorPopup(true);
-      // }
+
     } catch (error) {
-      console.log("error 22:", error);
+      console.error("error:", error);
     } finally {
       setIsLoading(false);
     }
-    // setShowSuccessAndErrorPopup(true)
   };
   return (
     <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[490px] md:h-[471px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
