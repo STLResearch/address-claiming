@@ -60,6 +60,7 @@ const handleLoadMore = () =>{
           <div>
             <button
               onClick={() => dispatch(setIsCreateAuctionModalOpen(true))}
+              // onClick={async () => await handleGetAuctions()}
               className="text-base bg-dark-blue py-2 w-full text-white rounded-lg"
             >
               Create Auction

@@ -20,27 +20,27 @@ const Portfolio = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAirspace, setSelectedAirspace] = useState(null);
   const { user, web3authStatus } = useAuth();
-  const {getPropertyById} = PropertiesService()
-  const { getSingleAsset } = AirspaceRentalService()
-  const searchParams = useSearchParams()
-  
+  const { getPropertyById } = PropertiesService();
+  const { getSingleAsset } = AirspaceRentalService();
+  const searchParams = useSearchParams();
+
   const id = searchParams?.get("id");
 
-  const { web3auth } = useContext(Web3authContext)
+  const { web3auth } = useContext(Web3authContext);
 
-  useEffect(()=>{
+  useEffect(() => {
     (async () => {
       if (web3auth && web3auth.status === "connected" && id) {
-        let portfolioData = null
+        let portfolioData = null;
         if (!isNaN(Number(id))) {
-          portfolioData = await getPropertyById(id)
+          portfolioData = await getPropertyById(id);
         } else {
-          portfolioData = await getSingleAsset(id)
+          portfolioData = await getSingleAsset(id);
         }
-        setSelectedAirspace(portfolioData)
+        setSelectedAirspace(portfolioData);
       }
-    })()
-  }, [id, web3auth?.status])
+    })();
+  }, [id, web3auth?.status]);
 
   useEffect(() => {
     if (!user) return;

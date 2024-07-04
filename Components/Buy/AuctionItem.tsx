@@ -1,33 +1,78 @@
-import { AuctionPropertyI } from "@/types";
+import { AuctionPropertyI, PropertyData } from "@/types";
 import { useState } from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+import { convertDate } from "@/utils";
 
 interface AuctionItemProps {
-  data: AuctionPropertyI;
+  data: PropertyData | AuctionPropertyI;
+  onSelectItem: (item: PropertyData) => void;
+  onUpdateItem: (
+    propertyId: number | null,
+    minSalePrice: number | null,
+    endDate: Date | string | null
+  ) => void;
+  selected: boolean;
+  disabled: boolean; // Add this prop
 }
 
-const AuctionItem: React.FC<AuctionItemProps> = ({ data }) => {
+const AuctionItem: React.FC<AuctionItemProps> = ({
+  data,
+  onSelectItem,
+  onUpdateItem,
+  selected,
+  disabled, // Add this prop
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [minSalePrice, setMinSalePrice] = useState<string>("");
 
-  const handleCheckboxClick = (event: React.MouseEvent<HTMLInputElement>) => {
+  const handleCheckboxClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onSelectItem(data as PropertyData);
     event.stopPropagation();
+  };
+
+  const handleToggleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).tagName !== "INPUT") {
+      setIsOpen(!isOpen);
+    }
+  };
+
+  const handleMinSalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMinSalePrice(e.target.value);
+    onUpdateItem(
+      data?.propertyId || null,
+      parseFloat(e.target.value) || 0,
+      endDate
+    );
+  };
+
+  const handleEndDateChange = (date: Date | null) => {
+    setEndDate(date);
+    onUpdateItem(
+      data?.propertyId || null,
+      parseFloat(minSalePrice) || 0,
+      convertDate(date)
+    );
   };
 
   return (
     <div
-      className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out`}
+      className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out ${disabled ? "opacity-50 pointer-events-none" : ""}`}
     >
       <div
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggleClick}
         className="flex items-center justify-between cursor-pointer"
       >
         <div className="flex items-center gap-4">
           <div>
-            <input type="checkbox" onClick={handleCheckboxClick} />
+            <input
+              type="checkbox"
+              checked={selected}
+              onChange={handleCheckboxClick}
+              disabled={disabled} // Disable the checkbox if disabled
+            />
           </div>
           <div>{data.address}</div>
         </div>
@@ -41,7 +86,11 @@ const AuctionItem: React.FC<AuctionItemProps> = ({ data }) => {
             </label>
             <div className="rounded-[8px] flex items-center border border-light-grey overflow-hidden px-4">
               <span className="pr-1">$</span>
-              <input className="focus:outline-none h-[49px]" />
+              <input
+                className="focus:outline-none h-[49px]"
+                value={minSalePrice}
+                onChange={handleMinSalePriceChange}
+              />
             </div>
           </div>
 
@@ -56,7 +105,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({ data }) => {
               <DatePicker
                 id="datetime"
                 selected={endDate}
-                onChange={(date) => setEndDate(date)}
+                onChange={handleEndDateChange}
                 showTimeSelect
                 timeFormat="HH:mm"
                 timeIntervals={15}

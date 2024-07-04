@@ -24,40 +24,9 @@ import { shallowEqual } from "react-redux";
 import BidPreview from "@/Components/Buy/BidPreview/BidPreview";
 import SuccessFailPopup from "@/Components/Buy/SuccessFailPopup";
 import { useDrawBidPolygons } from "@/hooks/useDrawBidPolygons";
-import useFetchAuctions from "@/hooks/useFetchAuctions";
+import MarketplaceService from "@/services/MarketplaceService";
 
-// const DUMMY_AUCTIONS = [
-//   {
-//     name: "Trentino USA",
-//     highest_bid: "$20",
-//     time_left: "2 days",
-//   },
-//   {
-//     name: "Trentino NG",
-//     highest_bid: "$20",
-//     time_left: "2 days",
-//   },
-//   {
-//     name: "Trentino Italy",
-//     highest_bid: "$20",
-//     time_left: "2 days",
-//   },
-//   {
-//     name: "Trentino Spain",
-//     highest_bid: "$20",
-//     time_left: "2 days",
-//   },
-//   {
-//     name: "Trentino Canada",
-//     highest_bid: "$20",
-//     time_left: "2 days",
-//   },
-//   {
-//     name: "Trentino UK",
-//     highest_bid: "$20",
-//     time_left: "2 days",
-//   },
-// ];
+import useFetchAuctions from "@/hooks/useFetchAuctions";
 
 const Buy = () => {
   const { isCreateAuctionModalOpen } = useAppSelector((state) => {
@@ -66,7 +35,7 @@ const Buy = () => {
   }, shallowEqual);
 
   const dispatch = useAppDispatch();
-
+  const { getAuctions } = MarketplaceService();
   const [searchTerm, setSearchTerm] = useState("");
   // const filteredAuctions = DUMMY_AUCTIONS.filter((auction) =>
   //   auction.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -182,7 +151,7 @@ const Buy = () => {
 
             {isCreateAuctionModalOpen && (
               <CreateAuctionModal
-                data={DUMMY_AUCTIONS}
+                data={[]}
                 onClose={() => dispatch(setIsCreateAuctionModalOpen(false))}
               />
             )}
@@ -225,9 +194,9 @@ const Buy = () => {
               {showSuccessAndErrorPopup && (
                 <SuccessFailPopup
                   setShowSuccessAndErrorPopup={setShowSuccessAndErrorPopup}
-                  setShowBidDetail={setShowBidDetail}
-                  bidResponseStatus={bidResponseStatus}
-                  successBidData={{
+                  setShowDetail={setShowBidDetail}
+                  responseStatus={bidResponseStatus}
+                  data={{
                     address: auctionDetailData?.properties[0]?.address,
                     currentUserBid: currentUserBid,
                   }}

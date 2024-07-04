@@ -3,22 +3,30 @@ import useAuth from "@/hooks/useAuth";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import { PropertyData } from "@/types";
 import { Web3authContext } from "@/providers/web3authProvider";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { setAirspaceList } from "@/redux/slices/userSlice";
 
 export enum PortfolioTabEnum {
   VERIFIED,
   UNVERIFIED,
   REJECTED,
-  RENTED
+  RENTED,
 }
 
 const usePortfolioList = () => {
-  const [pageNumber, setPageNumber] = useState(1);
+  const { airspaceList } = useAppSelector((state) => {
+    const { airspaceList } = state.userReducer;
+    return { airspaceList };
+  });
 
-  const [airspaceList, setAirspaceList] = useState<PropertyData[]>([]);
+  const dispatch = useAppDispatch();
+  const [pageNumber, setPageNumber] = useState(1);
 
   const [loading, setLoading] = useState(true);
 
-  const [activeTab, setActiveTab] = useState<PortfolioTabEnum>(PortfolioTabEnum.VERIFIED);
+  const [activeTab, setActiveTab] = useState<PortfolioTabEnum>(
+    PortfolioTabEnum.VERIFIED
+  );
   const { user } = useAuth();
   const { web3auth } = useContext(Web3authContext);
 
@@ -43,6 +51,7 @@ const usePortfolioList = () => {
             10,
             String(assetId)
           );
+          console.log({ airspaces });
         } else if (activeTab === PortfolioTabEnum.RENTED) {
           airspaces = await getPropertiesByUserAddress(
             user?.blockchainAddress,
@@ -54,7 +63,7 @@ const usePortfolioList = () => {
           const airspaceResp = await getUnverifiedAirspaces(
             user?.blockchainAddress,
             pageNumber,
-            10,
+            10
           );
           if (airspaceResp && airspaceResp.items) {
             airspaces = airspaceResp.items;
@@ -63,22 +72,21 @@ const usePortfolioList = () => {
           const airspaceResp = await getRejectedAirspaces(
             user?.blockchainAddress,
             pageNumber,
-            10,
+            10
           );
 
           if (airspaceResp && airspaceResp.items) {
             airspaces = airspaceResp.items;
           }
         }
-        setAirspaceList(airspaces);
+        dispatch(setAirspaceList(airspaces));
       } catch (error) {
-        console.error(error)
+        console.error(error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    })()
+    })();
   }, [activeTab, web3auth?.status, pageNumber]);
-
 
   const handleNextPage = () => {
     if (airspaceList?.length < 9) return;
@@ -91,11 +99,10 @@ const usePortfolioList = () => {
   };
 
   const handleTabSwitch = (tab: PortfolioTabEnum) => {
-    setAirspaceList([])
+    setAirspaceList([]);
     setPageNumber(1);
     setActiveTab(tab);
   };
-
 
   return {
     activeTab,
@@ -104,8 +111,8 @@ const usePortfolioList = () => {
     pageNumber,
     handleTabSwitch,
     handlePrevPage,
-    handleNextPage
-  }
+    handleNextPage,
+  };
 };
 
 export default usePortfolioList;

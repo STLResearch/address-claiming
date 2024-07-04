@@ -216,19 +216,38 @@ export interface KeyI {
 }
 
 export interface AuctionPropertyI {
-  id?:string;
-  address?:string;
-  latitude?:number;
-  longitude?:number;
-  transitFee?:number;
-  owner?:string;
-  imageUrl?:string;
-  area?:number[][];
+  id?: string;
+  propertyId?: number;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+  transitFee: number;
+  owner?: string;
+  imageUrl: string;
+  area?: number[][];
   name?: string;
   highest_bid?: string;
   time_left?: string;
-  price?:number;
-  currentUserBid?:number;
+  price?: number;
+  currentUserBid?: number;
+}
+
+export type AuctionListingI = {
+  propertyId: number;
+  listingType: string;
+  isActive: boolean;
+  listingPrice: number;
+  endDate: Date | null;
+};
+
+export type AuctionSubmitI = {
+  signatures: string[];
+  assetId: string | undefined;
+};
+
+export enum ToastEnum {
+  ERROR,
+  SUCCESS,
 }
 export interface AuctionDataI {
   assetId:string;

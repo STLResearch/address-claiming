@@ -1,4 +1,4 @@
-import { CategoryI, User, UserUSDWalletBalanceI } from "@/types";
+import { CategoryI, PropertyData, User, UserUSDWalletBalanceI } from "@/types";
 import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 
 interface UserState {
@@ -11,6 +11,8 @@ interface UserState {
   userUSDWalletBalance: UserUSDWalletBalanceI;
   activeFilters: number;
   isCreateAuctionModalOpen: boolean;
+  airspaceList: PropertyData[];
+  selectedproperty: PropertyData[];
 }
 
 const initialState: UserState = {
@@ -23,6 +25,8 @@ const initialState: UserState = {
   userUSDWalletBalance: { amount: "0", isLoading: true },
   activeFilters: 0,
   isCreateAuctionModalOpen: false,
+  airspaceList: [],
+  selectedproperty: [],
 };
 
 const userSlice: Slice<UserState> = createSlice({
@@ -63,6 +67,13 @@ const userSlice: Slice<UserState> = createSlice({
     setIsCreateAuctionModalOpen: (state, action: PayloadAction<boolean>) => {
       state.isCreateAuctionModalOpen = action.payload;
     },
+
+    setAirspaceList: (state, action: PayloadAction<PropertyData[]>) => {
+      state.airspaceList = action.payload;
+    },
+    setSelectedproperty: (state, action: PayloadAction<PropertyData[]>) => {
+      state.selectedproperty = action.payload;
+    },
   },
 });
 
@@ -76,5 +87,7 @@ export const {
   setUserUSDWalletBalance,
   setActiveFilters,
   setIsCreateAuctionModalOpen,
+  setAirspaceList,
+  setSelectedproperty,
 } = userSlice.actions;
 export default userSlice.reducer;

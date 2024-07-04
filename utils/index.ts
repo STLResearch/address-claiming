@@ -29,3 +29,16 @@ export function formatDate(dateString) {
 
   return formattedDate;
 }
+
+export function convertDate(dateString: Date | string | null): string {
+  // Create a new Date object from the input string
+  if (!dateString) {
+    return "";
+  }
+
+  const date = new Date(dateString);
+  // Convert to ISO 8601 format
+  const isoString = date.toISOString();
+
+  return isoString;
+}
