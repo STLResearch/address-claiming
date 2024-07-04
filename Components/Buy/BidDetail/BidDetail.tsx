@@ -1,65 +1,28 @@
-import React, { useState } from "react";
+import React,  from "react";
 import BidAirspaceHeader from "./BidHeader";
 import { LocationPointIcon, RectangleIcon } from "@/Components/Icons";
 import Image1 from "@/public/images/AHImage.png";
 import Image from "next/image";
-import Accordion from "./Accordion";
-import CustomTable from "./CustomTable";
-import AirspaceHistory from "./AirspaceHistory";
 import { useMobile } from "@/hooks/useMobile";
 import { getTimeLeft } from "@/utils/marketplaceUtils/getTimeLeft";
+import { AuctionDataI } from "@/types";
 interface BidDetailsProps {
-  auctionDetailData:any;
+  auctionDetailData:AuctionDataI;
   onCloseModal: () => void;
   onPlaceBid:() => void;
-  currentUserBid:number;
-  setCurrentUserBid:any;
+  currentUserBid:number | null;
+  setCurrentUserBid:React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 const BidDetails: React.FC<BidDetailsProps> = ({
   auctionDetailData,
-
   onCloseModal,
   onPlaceBid,
   setCurrentUserBid,
   currentUserBid
 }) => {
   const { isMobile } = useMobile();
-  const previousBidData = [
-    {
-      price: 100,
-      date: "15 december 2023",
-      from: "Jane Doe",
-    },
-    {
-      price: 95,
-      date: "5 december 2023",
-      from: "Jane Doe",
-    },
-    {
-      price: 91,
-      date: "29 november 2023",
-      from: "Jane Doe",
-    },
-  ];
-  const airspaceHistoryMockData = [
-    {
-      price: "Rental",
-      date: "15 december 2023",
-      from: "bcndkl,spuifijdczvè”yçh",
-    },
-    {
-      price: "Rental",
-      date: "5 december 2023",
-      from: "bvqnx,,qzidjcn-’bfszdxd",
-    },
-    {
-      price: "Sell",
-      date: "29 november 2023",
-      from: "adncjdjf, chzjneofjiochui",
-    },
-  ];
-  console.log(auctionDetailData,"auction detail")
+
   const handleCurrentBidInputChanged = (e) => {
     let inputValue = e.target.value;
     inputValue = inputValue.replace(/[^0-9.]/g, "");
@@ -70,14 +33,11 @@ const BidDetails: React.FC<BidDetailsProps> = ({
 
     setCurrentUserBid(inputValue);
   };
-  const totalBId = 3;
-  // const endDate = new Date('2024-06-28T16:48:21.658Z');
   const endDate = new Date(auctionDetailData?.endDate);
   const timeLeft = getTimeLeft(endDate)
-  console.log(auctionDetailData,"hello 2")
   return (
     <div>
-      <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[82%] md:h-[640px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
+      <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[82%] md:h-[530px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] md:shadow-md ">
         {isMobile && (
           <div
             onClick={onCloseModal}
@@ -149,7 +109,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 type="text"
                 name="currentBid"
                 id="currentBid"
-                placeholder="place your bid here"
+                placeholder=" place your bid here"
                 value={currentUserBid}
                 required
                 onChange={handleCurrentBidInputChanged}
@@ -160,27 +120,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
           <div className="w-full bg-[#0653EA] text-white rounded-lg ">
             <button disabled={!currentUserBid} className="w-full h-[42px]" onClick={onPlaceBid}>Place a Bid</button>
           </div>
-          {/* <hr />
-          <div>
-            <Accordion
-              title={`Previous Bid (${totalBId})`}
-              content={<CustomTable header={["Price", "Date", "From"]} body={previousBidData} />}
-            />
-          </div>
-          <hr /> */}
-          {/* <div>
-            <Accordion
-              title={"Airspace History"}
-              content={
-                <AirspaceHistory
-                  airspaceHistory={airspaceHistoryMockData}
-                  totalLifeTimeIncome={200.0}
-                  MtdTotalIncome={200.0}
-                  WtdTotalIncome={200.0}
-                />
-              }
-            />
-          </div> */}
+
         </div>
       </div>
     </div>

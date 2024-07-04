@@ -1,13 +1,12 @@
-import { AuctionPropertyI } from "@/types";
+import { AuctionDataI, AuctionPropertyI } from "@/types";
 import { getTimeLeft } from "@/utils/marketplaceUtils/getTimeLeft";
 import Image from "next/image";
 
 interface AuctionCardProps {
-  data: AuctionPropertyI;
+  data: AuctionDataI;
 }
 
 const AuctionCard: React.FC<AuctionCardProps> = ({ data }) => {
-  console.log(data?.metadata?.data?.uri,"the data test")
   const endDate = new Date(data?.endDate);
   const timeLeft = getTimeLeft(endDate)
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   RectangleIcon,
   LocationPointIcon,
@@ -10,56 +10,72 @@ import { useMobile } from "@/hooks/useMobile";
 import MarketPlaceService from "@/services/MarketPlaceService";
 import useAuth from "@/hooks/useAuth";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+import { VersionedTransaction } from "@solana/web3.js";
+import { executeTransaction } from "@/utils/rent/transactionExecutor";
+import { Web3authContext } from "@/providers/web3authProvider";
+import { AuctionDataI } from "@/types";
+
 interface BidPreviewProps {
-  // setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
-  // onCloseModal: any;
-  setShowSuccessAndErrorPopup: any;
-  auctionDetailData: any;
-  // isMobile: boolean;
-  currentUserBid: number;
-  onClose: any;
-  setBidResponseStatus:any;
-  // handleBid: any;
+  setShowSuccessAndErrorPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  auctionDetailData: AuctionDataI | undefined;
+  currentUserBid: number | null;
+  onClose: ()=>void;
+  setBidResponseStatus: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const BidPreview: React.FC<BidPreviewProps> = ({
   auctionDetailData,
   setBidResponseStatus,
-  // isMobile,
   currentUserBid,
-  // setShowClaimModal,
-  // onCloseModal,
   onClose,
   setShowSuccessAndErrorPopup,
 }) => {
-  // console.log(auctionDetailData, "auctionDetailData preview");
   const { isMobile } = useMobile();
   const { user } = useAuth();
-  const { createBid } = MarketPlaceService();
+  const { provider } = useContext(Web3authContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const { createBid, submitSignature } = MarketPlaceService();
+
   const handleBid = async () => {
     try {
-      const response = await createBid(
-        auctionDetailData?.assetId,
-        user?.blockchainAddress,
-        currentUserBid,
-        "Auction"
-      );
-      console.log(
-        response,
-        auctionDetailData?.assetId,
-        currentUserBid,
-        "the bid response thanks"
-      );
-      if(!response || (response?.data?.statusCode != 200)){
-        setBidResponseStatus('FAIL');
-      setShowSuccessAndErrorPopup(true);
+      setIsLoading(true);
+      const postData = {
+        assetId: auctionDetailData?.assetId,
+        callerBlockchainAddress: user?.blockchainAddress,
+        bidOffer: currentUserBid,
+        bidType: "Auction",
+      };
+      const response = await createBid({ postData });
+      console.log(response?.data?.tx, "tx hash");
+      if (response && response?.data && response?.data?.tx) {
+        const transaction = VersionedTransaction.deserialize(
+          new Uint8Array(Buffer.from(response?.data?.tx, "base64"))
+        );
+        const signature = await executeTransaction(transaction, provider);
+        console.log(signature, "signature");
+        if (signature) {
+          const postData = {
+            signature: signature,
+            assetId: auctionDetailData?.assetId,
+          };
+          const result = await submitSignature({ postData });
+          console.log(result, "hello result");
+        }
+      } else {
+        setBidResponseStatus("FAIL");
+        setShowSuccessAndErrorPopup(true);
       }
-      else{
-       setBidResponseStatus('SUCCESS');
-      setShowSuccessAndErrorPopup(true);
-      }
+      // if(!response || (response?.data?.statusCode != 200)){
+      //   setBidResponseStatus('FAIL');
+      // setShowSuccessAndErrorPopup(true);
+      // }
+      // else{
+      //  setBidResponseStatus('SUCCESS');
+      // setShowSuccessAndErrorPopup(true);
+      // }
     } catch (error) {
-        console.log('error:',error)
-    } finally{
+      console.log("error 22:", error);
+    } finally {
+      setIsLoading(false);
     }
     // setShowSuccessAndErrorPopup(true)
   };
@@ -174,16 +190,13 @@ const BidPreview: React.FC<BidPreviewProps> = ({
             </div>
           )}
         </div>
-        {/* <div
+
+        <LoadingButton
+          isLoading={false}
           onClick={handleBid}
           className="touch-manipulation rounded-[5px]  text-white bg-[#0653EA] cursor-pointer w-1/2 flex justify-center px-[17px] py-[10px]"
         >
-          Confirm Bid
-        </div> */}
-        <LoadingButton isLoading={false} onClick={handleBid} className="touch-manipulation rounded-[5px]  text-white bg-[#0653EA] cursor-pointer w-1/2 flex justify-center px-[17px] py-[10px]" >
-        <div>
-          Confirm Bid
-        </div>
+          <button onClick={() => handleBid()}>Confirm Bid</button>
         </LoadingButton>
       </div>
     </div>

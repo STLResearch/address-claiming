@@ -11,29 +11,41 @@ const MarketPlaceService = () => {
         uri: `/market/nft?page=${page}&limit=${limit}`,
         isPublic:true
       });
-      if (!response) {
-        return [];
-      }
-      console.log(response,"hello part 2");
+
+      console.log(response?.data,"hello part 2");
       return response?.data;
     } catch (error) {
       console.error(error);
-    //   console.log('error here 2',error)
       return [];
     }
   }
 
-  const createBid = async (assetId: string,callerBlockchainAddress:string, bidOffer:  number,bidType:string)=>{
+  const createBid = async ({postData})=>{
     try {
-        console.log(assetId,callerBlockchainAddress,bidOffer,bidType,'why')
+        // console.log(assetId,callerBlockchainAddress,bidOffer,bidType,'why')
       const response = await postRequest({
-        uri: `/market/nft/bid?assetId=${assetId}&callerBlockchainAddress=${callerBlockchainAddress}&bidOffer=${Number(bidOffer)}`,
+        uri: '/market/nft/bid',
+        postData
+      });
+      
+      console.log(response,"thanks");
+      return response;
+    } catch (error) {
+      console.error(error);
+      console.log('error here 2 thanks',error)
+      return [];
+    }
+  }
+  const submitSignature = async ({postData})=>{
+    try {
+      console.log(postData,"postData")
+        // console.log(assetId,signature)
+      const response = await postRequest({
+        uri: '/market/nft/tx/submit',
+        postData
 
       });
-      if (!response) {
-        return [];
-      }
-      console.log(response,"thanks");
+      console.log(response,"hello from service")
       return response;
     } catch (error) {
       console.error(error);
@@ -44,7 +56,8 @@ const MarketPlaceService = () => {
 
   return { 
     getNfts,
-    createBid
+    createBid,
+    submitSignature
   };
 };
 

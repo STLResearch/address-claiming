@@ -11,7 +11,7 @@
   import Spinner from "../Spinner";
 
   interface CreateAuctionModalProps {
-    onClose: any;
+    onClose: ()=>void;
     data: AuctionPropertyI[];
     mobile?: boolean;
   }

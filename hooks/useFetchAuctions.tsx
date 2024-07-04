@@ -1,40 +1,34 @@
 import MarketPlaceService from '@/services/MarketPlaceService';
+import { AuctionDataI } from '@/types';
 import { useState, useEffect } from 'react';
-// import axios from 'axios';
 
 const useFetchAuctions = (initialPage: number = 1, limit: number = 10) => {
-const {getNfts} = MarketPlaceService()
-  const [auctions, setAuctions] = useState<any[]>([]);
-  const [page, setPage] = useState(initialPage);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading ,setLoading] = useState(false);
+  const { getNfts } = MarketPlaceService();
+  const [auctions, setAuctions] = useState<AuctionDataI[]>([]);
+  const [page, setPage] = useState<number>(initialPage);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response  = await getNfts(
-        page,
-        limit,
-      );
+      const response = await getNfts(page, limit);
       const newData = response.data;
       setAuctions(prevData => (page === 1 ? newData : [...prevData, ...newData]));
       setHasMore(newData.length === limit);
     } catch (error) {
       console.error('Error fetching data', error);
-    }
-    finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
+
   useEffect(() => {
-
     fetchData();
-  }, [page, limit]);
-  const loadMore = () => {
-    setPage(prevPage => prevPage + 1);
-  };
+  }, [page]);
 
-  return {loading,page,setAuctions, auctions, hasMore, loadMore };
+
+  return { loading, page, auctions, hasMore, setPage };
 };
 
 export default useFetchAuctions;

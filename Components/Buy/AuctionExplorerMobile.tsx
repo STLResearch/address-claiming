@@ -1,4 +1,4 @@
-import { AuctionPropertyI } from "@/types";
+import { AuctionDataI, AuctionPropertyI } from "@/types";
 import { useState } from "react";
 import AuctionCard from "./AuctionCard";
 import CreateAuctionModal from "./CreateAuctionModal";
@@ -8,16 +8,22 @@ import useFetchAuctions from "@/hooks/useFetchAuctions";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 interface AuctionExplorerMobileProps {
-  // data: AuctionPropertyI[];
-  setShowBidDetail: any;
-  setAuctionDetailData: any;
+  auctions:AuctionDataI[];
+  setPage:React.Dispatch<React.SetStateAction<number>>;
+  hasMorePage:boolean;
+  setShowBidDetail:React.Dispatch<React.SetStateAction<boolean>>;
+  setAuctionDetailData:React.Dispatch<React.SetStateAction<AuctionDataI>>;
 }
 
 const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
+  auctions,
+  setPage,
+  hasMorePage,
   setShowBidDetail,
   setAuctionDetailData,
 }) => {
   const [toggleTray, setToggleTray] = useState(false);
+  // const {  loading, page, hasMore } = useFetchAuctions();
   const handleTrayToggle = (index) => {
     setToggleTray(false);
     setShowBidDetail(true);
@@ -25,7 +31,6 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
   };
 
   const dispatch = useAppDispatch();
-  const { auctions, loading, page, hasMore, loadMore } = useFetchAuctions();
 
   let filteredAuctions = auctions;
 
@@ -33,6 +38,9 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
   //   const { isCreateAuctionModalOpen } = state.userReducer;
   //   return { isCreateAuctionModalOpen };
   // });
+  const handleLoadMore = () =>{
+    setPage(prevPage => prevPage + 1);
+  }
 
   return (
     <>
@@ -44,33 +52,13 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
           <div className="w-16 animate-pulse h-2 rounded-3xl bg-light-grey"></div>
           <h4>{auctions?.length} Airspaces available</h4>
         </div>
-
-        {/* {toggleTray && (
-          <div className="h-[450px] overflow-y-auto flex flex-col items-center gap-4 mt-6">
-            {auctions?.length > 0 ? (
-              auctions.map((item, index) => (
-                <div
-                  className="mx-auto"
-                  key={index}
-                  onClick={() => handleTrayToggle(index)}
-                >
-                  <AuctionCard data={item} />
-                </div>
-              ))
-            ) : (
-              <div className="text-center mt-16 text-light-grey">
-                No auctions found
-              </div>
-            )}
-          </div>
-        )} */}
         {toggleTray && (
-          <div className="h-[450px] overflow-y-auto flex flex-col items-center gap-4 mt-6">
+          <div id='scrollableDiv' className="h-[450px] overflow-y-auto flex flex-col items-center gap-4 mt-6">
             {auctions && auctions?.length > 0 && (
               <InfiniteScroll
                 dataLength={auctions.length}
-                next={loadMore}
-                hasMore={hasMore}
+                next={handleLoadMore}
+                hasMore={hasMorePage}
                 loader={undefined}
                 scrollableTarget="scrollableDiv"
               >

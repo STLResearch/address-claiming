@@ -2,8 +2,9 @@ import React from "react";
 import Image from "next/image";
 import Image1 from "../../public/images/AHImage.png";
 import { getTimeLeft } from "@/utils/marketplaceUtils/getTimeLeft";
+import { AuctionDataI } from "@/types";
 interface MarkerPopupProps {
-  auction: any;
+  auction: AuctionDataI;
 }
 
 const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction }) => {
@@ -28,7 +29,7 @@ const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction }) => {
       >
         <div className="px-[15px] py-[5px] bg-white w-full">
           <h1 className="text-[14px] font-semibold leading-5 ">Name</h1>
-          <p className="text-xs leading-[26px] text-[#727272]">
+          <p className="text-xs leading-[26px] text-[#727272] truncate w-[98%]">
             {auction?.properties[0]?.title}
           </p>
         </div>

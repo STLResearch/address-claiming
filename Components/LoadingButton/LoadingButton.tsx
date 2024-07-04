@@ -13,10 +13,13 @@ interface PropsI {
 const LoadingButton = ({ children, onClick, isLoading, color, className }: PropsI) => {
   const [loading, setLoading] = useState(isLoading);
   const handleClick = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       await onClick();
-    } finally {
+    }catch(error){
+      console.error("error:",error)
+    }
+     finally {
       setLoading(false);
     }
   };

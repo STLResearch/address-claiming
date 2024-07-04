@@ -1,15 +1,11 @@
 import { useEffect, useRef } from "react";
 import { CloseIcon, CloseIconWhite, SuccessIconwhite } from "../Icons";
-import { getTokenLink } from "@/hooks/utils";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AuctionPropertyI, PropertyData } from "@/types";
-import { useMobile } from "@/hooks/useMobile";
 
 interface SuccessFailPopupProps {
   setShowSuccessAndErrorPopup: React.Dispatch<React.SetStateAction<boolean>>;
   bidResponseStatus: "SUCCESS" | "FAIL";
-  successBidData?: AuctionPropertyI;
+  successBidData?: {address:string; currentUserBid:number | null};
   setShowBidDetail: React.Dispatch<React.SetStateAction<boolean>>;
 }
 

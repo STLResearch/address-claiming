@@ -230,3 +230,15 @@ export interface AuctionPropertyI {
   price?:number;
   currentUserBid?:number;
 }
+export interface AuctionDataI {
+  assetId:string;
+  bidder:string;
+  endDate:Date;
+  highestBid:number;
+  id:number;
+  listType:string;
+  metadata:any;
+  owner:string;
+  price:number;
+  properties:PropertyData
+}
