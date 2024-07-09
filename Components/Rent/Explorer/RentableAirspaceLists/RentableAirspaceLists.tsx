@@ -29,7 +29,7 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
   setShowClaimModal,
 }) => {
   const [selectedAddress, setSelectedAddress] = useState<number | null | undefined>();
-
+  console.log(registeredAddress,"hello hello")
   return (
     <div className="w-full">
       {loadingReg && (

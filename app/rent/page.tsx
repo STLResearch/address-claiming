@@ -16,6 +16,7 @@ import { getAddresses, goToAddress } from "@/utils/apiUtils/apiFunctions";
 import { Coordinates, PropertyData } from "@/types";
 import Sidebar from "@/Components/Shared/Sidebar";
 import PropertiesService from "../../services/PropertiesService";
+import { handleMouseEvent } from "@/utils/eventHandlerUtils/eventHandlers";
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingAddresses, setLoadingAddresses] = useState<boolean>(false);
@@ -121,32 +122,36 @@ const Rent = () => {
             for (let i = 0; i < responseData.length; i++) {
               const lngLat = new mapboxgl.LngLat(responseData[i].longitude, responseData[i].latitude);
 
-               const popup = new mapboxgl.Popup({offset: 25}).trackPointer().setHTML(
-                `<strong>${responseData[i].address}</strong>`
-              ); 
+              //  const popup = new mapboxgl.Popup({offset: 25}).trackPointer().setHTML(
+              //   `<strong>${responseData[i].address}</strong>`
+              // ); 
              
-               popup.on('open', () => {
-                const popupElement = popup.getElement();                                
-                if (popupElement) {                                    
-                  popupElement.style.zIndex ='40';
-                  popupElement.addEventListener('click', function() {
-                    setRentData(responseData[i]);;
-                    setShowClaimModal(true);
-                  });                  
-                }
-              });              
+              //  popup.on('open', () => {
+              //   const popupElement = popup.getElement();                                
+              //   if (popupElement) {                                    
+              //     popupElement.style.zIndex ='40';
+              //     popupElement.addEventListener('click', function() {
+              //       setRentData(responseData[i]);;
+              //       setShowClaimModal(true);
+              //     });                  
+              //   }
+              // });              
 
                const marker = new mapboxgl.Marker({
                 color: "#3FB1CE",
               }).setLngLat(lngLat)
-              .setPopup(popup) 
+              // .setPopup(popup) 
               .addTo(newMap);               
                
                  const filteredData = responseData.filter(item => item.type === 'rent');
-                marker.getElement().addEventListener('click', function() {
-                  setRentData(responseData[i]);
-                  setShowClaimModal(true);
-               }); 
+              //   marker.getElement().addEventListener('click', function() {
+              //     setRentData(responseData[i]);
+              //     setShowClaimModal(true);
+              //  }); 
+              
+              const markerElement = marker.getElement();
+              handleMouseEvent(isMobile,markerElement,marker,newMap,responseData[i])
+
              }
           } 
         }, 3000);  

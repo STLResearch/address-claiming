@@ -47,3 +47,7 @@ export const formatNumber = (x: number | string) => {
 
   return addSeperator(x);
 };
+export const getMapboxStaticImage = (lat, lng) => {
+  const accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+  return `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${lng},${lat},14/600x600?access_token=${accessToken}`;
+};

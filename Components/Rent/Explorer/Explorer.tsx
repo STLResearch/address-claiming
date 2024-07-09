@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import SearchInput from "./SearchInput";
 import RentableAirspaceLists from "./RentableAirspaceLists/RentableAirspaceLists";
 import { Map, Marker } from "mapbox-gl";
 import { PropertyData } from "@/types";
+import { MagnifyingGlassIcon } from "@/Components/Icons";
+import Spinner from "@/Components/Spinner";
+import InfiniteScroll from "react-infinite-scroll-component";
+import RentCard from "./RentCard";
 interface ExplorerProps {
   address: string;
   setAddress: React.Dispatch<React.SetStateAction<string>>;
@@ -44,18 +48,34 @@ const Explorer: React.FC<ExplorerProps> = ({
   setFlyToAddress,
   setShowOptions,
 }) => {
+  const [searchTerm, setSearchTerm] = useState("");
   return (
     <div
-      className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]"
-      style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+      className="hidden md:block w-[518px] h-[668px] z-20 bg-white m-8 rounded-[30px] p-6 shadow-md overflow-hidden "
+      // style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
-      <div className="flex gap-[5px] items-center">
-        <p className="text-xl font-medium text-[#222222]">SkyMarket Hub</p>
+      <div>
+        <div className="text-[18px] font-semibold text-center py-4">
+          SkyMarket Hub
+        </div>
+        <div className="text-[14px]">
+          Explore and Own Low-Altitude Airspaces, Your Gateway to Aerial
+          Freedom.
+        </div>
       </div>
-      <p className="text-[15px] font-normal text-[#222222]">
-        Explore and Own Low-Altitude Airspaces, Your Gateway to Aerial Freedom.
-      </p>
-      <SearchInput
+      <div className="flex justify-between items-center my-[15px] w-full border rounded-lg overflow-hidden p-2">
+        <input
+          placeholder="Search Airspaces Location"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="focus:outline-none w-10/12 text-[14px]"
+        />
+
+        <div className="w-4 h-4">
+          <MagnifyingGlassIcon />
+        </div>
+      </div>
+      {/* <SearchInput
         address={address}
         addresses={addresses}
         loading={loading}
@@ -63,10 +83,10 @@ const Explorer: React.FC<ExplorerProps> = ({
         setFlyToAddress={setFlyToAddress}
         setShowOptions={setShowOptions}
         showOptions={showOptions}
-      />
-      <RentableAirspaceLists
+      /> */}
+      {/* <RentableAirspaceLists
         loadingReg={loadingReg}
-         map={map} 
+        map={map}
         marker={marker}
         regAdressShow={regAdressShow}
         registeredAddress={registeredAddress}
@@ -76,7 +96,49 @@ const Explorer: React.FC<ExplorerProps> = ({
         setMarker={setMarker}
         setRentData={setRentData}
         setShowClaimModal={setShowClaimModal}
-      />
+      /> */}
+
+<div
+            // id="scrollableDiv"
+            className="h-[410px] overflow-y-auto thin-scrollbar"
+          >
+            {" "}
+            {loadingReg && (
+              <div className="w-full flex justify-center items-center">
+                <div className="">
+                  <Spinner />
+                  <div className="mt-28">Fetching Rentable airspaces...</div>
+                </div>
+              </div>
+            )}
+            {!loading && registeredAddress && registeredAddress?.length > 0 && (
+              // <InfiniteScroll
+              //   dataLength={registeredAddress.length}
+              //   next={handleLoadMore}
+              //   hasMore={hasMorePage}
+              //   loader={undefined}
+              //   scrollableTarget="scrollableDiv"
+              //   className="w-full grid grid-cols-2 gap-4 border"
+              // >
+              <div
+                className="w-full grid grid-cols-2 gap-4 "
+              
+              >
+                {registeredAddress.length > 0 ? (
+                  registeredAddress.map((item, index) => (
+                    // <div key={index} onClick={() => handleShowBidDetail(index)}>
+                      <RentCard data={item} />
+                    // </div>
+                  ))
+                ) : (
+                  <div className="text-center col-span-2 text-light-grey">
+                    No auctions found
+                  </div>
+                )}
+              </div>
+              // </InfiniteScroll>
+            )}
+          </div>
     </div>
   );
 };
