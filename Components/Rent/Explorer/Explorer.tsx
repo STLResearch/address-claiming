@@ -26,6 +26,8 @@ interface ExplorerProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
   setRentData: React.Dispatch<React.SetStateAction<PropertyData>>;
+  setShowRentDetail: React.Dispatch<React.SetStateAction<boolean>>;
+  setRentDetailData:React.Dispatch<React.SetStateAction<any>>;
 }
 
 const Explorer: React.FC<ExplorerProps> = ({
@@ -47,8 +49,15 @@ const Explorer: React.FC<ExplorerProps> = ({
   setRentData,
   setFlyToAddress,
   setShowOptions,
+  setShowRentDetail,
+  setRentDetailData
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const handleShowRentDetail =(item: any): void => {
+    setRentData(item);
+    setShowClaimModal(true);
+  }
+
   return (
     <div
       className="hidden md:block w-[518px] h-[668px] z-20 bg-white m-8 rounded-[30px] p-6 shadow-md overflow-hidden "
@@ -98,47 +107,44 @@ const Explorer: React.FC<ExplorerProps> = ({
         setShowClaimModal={setShowClaimModal}
       /> */}
 
-<div
-            // id="scrollableDiv"
-            className="h-[410px] overflow-y-auto thin-scrollbar"
-          >
-            {" "}
-            {loadingReg && (
-              <div className="w-full flex justify-center items-center">
-                <div className="">
-                  <Spinner />
-                  <div className="mt-28">Fetching Rentable airspaces...</div>
+      <div
+        // id="scrollableDiv"
+        className="h-[410px] overflow-y-auto thin-scrollbar"
+      >
+        {" "}
+        {loadingReg && (
+          <div className="w-full flex justify-center items-center">
+            <div className="flex flex-col">
+              <Spinner />
+              <div className="mt-[10px]">Fetching Rentable airspaces...</div>
+            </div>
+          </div>
+        )}
+        {!loading && registeredAddress && registeredAddress?.length > 0 && (
+          // <InfiniteScroll
+          //   dataLength={registeredAddress.length}
+          //   next={handleLoadMore}
+          //   hasMore={hasMorePage}
+          //   loader={undefined}
+          //   scrollableTarget="scrollableDiv"
+          //   className="w-full grid grid-cols-2 gap-4 border"
+          // >
+          <div className="w-full grid grid-cols-2 gap-4 ">
+            {registeredAddress?.length > 0 ? (
+              registeredAddress?.map((item, index) => (
+                <div key={index} onClick={() => handleShowRentDetail(item)}>
+                <RentCard data={item} />
                 </div>
+              ))
+            ) : (
+              <div className="text-center col-span-2 text-light-grey">
+                No auctions found
               </div>
-            )}
-            {!loading && registeredAddress && registeredAddress?.length > 0 && (
-              // <InfiniteScroll
-              //   dataLength={registeredAddress.length}
-              //   next={handleLoadMore}
-              //   hasMore={hasMorePage}
-              //   loader={undefined}
-              //   scrollableTarget="scrollableDiv"
-              //   className="w-full grid grid-cols-2 gap-4 border"
-              // >
-              <div
-                className="w-full grid grid-cols-2 gap-4 "
-              
-              >
-                {registeredAddress.length > 0 ? (
-                  registeredAddress.map((item, index) => (
-                    // <div key={index} onClick={() => handleShowBidDetail(index)}>
-                      <RentCard data={item} />
-                    // </div>
-                  ))
-                ) : (
-                  <div className="text-center col-span-2 text-light-grey">
-                    No auctions found
-                  </div>
-                )}
-              </div>
-              // </InfiniteScroll>
             )}
           </div>
+          // </InfiniteScroll>
+        )}
+      </div>
     </div>
   );
 };

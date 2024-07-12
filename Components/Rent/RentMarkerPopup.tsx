@@ -7,8 +7,6 @@ interface MarkerPopupProps {
 }
 
 const RentMarkerPopup: React.FC<any> = ({ data }) => {
-  const endDate = new Date(data?.endDate);
-//   const timeLeft = getTimeLeft(endDate);
   const { latitude, longitude,title } = data || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
   return (
