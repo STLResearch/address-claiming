@@ -46,11 +46,6 @@ const BidPreview: React.FC<BidPreviewProps> = ({
   const handleBid = async () => {
     try {
       setIsLoading(true);
-      if(currentUserBid && auctionDetailData && (currentUserBid < auctionDetailData?.price)){
-        toast.error('bid value less than the minimum bid price!');
-        setIsLoading(false);
-        return ;
-      }
       const postData = {
         assetId: auctionDetailData?.assetId,
         callerBlockchainAddress: user?.blockchainAddress,

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import debounce from 'debounce';
+import { useEffect, useMemo, useState } from "react";
 import { MagnifyingGlassIcon } from "../Shared/Icons";
 import AuctionCard from "./AuctionCard";
 import { AuctionDataI, AuctionPropertyI } from "@/types";
@@ -50,10 +51,23 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1);
   };
-  const handleSearchAuctions = () => {
+  const handleSearchAuctions = (searchValue) => {
     setSearchTerm(searchValue);
   };
 
+  const debounceLoadData = useMemo(() => debounce(handleSearchAuctions,3000), []);
+
+  useEffect(() => {
+    const searchElement = document.getElementById('search_auctions');
+    
+    if (searchElement) {
+      const handleInput = (event) => debounceLoadData(event.target.value);
+      searchElement.addEventListener('input', handleInput);
+      return () => {
+        searchElement.removeEventListener('input', handleInput);
+      };
+    }
+  }, [debounceLoadData]);
   return (
     <>
       <div className="hidden md:block w-[518px] h-[668px] z-20 bg-white m-8 rounded-[30px] p-6 shadow-md overflow-hidden ">
@@ -78,16 +92,14 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
           </div>
           <div className="flex justify-between items-center w-full border rounded-lg overflow-hidden p-2">
             <input
+              id='search_auctions'
               placeholder="Search auctions..."
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              onKeyDown={(e) =>
-                e.key === "Enter" ? handleSearchAuctions() : ""
-              }
               className="focus:outline-none w-10/12 text-[14px]"
             />
             <div className="w-4 h-4">
-              <button onClick={handleSearchAuctions}>
+              <button disabled>
                 <MagnifyingGlassIcon />
               </button>
             </div>
