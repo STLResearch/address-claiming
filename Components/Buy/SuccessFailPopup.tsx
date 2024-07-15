@@ -57,9 +57,9 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
               setShowSuccessAndErrorPopup(false);
               setShowDetail(false);
             }}
-            className="w-[26px] h-[26px] absolute top-[10px] right-[10px] "
+            className="w-[26px] h-[26px] absolute sm:relative top-[10px] sm:ml-[400px] right-[10px] "
           >
-            <div className="w-[14.6px] h-[14.6px] mt-[20px] mr-[23px] cursor-pointer">
+            <div className="w-[14.6px] h-[14.6px] sm:-mt-[120px] mt-[20px] mr-[23px] cursor-pointer">
               <CloseIcon color="#fff" />
             </div>
           </div>
