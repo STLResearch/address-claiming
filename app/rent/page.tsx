@@ -20,6 +20,7 @@ import { handleMouseEvent } from "@/utils/eventHandlerUtils/eventHandlers";
 import supercluster from "supercluster";
 import { toast } from "react-toastify";
 import debounce from 'lodash.debounce';
+import RentPreview from "@/Components/Rent/RentPreview/RentPreview";
 
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -354,7 +355,7 @@ const Rent = () => {
           <Sidebar />
 
           <div className="w-full h-full flex flex-col">
-            <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
+            {!isMobile && <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />}
             {isMobile && (
               <ExplorerMobile
                 loadingReg={loadingRegAddresses}
@@ -415,6 +416,16 @@ const Rent = () => {
               )}
               {showClaimModal && (
                 <RentModal
+                setShowRentPreview={setShowRentPreview}
+                  setShowClaimModal={setShowClaimModal}
+                  rentData={rentData}
+                  setIsLoading={setIsLoading}
+                  isLoading={isLoading}
+                />
+              )}
+              {showRentPreview && (
+                <RentPreview
+                setShowRentPreview={setShowRentPreview}
                   setShowClaimModal={setShowClaimModal}
                   rentData={rentData}
                   setIsLoading={setIsLoading}

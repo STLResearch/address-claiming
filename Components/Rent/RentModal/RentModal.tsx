@@ -31,11 +31,13 @@ import { getMapboxStaticImage } from "@/utils";
 
 interface RentModalProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowRentPreview: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
 }
 const RentModal: React.FC<RentModalProps> = ({
+  setShowRentPreview,
   setShowClaimModal,
   rentData,
   setIsLoading,
@@ -140,6 +142,8 @@ const RentModal: React.FC<RentModalProps> = ({
   // };
 
   const handleShowRentPreview = () =>{
+    setShowClaimModal(false);
+    setShowRentPreview(true)
 
   }
 
@@ -177,23 +181,18 @@ const RentModal: React.FC<RentModalProps> = ({
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}> */}
       {!isMobile && <Backdrop />}
+      {/* <div className="md:hidden fixed bottom-0 left-0 w-full z-20 bg-white p-4 shadow-md text-center rounded-t-[30px]"> */}
+
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation fixed top-0 md:top-1/2  left-0 sm:left-2/3 md:-translate-x-1/2 md:-translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
+        
+        className="touch-manipulation fixed bottom-0 left-0  sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-[85%] sm:h-[561px] md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
       >
         <div
           className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
-          style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+          
         >
-          <div
-            className="w-[16px] h-[12px] md:hidden"
-            onClick={() => {
-              removePubLicUserDetailsFromLocalStorageOnClose("rentData");
-              setShowClaimModal(false);
-            }}
-          >
-            <ArrowLeftIcon />
-          </div>
+          
           <div className="flex items-center w-full justify-center">
             <h2 className="text-[#222222] font-medium text-xl text-center">
               Airspace Details
@@ -209,14 +208,11 @@ const RentModal: React.FC<RentModalProps> = ({
             <CloseIcon />
           </div>
         </div>
-        <div
-          className="touch-manipulation flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
-          style={{ border: "1px solid #4285F4" }}
-        >
-          <div className="w-6 h-6">
+        <div className="touch-manipulation flex items-center gap-[10px] p-[11px] rounded-lg border border-[#4285F4]">
+          <div className="w-6 h-full flex items-center">
             <LocationPointIcon />
           </div>
-          <p className="font-normal text-[#222222] text-[14px] flex-1">
+          <p className="flex items-center font-normal text-[#222222] text-[14px] flex-1">
             {rentData ? rentData.address : ""}
           </p>
         </div>
@@ -284,19 +280,19 @@ const RentModal: React.FC<RentModalProps> = ({
               </div>
             </div>
           </div>
-          <div>
-            <div className="text-light-black mt-[30px]">
-              <div className="text-[14px] leading-[21px] ">Current Price</div>
-              <div className="font-bold text-2xl leading-9">
-                &#36; {rentData?.price}
+          <div className="flex items-end">
+            <div className="text-light-black w-full">
+              <div className="text-[15px] leading-[22.5px] ">Current Price</div>
+              <div className="font-bold text-2xl leading-9 flex justify-end">
+                &#36;{rentData?.price}
               </div>
             </div>
           </div>
         </div>
 
         <div>
-          <div className="flex touch-manipulation items-center justify-center gap-[20px] text-[14px] ">
-            <div className="flex touch-manipulation justify-between gap-[5px] w-full text-light-grey">
+          <div className="flex touch-manipulation items-center justify-center gap-[20px] text-[14px] text-light-grey ">
+            {/* <div className="flex touch-manipulation justify-between gap-[5px] w-full text-light-grey"> */}
               <div className="flex flex-col w-1/2">
                 <label htmlFor="rentalDate">
                   Rental Date
@@ -311,7 +307,7 @@ const RentModal: React.FC<RentModalProps> = ({
               </div>
               <div className="w-1/2">
                 <label htmlFor="rentalDate">
-                  Starting Time
+                    Rental Time
                   <span className="text-[#E04F64] touch-manipulation">*</span>
                 </label>
                 <TimePicker
@@ -321,7 +317,7 @@ const RentModal: React.FC<RentModalProps> = ({
                   className="w-full"
                 />
               </div>
-            </div>
+            {/* </div> */}
           </div>
         </div>
 
@@ -337,7 +333,7 @@ const RentModal: React.FC<RentModalProps> = ({
             Cancel
           </div>
           <LoadingButton
-            // onClick={handleRentAirspace}
+            onClick={handleShowRentPreview}
             isLoading={isLoading}
             className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
