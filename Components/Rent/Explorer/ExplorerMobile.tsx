@@ -56,7 +56,7 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
   return (
     <div>
       <>
-      <div className="md:hidden fixed bottom-0 left-0 w-full z-20 bg-white p-4 shadow-md text-center rounded-t-[30px]">
+      <div className="md:hidden fixed bottom-0 left-0 w-full z-20 bg-white p-4 shadow-md text-center rounded-t-[30px] ">
         <div
           onClick={() => setToggleTray(!toggleTray)}
           className="flex flex-col items-center justify-center gap-4"
@@ -64,7 +64,7 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
           <div className="w-16 animate-pulse h-2 rounded-3xl bg-light-grey"></div>
           <h4>{registeredAddress?.length} Airspaces available</h4>
         </div>
-        { (
+        { toggleTray &&(
           <div
             id="scrollableDiv"
             className="h-[450px] overflow-y-auto flex flex-col items-center gap-4 mt-6"

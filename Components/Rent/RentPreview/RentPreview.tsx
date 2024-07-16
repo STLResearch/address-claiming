@@ -178,14 +178,15 @@ const RentPreview: React.FC<RentPreviewProps> = ({
       {!isMobile && <Backdrop />}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation fixed sm:left-1/2 md:top-1/2  md:-translate-x-1/2 md:-translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
+        className="touch-manipulation fixed bottom-0 left-0  sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] gap-[15px] sm:pb-[30px] rounded-t-[30px] md:rounded-[30px]  w-full h-[469px] sm:h-[485px] md:w-[689px] z-[100] md:z-40 flex flex-col overflow-auto sm:overflow-hidden"
       >
+        <div className="flex flex-col gap-[15px] px-[30px]">
         <div
-          className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
+          className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 pt-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
           //   style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
         >
           <div
-            className="w-[16px] h-[12px] cursor-pointer "
+            className="hidden sm:block w-[16px] h-[12px] cursor-pointer "
             onClick={() => {
               //   removePubLicUserDetailsFromLocalStorageOnClose("rentData");
               setShowRentPreview(false);
@@ -194,11 +195,23 @@ const RentPreview: React.FC<RentPreviewProps> = ({
           >
             <ArrowLeftIcon />
           </div>
-          <div className="flex items-center w-full justify-center">
-            <h2 className="text-[#222222] font-medium text-xl leading-[30px] text-center">
-              Rental Preview
-            </h2>
+          <div
+            // onClick={() => setToggleTray(!toggleTray)}
+            onClick={() => {
+              setShowRentPreview(false);
+              removePubLicUserDetailsFromLocalStorageOnClose("rentData");
+            }}
+            className="flex flex-col items-center justify-center gap-4 sm:gap-0 w-full"
+          >
+            <div className="block sm:hidden  w-16 animate-pulse h-2 sm:h-0 rounded-3xl bg-light-grey"></div>
+            {/* <h4>{registeredAddress?.length} Airspaces available</h4> */}
+            <div className="flex items-center w-full justify-center">
+              <h2 className="text-[#222222] font-medium text-xl leading-[30px] text-center">
+                Rental Preview
+              </h2>
+            </div>
           </div>
+
           <div
             onClick={() => {
               setShowRentPreview(false);
@@ -262,29 +275,30 @@ const RentPreview: React.FC<RentPreviewProps> = ({
             />
           </div>
         </div> */}
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-y-[15px] text-[14px] text-light-black leading-[21px]">
-            <div className="flex ">
-              <div>Owner:</div>
-              <div className="text-light-grey pl-[15px]">
-                {rentData?.owner?.name}
+          <div className="flex justify-between ">
+            <div className="flex flex-col gap-y-[15px] text-[14px] text-light-black leading-[21px]">
+              <div className="flex ">
+                <div>Owner:</div>
+                <div className="text-light-grey pl-[15px]">
+                  {rentData?.owner?.name}
+                </div>
               </div>
-            </div>
-            <div className="flex">
-              <div>ID::</div>
-              <div className="text-light-grey pl-[15px]">{rentData?.id}</div>
-            </div>
-            <div className="flex">
-              <div>Fees:</div>
-              <div className="text-light-grey pl-[15px]">
-                {rentData?.transitFee}
+              <div className="flex">
+                <div>ID::</div>
+                <div className="text-light-grey pl-[15px]">{rentData?.id}</div>
+              </div>
+              <div className="flex">
+                <div>Fees:</div>
+                <div className="text-light-grey pl-[15px]">
+                  {rentData?.transitFee}
+                </div>
               </div>
             </div>
           </div>
+          <hr className="hidden sm:flex"/>
         </div>
-            <hr className="mb-[15px]"/>
 
-        <div className="touch-manipulation flex items-center justify-between gap-[20px] text-[14px]">
+        <div className="touch-manipulation flex items-center justify-between gap-[20px] text-[14px]  sm:shadow-none shadow-[0px_0px_4.2px_0px_rgba(0,0,0,0.25)] px-[29px] py-[20px] sm:py-0">
           {/* <div
             onClick={() => {
               setShowClaimModal(false);
@@ -295,15 +309,15 @@ const RentPreview: React.FC<RentPreviewProps> = ({
           >
             Cancel
           </div> */}
-          <div className="flex justify-center">
+          <div className="flex justify-center items-center ">
             <div className="text-light-black pr-[10px]">
               <div className="font-bold text-2xl leading-9">
                 &#36;{rentData?.price}
               </div>
             </div>
-            <div className="border-l-2 border-[#000] border-opacity-20 pr-[10px]" />
+            {/* <div className="border-l-2 h-full border-[#000] border-opacity-20 pr-[10px]" /> */}
 
-            <div>
+            <div className="border-l-[1px] border-[#000] border-opacity-20 pl-[10px]">
               <p className="text-[11px] text-light-dark leading-[16.5px] ">
                 10 january 2024
               </p>
@@ -317,7 +331,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
             isLoading={isLoading}
             className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
-            Confirm Rental now
+            {isMobile ? "Confirm Rental" : "Confirm Rental now"}
           </LoadingButton>
         </div>
       </div>

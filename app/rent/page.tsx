@@ -59,6 +59,7 @@ const Rent = () => {
   const clustersRef = useRef<mapboxgl.Marker[]>([]);
 
   const { findPropertiesByCoordinates } = PropertiesService();
+ 
   useEffect(() => {
     if (map) return;
     const createMap = () => {
@@ -117,6 +118,7 @@ const Rent = () => {
       },
     });
     if (responseData) {
+      //here try catch
       const formattedProperties = responseData.filter((property) => {
         return (
           property.longitude >= crds._sw.lng &&
@@ -128,6 +130,7 @@ const Rent = () => {
 
       setRegisteredAddress(formattedProperties);
       setLoadingRegAddresses(false);
+      
       if (map.getZoom() < 8) {
         updateMarkers(map, formattedProperties);
       } else {
@@ -352,6 +355,7 @@ const Rent = () => {
       {isLoading && <Spinner />}
       {
         <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
+          
           <Sidebar />
 
           <div className="w-full h-full flex flex-col">

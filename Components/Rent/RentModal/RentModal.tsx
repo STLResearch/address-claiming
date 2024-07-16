@@ -141,11 +141,10 @@ const RentModal: React.FC<RentModalProps> = ({
   //   }
   // };
 
-  const handleShowRentPreview = () =>{
+  const handleShowRentPreview = () => {
     setShowClaimModal(false);
-    setShowRentPreview(true)
-
-  }
+    setShowRentPreview(true);
+  };
 
   if (showSuccess) {
     return (
@@ -185,48 +184,56 @@ const RentModal: React.FC<RentModalProps> = ({
 
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        
-        className="touch-manipulation fixed bottom-0 left-0  sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-[85%] sm:h-[561px] md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
+        className="touch-manipulation fixed bottom-0 left-0  sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] sm:py-[30px] gap-[15px] rounded-t-[30px] md:rounded-[30px]  w-full h-[674px] sm:h-[561px] md:w-[689px] z-[100] md:z-40 flex flex-col  overflow-auto sm:overflow-hidden"
       >
-        <div
-          className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
-          
-        >
-          
-          <div className="flex items-center w-full justify-center">
-            <h2 className="text-[#222222] font-medium text-xl text-center">
-              Airspace Details
-            </h2>
+        <div className="flex flex-col px-[29px] gap-[15px]">
+          <div className=" touch-manipulation relative flex sm:flex-row flex-col items-center gap-[20px] md:p-0 pt-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none">
+            <div
+              // onClick={() => setToggleTray(!toggleTray)}
+              onClick={() => {
+                setShowClaimModal(false);
+                removePubLicUserDetailsFromLocalStorageOnClose("rentData");
+              }}
+              className="flex flex-col items-center justify-center gap-4 sm:gap-0"
+            >
+              <div className="block sm:hidden  w-16 animate-pulse h-2 sm:h-0 rounded-3xl bg-light-grey"></div>
+              {/* <h4>{registeredAddress?.length} Airspaces available</h4> */}
+            </div>
+
+            <div className="flex items-center w-full justify-center">
+              <h2 className="text-[#222222] font-medium text-xl text-center">
+                Airspace Details
+              </h2>
+            </div>
+            <div
+              onClick={() => {
+                setShowClaimModal(false);
+                removePubLicUserDetailsFromLocalStorageOnClose("rentData");
+              }}
+              className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
+            >
+              <CloseIcon />
+            </div>
           </div>
-          <div
-            onClick={() => {
-              setShowClaimModal(false);
-              removePubLicUserDetailsFromLocalStorageOnClose("rentData");
-            }}
-            className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
-          >
-            <CloseIcon />
+          <div className="touch-manipulation flex items-center gap-[10px] p-[11px] rounded-lg border border-[#4285F4]">
+            <div className="w-6 h-full flex items-center">
+              <LocationPointIcon />
+            </div>
+            <p className="flex truncate items-center font-normal text-[#222222] text-[14px] flex-1">
+              {rentData ? rentData.address : ""}
+            </p>
           </div>
-        </div>
-        <div className="touch-manipulation flex items-center gap-[10px] p-[11px] rounded-lg border border-[#4285F4]">
-          <div className="w-6 h-full flex items-center">
-            <LocationPointIcon />
+          <div>
+            <div className="relative w-full h-[130px]">
+              <Image
+                src={imageUrl}
+                alt={`Map at ${rentData?.latitude}, ${rentData?.longitude}`}
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
           </div>
-          <p className="flex items-center font-normal text-[#222222] text-[14px] flex-1">
-            {rentData ? rentData.address : ""}
-          </p>
-        </div>
-        <div>
-          <div className="relative w-full h-[130px]">
-            <Image
-              src={imageUrl}
-              alt={`Map at ${rentData?.latitude}, ${rentData?.longitude}`}
-              layout="fill"
-              objectFit="cover"
-            />
-          </div>
-        </div>
-        {/* <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
+          {/* <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
           <div className="flex touch-manipulation flex-col gap-[5px] w-full">
             <label htmlFor="rentalDate">
               Rental Date and Time
@@ -261,39 +268,41 @@ const RentModal: React.FC<RentModalProps> = ({
             />
           </div>
         </div> */}
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">
-            <div className="flex ">
-              <div>Owner:</div>
-              <div className="text-light-grey pl-[15px]">
-                {rentData?.owner?.name}
+          <div className="flex justify-between">
+            <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">
+              <div className="flex ">
+                <div>Owner:</div>
+                <div className="text-light-grey pl-[15px]">
+                  {rentData?.owner?.name}
+                </div>
+              </div>
+              <div className="flex">
+                <div>ID::</div>
+                <div className="text-light-grey pl-[15px]">{rentData?.id}</div>
+              </div>
+              <div className="flex">
+                <div>Fees:</div>
+                <div className="text-light-grey pl-[15px]">
+                  {rentData?.transitFee}
+                </div>
               </div>
             </div>
-            <div className="flex">
-              <div>ID::</div>
-              <div className="text-light-grey pl-[15px]">{rentData?.id}</div>
-            </div>
-            <div className="flex">
-              <div>Fees:</div>
-              <div className="text-light-grey pl-[15px]">
-                {rentData?.transitFee}
+            <div className="hidden sm:flex items-end">
+              <div className="text-light-black w-full">
+                <div className="text-[15px] leading-[22.5px] ">
+                  Current Price
+                </div>
+                <div className="font-bold text-2xl leading-9 flex justify-end">
+                  &#36;{rentData?.price}
+                </div>
               </div>
             </div>
           </div>
-          <div className="flex items-end">
-            <div className="text-light-black w-full">
-              <div className="text-[15px] leading-[22.5px] ">Current Price</div>
-              <div className="font-bold text-2xl leading-9 flex justify-end">
-                &#36;{rentData?.price}
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div>
-          <div className="flex touch-manipulation items-center justify-center gap-[20px] text-[14px] text-light-grey ">
-            {/* <div className="flex touch-manipulation justify-between gap-[5px] w-full text-light-grey"> */}
-              <div className="flex flex-col w-1/2">
+          <div>
+            <div className="flex flex-col sm:flex-row  touch-manipulation items-center justify-center gap-[20px] text-[14px] text-light-grey ">
+              {/* <div className="flex touch-manipulation justify-between gap-[5px] w-full text-light-grey"> */}
+              <div className="flex flex-col w-full sm:w-1/2">
                 <label htmlFor="rentalDate">
                   Rental Date
                   <span className="text-[#E04F64] touch-manipulation">*</span>
@@ -305,9 +314,9 @@ const RentModal: React.FC<RentModalProps> = ({
                   maxDate={maxDate}
                 />
               </div>
-              <div className="w-1/2">
+              <div className="w-full sm:w-1/2">
                 <label htmlFor="rentalDate">
-                    Rental Time
+                  Rental Time
                   <span className="text-[#E04F64] touch-manipulation">*</span>
                 </label>
                 <TimePicker
@@ -317,20 +326,24 @@ const RentModal: React.FC<RentModalProps> = ({
                   className="w-full"
                 />
               </div>
-            {/* </div> */}
+              {/* </div> */}
+            </div>
           </div>
         </div>
 
-        <div className="touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
+        <div className="touch-manipulation flex items-center justify-center gap-[20px] text-[14px] sm:shadow-none shadow-[0px_0px_4.2px_0px_rgba(0,0,0,0.25)] px-[29px] py-[20px] sm:py-0">
           <div
             onClick={() => {
               setShowClaimModal(false);
               removePubLicUserDetailsFromLocalStorageOnClose("rentData");
             }}
-            className="text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2"
+            className="hidden sm:flex text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2 "
             style={{ border: "1px solid #0653EA" }}
           >
             Cancel
+          </div>
+          <div className="sm:hidden font-bold text-2xl leading-9 flex  w-1/2">
+            &#36;{rentData?.price}
           </div>
           <LoadingButton
             onClick={handleShowRentPreview}
