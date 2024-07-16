@@ -478,7 +478,7 @@ const Airspaces: React.FC = () => {
       {isLoading && <Spinner />}
 
       <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA]">
-        {!isMobile && <Sidebar />}
+       <Sidebar />
         <div className="flex h-full w-full flex-col">
           {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
           {((showMobileMap && isMobile) ||
