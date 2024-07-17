@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { IoArrowBack } from "react-icons/io5";
-import { MagnifyingGlassIcon } from "../Shared/Icons";
+import { InfoIcon, MagnifyingGlassIcon } from "@/Components/Shared/Icons";
 import { GiSettingsKnobs } from "react-icons/gi";
 import { FiPlus } from "react-icons/fi";
 // import FilterTab from "./FilterTab";
@@ -63,7 +63,7 @@ const RentSearchMobile: React.FC<RentSearchMobileProps> = ({
         <div className="flex justify-between items-center border rounded-lg overflow-hidden p-2">
           <input
             id="search_auctions"
-            placeholder="Search auctions..."
+            placeholder="Search Airspaces"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             className="focus:outline-none min-w-[200px] text-[14px]"

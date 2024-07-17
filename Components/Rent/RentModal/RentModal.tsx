@@ -337,8 +337,7 @@ const RentModal: React.FC<RentModalProps> = ({
               setShowClaimModal(false);
               removePubLicUserDetailsFromLocalStorageOnClose("rentData");
             }}
-            className="hidden sm:flex text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2 "
-            style={{ border: "1px solid #0653EA" }}
+            className="hidden sm:flex text-center justify-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2 border border-[#0653EA]"
           >
             Cancel
           </div>

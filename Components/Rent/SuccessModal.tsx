@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
-import { CloseIconWhite, SuccessIconwhite } from "../Icons";
+import { CloseIconWhite, SuccessIconwhite, CloseIcon } from "../Icons";
 import { getTokenLink } from "@/hooks/utils";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { PropertyData } from "@/types";
 
@@ -22,7 +23,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   setShowClaimModal,
 }) => {
   const modalRef = useRef<HTMLDivElement | null>(null);
-
+  const router = useRouter();
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -40,20 +41,20 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   return (
     <div
       ref={modalRef}
-      className={`md:max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full  z-50`}
+      className={`md:max-w-sm fixed top-1/2  left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] z-50  backdrop-blur-[2px] ${finalAns?.status === "Rent Successful" ? "sm:h-[584px]" : "h-auto"}`}
     >
       <div
-        className={`w-[100%] md:h-[100%] h-screen py-10 z-40 flex flex-col gap-[15px] items-center  md:rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+        className={`w-screen sm:w-[422px]  h-screen md:h-full  py-10 z-40 flex flex-col gap-[15px] items-center  md:rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
       >
         <div
           onClick={() => {
             setShowSuccess(false);
             setShowClaimModal(false);
           }}
-          className="w-[26px] h-[26px] absolute top-[10px] right-[10px] "
+          className="w-[26px] h-[26px] absolute top-[10px] right-[15px] sm:-right-[25px] "
         >
-          <div className="hidden sm:block absolute top-[10px] right-[10px] cursor-pointer">
-            <CloseIconWhite />
+          <div className="absolute top-[10px] right-[10px] cursor-pointer">
+            <CloseIcon color={"#fff"} />
           </div>
         </div>
 
@@ -66,8 +67,8 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
         </div>
         {finalAns?.status === "Rent Successful" ? (
           <>
-            <div className="w-full mt-6">
-              <h1 className=" font-medium text-xl text-center text-[#FFFFFF] font-poppins">
+            <div className="w-[310px] mt-6">
+              <h1 className=" font-medium text-3xl leading-[48px] text-center text-[#FFFFFF] font-poppins">
                 Your rental order is complete
               </h1>
             </div>
@@ -76,17 +77,17 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           <>
             <div className="w-full  mt-6">
               <h1 className=" font-medium text-xl text-center text-[#FFFFFF] font-poppins">
-                Rent failed
+                {`${finalAns?.message ? "Rent failed" : "An error occurred"}`}
               </h1>
             </div>
           </>
         )}
 
-        <div className=" px-6 w-full  mt-4  md:mt-[2rem] ">
+        <div className=" w-[310px]   mt-4  md:mt-[2rem] ">
           <div className="font-normal text-lg leading-7 text-center text-[#FFFFFF] font-poppins">
             {finalAns?.status === "Rent Successful" && (
               <div>
-                'You rented'{" "}
+                You rented{" "}
                 {rentData && (
                   <>
                     <span className=" text-lg font-bold">{`${rentData.address}`}</span>{" "}
@@ -94,9 +95,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
                 )}
                 {` for `}{" "}
                 {rentData && (
-                  <span className=" text-lg font-bold">
-                    ${rentData.price}
-                  </span>
+                  <span className=" text-lg font-bold">${rentData.price}</span>
                 )}
               </div>
             )}
@@ -104,39 +103,41 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 
           <div className="font-normal  text-lg leading-7 text-center text-[#FFFFFF] font-poppins">
             {finalAns?.status !== "Rent Successful" && (
-              <div>{`${finalAns?.message}`}</div>
+              <div>{`${finalAns?.message ? finalAns?.message : "Please try again later"}`}</div>
             )}
           </div>
         </div>
 
         {finalAns?.status === "Rent Successful" && (
-          <div className=" w-[75%] ">
-            <p className="font-normal text-[10px] text-center text-[#FFFFFF]">
-              A copy of your transaction is availble inside your Portfolio{" "}
+          <div className=" w-[310px] flex justify-center">
+            <p className="font-normal text-[14px] leading-[21px] text-center text-[#FFFFFF]">
+              A copy of your transaction is availble inside your{" "}
             </p>
-          </div>
-        )}
-
-        {finalAns?.status === "Rent Successful" && (
-          <>
-            <Link
+            <>
+              {/* <Link
               target="_blank"
               href={getTokenLink(finalAns.tokenId)}
               className="py-2 font-bold text-center text-[#FFFFFF] text-[14px] underline"
             >
-              Transaction Link
-            </Link>
-          </>
+              funds
+            </Link> */}
+            </>
+          </div>
         )}
 
         {finalAns?.status === "Rent Successful" ? (
           <>
             <button
-              onClick={()=> ( setShowClaimModal(false))}
-              className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-lg"
-              
+              onClick={() => router.push("/marketplace")}
+              className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 text-[#34A853] text-center bg-[#FFFFFF] text-[14px]"
             >
-              Portfolio
+              Marketplace
+            </button>
+            <button
+              onClick={() => router.push("/funds")}
+              className="my-[11px] py-2 w-[50%] h-[41px]   rounded-md gap-10 text-white text-center border border-white text-[14px]"
+            >
+              Funds
             </button>
           </>
         ) : (

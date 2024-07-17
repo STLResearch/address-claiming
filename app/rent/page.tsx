@@ -21,6 +21,7 @@ import supercluster from "supercluster";
 import { toast } from "react-toastify";
 import debounce from 'lodash.debounce';
 import RentPreview from "@/Components/Rent/RentPreview/RentPreview";
+import RentSearchMobile from "@/Components/Rent/Explorer/RentSearchMobile";
 
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -57,6 +58,7 @@ const Rent = () => {
   const clusterIndex = useRef(new supercluster({ radius: 40, maxZoom: 16 }));
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const clustersRef = useRef<mapboxgl.Marker[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const { findPropertiesByCoordinates } = PropertiesService();
  
@@ -156,10 +158,10 @@ const Rent = () => {
     map.on("moveend", onIdle);
 
     return () => {
-      map.off("idle", onIdle);
+      map.off("idle", onIdle); 
       map.off("moveend", onIdle);
     };
-  }, [map]);
+  }, [map,isMobile]);
 
 
   const updateMarkers = (newMap, responseData) => {
@@ -356,7 +358,7 @@ const Rent = () => {
       {
         <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
           
-          <Sidebar />
+         {!isMobile && <Sidebar />} 
 
           <div className="w-full h-full flex flex-col">
             {!isMobile && <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />}
@@ -391,7 +393,10 @@ const Rent = () => {
                 className={"!absolute !top-0 !left-0 !m-0 !w-screen !h-screen"}
                 id="map"
               />
-
+            <RentSearchMobile
+              searchTerm={searchTerm}
+              setSearchTerm={(value: string) => setSearchTerm(value)}
+            />
               {!isMobile && (
                 <div className="flex justify-start items-start">
                   <Explorer
