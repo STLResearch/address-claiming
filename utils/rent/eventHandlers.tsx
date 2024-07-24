@@ -1,4 +1,3 @@
-
 import ReactDom from "next/dist/compiled/react-dom/cjs/react-dom-server-legacy.browser.production";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
 import RentMarkerPopup from "@/Components/Rent/RentMarkerPopup";

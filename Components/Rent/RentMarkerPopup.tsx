@@ -6,7 +6,7 @@ interface MarkerPopupProps {
   data: any;
 }
 
-const RentMarkerPopup: React.FC<any> = ({ data }) => {
+const RentMarkerPopup: React.FC<MarkerPopupProps> = ({ data }) => {
   const { latitude, longitude,title } = data || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
   return (
@@ -21,6 +21,7 @@ const RentMarkerPopup: React.FC<any> = ({ data }) => {
           alt={`Map at ${latitude}, ${longitude}`}
           layout="fill"
           objectFit="cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
       <div
@@ -34,15 +35,11 @@ const RentMarkerPopup: React.FC<any> = ({ data }) => {
         </div>
         <div className="flex justify-between flex-end px-[15px] py-[10px] w-full bg-[#4285F4]/5 ">
           <div className="flex flex-col ">
-            <p className="text-xs  text-[#727272]">Highest Bid</p>
-            <h1 className="text-xs  font-bold text-[#050505]">
-              $ {data?.price}
+            <p className="text-xs leading-[16px] text-[#727272]">Rental Price</p>
+            <h1 className="text-xs  leading-[26px] font-bold text-[#050505]">
+              ${data?.price}
             </h1>
           </div>
-          {/* <div className="flex flex-col ">
-            <p className="text-xs  text-[#727272]">Time left</p>
-            <h1 className="text-xs  font-bold text-[#050505]">{timeLeft}</h1>
-          </div> */}
           <div>
             <button className="rounded-[8px] px-[10px] py-[5px] text-white leading-[21px] text-[14px] first-letter: border border-[#4285F4] bg-[#0653EA]">
                 Rent

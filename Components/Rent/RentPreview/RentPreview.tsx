@@ -35,6 +35,7 @@ interface RentPreviewProps {
   rentData: PropertyData | null | undefined;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
+  date:any;
 }
 const RentPreview: React.FC<RentPreviewProps> = ({
   setShowRentPreview,
@@ -42,6 +43,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
   rentData,
   setIsLoading,
   isLoading,
+  date,
 }) => {
   const defaultValueDate = dayjs()
     .add(1, "h")
@@ -50,7 +52,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
   const maxDate = dayjs().add(29, "day");
   const [landAssetIds, setLandAssetIds] = useState([]);
   const [tokenBalance, setTokenBalance] = useState<string>("0");
-  const [date, setDate] = useState(defaultValueDate);
+  // const [date, setDate] = useState(defaultValueDate);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const { isMobile } = useMobile();
   const [finalAns, setFinalAns] = useState<
@@ -71,77 +73,75 @@ const RentPreview: React.FC<RentPreviewProps> = ({
       getTokenBalance(user, setTokenBalance);
     }
   }, [user]);
+console.log('here 1:',date)
+  const handleRentAirspace = async () => {
+    try {
+      const isRedirecting = redirectIfUnauthenticated();
+      if (isRedirecting) {
+        setAndClearOtherPublicRouteData("rentData", rentData);
+        return;
+      }
+      const currentDate = new Date();
+      const startDate = new Date(date.toString());
+      const endDate = new Date(startDate.getTime() + 30 * 60000);
 
-  // const handleRentAirspace = async () => {
-  //   try {
-  //     const isRedirecting = redirectIfUnauthenticated();
-  //     if (isRedirecting) {
-  //       setAndClearOtherPublicRouteData("rentData", rentData);
-  //       return;
-  //     }
-  //     const currentDate = new Date();
-  //     const startDate = new Date(date.toString());
-  //     const endDate = new Date(startDate.getTime() + 30 * 60000);
+      if (
+        !validateRental(
+          currentDate,
+          startDate,
+          endDate,
+          tokenBalance,
+          setFinalAns,
+          setShowSuccess
+        )
+      )
+        return;
 
-  //     if (
-  //       !validateRental(
-  //         currentDate,
-  //         startDate,
-  //         endDate,
-  //         tokenBalance,
-  //         setFinalAns,
-  //         setShowSuccess
-  //       )
-  //     )
-  //       return;
+      setIsLoading(true);
+      if (rentData?.layers) {
+        const postData = {
+          callerAddress: user?.blockchainAddress,
+          startTime: startDate.toISOString(),
+          endTime: endDate.toISOString(),
+          landAssetIds: [rentData.layers[0].tokenId],
+        };
 
-  //     setIsLoading(true);
-  //     if (rentData?.layers) {
-  //       const postData = {
-  //         callerAddress: user?.blockchainAddress,
-  //         startTime: startDate.toISOString(),
-  //         endTime: endDate.toISOString(),
-  //         landAssetIds: [rentData.layers[0].tokenId],
-  //       };
+        const createMintResponse = await createMintRentalToken({ postData });
+        const mintResponse = await handleMintResponse(
+          createMintResponse,
+          setIsLoading,
+          setShowSuccess,
+          setFinalAns
+        );
+        if (!mintResponse) return;
+        const transaction = VersionedTransaction.deserialize(
+          new Uint8Array(Buffer.from(createMintResponse, "base64"))
+        );
+        const txString = await executeTransaction(transaction, provider);
+        if (!txString) return;
 
-  //       const createMintResponse = await createMintRentalToken({ postData });
-  //       const mintResponse = await handleMintResponse(
-  //         createMintResponse,
-  //         setIsLoading,
-  //         setShowSuccess,
-  //         setFinalAns
-  //       );
-  //       if (!mintResponse) return;
-  //       const transaction = VersionedTransaction.deserialize(
-  //         new Uint8Array(Buffer.from(createMintResponse, "base64"))
-  //       );
-  //       const txString = await executeTransaction(transaction, provider);
-  //       if (!txString) return;
+        const postExecuteMintData = {
+          transaction: txString,
+          landAssetIds: [rentData?.layers[0].tokenId],
+          startTime: startDate.toISOString(),
+          endTime: endDate.toISOString(),
+        };
 
-  //       const postExecuteMintData = {
-  //         transaction: txString,
-  //         landAssetIds: [rentData?.layers[0].tokenId],
-  //         startTime: startDate.toISOString(),
-  //         endTime: endDate.toISOString(),
-  //       };
+        const executionResponse = await executeMintRentalToken({
+          postData: { ...postExecuteMintData },
+        });
 
-  //       const executionResponse = await executeMintRentalToken({
-  //         postData: { ...postExecuteMintData },
-  //       });
-
-  //       handleExecuteResponse(executionResponse, setFinalAns, setShowSuccess);
-  //     } else {
-  //       toast.error("something went wrong!");
-  //     }
-  //   } catch (error) {
-  //     setFinalAns({ status: "Rent failed", message: error.message });
-  //   } finally {
-  //     setIsLoading(false);
-  //     localStorage.removeItem("rentData");
-  //   }
-  // };
-
-  const handleShowRentPreview = () => {};
+        handleExecuteResponse(executionResponse, setFinalAns, setShowSuccess);
+      } else {
+        toast.error("something went wrong!");
+      }
+    } catch (error) {
+      setFinalAns({ status: "Rent failed", message: error.message });
+    } finally {
+      setIsLoading(false);
+      localStorage.removeItem("rentData");
+    }
+  };
 
   if (showSuccess) {
     return (
@@ -153,32 +153,25 @@ const RentPreview: React.FC<RentPreviewProps> = ({
       />
     );
   }
-  const shouldDisableTime = (value, view) => {
-    if (view === "minutes" && value.minute() >= 1 && value.minute() <= 29) {
-      return true;
-    } else if (
-      view === "minutes" &&
-      value.minute() >= 31 &&
-      value.minute() <= 59
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+
 
   const imageUrl = getMapboxStaticImage(
     rentData?.latitude,
     rentData?.longitude
   );
-  console.log(rentData, "the rent data");
+  // console.log(rentData, "the rent data");
+  const formattedDate = date.format('DD MMMM YYYY');
 
+  // Format the time as "9:00 - 09:30"
+  const formattedTimeStart = date.format('H:mm');
+  const formattedTimeEnd = date.add(30, 'minute').format('H:mm');
+  const formattedTime = `${formattedTimeStart} - ${formattedTimeEnd}`;
   return (
     <div>
       {!isMobile && <Backdrop />}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation fixed bottom-0 left-0  sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] gap-[15px] sm:pb-[30px] rounded-t-[30px] md:rounded-[30px]  w-full h-[469px] sm:h-[485px] md:w-[689px] z-[100] md:z-40 flex flex-col overflow-auto sm:overflow-hidden"
+        className="touch-manipulation fixed bottom-0 left-0  sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] gap-[15px] sm:pb-[30px] rounded-t-[30px] md:rounded-[30px]  w-full h-[415px] sm:h-[406px] md:w-[689px] z-[100] md:z-40 flex flex-col overflow-auto sm:overflow-hidden"
       >
         <div className="flex flex-col gap-[15px] px-[30px]">
         <div
@@ -240,59 +233,24 @@ const RentPreview: React.FC<RentPreviewProps> = ({
             />
           </div>
         </div>
-        {/* <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
-          <div className="flex touch-manipulation flex-col gap-[5px] w-full">
-            <label htmlFor="rentalDate">
-              Rental Date and Time
-              <span className="text-[#E04F64] touch-manipulation">*</span>
-            </label>
-            <DateTimePicker
-              value={date}
-              onChange={(e) => {
-                setDate(e);
-              }}
-              disablePast
-              maxDate={maxDate}
-              shouldDisableTime={shouldDisableTime}
-              slotProps={{
-                popper: {
-                modifiers: [
-                  {
-                    name: 'offset',
-                    options: {
-                      offset: [-10, -30],
-                    },
-                  },
-                  {
-                    name: 'preventOverflow',
-                    options: {
-                      altAxis: true, 
-                    },
-                  },
-                ],
-              }
-              }}
-            />
-          </div>
-        </div> */}
           <div className="flex justify-between ">
             <div className="flex flex-col gap-y-[15px] text-[14px] text-light-black leading-[21px]">
-              <div className="flex ">
+              {/* <div className="flex ">
                 <div>Owner:</div>
                 <div className="text-light-grey pl-[15px]">
                   {rentData?.owner?.name}
                 </div>
-              </div>
+              </div> */}
               <div className="flex">
                 <div>ID::</div>
                 <div className="text-light-grey pl-[15px]">{rentData?.id}</div>
               </div>
-              <div className="flex">
+              {/* <div className="flex">
                 <div>Fees:</div>
                 <div className="text-light-grey pl-[15px]">
                   {rentData?.transitFee}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <hr className="hidden sm:flex"/>
@@ -319,15 +277,19 @@ const RentPreview: React.FC<RentPreviewProps> = ({
 
             <div className="border-l-[1px] border-[#000] border-opacity-20 pl-[10px]">
               <p className="text-[11px] text-light-dark leading-[16.5px] ">
-                10 january 2024
+                {/* 10 january 2024 */}
+                {/* {date} */}
+                {formattedDate}
               </p>
               <p className="text-[11px] text-light-dark leading-[16.5px]">
-                9:00 - 09:30
+                {/* 9:00 - 09:30 */}
+                {/* {date} */}
+                {formattedTime}
               </p>
             </div>
           </div>
           <LoadingButton
-            // onClick={handleRentAirspace}
+            onClick={handleRentAirspace}
             isLoading={isLoading}
             className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >

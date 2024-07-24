@@ -97,6 +97,9 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
                 {rentData && (
                   <span className=" text-lg font-bold">${rentData.price}</span>
                 )}
+                {rentData && (
+                  <span className=" text-lg font-bold">The {rentData.date}</span>
+                )}
               </div>
             )}
           </div>

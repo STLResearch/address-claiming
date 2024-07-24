@@ -1,4 +1,5 @@
 
+
 export const DashboardIcon = ({ isActive }) => {
   return (
     <svg
@@ -807,7 +808,7 @@ export const ShieldIcon = () => {
   );
 };
 
-export const InfoIcon = () => {
+export const InfoIcon = ({color="#222222"}) => {
   return (
     <svg
       width="100%"
@@ -818,12 +819,12 @@ export const InfoIcon = () => {
     >
       <path
         d="M10 9.16667V13.3333M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z"
-        stroke="#222222"
+        stroke={color}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle cx="10.0003" cy="6.25008" r="0.833333" fill="#222222" />
+      <circle cx="10.0003" cy="6.25008" r="0.833333" fill={color} />
     </svg>
   );
 };

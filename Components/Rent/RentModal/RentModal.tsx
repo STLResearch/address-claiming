@@ -35,6 +35,8 @@ interface RentModalProps {
   rentData: PropertyData | null | undefined;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
+  date:any;
+  setDate:any;
 }
 const RentModal: React.FC<RentModalProps> = ({
   setShowRentPreview,
@@ -42,6 +44,8 @@ const RentModal: React.FC<RentModalProps> = ({
   rentData,
   setIsLoading,
   isLoading,
+  date,
+  setDate
 }) => {
   const defaultValueDate = dayjs()
     .add(1, "h")
@@ -50,8 +54,10 @@ const RentModal: React.FC<RentModalProps> = ({
   const maxDate = dayjs().add(29, "day");
   const [landAssetIds, setLandAssetIds] = useState([]);
   const [tokenBalance, setTokenBalance] = useState<string>("0");
-  const [date, setDate] = useState(defaultValueDate);
+  // const [date, setDate] = useState(defaultValueDate);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [showDateTooltip, setShowDateTooltip] = useState<boolean>(false);
+
   const { isMobile } = useMobile();
   const [finalAns, setFinalAns] = useState<
     | { status: string; message?: string | undefined; tokenId?: string }
@@ -140,6 +146,26 @@ const RentModal: React.FC<RentModalProps> = ({
   //     localStorage.removeItem("rentData");
   //   }
   // };
+  const Tooltip = () => (
+    <div className="z-[1000] absolute -top-5 left-5 transition duration-300  opacity-100">
+      <div className="flex  px-[0px] items-center ">
+        <div>
+          <svg
+            width="6px"
+            height="10px"
+            viewBox="0 0 6 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M-1.64907e-06 5L6 0L6 10L-1.64907e-06 5Z" fill="#CCE3FC" />
+          </svg>
+        </div>
+        <div className="p-3 bg-[#CCE3FC]  text-[#4285F4] w-[183px] text-xs italic leading-[15px]">
+          You rent the airspace for 30 minutes.
+        </div>
+      </div>
+    </div>
+  );
 
   const handleShowRentPreview = () => {
     setShowClaimModal(false);
@@ -184,7 +210,7 @@ const RentModal: React.FC<RentModalProps> = ({
 
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation fixed bottom-0 left-0  sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] sm:py-[30px] gap-[15px] rounded-t-[30px] md:rounded-[30px]  w-full h-[674px] sm:h-[561px] md:w-[689px] z-[100] md:z-40 flex flex-col  overflow-auto sm:overflow-hidden"
+        className="touch-manipulation fixed bottom-0 left-0  sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] sm:py-[30px] gap-[15px] rounded-t-[30px] md:rounded-[30px]  w-full h-[610px] sm:h-[525px] md:w-[689px] z-[100] md:z-40 flex flex-col  overflow-auto sm:overflow-hidden"
       >
         <div className="flex flex-col px-[29px] gap-[15px]">
           <div className=" touch-manipulation relative flex sm:flex-row flex-col items-center gap-[20px] md:p-0 pt-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none">
@@ -270,22 +296,22 @@ const RentModal: React.FC<RentModalProps> = ({
         </div> */}
           <div className="flex justify-between">
             <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">
-              <div className="flex ">
+              {/* <div className="flex ">
                 <div>Owner:</div>
                 <div className="text-light-grey pl-[15px]">
                   {rentData?.owner?.name}
                 </div>
-              </div>
-              <div className="flex">
+              </div> */}
+              <div className="flex ">
                 <div>ID::</div>
-                <div className="text-light-grey pl-[15px]">{rentData?.id}</div>
+                <a className="text-light-grey pl-[15px] underline" target="_blank" href="/">{rentData?.id}</a>
               </div>
-              <div className="flex">
+              {/* <div className="flex">
                 <div>Fees:</div>
                 <div className="text-light-grey pl-[15px]">
                   {rentData?.transitFee}
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="hidden sm:flex items-end">
               <div className="text-light-black w-full">
@@ -303,10 +329,18 @@ const RentModal: React.FC<RentModalProps> = ({
             <div className="flex flex-col sm:flex-row  touch-manipulation items-center justify-center gap-[20px] text-[14px] text-light-grey ">
               {/* <div className="flex touch-manipulation justify-between gap-[5px] w-full text-light-grey"> */}
               <div className="flex flex-col w-full sm:w-1/2">
-                <label htmlFor="rentalDate">
-                  Rental Date
-                  <span className="text-[#E04F64] touch-manipulation">*</span>
-                </label>
+                <div className="flex">
+                  <label htmlFor="rentalDate">
+                    Rental Date
+                    <span className="text-[#E04F64] touch-manipulation">*</span>
+                  </label>
+                  <div className="hidden sm:relative sm:block">
+                    <div className="w-5 h-5 cursor-pointer" onClick={()=>setShowDateTooltip(prev=>(!prev))}>
+                      <InfoIcon color="#838187" />
+                    </div>
+                    {showDateTooltip && <Tooltip />}
+                  </div>
+                </div>
                 <DatePicker
                   value={date}
                   onChange={(d) => setDate(d)}

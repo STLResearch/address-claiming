@@ -2,9 +2,6 @@
 // import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
 import { getMapboxStaticImage } from "@/utils";
 import Image from "next/image";
-interface RentCardProps {
-  data: AuctionDataI;
-}
 
 const RentCard: React.FC<any> = ({ data }) => {
 //   const endDate = new Date(data?.endDate);
@@ -17,8 +14,8 @@ const RentCard: React.FC<any> = ({ data }) => {
       <Image
           src={imageUrl}
           alt={`Map at ${latitude}, ${longitude}`}
-          layout="fill"
-          objectFit="cover"
+          fill
+          sizes="100%"
         />
       </div>
       <div className="px-4 py-2 flex flex-col items-start">

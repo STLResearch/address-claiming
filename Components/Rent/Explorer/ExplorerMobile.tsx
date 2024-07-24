@@ -70,7 +70,7 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
             className="h-[450px] overflow-y-auto flex flex-col items-center gap-4 mt-6"
           >
             {" "}
-            {loading && (
+            {(loading || loadingReg) && (
               <div className="w-full flex justify-center items-center">
                 <div className="">
                   <Spinner />
@@ -79,7 +79,7 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
               </div>
             )}
             <>
-            {!loading && registeredAddress && registeredAddress?.length > 0 && (
+            {!loading && !loadingReg && registeredAddress && registeredAddress?.length > 0 && (
               
               <>
                 {registeredAddress.length > 0 ? (
