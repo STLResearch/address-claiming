@@ -29,7 +29,7 @@
     ".next/types/**/*.ts",
     "Components/Shared/Sidebar.tsx",
     "store/store.js"
-  ],
+, "app/rent/page.tsx"  ],
 
   "exclude": ["node_modules"]
 }

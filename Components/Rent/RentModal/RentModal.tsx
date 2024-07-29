@@ -57,6 +57,7 @@ const RentModal: React.FC<RentModalProps> = ({
   // const [date, setDate] = useState(defaultValueDate);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const [showDateTooltip, setShowDateTooltip] = useState<boolean>(false);
+  const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
 
   const { isMobile } = useMobile();
   const [finalAns, setFinalAns] = useState<
@@ -146,6 +147,35 @@ const RentModal: React.FC<RentModalProps> = ({
   //     localStorage.removeItem("rentData");
   //   }
   // };
+  const endTime = startTime ? startTime.add(30, 'minute') : null;
+
+  const handleStartTimeChange = (newValue: any) => {
+    setStartTime(newValue);
+  };
+
+  const renderDateInputTextField = (props) => {
+    const timeToDisplay = startTime && endTime ? `${startTime.format('HH:mm')} - ${endTime.format('HH:mm')}` : '';
+    return (
+      <TextField
+        {...props}
+        value={timeToDisplay}
+        // disabled
+        InputProps={{
+          readOnly: true,
+          startAdornment: (
+            <span style={{ marginRight: 8 }}>
+              <input
+                {...props}
+                value={timeToDisplay}
+                onChange={(e) => handleStartTimeChange(dayjs(e.target.value, 'HH:mm'))}
+                style={{ border: 'none', outline: 'none', width: '140px' }}
+              />
+            </span>
+          ),
+        }}
+      />
+    );
+  };
   const Tooltip = () => (
     <div className="z-[1000] absolute -top-5 left-5 transition duration-300  opacity-100">
       <div className="flex  px-[0px] items-center ">
@@ -346,6 +376,7 @@ const RentModal: React.FC<RentModalProps> = ({
                   onChange={(d) => setDate(d)}
                   disablePast
                   maxDate={maxDate}
+                  
                 />
               </div>
               <div className="w-full sm:w-1/2">
@@ -354,10 +385,15 @@ const RentModal: React.FC<RentModalProps> = ({
                   <span className="text-[#E04F64] touch-manipulation">*</span>
                 </label>
                 <TimePicker
-                  value={date}
+                // open={true}
+                  value={startTime}
                   shouldDisableTime={shouldDisableTime}
-                  onChange={(d) => setDate(d)}
+                  // onChange={(d) => setDate(d)}
+                  onChange={(d)=>setStartTime(d)}
                   className="w-full"
+                  // slots={{
+                  //   textField: renderDateInputTextField,
+                  // }}
                 />
               </div>
               {/* </div> */}

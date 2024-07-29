@@ -25,6 +25,7 @@ import {
   createAndUpdateClusters,
 } from "@/utils/rent/mapUtils";
 import dayjs from "dayjs";
+import geohash from 'ngeohash';
 
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -72,6 +73,15 @@ const Rent = () => {
   const [date, setDate] = useState(defaultValueDate);
   const { findPropertiesByCoordinates } = PropertiesService();
 
+  function calculateVisibleGeohashes(map) {
+    let bounds = map.getBounds();
+    let minLat = bounds.getSouth();
+    let minLon = bounds.getWest();
+    let maxLat = bounds.getNorth();
+    let maxLon = bounds.getEast();
+    return geohash.bboxes(minLat, minLon, maxLat, maxLon, 1);
+  }
+
   useEffect(() => {
     if (map) return;
     const createMap = () => {
@@ -114,10 +124,26 @@ const Rent = () => {
     };
     createMap();
   }, [map]);
-
+  let previousGeoHashes = [];
+  let addedGeohashes;
+  let removedGeohashes;
+function updateGeohashData() {
+    let newGeohashes = calculateVisibleGeohashes(map);
+     addedGeohashes = newGeohashes.filter(gh => !previousGeoHashes.includes(gh));
+     removedGeohashes = previousGeoHashes.filter(gh => !newGeohashes.includes(gh));
+    console.log('previousGeoHashes geoHash',previousGeoHashes);
+    console.log("new geoHashes",newGeohashes);
+    console.log("added geohash" , addedGeohashes);
+    console.log("removed geohash" , removedGeohashes);
+    previousGeoHashes = newGeohashes;
+}
   const handleMapMove = async () => {
     if (!map) return;
     try {
+    updateGeohashData();
+    if(addedGeohashes?.length == 0){
+      return ;
+    }
     setLoadingRegAddresses(true);
     const crds = map.getBounds();
     const responseData = await findPropertiesByCoordinates({
@@ -161,12 +187,15 @@ const Rent = () => {
         setLoadingRegAddresses(false);
       }
   };
-  const debouncedHandleMapMove = debounce(handleMapMove, 500);
+
+  const debouncedHandleMapMove = debounce(handleMapMove, 3000);
 
   useEffect(() => {
     if (!map) return;
-    handleMapMove()
-    // map.on("moveend", debouncedHandleMapMove);
+    // handleMapMove()
+    if(!loadingAddresses || loadingRegAddresses){
+      map.on("moveend", debouncedHandleMapMove);
+    }
     return () => {
       map.off("moveend", debouncedHandleMapMove);
     };

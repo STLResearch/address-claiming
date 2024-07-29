@@ -17,6 +17,9 @@ const RentCard: React.FC<any> = ({ data }) => {
           fill
           sizes="100%"
         />
+        <div>
+          
+        </div>
       </div>
       <div className="px-4 py-2 flex flex-col items-start">
         <div className="text-sm text-black font-bold">Name</div>

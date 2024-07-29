@@ -11,11 +11,11 @@ export const createAndUpdateClusters = (
   isMobile: boolean,
   setRentData: any,
   setShowClaimModal: any,
-zoom:number,
-bounds:any,
+  zoom: number,
+  bounds: any
 ) => {
-//   clearMarkers(markersRef);
-//   removeClusterLayers(map);
+  //   clearMarkers(markersRef);
+  //   removeClusterLayers(map);
   //   if (map && responseData) {
   //     const geoJSONData = responseData.map((point) => ({
   //       type: "Feature",
@@ -96,7 +96,7 @@ bounds:any,
   }));
   clusterIndex.current.load(geoJSONData);
   // const bounds = map.getBounds().toArray().flat();
-//   const zoom = map.getZoom();
+  //   const zoom = map.getZoom();
   const clusters = clusterIndex.current.getClusters(bounds, Math.round(zoom));
 
   const markersGeoJSON = {
@@ -145,7 +145,7 @@ bounds:any,
       source: "markers",
       filter: ["has", "point_count"],
       layout: {
-        'text-allow-overlap': false,
+        "text-allow-overlap": false,
         "text-field": "{point_count_abbreviated}",
         "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
         "text-size": 12,
