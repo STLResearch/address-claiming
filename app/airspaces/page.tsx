@@ -554,7 +554,7 @@ const Airspaces: React.FC = () => {
                   }}
                 />
                 <div className="hidden sm:block"><Slider /></div>
-                {true &&<SuccessPopUp isVisible={true} setShowSuccessPopUp={setShowSuccessPopUp} />}
+                <SuccessPopUp  />
                 {showFailurePopUp &&<FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />}
                 {(showClaimModal || (isOpen && currentStep >= 2)) && (
                   <ClaimModal

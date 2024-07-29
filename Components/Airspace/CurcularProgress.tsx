@@ -48,16 +48,16 @@ const CircularProgressButton: React.FC<CircularProgressButtonProps> = ({
             cy="50"
             r="24"
             fill="none"
-            stroke="#E5E7EB"
-            strokeWidth="8"
+            stroke="#3B82F6"
+            strokeWidth="6"
           />
           <circle
             cx="50"
             cy="50"
             r="24"
             fill="none"
-            stroke="#3B82F6"
-            strokeWidth="8"
+            stroke="#E5E7EB"
+            strokeWidth="6"
             strokeDasharray={`${(progress / 100) * circumference}, ${circumference}`}
             strokeLinecap="round"
             transform="rotate(-90 50 50)"

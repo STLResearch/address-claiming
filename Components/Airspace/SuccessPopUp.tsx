@@ -9,16 +9,16 @@ const SuccessPopUp: React.FC = () => {
   const origin = useOrigin();
   const [isSharing, setIsSharing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [showSuccessPopUp, setShowSuccessPopUp] = useState(true);
+  const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
   const [isPopupHovered, setIsPopupHovered] = useState(false);
   const [timer, setTimer] = useState<any>(null);
 
   useEffect(() => {
     if (showSuccessPopUp) {
       const timerTemp = new Timer(function () {
-        if (!isSharing && !isPopupHovered) {
-          setShowSuccessPopUp(false);
-        }
+        // if (!isSharing && !isPopupHovered) {
+        //   setShowSuccessPopUp(false);
+        // }
       }, 10000);
       setTimer(timerTemp);
     }
@@ -65,7 +65,7 @@ const SuccessPopUp: React.FC = () => {
       <div>
         <ShareButtons
           setIsSharing={setIsSharing}
-          url={`${origin}/homepage/airspace2`}
+          url={`${origin}/airspaces`}
         />
       </div>
     </div>
