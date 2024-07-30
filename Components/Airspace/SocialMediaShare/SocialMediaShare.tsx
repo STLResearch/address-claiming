@@ -3,26 +3,29 @@ import useOrigin from "@/hooks/useOrigin";
 import CircularProgressButton from "./CurcularProgress";
 import ShareButtons from "./ShareButtons";
 import { Timer } from "@/utils/timer/timer";
-import { SuccessIcon } from "../Icons";
+import { SuccessIcon } from "@/Components/Icons";
+interface SocialMediaShareProps {
+  showSuccessPopUp:boolean;
+  setShowSuccessPopUp: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-const SuccessPopUp: React.FC = () => {
+const SocialMediaShare: React.FC<SocialMediaShareProps> = ({showSuccessPopUp,setShowSuccessPopUp}) => {
   const origin = useOrigin();
   const [isSharing, setIsSharing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
   const [isPopupHovered, setIsPopupHovered] = useState(false);
   const [timer, setTimer] = useState<any>(null);
 
+
+  
   useEffect(() => {
     if (showSuccessPopUp) {
       const timerTemp = new Timer(function () {
-        // if (!isSharing && !isPopupHovered) {
-        //   setShowSuccessPopUp(false);
-        // }
-      }, 10000);
+      }, 1000);
       setTimer(timerTemp);
     }
-  }, [showSuccessPopUp, isSharing, isPopupHovered]);
+    
+  }, [showSuccessPopUp]);
 
   const handlePause = () => {
     setIsPopupHovered(true);
@@ -51,6 +54,7 @@ const SuccessPopUp: React.FC = () => {
           successfully! Share the good news on social media and let <br />
           your friends know about your great experience with SkyTrade.
         </p>
+
         <CircularProgressButton
           progress={progress}
           setProgress={setProgress}
@@ -63,13 +67,10 @@ const SuccessPopUp: React.FC = () => {
         />
       </div>
       <div>
-        <ShareButtons
-          setIsSharing={setIsSharing}
-          url={`${origin}/airspaces`}
-        />
+        <ShareButtons setIsSharing={setIsSharing} url={`${origin}/airspaces`} />
       </div>
     </div>
   );
 };
 
-export default SuccessPopUp;
+export default SocialMediaShare;

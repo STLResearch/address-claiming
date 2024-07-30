@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { CloseIcon } from "../Icons";
-import { useCircularProgress } from "@/hooks/useCircularProgress";
-
+import React, { useEffect, useState } from "react";
+import { CloseIcon } from "../../Icons";
 interface CircularProgressButtonProps {
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   progress: number;
@@ -23,21 +21,35 @@ const CircularProgressButton: React.FC<CircularProgressButtonProps> = ({
   setIsSharing,
   isVisible,
 }) => {
-  useCircularProgress({
-    totalTime,
-    isVisible,
-    isSharing,
-    isPopupHovered,
-    progress,
-    setProgress,
-    setShowSuccessPopUp,
-    setIsSharing,
-  });
+  const [previousProgress, setPreviousProgress] = useState(0);
+
+  useEffect(() => {
+    if (!isVisible || isSharing) return;
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      if (!isPopupHovered) {
+        const elapsedTime = Date.now() - startTime;
+        const calculatedProgress = (elapsedTime / totalTime) * 100;
+
+        if (calculatedProgress + previousProgress >= 100) {
+          setProgress(100);
+          clearInterval(interval);
+          setShowSuccessPopUp(false);
+        } else {
+          setProgress(calculatedProgress + previousProgress);
+        }
+      } else {
+        setPreviousProgress(progress);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [totalTime, isSharing, isVisible, isPopupHovered, previousProgress]);
   const calculateCircumference = (radius: number) => 2 * Math.PI * radius;
   const circumference = calculateCircumference(24);
   const handleClose = () => {
     setShowSuccessPopUp(false);
-    () => setIsSharing(false);
+    setIsSharing(false);
   };
   return (
     <>

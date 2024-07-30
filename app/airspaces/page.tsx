@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import useAuth from "../../hooks/useAuth";
 import { useMobile } from "../../hooks/useMobile";
@@ -8,7 +8,10 @@ import { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import maplibregl, { Marker } from "maplibre-gl";
 import { toast } from "react-toastify";
-import { removePubLicUserDetailsFromLocalStorage, removePubLicUserDetailsFromLocalStorageOnClose } from "../../helpers/localstorage";
+import {
+  removePubLicUserDetailsFromLocalStorage,
+  removePubLicUserDetailsFromLocalStorageOnClose,
+} from "../../helpers/localstorage";
 import axios from "axios";
 import Head from "next/head";
 import Backdrop from "../../Components/Backdrop";
@@ -17,11 +20,11 @@ import Sidebar from "../../Components/Shared/Sidebar";
 import PageHeader from "../../Components/PageHeader";
 import ExplorerMobile from "../../Components/Airspace/Explorer/ExplorerMobile";
 import HowToModal from "../../Components/Airspace/HowToModal";
-import {ClaimModal} from "../../Components/Airspace/ClaimModal/ClaimModal";
+import { ClaimModal } from "../../Components/Airspace/ClaimModal/ClaimModal";
 import SuccessModal from "../../Components/Airspace/SuccessModal";
 import Explorer from "../../Components/Airspace/Explorer/Explorer";
 import Slider from "../../Components/Airspace/Slider";
-import SuccessPopUp from "../../Components/Airspace/SuccessPopUp";
+import SocialMediaShare from "../../Components/Airspace/SocialMediaShare/SocialMediaShare";
 import FailurePopUp from "../../Components/Airspace/FailurePopUp";
 import Link from "next/link";
 import { HelpQuestionIcon } from "../../Components/Icons";
@@ -264,8 +267,6 @@ const Airspaces: React.FC = () => {
           setFlyToAddress(propertyAddress)
         }
       }
-      
-    
     }
 
     if (flyToAddress === address) setShowOptions(false);
@@ -553,9 +554,21 @@ const Airspaces: React.FC = () => {
                     setIsLoading(true);
                   }}
                 />
-                <div className="hidden sm:block"><Slider /></div>
-                <SuccessPopUp  />
-                {showFailurePopUp &&<FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />}
+                <div className="hidden sm:block">
+                  <Slider />
+                </div>
+                {showSuccessPopUp && (
+                  <SocialMediaShare
+                    showSuccessPopUp={showSuccessPopUp}
+                    setShowSuccessPopUp={setShowSuccessPopUp}
+                  />
+                )}
+                {showFailurePopUp && (
+                  <FailurePopUp
+                    isVisible={showFailurePopUp}
+                    errorMessages={errorMessages}
+                  />
+                )}
                 {(showClaimModal || (isOpen && currentStep >= 2)) && (
                   <ClaimModal
                     onCloseModal={() => {

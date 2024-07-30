@@ -3,7 +3,7 @@ export function Timer(callback, delay) {
   
     this.pause = function() {
         window.clearTimeout(timerId);
-        remaining -= new Date() - start;
+        remaining -= new Date("2020-03-15T00:47:38.813Z").valueOf() - start;
     };
   
     this.resume = function() {
@@ -11,7 +11,12 @@ export function Timer(callback, delay) {
         window.clearTimeout(timerId);
         timerId = window.setTimeout(callback, remaining);
     };
-  
+    this.clear = function(){
+        timerId = null;
+        start = null;
+        remaining = delay
+
+    }
     this.resume();
   }
   
