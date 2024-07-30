@@ -20,6 +20,7 @@ interface SidebarItemProps {
   style?: string;
   onClick?: () => void;
   numberOfUnseenNotifications?: number;
+  target?: string;
 }
 
 interface SidebarItemMobileProps {
@@ -47,7 +48,7 @@ const Sidebar = () => {
   }, [])
 
 
-  const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications}: SidebarItemProps) => {
+  const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications, target = "_self"}: SidebarItemProps) => {
     const [isActive, setIsActive] = useState(false);
 
     useEffect(() => {
@@ -89,7 +90,7 @@ const Sidebar = () => {
     return (
       <Link
         title={text}
-        target={text === 'Help Center' ? '_blank' : '_self'}
+        target={target}
         href={href || ''}
         className={`${style || ''} ${href ? 'cursor-pointer' : 'cursor-not-allowed'} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}
       >
@@ -162,15 +163,15 @@ const Sidebar = () => {
 
         <SidebarItem href={'/dashboard'} text={'Dashboard'} children={<DashboardIcon isActive={false} />} />
         <SidebarItem href={'/airspaces'} text={'Airspaces'} children={<EarthIcon isActive={false} />} />
-        <SidebarItem href={'/referral'} text={'Referral Program'} children={<GiftIcon isActive={false} />} />
+        <SidebarItem href={'/points'} text={'Points Program'} children={<GiftIcon isActive={false} />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
         {!isCollapsed && <p className='font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]'>MARKETPLACE</p>}
-        <SidebarItem href={''} text={'Buy Airspace'} children={<MapIcon isActive={false} />} />
+        <SidebarItem href={'https://sky.trade/waitlist'} target={'_blank'} text={'Buy Airspace'} children={<MapIcon isActive={false} />} />
         <SidebarItem href={'/rent'} text={'Rent Airspace'} children={<DroneIcon isActive={false} />} />
         <SidebarItem href={'/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon isActive={false} />} numberOfUnseenNotifications={0} />
         <SidebarItem href={'/funds'} text={'Funds'} children={<WalletIcon isActive={false} />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
-        <SidebarItem href={'https://skytrade.tawk.help'} text={'Help Center'} children={<HelpQuestionIcon isActive={false} color={undefined} />} />
+        <SidebarItem href={'https://skytrade.tawk.help'} target={'_blank'} text={'Help Center'} children={<HelpQuestionIcon isActive={false} color={undefined} />} />
         {user?.blockchainAddress && <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon isActive={false} />} />}
         <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon isActive={false} /> : <ArrowCompressIcon isActive={false} />} />
       </aside>

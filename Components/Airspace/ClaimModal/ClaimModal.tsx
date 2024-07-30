@@ -75,9 +75,9 @@ export const ClaimModal = ({
   return ( 
     <div>
     <Backdrop onClick={() => {}} />
-    <div className="claim-modal-step fixed top-0 left-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
+    <div className="claim-modal-step fixed top-0 left-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-dvh h-dvh md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
       <div
-        className="z-[100] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px] md:shadow-none"
+        className="z-[100] h-[68px] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px] md:shadow-none"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
       >
         <div className="relative flex items-center gap-[20px] md:p-0">
@@ -109,7 +109,7 @@ export const ClaimModal = ({
           </div>
         </div>
       </div>
-      <div className="md:overflow-y-scroll">
+      <div className="overflow-y-scroll" style={{height: 'calc(100dvh - 68px)'}}>
         <div className="px-[29px]">
           <div
             className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg"

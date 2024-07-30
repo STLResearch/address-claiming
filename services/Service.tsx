@@ -1,10 +1,11 @@
-import React, { Fragment, useContext } from "react";
+import { useContext } from "react";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import { Web3authContext } from "@/providers/web3authProvider";
 import axios from "axios";
 import base58 from "bs58";
 import { toast } from "react-toastify";
+import * as Sentry from "@sentry/nextjs";
 
 interface RequestI {
   uri: string;
@@ -16,6 +17,8 @@ interface RequestI {
 
 const Service = () => {
   const { provider } = useContext(Web3authContext);
+
+  const TIMEOUT = 300000;
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
     console.error(error);
@@ -29,6 +32,7 @@ const Service = () => {
         toast.error(error.response?.data?.errorMessage);
       }
     }
+    Sentry.captureException(error);
   };
 
   const createHeader = async ({ uri, isPublic }: {
@@ -90,6 +94,7 @@ const Service = () => {
 
       return await axios({
         method: "get",
+        timeout: TIMEOUT,
         url: `/api/proxy?${Date.now()}`,
         headers,
       });
@@ -112,6 +117,7 @@ const Service = () => {
       return await axios({
         method: "post",
         url: `/api/proxy?${Date.now()}`,
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });
@@ -134,6 +140,7 @@ const Service = () => {
       return await axios({
         method: "patch",
         url: `/api/proxy?${Date.now()}`,
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });
@@ -156,6 +163,7 @@ const Service = () => {
       return await axios({
         method: "delete",
         url: `/api/proxy?${Date.now()}`,
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });

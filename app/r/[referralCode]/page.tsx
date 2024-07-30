@@ -140,7 +140,7 @@ const ReferralCodeRedirect = () => {
                 Welcome to SkyTrade
               </p>
               <p className="font-bold text-base text-[#4285F4] text-center px-[68px]">
-                You have an awesome friend who referred you to earn 50 extra SKY
+                You have an awesome friend who referred you to earn 5 extra SKY
                 points!
               </p>
               <p className="font-normal text-[16px] text-[#222222] text-center">
@@ -192,7 +192,7 @@ const ReferralCodeRedirect = () => {
             >
               <p className="text-base font-normal text-[#222222]">Register</p>
               <p className="text-sm text-light-grey text-center">
-                Sign up to get rewarded with 50 credit
+                Sign up to get rewarded with 5 credit
               </p>
               <EmailInput
                 emailRef={emailRef}

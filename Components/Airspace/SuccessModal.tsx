@@ -11,7 +11,7 @@ interface PropsI {
 const SuccessModal = ({ closePopUp, isSuccess, errorMessages }: PropsI) => {
   const router = useRouter();
   const handleButtonClick = () => {
-    router.push("/referral");
+    router.push("/points");
   };
 
   return (

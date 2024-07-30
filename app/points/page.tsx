@@ -13,8 +13,10 @@ import AlertMessage from "@/Components/Referral/AlertMessage";
 import ReferralProgramOverview from "@/Components/Referral/ReferralProgramOverview/ReferralProgramOverview";
 import Sidebar from "@/Components/Shared/Sidebar";
 import PointBalance from "@/Components/Referral/PointBalance";
+import RewardService from "@/services/RewardService";
+import { UserRewards } from "@/types";
 
-const Referral = () => {
+const Points = () => {
   const [fetchingCode, setFetchingCode] = useState<boolean>(false);
   const [activeSection, setActiveSection] = useState<number>(0);
   const [data, setData] = useState({
@@ -25,34 +27,48 @@ const Referral = () => {
   });
   const { user, web3authStatus } = useAuth();
   const { retrieveUserReferralData } = UserService();
+  const { getUserRewardsInfo } = RewardService();
   const sections = ["The Program", "Share", "My Referrals"];
+
+  const [userRewards, setUserRewards] = useState<UserRewards | null>(null);
+
   useEffect(() => {
-    (async () => {
+    const fetchData = async () => {
+      if (!user || !web3authStatus) return;
       try {
         setFetchingCode(true);
-        if (!user) return;
-        const responseData = await retrieveUserReferralData();
-        if (responseData) {
-          setData(responseData);
-          setFetchingCode(false);
-        }
+
+        const [referralData, rewardsInfo] = await Promise.all([
+          retrieveUserReferralData(),
+          getUserRewardsInfo()
+        ]);
+
+        if (referralData) setData(referralData);
+        if (rewardsInfo) setUserRewards(rewardsInfo);
+
+        setFetchingCode(false);
       } catch (error) {
         console.log(error);
         setFetchingCode(false);
-      }
-    })();
+      } 
+    };
+
+    fetchData();
   }, [user, web3authStatus]);
+
+  const skyPoint: string | null = userRewards?.stats._sum.point?.toString() ?? '0';
+
 
   return (
     <Fragment>
       <Head>
-        <title>SkyTrade - Referral Program</title>
+        <title>SkyTrade - Points Program</title>
       </Head>
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
-          <PageHeader pageTitle={"Referral Program"} />
+          <PageHeader pageTitle={"Points Program"} />
           <section className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll">
             <Switcher
               sections={sections}
@@ -61,7 +77,7 @@ const Referral = () => {
             />
             <AlertMessage />
 
-            <PointBalance registeredFriends={data?.registeredFriends} />
+            <PointBalance point={skyPoint} />
 
             <ReferralProgramOverview
               activeSection={activeSection}
@@ -88,4 +104,4 @@ const Referral = () => {
   );
 };
 
-export default Referral;
+export default Points;

@@ -9,7 +9,7 @@ import { PropertyData } from "@/types";
 interface SuccessModalProps {
   setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>;
   finalAns:
-    | { status: string; message?: string | undefined; tokenId?: string }
+    | { status: string; message?: string | undefined; }
     | null
     | undefined;
   rentData: PropertyData | undefined | null;
@@ -119,7 +119,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
             <>
               {/* <Link
               target="_blank"
-              href={getTokenLink(finalAns.tokenId)}
+              href={getTokenLink(finalAns.message)}
               className="py-2 font-bold text-center text-[#FFFFFF] text-[14px] underline"
             >
               funds
