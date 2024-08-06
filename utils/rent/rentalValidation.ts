@@ -5,7 +5,7 @@ export const validateRental = (currentDate: Date, startDate: Date, endDate: Date
     toast.error("Rental Tokens can't be booked in the past");
     return false;
   }
-  if (parseFloat(tokenBalance) === 0) {
+  if (parseFloat(tokenBalance) < 2) {
     toast.error("Please deposit some funds into your wallet to continue");
     return false;
   }
