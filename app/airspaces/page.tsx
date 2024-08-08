@@ -101,6 +101,7 @@ const Airspaces: React.FC = () => {
     if (map) return;
 
     const createMap = () => {
+      //@ts-ignore
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
       const newMap = new mapboxgl.Map({
@@ -121,6 +122,7 @@ const Airspaces: React.FC = () => {
           type: "fill",
           source: {
             type: "geojson",
+            //@ts-ignore
             data: {
               type: "Feature",
               geometry: {
