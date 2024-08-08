@@ -34,6 +34,12 @@ const PortfolioList = ({ title, selectAirspace }) => {
           Verified Airspaces
         </div>
         <div
+          className={`${activeTab === PortfolioTabEnum.PENDING ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
+          onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING)}
+        >
+         Pending Airspaces
+        </div>
+        <div
           className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
         >
@@ -68,7 +74,7 @@ const PortfolioList = ({ title, selectAirspace }) => {
                 <PortfolioItem
                   airspaceName={airspace?.address}
                   key={index}
-                  tags={[true, false, false, false]}
+                  tags={[activeTab === PortfolioTabEnum.UNVERIFIED, false, false, false, activeTab === PortfolioTabEnum.PENDING]}
                   type={airspace?.type}
                   selectAirspace={() => selectAirspace(airspace)}
                 />

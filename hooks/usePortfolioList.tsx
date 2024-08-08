@@ -8,7 +8,8 @@ export enum PortfolioTabEnum {
   VERIFIED,
   UNVERIFIED,
   REJECTED,
-  RENTED
+  RENTED,
+  PENDING
 }
 
 const usePortfolioList = () => {
@@ -26,6 +27,7 @@ const usePortfolioList = () => {
     getPropertiesByUserAddress,
     getUnverifiedAirspaces,
     getRejectedAirspaces,
+    getPendingAirspaces
   } = AirspaceRentalService();
 
   useEffect(() => {
@@ -59,7 +61,16 @@ const usePortfolioList = () => {
           if (airspaceResp && airspaceResp.items) {
             airspaces = airspaceResp.items;
           }
-        } else {
+        } else if(activeTab === PortfolioTabEnum.PENDING){
+          const airspaceResp = await getPendingAirspaces(
+            user?.blockchainAddress,
+            pageNumber,
+            10,
+          );
+          if (airspaceResp && airspaceResp.items) {
+            airspaces = airspaceResp.items;
+          }
+        }else {
           const airspaceResp = await getRejectedAirspaces(
             user?.blockchainAddress,
             pageNumber,

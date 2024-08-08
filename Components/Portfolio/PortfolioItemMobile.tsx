@@ -37,6 +37,11 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
               Review Offer
             </div>
           )}
+           {!!tags[4] && (
+         <div className="bg-[#E7E6E6] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
+           Pending
+          </div>
+        )}
           <div className="w-[7px] h-[14px]">
             <ChevronRightIcon />
           </div>
