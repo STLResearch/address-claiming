@@ -38,7 +38,8 @@ const BidDetails: React.FC<BidDetailsProps> = ({
     setCurrentUserBid(inputValue);
   };
 
-  const getStatus = (endDate: Date) => {
+  const getStatus = (endDate: Date | undefined) => {
+    if (!endDate) return;
     const now = new Date();
     const timeDiff = endDate.getTime() - now.getTime();
 
