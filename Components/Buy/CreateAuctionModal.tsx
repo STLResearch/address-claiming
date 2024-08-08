@@ -103,7 +103,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
               <div className="text-center">Create Auction</div>
               <div className="flex justify-between">
                 {" "}
-                <div>Select the properties you want to auctions</div>
+                <div>Select the Airspace you would like to auction</div>
                 <div className="text-black">
                   <HiMiniPlusSmall />
                   {pageNumber}
@@ -120,7 +120,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                 </div>
               ) : (
                 <>
-                  {airspaces.length > 0 ? (
+                  {airspaces && airspaces.length > 0 ? (
                     <div className="flex flex-col gap-3 thin-scrollbar">
                       {airspaces?.length > 0 &&
                         airspaces?.map((item, index) => (
@@ -144,7 +144,8 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                     </div>
                   ) : (
                     <div className="text-center col-span-2 text-light-grey">
-                      {!loading && "No auctions found"}
+                      You must have at least one verified airspace to create an
+                      auction
                     </div>
                   )}
                 </>
