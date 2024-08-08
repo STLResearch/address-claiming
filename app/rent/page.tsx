@@ -49,6 +49,7 @@ const Rent = () => {
   useEffect(() => {
     if (map) return;
     const createMap = () => {
+      //@ts-ignore
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
       const newMap = new mapboxgl.Map({
@@ -65,6 +66,7 @@ const Rent = () => {
           type: "fill",
           source: {
             type: "geojson",
+            //@ts-ignore
             data: {
               type: "Feature",
               geometry: {
@@ -78,6 +80,7 @@ const Rent = () => {
             "fill-color": "#D20C0C",
           },
         });
+        //@ts-ignore
         newMap.zoomOut(4);
       });
 
@@ -131,6 +134,7 @@ const Rent = () => {
               const marker = new maplibregl.Marker(el)
                 .setLngLat(lngLat)
                 .setPopup(popup)
+                //@ts-ignore
                 .addTo(newMap);
               const filteredData = responseData.filter(
                 (item) => item.type === "rent"
@@ -183,6 +187,7 @@ const Rent = () => {
       setCoordinates,
       setAddressData,
       setIsLoading,
+      //@ts-ignore
       setMarker,
       map,
       marker
@@ -236,6 +241,7 @@ const Rent = () => {
                 regAdressShow={regAdressShow}
                 registeredAddress={registeredAddress}
                 map={map}
+                //@ts-ignore
                 marker={marker}
                 setMarker={setMarker}
                 setShowClaimModal={setShowClaimModal}
@@ -272,6 +278,7 @@ const Rent = () => {
                     regAdressShow={regAdressShow}
                     registeredAddress={registeredAddress}
                     map={map}
+                    //@ts-ignore
                     marker={marker}
                     setMarker={setMarker}
                     setShowClaimModal={setShowClaimModal}
