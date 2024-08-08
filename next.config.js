@@ -1,4 +1,5 @@
 module.exports = {
+  distDir: "dist",
   images: {
     domains: ["ipfs.sky.trade", ""],
 
