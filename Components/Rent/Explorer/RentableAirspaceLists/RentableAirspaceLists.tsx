@@ -4,6 +4,7 @@ import { Map, Marker } from "mapbox-gl";
 import RentableAirspace from "./RentableAirspace";
 import { useRentableAirspaces } from "@/hooks/useRentableAirspaces";
 import { PropertyData } from "@/types";
+
 interface RentableAirspaceListsProps {
   loadingReg: boolean;
   regAdressShow: boolean;
@@ -17,6 +18,7 @@ interface RentableAirspaceListsProps {
   setLoadingRegAddresses: React.Dispatch<React.SetStateAction<boolean>>; //check
   setRegisteredAddress: React.Dispatch<React.SetStateAction<PropertyData[]>>;
 }
+
 const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
   setRegisteredAddress,
   setLoadingRegAddresses,

@@ -59,6 +59,7 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
       <RentableAirspaceLists
         loadingReg={loadingReg}
         map={map}
+        //@ts-ignore
         marker={marker}
         regAdressShow={regAdressShow}
         registeredAddress={registeredAddress}
