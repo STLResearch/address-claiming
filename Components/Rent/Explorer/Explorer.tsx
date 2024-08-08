@@ -67,6 +67,7 @@ const Explorer: React.FC<ExplorerProps> = ({
       <RentableAirspaceLists
         loadingReg={loadingReg}
         map={map}
+        //@ts-ignore
         marker={marker}
         regAdressShow={regAdressShow}
         registeredAddress={registeredAddress}

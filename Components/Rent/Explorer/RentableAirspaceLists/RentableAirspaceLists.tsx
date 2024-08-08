@@ -1,5 +1,5 @@
 import { BalanceLoader } from "@/Components/Wrapped";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { Map, Marker } from "mapbox-gl";
 import RentableAirspace from "./RentableAirspace";
 import { useRentableAirspaces } from "@/hooks/useRentableAirspaces";
@@ -29,8 +29,11 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
   setRentData,
   setShowClaimModal,
 }) => {
-  const [selectedAddress, setSelectedAddress] = useState<number | null | undefined>();
+  const [selectedAddress, setSelectedAddress] = useState<
+    number | null | undefined
+  >();
   useRentableAirspaces({
+    //@ts-ignore
     map,
     setRentData,
     setShowClaimModal,
