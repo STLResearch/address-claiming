@@ -1,4 +1,5 @@
 import { AuctionDataI } from "@/types";
+import { shortenAddress } from "@/utils";
 import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
 import Image from "next/image";
 interface AuctionCardProps {
@@ -45,11 +46,11 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ data }) => {
 
       <div className="px-4 py-2 flex flex-col items-start">
         <div className="text-sm text-black font-bold flex items-center justify-between w-full">
-          Name
+          {title}
           <div className="text-xs text-[#727272]">{getStatus(endDate)}</div>
         </div>
         <div className="text-sm text-[#727272] truncate w-[95%] text-left">
-          {title}
+          {shortenAddress(data?.assetId, 6)}
         </div>
       </div>
 
