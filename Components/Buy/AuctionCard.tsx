@@ -50,7 +50,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ data }) => {
           <div className="text-xs text-[#727272]">{getStatus(endDate)}</div>
         </div>
         <div className="text-sm text-[#727272] truncate w-[95%] text-left">
-          {shortenAddress(data?.assetId, 6)}
+          {shortenAddress(data?.assetId, 4)}
         </div>
       </div>
 
