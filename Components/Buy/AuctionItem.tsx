@@ -58,7 +58,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
   };
 
   const now = new Date();
-  const maxDate = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+  const maxDate = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
 
   const isToday = endDate
     ? now.toDateString() === endDate.toDateString()
