@@ -73,6 +73,7 @@ export type PropertyData = {
   status?:number;
   type?:string;
   hasPlanningPermission?:string | null;
+  property?:any;
 };
 export type User = {
   KYCStatusId: number;
