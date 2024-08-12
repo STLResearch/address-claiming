@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { CloseIconWhite, SuccessIconwhite, CloseIcon } from "../Icons";
+import { CircledCloseIcon, SuccessIconwhite, CloseIcon } from "../Icons";
 import { getTransactionLink } from "@/hooks/utils";
 import Link from "next/link";
 import { PropertyData } from "@/types";
@@ -67,7 +67,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           {finalAns?.status === "Rent Successful" ? (
             <SuccessIconwhite />
           ) : (
-            <CloseIconWhite/>
+            <CircledCloseIcon/>
           )}
         </div>
         {finalAns?.status === "Rent Successful" ? (
