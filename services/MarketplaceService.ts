@@ -14,28 +14,32 @@ const MarketplaceService = () => {
     try {
       console.log('=======================================')
       const solanaWallet = new SolanaWallet(provider);
-      console.log(solanaWallet)
+      // console.log(solanaWallet)
       // solanaWallet.signTransaction()
 
       if (!callerAddress) return [];
       const response = await getRequest({
         uri: `/private/auction-house/get-auctionable-airspaces?page=${1}&limit=${10}`,
       });
-      console.log('response: ', response)
+      // console.log('response: ', response)
 
+      const walletKey = (await solanaWallet.requestAccounts())[0]
+      const tokenId = response?.data[1].layers[0].tokenId
 
       const createResp = await postRequest({
         uri: '/private/auction-house/generate-create-auction-tx',
         postData: {
-          assetId: '',
-          seller: '',
-          initialPrice: '',
-          secsDuration: ''
+          assetId: tokenId,
+          seller: walletKey,
+          initialPrice: 100,
+          secsDuration: 10000
         }
       })
+      console.log('createResp: ', createResp)
 
 
 
+      console.log('=======================================')
 
 
 
