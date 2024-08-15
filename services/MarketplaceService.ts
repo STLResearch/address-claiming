@@ -1,6 +1,7 @@
 import { AuctionListingI, AuctionSubmitI } from "@/types";
 import Service from "./Service";
 import { SolanaWallet } from "@web3auth/solana-provider";
+import { VersionedTransaction } from "@solana/web3.js";
 
 const MarketplaceService = () => {
   const { getRequest, postRequest, provider } = Service();
@@ -12,10 +13,9 @@ const MarketplaceService = () => {
     afterAssetId?: string
   ) => {
     try {
+
       console.log('=======================================')
       const solanaWallet = new SolanaWallet(provider);
-      // console.log(solanaWallet)
-      // solanaWallet.signTransaction()
 
       if (!callerAddress) return [];
       const response = await getRequest({
@@ -32,10 +32,26 @@ const MarketplaceService = () => {
           assetId: tokenId,
           seller: walletKey,
           initialPrice: 100,
-          secsDuration: 10000
+          secsDuration: 100000
         }
       })
-      console.log('createResp: ', createResp)
+      // console.log('createResp: ', createResp)
+
+      const serializedTx = createResp?.data.tx[0]
+      const tx = VersionedTransaction.deserialize(
+        new Uint8Array(Buffer.from(serializedTx, "base64"))
+      );
+      const userSignedTx = await solanaWallet.signTransaction(tx)
+
+
+      const txSigResp = await postRequest({
+        uri: '/private/auction-house/send-tx',
+        postData: {
+          serializedTx: Buffer.from(userSignedTx.serialize()).toString('base64')
+        }
+      })
+
+      console.log('txSigResp: ', txSigResp)
 
 
 
