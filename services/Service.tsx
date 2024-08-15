@@ -193,7 +193,7 @@ const Service = () => {
       toastError(error, suppressErrorReporting);
     }
   };
-  return { getRequest, postRequest, patchRequest, deleteRequest };
+  return { getRequest, postRequest, patchRequest, deleteRequest, provider };
 };
 
 export default Service;

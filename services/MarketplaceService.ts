@@ -1,8 +1,9 @@
 import { AuctionListingI, AuctionSubmitI } from "@/types";
 import Service from "./Service";
+import { SolanaWallet } from "@web3auth/solana-provider";
 
 const MarketplaceService = () => {
-  const { getRequest, postRequest } = Service();
+  const { getRequest, postRequest, provider } = Service();
 
   const getAuctionableProperties = async (
     callerAddress: string | undefined,
@@ -11,10 +12,35 @@ const MarketplaceService = () => {
     afterAssetId?: string
   ) => {
     try {
+      console.log('=======================================')
+      const solanaWallet = new SolanaWallet(provider);
+      console.log(solanaWallet)
+      // solanaWallet.signTransaction()
+
       if (!callerAddress) return [];
       const response = await getRequest({
-        uri: `/private/auction-house/get-auctionable-airspaces`,
+        uri: `/private/auction-house/get-auctionable-airspaces?page=${1}&limit=${10}`,
       });
+      console.log('response: ', response)
+
+
+      const createResp = await postRequest({
+        uri: '/private/auction-house/generate-create-auction-tx',
+        postData: {
+          assetId: '',
+          seller: '',
+          initialPrice: '',
+          secsDuration: ''
+        }
+      })
+
+
+
+
+
+
+
+
       if (!response) {
         return [];
       }
@@ -37,6 +63,7 @@ const MarketplaceService = () => {
   };
 
   const createAuction = async ({ postData }: { postData: AuctionListingI }) => {
+    console.log('=======================================')
     try {
       const response = await postRequest({
         uri: `/market/nft`,
@@ -81,6 +108,7 @@ const MarketplaceService = () => {
     limit: number = 10,
     searchParam: string | undefined
   ) => {
+    console.log('=======================================')
     try {
       const response = await getRequest({
         uri: `/market/nft/search?searchParam=${searchParam}&page=${page}&limit=${limit}`,
