@@ -84,8 +84,8 @@ const usePortfolioList = () => {
         } else if (activeTab === PortfolioTabEnum.BIDS) {
           const airspaceResp = await getBidsAndOffers(user?.blockchainAddress);
           console.log({ airspaceResp });
-          if (airspaceResp && airspaceResp.items) {
-            airspaces = airspaceResp.items;
+          if (airspaceResp) {
+            airspaces = airspaceResp;
           }
         } else {
           const airspaceResp = await getRejectedAirspaces(

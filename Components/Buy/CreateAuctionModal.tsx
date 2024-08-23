@@ -53,7 +53,18 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
   } = useAuction();
 
   useEffect(() => {
-    setAirspaces(airspaceList);
+    let auctionable: PropertyData[] = [];
+    for (let items of airspaceList) {
+      if (
+        items &&
+        items.layers &&
+        items.layers[0] &&
+        !items.layers[0].isCurrentlyInAuction
+      ) {
+        auctionable.push(items);
+      }
+    }
+    setAirspaces(auctionable);
   }, [airspaceList]);
 
   if (isMobile) {
