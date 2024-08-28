@@ -47,8 +47,9 @@ const useFetchAuctions = (
       }
 
       const newData = response;
+
       setAuctions((prevData) =>
-        page === 1 ? newData : [...prevData, ...newData]
+        page === 1 ? newData : [...(prevData || []), ...newData]
       );
       setHasMore(newData.length === limit);
     } catch (error) {
