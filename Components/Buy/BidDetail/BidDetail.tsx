@@ -7,7 +7,7 @@ import { AuctionDataI } from "@/types";
 import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
 import { shortenAddress } from "@/utils";
 import { useEffect, useState } from "react";
-import BidsViewModal from "./BidsView";
+
 import Accordion from "./Accordion";
 import AirspaceHistory from "./AirspaceHistory";
 import CustomTable from "./CustomTable";
