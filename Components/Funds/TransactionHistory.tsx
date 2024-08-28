@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { MagnifyingGlassIcon, RefreshIcon } from '../../Components/Icons';
-import { useMobile } from '@/hooks/useMobile';
-import { Connection, PublicKey } from '@solana/web3.js';
-import moment from 'moment';
-import Link from 'next/link';
+import React, { useState, useEffect, useContext } from "react";
+import { MagnifyingGlassIcon, RefreshIcon } from "../../Components/Icons";
+import { useMobile } from "@/hooks/useMobile";
+import { Connection, PublicKey } from "@solana/web3.js";
+import moment from "moment";
+import Link from "next/link";
 import { Web3authContext } from "@/providers/web3authProvider";
-import useAuth from '@/hooks/useAuth';
-import { formatNumber } from '@/utils';
+import useAuth from "@/hooks/useAuth";
+import { formatNumber } from "@/utils";
 
 interface TransactionListI {
   time: string;
@@ -22,7 +22,10 @@ export interface TransactionHistoryPropsI {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryPropsI) => {
+const TransactionHistory = ({
+  isLoading,
+  setIsLoading,
+}: TransactionHistoryPropsI) => {
   const limit: number = 10;
   const targetRpcUrl = process.env.NEXT_PUBLIC_RPC_TARGET as string;
   const minterAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS as string;
@@ -34,8 +37,10 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
 
   const [isNext, setIsNext] = useState<boolean>(true);
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [transactionList, setTransactionList] = useState<TransactionListI[]>([]);
-  const [searchQuery, setSearchQuery] = useState("")
+  const [transactionList, setTransactionList] = useState<TransactionListI[]>(
+    []
+  );
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -46,14 +51,20 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
         const blockchainAddress = user?.blockchainAddress;
         let options = {};
 
-        const lastTxHash = transactionList.length > 0 ? transactionList.at(-1)?.lastTransactionSignature : "";
+        const lastTxHash =
+          transactionList.length > 0
+            ? transactionList.at(-1)?.lastTransactionSignature
+            : "";
         if (isNext) {
           options = {
             limit,
-            ...(lastTxHash && { before: lastTxHash })
+            ...(lastTxHash && { before: lastTxHash }),
           };
         } else {
-          const firstTxHash = transactionList.length > 0 ? transactionList.at(-1)?.firstTransactionSignature : "";
+          const firstTxHash =
+            transactionList.length > 0
+              ? transactionList.at(-1)?.firstTransactionSignature
+              : "";
 
           options = {
             ...(firstTxHash && { until: firstTxHash }),
@@ -68,35 +79,54 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
           options
         );
         const txs = _txs.slice(-limit);
-        const signatureList = txs.map(transaction => transaction.signature);
-        const transactionDetails = await connection.getParsedTransactions(signatureList, { maxSupportedTransactionVersion: 0 });
+        const signatureList = txs.map((transaction) => transaction.signature);
+        const transactionDetails = await connection.getParsedTransactions(
+          signatureList,
+          { maxSupportedTransactionVersion: 0 }
+        );
         const data = transactionDetails?.map((item, idx) => {
-          const preTokenBalObject = item?.meta?.preTokenBalances?.filter((item) => {
-            return item.owner == blockchainAddress && item.mint == minterAddress;
-          });
-          const postTokenBalObject = item?.meta?.postTokenBalances?.filter((item) => {
-            return item.owner == blockchainAddress && item.mint == minterAddress;
-          });
+          const preTokenBalObject = item?.meta?.preTokenBalances?.filter(
+            (item) => {
+              return (
+                item.owner == blockchainAddress && item.mint == minterAddress
+              );
+            }
+          );
+          const postTokenBalObject = item?.meta?.postTokenBalances?.filter(
+            (item) => {
+              return (
+                item.owner == blockchainAddress && item.mint == minterAddress
+              );
+            }
+          );
           let difference = 0;
           if (preTokenBalObject || postTokenBalObject) {
-            
-            if ((preTokenBalObject && preTokenBalObject.length >0) && (postTokenBalObject && postTokenBalObject.length >0)) {
-              
-              difference = (postTokenBalObject[0]?.uiTokenAmount?.uiAmount as number) - (preTokenBalObject[0]?.uiTokenAmount?.uiAmount as number);
-            } else if ((!preTokenBalObject || preTokenBalObject.length <=0) && postTokenBalObject ) {
-              
-              difference = postTokenBalObject[0]?.uiTokenAmount?.uiAmount as number;
+            if (
+              preTokenBalObject &&
+              preTokenBalObject.length > 0 &&
+              postTokenBalObject &&
+              postTokenBalObject.length > 0
+            ) {
+              difference =
+                (postTokenBalObject[0]?.uiTokenAmount?.uiAmount as number) -
+                (preTokenBalObject[0]?.uiTokenAmount?.uiAmount as number);
+            } else if (
+              (!preTokenBalObject || preTokenBalObject.length <= 0) &&
+              postTokenBalObject
+            ) {
+              difference = postTokenBalObject[0]?.uiTokenAmount
+                ?.uiAmount as number;
             } else if (preTokenBalObject && preTokenBalObject.length > 0) {
-              
-              difference = (preTokenBalObject[0]?.uiTokenAmount?.uiAmount as number);
+              difference = preTokenBalObject[0]?.uiTokenAmount
+                ?.uiAmount as number;
             }
           }
-          difference=parseFloat(difference.toPrecision(5))
-          let type = difference > 0 ? 'Deposit' : 'Withdraw';
+          difference = parseFloat(difference.toPrecision(5));
+          let type = difference > 0 ? "Deposit" : "Withdraw";
 
           item?.transaction.message.accountKeys?.forEach((item) => {
             if (item.pubkey.toString() === rentalFeePublicKey) {
-              type = 'Rental Fee';
+              type = "Rental Fee";
             }
           });
 
@@ -104,7 +134,10 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
             time: moment.unix(item?.blockTime as number).format("MMM D, YYYY"),
             transactionHash: signatureList[idx],
             type,
-            difference: difference.toString() == 'NaN' ? '1st transaction' : formatNumber(difference),
+            difference:
+              difference.toString() == "NaN"
+                ? "1st transaction"
+                : formatNumber(difference),
             firstTransactionSignature: signatureList[0],
             lastTransactionSignature: signatureList[signatureList.length - 1],
           };
@@ -112,7 +145,6 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
 
         setTransactionList(data);
         setIsLoading(false);
-
       } catch (error) {
         console.error(error);
         setIsLoading(false);
@@ -121,7 +153,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
   }, [web3auth?.status, pageNumber, user?.blockchainAddress, isNext]);
 
   const handleNextPage = () => {
-    if (transactionList?.length < (limit - 1)) return;
+    if (transactionList?.length < limit - 1) return;
     setPageNumber((prevPageNumber) => prevPageNumber + 1);
     setIsNext(true);
   };
@@ -146,29 +178,51 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
 
     // Filter transactions based on search query
     const filteredTransactions = trimmedSearchQuery
-      ? transactionList.filter(transaction =>
-        transaction.transactionHash.toLowerCase().includes(trimmedSearchQuery) ||
-        transaction.difference.toString().toLowerCase().includes(trimmedSearchQuery) ||
-        transaction.time.toString().toLowerCase().includes(trimmedSearchQuery) ||
-        transaction.type.toString().toLowerCase().includes(trimmedSearchQuery)
-      )
+      ? transactionList.filter(
+          (transaction) =>
+            transaction.transactionHash
+              .toLowerCase()
+              .includes(trimmedSearchQuery) ||
+            transaction.difference
+              .toString()
+              .toLowerCase()
+              .includes(trimmedSearchQuery) ||
+            transaction.time
+              .toString()
+              .toLowerCase()
+              .includes(trimmedSearchQuery) ||
+            transaction.type
+              .toString()
+              .toLowerCase()
+              .includes(trimmedSearchQuery)
+        )
       : transactionList;
 
-    return filteredTransactions.map(item => (
+    return filteredTransactions.map((item) => (
       <tr key={item.transactionHash}>
-        <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.time}</td>
-        <td className='py-6 text-[#222222] text-clip px-5 w-2/12 underline whitespace-nowrap'>
-          <Link href={`https://explorer.solana.com/tx/${item.transactionHash}`} target='_blank'>
+        <td className="py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap">
+          {item.time}
+        </td>
+        <td className="py-6 text-[#222222] text-clip px-5 w-2/12 underline whitespace-nowrap">
+          <Link
+            href={`https://explorer.solana.com/tx/${item.transactionHash}`}
+            target="_blank"
+          >
             {item.transactionHash.substring(0, 25)}
           </Link>
         </td>
-        <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.type}</td>
-        <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.difference}</td>
-        <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>Settled</td>
+        <td className="py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap">
+          {item.type}
+        </td>
+        <td className="py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap">
+          {item.difference}
+        </td>
+        <td className="py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap">
+          Settled
+        </td>
       </tr>
     ));
   };
-
 
   return (
     <div className="flex flex-col gap-5 flex-1 min-w-[89%] sm:min-w-[600px]">
@@ -176,7 +230,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
         <p className="flex font-medium text-xl pt-[14px] md:px-0 px-2 pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
           Transaction History
         </p>
-        <div className='flex md:px-0 px-2 justify-end items-center md:w-full '>
+        <div className="flex md:px-0 px-2 justify-end items-center md:w-full ">
           <div
             className="relative px-[22px] md:py-[16px] py-3 bg-white rounded-lg"
             style={{ border: "1px solid #87878D" }}
@@ -194,7 +248,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
             </div>
           </div>
           <div
-            className='w-12 h-12 md:h-12  md:w-12 cursor-pointer  bg-[#0653EA] text-center font-medium ml-5 p-1 rounded-md'
+            className="w-12 h-12 md:h-12  md:w-12 cursor-pointer  bg-[#0653EA] text-center font-medium ml-5 p-1 rounded-md"
             onClick={handleReset}
           >
             <RefreshIcon />
@@ -217,26 +271,26 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
                   <th className="py-5 px-5 text-start">Status</th>
                 </tr>
               </thead>
-              <tbody>
-                {renderTransactionRows()}
-              </tbody>
+              <tbody>{renderTransactionRows()}</tbody>
             </table>
             <div className="flex items-center justify-end mt-8 w-[94%]">
               <div className="mx-auto flex gap-[11.71px]">
                 <div className={` text-[#87878D] text-base font-normal`}>
-                  {transactionList.length === 0 && !isLoading && "No transactions found."}
+                  {transactionList.length === 0 &&
+                    !isLoading &&
+                    "No transactions found."}
                 </div>
               </div>
               {transactionList.length > 0 && (
                 <>
                   <div
                     onClick={handlePrevPage}
-                    className={`${pageNumber === 1 ? 'text-[#87878D] cursor-not-allowed' : 'text-[#0653EA] cursor-pointer'} text-base font-normal mx-5`}
+                    className={`${pageNumber === 1 ? "text-[#87878D] cursor-not-allowed" : "text-[#0653EA] cursor-pointer"} text-base font-normal mx-5`}
                   >
                     Previous
                   </div>
                   <div
-                    className={`${transactionList.length < limit - 1 ? 'text-[#87878D] cursor-not-allowed' : 'text-[#0653EA] cursor-pointer'} text-base font-normal mx-1`}
+                    className={`${transactionList.length < limit - 1 ? "text-[#87878D] cursor-not-allowed" : "text-[#0653EA] cursor-pointer"} text-base font-normal mx-1`}
                     onClick={handleNextPage}
                   >
                     Next
