@@ -26,6 +26,7 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
   txHash,
   setShowDetail,
 }) => {
+  console.log({ data });
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement | null>(null);
 
