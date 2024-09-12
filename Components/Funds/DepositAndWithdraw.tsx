@@ -60,7 +60,6 @@ const DepositAndWithdraw = ({
   }
 
   const handleWithdraw = async () => {
-    console.log('here')
     if (selectedMethod.name === "Ramp") {
       handleOnAndOffRamp()
     }
