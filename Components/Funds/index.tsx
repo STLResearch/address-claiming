@@ -22,7 +22,6 @@ const Funds = () => {
     const { userUSDWalletBalance } = state.userReducer;
     return { userUSDWalletBalance };
   });
-  console.log({userUSDWalletBalance})
   const { isMobile } = useMobile();
   
 
