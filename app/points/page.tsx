@@ -32,7 +32,7 @@ const Points = () => {
   const { user, web3authStatus } = useAuth();
   const { retrieveUserReferralData } = UserService();
   const { getUserRewardsInfo } = RewardService();
-  const sections = ["The Program", "Share", "My Referrals", "Leaderboard"];
+  const sections = ["The Program", "Share", "History", "Leaderboard"];
 
   const [userRewards, setUserRewards] = useState<UserRewards | null>(null);
 
