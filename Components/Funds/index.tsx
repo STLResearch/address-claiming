@@ -12,11 +12,17 @@ import TransactionHistory from "./TransactionHistory";
 import Head from "next/head";
 import Sidebar from "../Shared/Sidebar";
 import { useMobile } from "@/hooks/useMobile";
+import { useAppSelector } from "../../redux/store";
 
 const Funds = () => {
   const [activeSection, setActiveSection] = useState<number>(0);
   const { user } = useAuth();
   const [tokenBalance, setTokenBalance] = useState<number>(0);
+  const { userUSDWalletBalance } = useAppSelector((state) => {
+    const { userUSDWalletBalance } = state.userReducer;
+    return { userUSDWalletBalance };
+  });
+  console.log({userUSDWalletBalance})
   const { isMobile } = useMobile();
   
 
@@ -38,7 +44,7 @@ const Funds = () => {
                   activeSection={activeSection}
                   setActiveSection={setActiveSection}
                   setTokenBalance={setTokenBalance}
-                  tokenBalance={tokenBalance}
+                  tokenBalance={parseFloat(userUSDWalletBalance.amount)}
                 />
               </div>
               <TransactionHistory />
