@@ -38,7 +38,7 @@ const UserBalanceTable: React.FC = () => {
         <thead>
             <tr> 
             <th className="border-b px-4 py-4 text-left">User ID</th>
-            <th className="border-b px-4 py-4 text-right">Balance</th> {/* Align header to the right */}
+            <th className="border-b px-4 py-4 text-right">Balance</th>
             </tr>
         </thead>
         <tbody>
