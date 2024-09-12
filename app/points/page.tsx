@@ -18,6 +18,7 @@ import ReferralActivities from "@/Components/Referral/ReferralActivities";
 import RewardService from "@/services/RewardService";
 import { UserRewards } from "@/types";
 import ReferralHistoryTable from "@/Components/Referral/ReferralHistoryTable";
+import UserBalanceTable from "@/Components/Referral/Leaderboard";
 
 const Points = () => {
   const [fetchingCode, setFetchingCode] = useState<boolean>(false);
@@ -31,7 +32,7 @@ const Points = () => {
   const { user, web3authStatus } = useAuth();
   const { retrieveUserReferralData } = UserService();
   const { getUserRewardsInfo } = RewardService();
-  const sections = ["The Program", "Share", "My Referrals"];
+  const sections = ["The Program", "Share", "My Referrals", "Leaderboard"];
 
   const [userRewards, setUserRewards] = useState<UserRewards | null>(null);
 
@@ -97,15 +98,15 @@ const Points = () => {
               <div className="flex flex-col items-center">
                 {!isMobile && (
                 <div className="flex  gap-10 border-b-4 border-[#D3D3D3] w-[95%]">
-                {['The Program', 'Share Referral Link', 'Your Referral History'].map((item, index) => (
+                {['The Program', 'Share Referral Link', 'Your Referral History', ' Leaderboard'].map((item, index) => (
                   <div
                   key={index}
                   onClick={() => handleClick(index)}
-                  className=" text-[#222222] text-[16px] relative px-8 py-1.5 cursor-pointer transition ease-linear delay-75"
+                  className="text-[#7E939A]  text-[16px] relative px-8 py-1.5 cursor-pointer transition ease-linear delay-75"
                 >
                   <span>{item}</span>
                   {activeIndex === index && (
-                    <div className="absolute bottom-[-4px] left-0 right-0 h-1 bg-[#0653EA]"></div>
+                    <div className="absolute bottom-[-4px] left-0 right-0 h-1 bg-[#0653EA] text-[#222222] "></div>
                   )}
                 </div>
               ))}
@@ -142,6 +143,11 @@ const Points = () => {
                       />
                     </div>
                   </div>
+                </div>
+                }
+                {activeIndex === 3 && 
+                  <div className="container mx-auto p-4">
+                    <UserBalanceTable />
                 </div>
                 }
                 </div>  
