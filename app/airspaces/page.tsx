@@ -5,7 +5,7 @@ import { useMobile } from "../../hooks/useMobile";
 import PropertiesService from "../../services/PropertiesService";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useState } from "react";
-import mapboxgl, { LngLat } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import { toast } from "react-toastify";
 import { removePubLicUserDetailsFromLocalStorage, removePubLicUserDetailsFromLocalStorageOnClose } from "../../helpers/localstorage";
 import axios from "axios";
@@ -133,9 +133,6 @@ const Airspaces: React.FC = () => {
     })();
   }, [user]);
 
-  if (!user) {
-    return <Spinner />;
-  }
 
   //removes cached airspaceData when address is in coOrdinates
   useLayoutEffect(() => {
@@ -150,7 +147,6 @@ const Airspaces: React.FC = () => {
   // new map is created if not rendered
   useEffect(() => {
     if (map) return;
-    if (!user) return;
 
     const createMap = () => {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
@@ -642,7 +638,7 @@ const Airspaces: React.FC = () => {
             <MyMobileAirspacesPage setShowAirspacePage={setShowAirspacePage} airspaces={airspaces} />
           )}
 
-          {isMobile && showMobileMap && !showAirspacePage && (
+          {isMobile && showMobileMap && !showAirspacePage && user && (
             <div onClick={() => { setShowAirspacePage(true) }} className='flex fixed bottom-[76px] left-0 w-full z-40 bg-white'>
               <div className="bg-white w-full p-4 shadow-md flex items-center">
                 <div className="flex items-center justify-between  gap-8 w-[375px] h-[50px] px-4">
