@@ -38,7 +38,7 @@ const DepositAndWithdraw = ({
   const { user } = useAuth();
   const { createStripe } = StripeService();
   const { provider } = useContext(Web3authContext) as Web3authContextType
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
   const [amount, setAmount] = useState<string>('');

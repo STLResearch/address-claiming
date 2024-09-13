@@ -221,6 +221,7 @@ const TransactionHistory = () => {
             <div className="flex items-center justify-end mt-8 w-[94%]">
               <div className="mx-auto flex gap-[11.71px]">
                 <div className={` text-[#87878D] text-base font-normal`}>
+                  {isLoading && "Loading transaction history..."}
                   {transactionList.length === 0 && !isLoading && "No transactions found."}
                 </div>
               </div>
