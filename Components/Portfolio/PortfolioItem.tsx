@@ -5,11 +5,13 @@ import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import AdditionalDocuments from "./AdditionalDocuments";
 import { RequestDocumentStatus } from "@/types";
 import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
+import CancelClaimModal from "./CancelClaimModal";
 
-const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, requestDocument }) => {
+const PortfolioItem = ({ airspaceName, tags, type, selectAirspace,setUploadedDoc, selectedAirspace,  requestDocument }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false)
+  const [showCancelModal, setShowCancelModal] = useState(false)
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -17,7 +19,11 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
 
   const closePopup = () => {
     setShowPopup(false);
-  };
+  }
+const handleAirspace = () => {
+  selectAirspace()
+  setShowCancelModal(true)
+}
   const documentStatus = checkDocumentStatus(requestDocument);
   return (
     <div
@@ -55,6 +61,14 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
               Review Offer
             </div>
           )}
+
+         <div onClick={handleAirspace} className="bg-[#4285F4] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
+            Cancel Claim
+          </div>
+
+           {showCancelModal && (
+             <CancelClaimModal selectAirspace={selectAirspace} airspace={selectedAirspace} setShowCancelModal={setShowCancelModal}/>
+           )}
 
 
           {(documentStatus === 'NOT_SUBMITTED' && !underReview) &&
@@ -104,6 +118,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
             <ChevronRightIcon />
           </div>
         </div>
+       
       </div>
 
       {(documentStatus ==='SUBMITTED' || underReview) && <UploadedDocuments requestDocument={requestDocument} />}

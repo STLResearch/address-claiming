@@ -8,6 +8,7 @@ import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Modal from "../Portfolio/Modal";
 import { PropertyData, StatusTypes } from "@/types";
+import CancelClaimModal from "./CancelClaimModal";
 
 interface PropsI {
   title: string;
@@ -43,12 +44,15 @@ const PortfolioList = ({ title, selectAirspace, selectedAirspace, onCloseModal, 
   }, [user?.KYCStatusId])
 
 
+  console.log(selectedAirspace, "ffffffffffff")
 
   return (
     <>
       {selectedAirspace !== null && (
         <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} setAirspaceList={setAirspaceList} />
       )}
+      
+      
       <div
         className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -130,6 +134,7 @@ const PortfolioList = ({ title, selectAirspace, selectedAirspace, onCloseModal, 
                     requestDocument={airspace?.requestDocument}
                     selectAirspace={() => selectAirspace(airspace)}
                     setUploadedDoc={setUploadedDoc}
+                    selectedAirspace={selectedAirspace}
                   />
                 ))
               ) : (

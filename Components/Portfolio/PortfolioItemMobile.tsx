@@ -5,12 +5,14 @@ import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import UploadedDocuments from "./UploadedDocuments";
 import { RequestDocumentStatus } from "@/types";
 import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
+import CancelClaimModal from "./CancelClaimModal";
 
-const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, requestDocument }) => {
+const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc,selectedAirspace, requestDocument }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false)
   const [underReview, setUnderReview] = useState<boolean>(false);
-
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  
   const handleButtonClick = () => {
     setShowPopup(true);
   };
@@ -18,6 +20,11 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
   const closePopup = () => {
     setShowPopup(false);
   };
+
+  const handleAirspace = () => {
+    selectAirspace()
+    setShowCancelModal(true)
+  }
   const documentStatus = checkDocumentStatus(requestDocument);
 
   return (
@@ -57,6 +64,13 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
                   Review Offer
                 </div>
               )}
+          <div onClick={handleAirspace} className="bg-[#4285F4] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
+            Cancel Claim
+          </div>
+
+           {showCancelModal && (
+             <CancelClaimModal selectAirspace={selectAirspace} airspace={selectedAirspace} setShowCancelModal={setShowCancelModal}/>
+           )}
               {((documentStatus === 'SUBMITTED') || (underReview)) && (
                 <div className="flex justify-center items-center gap-2">
                   <div className="w-6 h-6">
