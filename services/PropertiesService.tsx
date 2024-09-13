@@ -64,11 +64,10 @@ const PropertiesService = () => {
     }
   }
 
-  const deleteProperty = async ({ postData }: { postData: any }) => {
+  const unclaimProperty = async (propertyId: number) => {
     try {
-      const response = await deleteRequest({
-        uri: `/private/properties/delete`,
-        postData,
+      const response = await patchRequest({
+        uri: `/private/properties/unclaim-property/${propertyId}`,
       })
       return response?.data;
     } catch (error) {
@@ -109,7 +108,7 @@ const PropertiesService = () => {
     getPropertyById,
     claimProperty,
     updateClaimedProperty,
-    deleteProperty,
+    unclaimProperty,
     getClaimedPropertiesByUserAddress,
     getRentedTimes,
     editAirSpaceAddress
