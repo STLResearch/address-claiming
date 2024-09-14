@@ -76,6 +76,20 @@ export default function RootLayout({
                 s1.setAttribute('crossorigin','*');
                 s0.parentNode.insertBefore(s1,s0);
                 })();
+              Tawk_API.customStyle = {
+              visibility : {
+                mobile : {
+                  position : 'br',
+                  xOffset : 10,
+                  yOffset : 80
+                },
+                bubble : {
+                  rotate : '0deg',
+                  xOffset : -20,
+                  yOffset : 0
+                }
+              }
+            };
               `,
             }}
           />
