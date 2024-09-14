@@ -91,7 +91,7 @@ const AuthForm: FC<AuthFormProps> = ({
    <div className="bg-[#F6FAFF]  max-sm:bg-[white]  md:w-full md:h-full  w-screen h-screen flex items-center justify-center mx-auto">
       {isMobile && ( <Sidebar />)}
     <form
-      className=" w-full md:w-[449px]  flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] justify-center m-auto"
+      className=" w-full md:w-[449px]  flex flex-col items-center gap-[15px] py-[40px] px-[30px] justify-center m-auto"
       id="login"
       name="login"
       onSubmit={(e) => {
@@ -199,7 +199,7 @@ const AuthForm: FC<AuthFormProps> = ({
       <div style={{ width: "100%", height: "1px", background: "#00000033" }} />
       <p
         onClick={handleSwitchingBetweenLoginAndRegister}
-        className="text-[#87878D]"
+        className="text-[#87878D] mb-20 "
       >
         {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
         <span className="cursor-pointer font-bold text-[#0653EA]">
