@@ -91,7 +91,7 @@ const AuthForm: FC<AuthFormProps> = ({
    <div className="bg-[#F6FAFF]  max-sm:bg-[white]  md:w-full md:h-full  w-screen h-screen flex items-center justify-center mx-auto">
       {isMobile && ( <Sidebar />)}
     <form
-      className=" w-full md:w-[449px]  flex flex-col items-center gap-[15px] py-[40px] px-[30px] justify-center m-auto"
+      className=" w-full md:w-[449px]  flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] justify-center m-auto"
       id="login"
       name="login"
       onSubmit={(e) => {
