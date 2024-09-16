@@ -8,7 +8,7 @@ import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from "@solana/we
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { useQRCode } from "next-qrcode";
 import { toast } from "react-toastify";
-import { Tooltip, CopyIcon, WarningIcon } from "../Icons";
+import { Tooltip, CopyIcon, WarningIcon, QuestionMarkIcon } from "../Icons";
 import Accordion from "./Accordion";
 import { DepositAndWithdrawProps, Web3authContextType, ConnectionConfig, PaymentMethod } from "../../types";
 import CopyToClipboard from "react-copy-to-clipboard";
@@ -22,6 +22,7 @@ import StripeOnrampComponent from "./Stripe/StripeComponent";
 import StripeService from '@/services/StripeService'
 import Backdrop from "../Backdrop";
 import Spinner from "../Spinner";
+import Link from "next/link";
 const defaultPaymentMethod = {
   icon: "/images/bank-note-arrow.svg",
   name: "Native",
@@ -498,7 +499,17 @@ const DepositAndWithdraw = ({
           }
         </>
       )}
-
+    {
+      <Link target="_blank" href="https://help.sky.trade/article/how-to-buy-usdc-on-the-solana-network-a-simple-guide">
+       <div className="flex items-center gap-[5px]">
+          <div className="w-6 h-6">
+            <QuestionMarkIcon />
+          </div>
+           <p className="text-[#0000FF] text-base ">Simple Guide to Buy USDC on the Solana Network</p>
+      </div>
+       </Link>
+    }
+ 
       {
         showLIFI &&
         <div>
