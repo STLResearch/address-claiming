@@ -112,7 +112,6 @@ const Airspaces: React.FC = () => {
   // new map is created if not rendered
   useEffect(() => {
     if (map) return;
-    if (!user) return;
 
     const createMap = () => {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
