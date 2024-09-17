@@ -487,6 +487,7 @@ const Airspaces: React.FC = () => {
       if (errors.length > 0) {
         setErrorMessages(errors);
         setShowFailurePopUp(true);
+        setShowClaimModal(false);
         return;
       }
 
