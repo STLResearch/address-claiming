@@ -16,7 +16,7 @@ export const initializeTransak = ({
   onFailure,
 }: InitializeTransakProps) => {
   const transakConfig: TransakConfig = {
-    apiKey: String(process.env.NEXT_PUBLIC_TRANSAK_API_KEY),
+    apiKey: String(process.env.NEXT_PUBLIC_TRANSAK_PUBLISHABLE_KEY),
     environment:
       String(process.env.NEXT_PUBLIC_ENVIRONMENT) === 'PRODUCTION'
         ? Transak.ENVIRONMENTS.PRODUCTION

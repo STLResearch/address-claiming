@@ -8,7 +8,7 @@ export default function StripeOnrampComponent({
   showOnramp,
   setShowOnramp,
 }) {
-  const apiKey = process.env.NEXT_PUBLIC_STRIPE_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
   if (!apiKey) {
     throw new Error("Stripe Onramp Publishable Key is missing");
   }
