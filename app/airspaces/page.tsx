@@ -51,7 +51,7 @@ const Airspaces: React.FC = () => {
   const [showHowToModal, setShowHowToModal] = useState<boolean>(false);
   // variables
   const [address, setAddress] = useState<string>("");
-  const [addresses, setAddresses] = useState([]);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [flyToAddress, setFlyToAddress] = useState<string>("");
   const [coordinates, setCoordinates] = useState({
     longitude: "",
@@ -616,6 +616,7 @@ const Airspaces: React.FC = () => {
                         onClick={() => {
                           setShowClaimModal(true);
                           setIsLoading(true);
+                          handleSelectAddress(addresses[0].place_name)
                         }}
                         className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
                         style={{ maxWidth: "400px" }}
@@ -676,7 +677,7 @@ const Airspaces: React.FC = () => {
                       setData({ ...defaultData })
 
                     }}
-                    data={data}
+                    data={{...data, address}}
                     setData={setData}
                     onClaim={onClaim}
                     claimButtonLoading={claimButtonLoading}
@@ -718,7 +719,7 @@ const Airspaces: React.FC = () => {
                       setIsLoading(false);
                       setData({ ...defaultData })
                     }}
-                    data={data}
+                    data={{...data, address}}
                     setData={setData}
                     onClaim={onClaim}
                     claimButtonLoading={claimButtonLoading}

@@ -33,6 +33,8 @@ export const ClaimModal = ({
   setDontShowAddressOnInput
 }: PropsI) => {
 
+  console.log({ data })
+
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   const searchParams = useSearchParams();
   const endOfDivRef = useRef(null);
