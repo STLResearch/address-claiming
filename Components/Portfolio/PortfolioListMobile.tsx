@@ -1,19 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import Spinner from "../Spinner";
 import PortfolioItemMobile from "./PortfolioItemMobile";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import { PropertyData } from "@/types";
+import CancelClaimModal from "./CancelClaimModal";
 
 interface PropsI {
   selectAirspace: (data: PropertyData) => void;
   setUploadedDoc: any;
   uploadedDoc: any;
+  selectedAirspace:any;
+  setSelectedAirspace:any;
 }
 
 
-const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: PropsI) => {
+const PortfolioListMobile = ({setSelectedAirspace, selectAirspace, setUploadedDoc, selectedAirspace,uploadedDoc }: PropsI) => {
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  
   const {
     handleTabSwitch,
     handlePrevPage,
@@ -21,9 +26,15 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
     loading,
     airspaceList,
     pageNumber,
-    activeTab
+    activeTab,
+    setAirspaceList,
+    refetchAirspaceRef
   } = usePortfolioList();
   return (
+<>
+    {showCancelModal && (
+      <CancelClaimModal airspace={selectedAirspace} setShowCancelModal={setShowCancelModal} setSelectedAirspace={setSelectedAirspace} setAirspaceList={setAirspaceList}  />
+    )}
     <div className="overflow-x-hidden mb-24">
       <div
         className="flex items-center overflow-x-scroll border-b border-[#5D7285]/50 gap-12"
@@ -86,6 +97,8 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
                 requestDocument={airspace?.requestDocument}
                 selectAirspace={() => selectAirspace(airspace)}
                 setUploadedDoc={setUploadedDoc}
+                setShowCancelModal={setShowCancelModal} 
+                  refetchAirspaceRef={refetchAirspaceRef}  
                 />
               ))
             ) : (
@@ -116,6 +129,7 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
         </div>
       )}
     </div>
+    </>
   );
 };
 export default PortfolioListMobile;

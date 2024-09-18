@@ -1,19 +1,36 @@
 "use client";
 
-import React, { Fragment, useState } from "react";
+import React, { Dispatch, Fragment, SetStateAction, useState } from "react";
 import Image from "next/image";
 import {  CloseIconBlack, LocationPointIcon } from "../Icons";
+import { PropertyData, StatusTypes } from "@/types";
+import PropertiesService from "@/services/PropertiesService";
 
 
 interface ModalProps {
   airspace: any;
   setShowCancelModal: React.Dispatch<React.SetStateAction<boolean>>;
-  selectAirspace: any
+  setAirspaceList: React.Dispatch<React.SetStateAction<PropertyData[]>>
+  setSelectedAirspace: Dispatch<SetStateAction<null>>
 }
 
-const CancelClaimModal = ({airspace,setShowCancelModal, selectAirspace}: ModalProps) => {
+const CancelClaimModal = ({airspace,setShowCancelModal,setSelectedAirspace,setAirspaceList}: ModalProps) => {
 
   const [inputValue, setInputValue] = useState(airspace?.address);
+  const { unclaimProperty } = PropertiesService();
+
+  const handleCancelBtn = () => {
+    setSelectedAirspace(null)
+    setShowCancelModal(false)
+  }
+  const handleUnclaim = async () => {
+      await unclaimProperty(airspace?.id) 
+      setAirspaceList((prev) => {
+        return prev.filter(p => p.id !== airspace?.id);
+    });
+      setSelectedAirspace(null)
+      setShowCancelModal(false)
+  }
 
   return (
     <Fragment>
@@ -25,7 +42,7 @@ const CancelClaimModal = ({airspace,setShowCancelModal, selectAirspace}: ModalPr
         <h2 className="text-light-black text-center font-medium text-xl w-full">
           Cancel Claim
         </h2>
-        <div  onClick={() => {selectAirspace(true); setShowCancelModal(false)}} className="absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer">
+        <div  onClick={() =>(setShowCancelModal(false))}  className="absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer">
           <CloseIconBlack />
         </div>
       </div>
@@ -55,11 +72,11 @@ const CancelClaimModal = ({airspace,setShowCancelModal, selectAirspace}: ModalPr
       />
        </div>
       <div className="flex gap-[20px] md:mt-[15px] mt-auto -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 py-[16px] md:py-0">
-        <button   onClick={() => {selectAirspace(true); setShowCancelModal(false)}}  className="text-[11.89px] flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center border border-[#0653EA] hover:bg-[#0653EA] hover:text-white">
+        <button onClick={handleCancelBtn} className="text-[11.89px] flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center border border-[#0653EA] hover:bg-[#0653EA] hover:text-white">
         No, I want to keep my claim
         </button>
       
-          <button  className="text-[11.89px] flex-1 text-[#0653EA] rounded-[5px] bg-white text-center px-[10px] cursor-pointer flex items-center justify-center border border-[#0653EA] hover:bg-[#0653EA] hover:text-white">
+          <button onClick={handleUnclaim} className="text-[11.89px] flex-1 text-[#0653EA] rounded-[5px] bg-white text-center px-[10px] cursor-pointer flex items-center justify-center border border-[#0653EA] hover:bg-[#0653EA] hover:text-white">
             Yes, I confirm I want to cancel my claim
           </button>
         </div>

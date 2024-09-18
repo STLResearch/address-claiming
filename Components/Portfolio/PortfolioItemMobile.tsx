@@ -7,11 +7,10 @@ import { RequestDocumentStatus } from "@/types";
 import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
 import CancelClaimModal from "./CancelClaimModal";
 
-const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc,selectedAirspace, requestDocument }) => {
+const PortfolioItemMobile = ({setShowCancelModal,refetchAirspaceRef, airspaceName, tags, type, selectAirspace, setUploadedDoc,requestDocument }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false)
   const [underReview, setUnderReview] = useState<boolean>(false);
-  const [showCancelModal, setShowCancelModal] = useState(false)
   
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -24,6 +23,7 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
   const handleAirspace = () => {
     selectAirspace()
     setShowCancelModal(true)
+    refetchAirspaceRef.current = true
   }
   const documentStatus = checkDocumentStatus(requestDocument);
 
@@ -45,7 +45,7 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
           <div className="">
             <div className="flex justify-between mt-2 gap-[10px] items-center w-full">
               {!!tags[0] && (
-                <div onClick={selectAirspace} className="w-20 bg-[#DBDBDB] text-[#222222] text-sm font-normal p-2 cursor-pointer rounded-[3px]">
+                <div onClick={selectAirspace} className="w-20 h-8 bg-[#DBDBDB] text-[#222222] text-sm font-normal p-2 cursor-pointer rounded-[3px] flex items-center justify-center">
                   {type === "land" ? "On Claim" : "On Rent"}
                 </div>
               )}
@@ -64,13 +64,12 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
                   Review Offer
                 </div>
               )}
-          <div onClick={handleAirspace} className="bg-[#4285F4] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
-            Cancel Claim
-          </div>
+             <div 
+              onClick={handleAirspace} 
+              className="bg-[#4285F4] text-white text-sm font-normal px-2 cursor-pointer rounded-[3px] w-28 h-8 flex items-center justify-center">
+              Cancel Claim
+             </div>
 
-           {showCancelModal && (
-             <CancelClaimModal selectAirspace={selectAirspace} airspace={selectedAirspace} setShowCancelModal={setShowCancelModal}/>
-           )}
               {((documentStatus === 'SUBMITTED') || (underReview)) && (
                 <div className="flex justify-center items-center gap-2">
                   <div className="w-6 h-6">
@@ -104,7 +103,7 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
                  
                 </div>
               )}
-            </div>
+         </div>
             {
               <div>
               {

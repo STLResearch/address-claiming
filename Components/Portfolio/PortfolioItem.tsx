@@ -5,13 +5,14 @@ import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import AdditionalDocuments from "./AdditionalDocuments";
 import { RequestDocumentStatus } from "@/types";
 import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
-import CancelClaimModal from "./CancelClaimModal";
 
-const PortfolioItem = ({ airspaceName, tags, type, selectAirspace,setUploadedDoc, selectedAirspace,  requestDocument }) => {
+
+const PortfolioItem = ({ setShowCancelModal, airspaceName, refetchAirspaceRef, tags, type, selectAirspace,setUploadedDoc,requestDocument,}) => {
   const [showPopup, setShowPopup] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false)
-  const [showCancelModal, setShowCancelModal] = useState(false)
+ 
+  
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -23,6 +24,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace,setUploadedDoc
 const handleAirspace = () => {
   selectAirspace()
   setShowCancelModal(true)
+  refetchAirspaceRef.current = true
 }
   const documentStatus = checkDocumentStatus(requestDocument);
   return (
@@ -66,11 +68,7 @@ const handleAirspace = () => {
             Cancel Claim
           </div>
 
-           {showCancelModal && (
-             <CancelClaimModal selectAirspace={selectAirspace} airspace={selectedAirspace} setShowCancelModal={setShowCancelModal}/>
-           )}
-
-
+        
           {(documentStatus === 'NOT_SUBMITTED' && !underReview) &&
             (<div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
               <p className="text-orange-500 font-normal text-sm">

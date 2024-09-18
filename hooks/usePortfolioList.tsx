@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import useAuth from "@/hooks/useAuth";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import { PropertyData } from "@/types";
@@ -34,10 +34,13 @@ const usePortfolioList = () => {
     getRejectedAirspaces,
   } = AirspaceRentalService();
 
+  const refetchRef = useRef(false)
+
   useEffect(() => {
     (async () => {
       try {
         if (web3auth && web3auth?.status !== "connected") return;
+        console.log("hhhhhhhhhh")
         let airspaces = [];
         setLoading(true);
         const assetId = airspaceList.length > 0 ? airspaceList.at(-1)?.id : "";
@@ -66,6 +69,7 @@ const usePortfolioList = () => {
             airspaces = airspaceResp.items;
           }
         } else if (activeTab === PortfolioTabEnum.PENDING_RENTAL) {
+          console.log("Blessing")
           const airspaceResp = await getRetrievePendingRentalAirspace(
             user?.blockchainAddress,
             pageNumber,
@@ -92,7 +96,7 @@ const usePortfolioList = () => {
         setLoading(false);
       }
     })();
-  }, [activeTab, web3auth?.status, pageNumber]);
+  }, [activeTab, web3auth?.status, pageNumber, refetchRef.current]);
 
   const handleNextPage = () => {
     if (airspaceList?.length < 9) return;
@@ -120,6 +124,7 @@ const usePortfolioList = () => {
     handlePrevPage,
     handleNextPage,
     setAirspaceList,
+    refetchAirspaceRef: refetchRef
   };
 };
 
