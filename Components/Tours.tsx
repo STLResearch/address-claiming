@@ -50,7 +50,7 @@ const steps = [
     },
     {
       selector: ".claim-modal-step",
-      content: "Fill in the details and select your preference (rent/sell details section or both).",
+      content:"Fill in the details and select your preference (rent/sell details section or both).",
     },
     {
       selector: ".Claim-airspacebtn2-step",
