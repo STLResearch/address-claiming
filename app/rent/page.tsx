@@ -141,7 +141,6 @@ const Rent = () => {
               .setPopup(popup) 
               .addTo(newMap);               
                
-                 const filteredData = responseData.filter(item => item.type === 'rent');
                 marker.getElement().addEventListener('click', function() {
                   setRentData(responseData[i]);
                   setShowClaimModal(true);
@@ -220,9 +219,10 @@ const Rent = () => {
           <Sidebar />
 
           <div className="w-full h-full flex flex-col ">
-       <div className="md:hidden">
-       <PageHeader pageTitle={!isMobile ? "Marketplace: Rent" : ""} />
-       </div>
+            <div className="hidden md:block">
+              <PageHeader pageTitle={"Marketplace: Rent"} />
+            </div>
+            
             {isMobile && (
               <ExplorerMobile
                 loadingReg={loadingRegAddresses}

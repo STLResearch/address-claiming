@@ -17,16 +17,13 @@ interface TransactionListI {
   difference: string | number;
 }
 
-export interface TransactionHistoryPropsI {
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
-const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryPropsI) => {
+const TransactionHistory = () => {
   const limit: number = 10;
   const targetRpcUrl = process.env.NEXT_PUBLIC_RPC_TARGET as string;
   const minterAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS as string;
   const rentalFeePublicKey = "HmqstutaEpbddgt5hjhJAsnrXhTUfQpveCpyWEvEdnWM";
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const { web3auth } = useContext(Web3authContext);
   const { isMobile } = useMobile();
@@ -224,6 +221,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
             <div className="flex items-center justify-end mt-8 w-[94%]">
               <div className="mx-auto flex gap-[11.71px]">
                 <div className={` text-[#87878D] text-base font-normal`}>
+                  {isLoading && "Loading transaction history..."}
                   {transactionList.length === 0 && !isLoading && "No transactions found."}
                 </div>
               </div>

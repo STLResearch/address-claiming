@@ -97,14 +97,31 @@ const Explorer = ({
         )}
       </div>
       {(flyToAddress && address  || isOpen )&& (
+        <div>
+        <p className="my-4 text-[20px] text-center font-medium">My Airspaces</p>
+         <p className="  text-[15px] font-normal text-[#222222]">
+         Please ensure the address entered matches the registered property address to accurately claim this area.
+         </p>
+
+       <div className="bg-white w-[304px] mt-4 p-4  rounded-2xl">
+        <div className="flex  items-center mb-6">
+        <div className="w-[10%] h-6 mr-2">
+          <LocationPointIcon />
+        </div>
+        <div className="w-[90%]">
+          {address}
+        </div>
+       </div>
         <div
           onClick={onClaimAirspace}
           className="Claim-airspacebtn-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
         >
           Claim Airspace
         </div>
+        </div>
+        </div>
       )}
-    </div>
+      </div>
   );
 };
 

@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { shallowEqual } from "react-redux";
 import Head from "next/head";
 import { AuthForm } from "@/Components/Auth";
 import LoadingMessage from "@/Components/Auth/LoadingMessage";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppSelector } from "@/redux/store";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 
 const Signup: React.FC = () => {
@@ -13,7 +13,6 @@ const Signup: React.FC = () => {
 
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-  const dispatch = useAppDispatch();
 
   const { isWaitingScreenVisible } = useAppSelector((state) => {
     const { isWaitingScreenVisible } = state.userReducer;

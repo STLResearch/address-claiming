@@ -22,6 +22,7 @@ interface SidebarItemProps {
 const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
     const pathname = usePathname()
     const { signOut } = useAuth();
+    const { user } = useAuth()
 
   const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications, target = "_self" }: SidebarItemProps) => {
       const isActive = href ? pathname?.includes(href) : false;
@@ -80,12 +81,15 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
             <SidebarItem href={'/funds'} text={'Funds'} children={<WalletIcon isActive={false} />} />
             <div className='bg-[#00000012] w-full h-[1px]' />
             <SidebarItem href={'https://skytrade.tawk.help'} target='_blank' text={'Help Center'} children={<HelpQuestionIcon isActive={false} color={undefined} />} />
+            {user?.blockchainAddress &&
             <div onClick={logoutHandler} className='cursor-pointer mb-8 flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold rounded-[3.66px]'>
-                <div className='w-6 h-6 flex items-center justify-center'>
-                    <LogoutIcon isActive={false} />
-                </div>
-                <p className='font-normal text-[#5D7285] text-[14.64px] tracking-[1%]'>Logout</p>
+            <div className='w-6 h-6 flex items-center justify-center'>
+                <LogoutIcon isActive={false} />
             </div>
+            <p className='font-normal text-[#5D7285] text-[14.64px] tracking-[1%]'>Logout</p>
+        </div>
+            }
+            
         </div>
     </div>
      </div>

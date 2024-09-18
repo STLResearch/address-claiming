@@ -131,7 +131,7 @@ const Points = () => {
                 {activeIndex === 2 && 
                   <div className="container mx-auto p-4">
                   <div className="flex flex-wrap-reverse w-full h-full gap-10 justify-center">
-                    <div className="md:p-8 w-full md:w-[55%] bg-white rounded-2xl">
+                    <div className="md:p-8 w-full md:w-[55%] md:bg-white rounded-2xl">
                       <ReferralHistoryTable />
                     </div>
                     <div className=" md:w-[40%]">

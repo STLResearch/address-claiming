@@ -20,6 +20,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { TourProvider } from "@reactour/tour";
 import React from "react";
 import { OnboardingTour } from "../Components/Tours";
+import NotificationBanner from "@/Components/NotificationBanner";
 
 
 export const metadata: Metadata = {
@@ -75,6 +76,20 @@ export default function RootLayout({
                 s1.setAttribute('crossorigin','*');
                 s0.parentNode.insertBefore(s1,s0);
                 })();
+              Tawk_API.customStyle = {
+              visibility : {
+                mobile : {
+                  position : 'br',
+                  xOffset : 10,
+                  yOffset : 80
+                },
+                bubble : {
+                  rotate : '0deg',
+                  xOffset : -20,
+                  yOffset : 0
+                }
+              }
+            };
               `,
             }}
           />
@@ -96,6 +111,7 @@ export default function RootLayout({
               speed={300}
               shadow="0 0 10px #2299DD,0 0 5px #2299DD"
               />
+              <NotificationBanner />
               <OnboardingTour>
                 {children}
               </OnboardingTour>

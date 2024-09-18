@@ -1,11 +1,11 @@
 import { toast } from "react-toastify";
 
-export const validateRental = (currentDate: Date, startDate: Date, endDate: Date, tokenBalance: string,setFinalAns:React.Dispatch<React.SetStateAction<{status:string;message:string;tokenId?:string;}>>,setShowSuccess:React.Dispatch<React.SetStateAction<boolean>>): boolean => {
+export const validateRental = (currentPrice: number, currentDate: Date, startDate: Date, endDate: Date, tokenBalance: string,setFinalAns:React.Dispatch<React.SetStateAction<{status:string;message:string;tokenId?:string;}>>,setShowSuccess:React.Dispatch<React.SetStateAction<boolean>>): boolean => {
   if (currentDate > endDate) {
     toast.error("Rental Tokens can't be booked in the past");
     return false;
   }
-  if (parseFloat(tokenBalance) === 0) {
+  if (parseFloat(tokenBalance) < Number(currentPrice)) {
     toast.error("Please deposit some funds into your wallet to continue");
     return false;
   }

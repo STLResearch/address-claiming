@@ -19,6 +19,7 @@ body {
   padding: 0;
   background-color: #f6faff;
   font-family: "Poppins", sans-serif;
+  overflow-x: hidden;
 }
 
 #map {
@@ -214,4 +215,10 @@ button {
     width: 100% !important;
     font-family: "Inter", sans-serif;
   }
+}
+#transakCloseIcon{
+  top:4px !important;
+  right:4px !important;
+  width: 22px !important;
+  height: 22px !important;
 }

@@ -27,13 +27,11 @@ const steps = [
     },
     {
       selector: ".claim-modal-step",
-      content:
-        "fill in the details and select your preference (rent/sell details section or both).",
+      content: "Fill in the details and select your preference (rent/sell details section or both).",
     },
     {
       selector: ".Claim-airspacebtn2-step",
-      content:
-        "Click the ‘Claim Airspace’ button to confirm your airspace address.",
+      content: "Click the ‘Claim Airspace’ button to confirm your airspace address.",
     },
   ];
   
@@ -48,17 +46,15 @@ const steps = [
     },
     {
       selector: ".Claim-airspacebtn-step",
-      content: " Click on Claim Airspace button to set your airspace.",
+      content: "Click on Claim Airspace button to set your airspace.",
     },
     {
       selector: ".claim-modal-step",
-      content:
-        "fill in the details and select your preference (rent/sell details section or both).",
+      content: "Fill in the details and select your preference (rent/sell details section or both).",
     },
     {
       selector: ".Claim-airspacebtn2-step",
-      content:
-        "Click the ‘Claim Airspace’ button to confirm your airspace address.",
+      content: "Click the ‘Claim Airspace’ button to confirm your airspace address.",
     },
   ];
   export const handleNextSteps = ({

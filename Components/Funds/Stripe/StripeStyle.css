@@ -1,0 +1,45 @@
+#root {
+    display: flex;
+    align-items: center;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    justify-content: center;
+    align-content: center;
+    width: 100vw;
+  }
+  
+  #onramp-message {
+    color: rgb(105, 115, 134);
+    font-size: 16px;
+    line-height: 20px;
+    padding-top: 12px;
+    text-align: center;
+  }
+  
+  #onramp-element {
+    min-width: min(450px, 60vw);
+    margin:0px !important;
+    height: 100px !important;
+  }
+  #onramp-element iframe {
+    border: none;
+    border-radius: 8px;
+    margin: 0px;
+    padding: 0px;
+    aspect-ratio: 2 / 3;
+    width: 100%;
+    min-width: 320px;
+    min-height: 480px;
+    max-width: 635px !important;
+    max-height: 1000px;
+    overflow: hidden;
+    display: block;
+    user-select: none;
+    transform: translate(0px);
+    color-scheme: light only;
+    height: 480px !important;
+  }

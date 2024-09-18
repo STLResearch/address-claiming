@@ -212,7 +212,7 @@ const Modal = ({
           <div
             onClick={onCloseModal}
             className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
-          >
+           >
             <CloseIcon />
           </div>
         </div>

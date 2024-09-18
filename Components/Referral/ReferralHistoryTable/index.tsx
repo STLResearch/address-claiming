@@ -52,9 +52,9 @@ const ReferralHistoryTable: React.FC = () => {
   };
 
   return (
-    <div>
-      <table className="w-full">
-        <thead>
+    <div className=' w-[100%] overflow-x-scroll h-full bg-white'>
+      <table className=" w-[582.33px]">
+        <thead className=''>
           <tr>
             <th className="px-4 py-2 text-[15px] text-[#222222]">Date</th>
             <th className="px-4 py-2 text-[15px] text-[#222222]">Amount</th>
@@ -62,10 +62,10 @@ const ReferralHistoryTable: React.FC = () => {
             <th className="px-4 py-2 text-[15px] text-[#222222]">Balance</th>
           </tr>
         </thead>
-        <tbody className="text-center">
+        <tbody className="text-center ">
           {referralList.map((row, index) => (
             <tr key={index}>
-              <td className="px-4 py-2 text-[#87878D] text-[15px]">{row.date}</td>
+              <td className="py-2 text-[#87878D] text-[15px]">{row.date}</td>
               <td className={`px-4 py-2 ${row.amount.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>{row.amount}</td>
               <td className="px-4 py-2 text-[#87878D] text-[15px]">{row.description}</td>
               <td className="px-4 py-2 text-[#87878D] text-[15px]">{row.balance}</td>
@@ -74,7 +74,7 @@ const ReferralHistoryTable: React.FC = () => {
         </tbody>
       </table>
       {!loading ? (
-        <div className="flex justify-center mt-4 gap-4">
+        <div className="flex justify-center my-4 gap-4">
           {Array.from({ length: totalPages }, (_, index) => index).map(currentPage => (
             <button
               key={currentPage}
