@@ -12,24 +12,24 @@ import TransactionHistory from "./TransactionHistory";
 import Head from "next/head";
 import Sidebar from "../Shared/Sidebar";
 import { useMobile } from "@/hooks/useMobile";
+import { useAppSelector } from "../../redux/store";
 
 const Funds = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<number>(0);
   const { user } = useAuth();
   const [tokenBalance, setTokenBalance] = useState<number>(0);
+  const { userUSDWalletBalance } = useAppSelector((state) => {
+    const { userUSDWalletBalance } = state.userReducer;
+    return { userUSDWalletBalance };
+  });
   const { isMobile } = useMobile();
   
-
-
 
   return (
     <Fragment>
       <Head>
         <title>SkyTrade - Wallet</title>
       </Head>
-      {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
       <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden ">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
@@ -42,13 +42,11 @@ const Funds = () => {
                   walletId={user?.blockchainAddress || ""}
                   activeSection={activeSection}
                   setActiveSection={setActiveSection}
-                  setIsLoading={setIsLoading}
-                  isLoading={isLoading}
                   setTokenBalance={setTokenBalance}
-                  tokenBalance={tokenBalance}
+                  tokenBalance={parseFloat(userUSDWalletBalance.amount)}
                 />
               </div>
-              <TransactionHistory isLoading={isLoading} setIsLoading={setIsLoading}/>
+              <TransactionHistory />
             </div>
           </section>
         </div>

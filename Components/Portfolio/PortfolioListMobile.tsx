@@ -1,19 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import Spinner from "../Spinner";
 import PortfolioItemMobile from "./PortfolioItemMobile";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
-import { PropertyData } from "@/types";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import Modal from "../Portfolio/Modal";
+import { PropertyData, StatusTypes } from "@/types";
+import CancelClaimModal from "./CancelClaimModal";
 
 interface PropsI {
   selectAirspace: (data: PropertyData) => void;
+  selectedAirspace: any;
+  onCloseModal: () => void;
   setUploadedDoc: any;
   uploadedDoc: any;
+  setSelectedAirspace:any;
 }
 
+const PortfolioListMobile = ({setSelectedAirspace, selectAirspace, setUploadedDoc, selectedAirspace,onCloseModal }: PropsI) => {
+  const [showCancelModal, setShowCancelModal] = useState(false)
 
-const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: PropsI) => {
+  const { user } = useAuth();
+  const router = useRouter();
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+
+
+  useEffect(() => {
+    if (user && user.KYCStatusId === StatusTypes.NotAttempted) {
+      setShowPopup(true);
+      return
+    }
+  }, [user?.KYCStatusId])
+  
   const {
     handleTabSwitch,
     handlePrevPage,
@@ -21,9 +41,18 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
     loading,
     airspaceList,
     pageNumber,
-    activeTab
+    activeTab,
+    setAirspaceList,
+    refetchAirspaceRef
   } = usePortfolioList();
   return (
+<>
+    {showCancelModal && (
+      <CancelClaimModal airspace={selectedAirspace} setShowCancelModal={setShowCancelModal} setSelectedAirspace={setSelectedAirspace} setAirspaceList={setAirspaceList}  />
+    )}
+    {selectedAirspace !== null && (
+      <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} setAirspaceList={setAirspaceList} />
+    )}
     <div className="overflow-x-hidden mb-24">
       <div
         className="flex items-center overflow-x-scroll border-b border-[#5D7285]/50 gap-12"
@@ -74,6 +103,25 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
       ) : (
         <div className="w-screen ">
           <div className="flex flex-col gap-[2px] pb-2  min-h-[70vh] ">
+          {activeTab === PortfolioTabEnum.UNVERIFIED && showPopup &&
+                <div className="flex w-full rounded-[30px] gap-[15px] bg-white" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }} >
+                  <div className="md:w-[50%]  p-6  flex flex-col justify-center items-center md:gap-6 gap-4">
+                    <h1 className="text-xl font-medium text-[#222222]  text-center">🚀 Attention Airspace Owner!</h1>
+                    <h1 className="text-xl font-medium text-[#222222] block md:hidden">Account verification</h1>
+                    <p className="text-sm font-normal text-[#838187] text-center leading-6">Your airspace awaits verification by our operation team. Your account is not verified. We verify the identity of our customers to assess potential risks, prevent fraud, and comply with legal and regulatory requirements. Complete your KYC to expedite the process and ensure swift approval. Plus,<span className="text-[#87878D] text-sm font-bold" > earn 10 SKY points </span> as a token of our appreciation! Don't delay - verify now and unlock the full potential of your airspace!</p>
+
+                    <button onClick={() => router.push('/my-account')} className="text-sm font-medium w-full px-6 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Verify my identity Now</button>
+
+                  </div>
+                  <div className="w-[50%]">
+                    <img
+                      src="/images/portfolio.png"
+                      alt="Verification Image"
+                      className="h-full w-full object-cover rounded-r-[30px]"
+                    />
+                  </div>
+                </div>
+              }
             {airspaceList &&
               airspaceList[0] &&
               airspaceList[0].address ? (
@@ -86,6 +134,8 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
                 requestDocument={airspace?.requestDocument}
                 selectAirspace={() => selectAirspace(airspace)}
                 setUploadedDoc={setUploadedDoc}
+                setShowCancelModal={setShowCancelModal} 
+                  refetchAirspaceRef={refetchAirspaceRef}  
                 />
               ))
             ) : (
@@ -116,6 +166,7 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
         </div>
       )}
     </div>
+    </>
   );
 };
 export default PortfolioListMobile;

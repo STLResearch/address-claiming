@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import useAuth from "@/hooks/useAuth";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import { PropertyData } from "@/types";
@@ -33,6 +33,8 @@ const usePortfolioList = () => {
     getRetrievePendingRentalAirspace,
     getRejectedAirspaces,
   } = AirspaceRentalService();
+
+  const refetchRef = useRef(false)
 
   useEffect(() => {
     (async () => {
@@ -92,7 +94,7 @@ const usePortfolioList = () => {
         setLoading(false);
       }
     })();
-  }, [activeTab, web3auth?.status, pageNumber]);
+  }, [activeTab, web3auth?.status, pageNumber, refetchRef.current]);
 
   const handleNextPage = () => {
     if (airspaceList?.length < 9) return;
@@ -120,6 +122,7 @@ const usePortfolioList = () => {
     handlePrevPage,
     handleNextPage,
     setAirspaceList,
+    refetchAirspaceRef: refetchRef
   };
 };
 

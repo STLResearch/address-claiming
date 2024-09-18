@@ -234,8 +234,6 @@ export interface DepositAndWithdrawProps {
   walletId: string;
   activeSection: number;
   setActiveSection: Dispatch<SetStateAction<number>>;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
-  isLoading: boolean;
   setTokenBalance: Dispatch<SetStateAction<number>>;
   tokenBalance: number;
 }

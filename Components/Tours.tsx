@@ -46,7 +46,7 @@ const steps = [
     },
     {
       selector: ".Claim-airspacebtn-step",
-      content: " Click on Claim Airspace button to set your airspace.",
+      content: "Click on Claim Airspace button to set your airspace.",
     },
     {
       selector: ".claim-modal-step",

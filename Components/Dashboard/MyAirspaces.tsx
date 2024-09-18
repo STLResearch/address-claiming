@@ -31,7 +31,7 @@ const MyAirspaces: FC<MyAirspacesProps> = ({
           )}
         </>
       }
-      icon={<DroneIcon isActive />}
+      icon={<DroneIcon />}
       linkText={`${!isLoading ? "View all airspaces" : ""}`}
       href={"/portfolio"}
     >

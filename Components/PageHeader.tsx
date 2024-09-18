@@ -11,7 +11,6 @@ interface PageHeaderProps {
 
 const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle }) => {
   const { user } = useAuth();
-  const [hasNotification, setHasNotification] = useState(true);
   const { isMobile } = useMobile();
 
   return (

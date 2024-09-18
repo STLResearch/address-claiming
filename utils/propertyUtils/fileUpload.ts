@@ -1,3 +1,4 @@
+import { RequestDocumentStatus } from "@/types";
 import axios from "axios";
 
 export function isFileSizeValid(file: File, maxSizeInMB: number = 20): boolean {
@@ -35,3 +36,27 @@ export  const uploadImage = async (response: any,file:File) => {
       return false;
     }
 };
+export const checkDocumentStatus = (requestDocument) => {
+  if (!requestDocument || requestDocument.length === 0) {
+    return "NOT_REQUESTED";
+  }
+  const lastItem = requestDocument[requestDocument.length - 1];
+  switch (lastItem.status) {
+    case RequestDocumentStatus.APPROVED:
+      return "APPROVED";
+    case RequestDocumentStatus.SUBMITTED:
+      return "SUBMITTED";
+    case RequestDocumentStatus.REJECTED:
+      return "REJECTED";
+    case RequestDocumentStatus.NOT_SUBMITTED:
+      if (requestDocument.length > 1) {
+        const secondLastItem = requestDocument[requestDocument.length - 2];
+        if (secondLastItem.status === RequestDocumentStatus.REJECTED) {
+          return "RE_UPLOAD";
+        }
+      }
+      return "NOT_SUBMITTED";
+    default:
+      return "NOT_REQUESTED";
+  }
+}

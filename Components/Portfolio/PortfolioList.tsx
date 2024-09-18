@@ -8,21 +8,24 @@ import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Modal from "../Portfolio/Modal";
 import { PropertyData, StatusTypes } from "@/types";
+import CancelClaimModal from "./CancelClaimModal";
 
 interface PropsI {
   title: string;
   selectAirspace: (data: PropertyData) => void;
-  selectedAirspace: PropertyData | null;
+  selectedAirspace:any;
   onCloseModal: () => void;
   setUploadedDoc: any;
   uploadedDoc: any;
+  setSelectedAirspace:any;
 }
 
-const PortfolioList = ({ title, selectAirspace, selectedAirspace, onCloseModal, setUploadedDoc, uploadedDoc }: PropsI) => {
+const PortfolioList = ({ title,selectAirspace, selectedAirspace,setSelectedAirspace, onCloseModal, setUploadedDoc, }: PropsI) => {
 
   const { user } = useAuth();
   const router = useRouter();
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [showCancelModal, setShowCancelModal] = useState(false)
 
   const {
     handleTabSwitch,
@@ -32,7 +35,8 @@ const PortfolioList = ({ title, selectAirspace, selectedAirspace, onCloseModal, 
     airspaceList,
     pageNumber,
     activeTab,
-    setAirspaceList
+    setAirspaceList,
+    refetchAirspaceRef
   } = usePortfolioList()
 
   useEffect(() => {
@@ -42,13 +46,17 @@ const PortfolioList = ({ title, selectAirspace, selectedAirspace, onCloseModal, 
     }
   }, [user?.KYCStatusId])
 
-
-
   return (
     <>
       {selectedAirspace !== null && (
         <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} setAirspaceList={setAirspaceList} />
       )}
+      
+      {showCancelModal && (
+             <CancelClaimModal airspace={selectedAirspace} setShowCancelModal={setShowCancelModal} setSelectedAirspace={setSelectedAirspace} setAirspaceList={setAirspaceList}  />
+           )}
+
+
       <div
         className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -130,7 +138,8 @@ const PortfolioList = ({ title, selectAirspace, selectedAirspace, onCloseModal, 
                     requestDocument={airspace?.requestDocument}
                     selectAirspace={() => selectAirspace(airspace)}
                     setUploadedDoc={setUploadedDoc}
-                  />
+                    refetchAirspaceRef={refetchAirspaceRef}
+                    setShowCancelModal={setShowCancelModal}                     />
                 ))
               ) : (
                 <AirspacesEmptyMessage />

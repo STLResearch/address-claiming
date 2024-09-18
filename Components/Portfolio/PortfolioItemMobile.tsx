@@ -4,12 +4,14 @@ import AdditionalDocuments from "./AdditionalDocuments";
 import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import UploadedDocuments from "./UploadedDocuments";
 import { RequestDocumentStatus } from "@/types";
+import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
+import CancelClaimModal from "./CancelClaimModal";
 
-const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, requestDocument }) => {
+const PortfolioItemMobile = ({setShowCancelModal,refetchAirspaceRef, airspaceName, tags, type, selectAirspace, setUploadedDoc,requestDocument }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false)
   const [underReview, setUnderReview] = useState<boolean>(false);
-
+  
   const handleButtonClick = () => {
     setShowPopup(true);
   };
@@ -17,6 +19,14 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
   const closePopup = () => {
     setShowPopup(false);
   };
+
+  const handleAirspace = () => {
+    selectAirspace()
+    setShowCancelModal(true)
+    refetchAirspaceRef.current = true
+  }
+  const documentStatus = checkDocumentStatus(requestDocument);
+
   return (
     <div>
       <div
@@ -33,9 +43,9 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
             </p>
           </div>
           <div className="">
-            <div className="flex mt-2 gap-[10px] items-center">
+            <div className="flex justify-between mt-2 gap-[10px] items-center w-full">
               {!!tags[0] && (
-                <div onClick={selectAirspace} className="w-20 bg-[#DBDBDB] text-[#222222] text-sm font-normal p-2 cursor-pointer rounded-[3px]">
+                <div onClick={selectAirspace} className="w-20 h-8 bg-[#DBDBDB] text-[#222222] text-sm font-normal p-2 cursor-pointer rounded-[3px] flex items-center justify-center">
                   {type === "land" ? "On Claim" : "On Rent"}
                 </div>
               )}
@@ -54,7 +64,13 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
                   Review Offer
                 </div>
               )}
-              {((requestDocument && requestDocument[0]?.status == 'SUBMITTED') || (underReview)) && (
+             <div 
+              onClick={handleAirspace} 
+              className="bg-[#4285F4] text-white text-sm font-normal px-2 cursor-pointer rounded-[3px] w-28 h-8 flex items-center justify-center">
+              Cancel Claim
+             </div>
+
+              {((documentStatus === 'SUBMITTED') || (underReview)) && (
                 <div className="flex justify-center items-center gap-2">
                   <div className="w-6 h-6">
                     <ReviewVerificationIcon />
@@ -64,7 +80,7 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
                   </p>
                 </div>
               )}
-              {requestDocument && requestDocument[0]?.status == 'APPROVED' && (
+              {(documentStatus === 'APPROVED' && !underReview) &&(
                 <div className="flex justify-center items-center gap-2">
                   <div className="w-6 h-6">
                     <DocumentApprovedIcon />
@@ -74,19 +90,30 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
                   </p>
                 </div>
               )}
-              {requestDocument && requestDocument[0]?.status == 'REJECTED' && (
-                <div className="flex justify-center items-center gap-2">
-                  <div className="w-6 h-6">
-                    <DocumentRejectedIcon />
+              {((documentStatus === 'REJECTED' || documentStatus === 'RE_UPLOAD') &&  !underReview) &&(
+                <div className="">
+                  <div className="flex justify-end items-center ">
+                    <div className="w-4 h-4 mr-[10px]">
+                      <DocumentRejectedIcon />
+                    </div>
+                    <p className="text-[#E04F64] font-normal text-sm">
+                      Documents rejected
+                    </p>
                   </div>
-                  <p className="text-[#E04F64] font-normal text-sm">
-                    Documents rejected
-                  </p>
+                 
                 </div>
               )}
-            </div>
+         </div>
+            {
+              <div>
+              {
+              (documentStatus === 'RE_UPLOAD' && !underReview) &&
+              <button onClick={handleButtonClick} className="flex items-center mt-4 rounded-[3px] border-[1px] text-[12px] leading-[26px] font border-[#F79663] px-[7px] text-[#F79663]"><pre>Re-updload</pre></button>
+              }
+              </div>
+            }
 
-            {((requestDocument && requestDocument?.length > 0) && (!requestDocument[0]?.document && !underReview)) &&
+            {(documentStatus === 'NOT_SUBMITTED' && !underReview) &&
               (
                 <div className="flex justify-between items-center gap-12 w-full mt-4">
                   <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
@@ -102,9 +129,9 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
 
 
 
-            {((requestDocument && requestDocument?.length > 0 && requestDocument[0]?.document && requestDocument[0]?.status !== RequestDocumentStatus.NOT_SUBMITTED) || underReview) && <UploadedDocuments requestDocument={requestDocument} />}
+            {(documentStatus ==='SUBMITTED' || underReview) && <UploadedDocuments requestDocument={requestDocument} />}
             {showPopup && !underReview && (
-              <AdditionalDocuments setUnderReview={setUnderReview} showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument={requestDocument[0]} />
+              <AdditionalDocuments setUnderReview={setUnderReview} showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument={requestDocument[requestDocument?.length -1]} />
             )}
 
             {showSuccessToast && <VerificationSuccessPopup />}

@@ -33,7 +33,7 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
   return (
     <div className="w-full">
       {loadingReg && (
-        <div className="mt-4 w-full flex justify-center">
+        <div className=" mt-2 w-full flex justify-center">
           <BalanceLoader />
         </div>
       )}
@@ -41,7 +41,7 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
       {regAdressShow && (
         <div
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-          className=" mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll"
+          className=" mt-2 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll"
         >
           {registeredAddress.map((item) => (
             <RentableAirspace

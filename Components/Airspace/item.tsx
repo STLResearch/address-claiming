@@ -2,19 +2,15 @@ import { FC, ReactNode } from "react";
 import Link from "next/link";
 
 interface ItemProps {
-  children: ReactNode;
   title: ReactNode;
   icon: ReactNode;
-  linkText: string;
   href: string;
   style?: string;
 }
 
 const Item: FC<ItemProps> = ({
-  children,
   title,
   icon,
-  linkText,
   href,
   style,
 }) => {
@@ -30,14 +26,9 @@ const Item: FC<ItemProps> = ({
           <div className="h-10 w-10">{icon}</div>
         </Link>
       </div>
-      {children}
-      <Link href={href}>
-        <p className="font-medium text-base text-[#0653ea] cursor-pointer text-right">
-          {linkText}
-        </p>
-      </Link>
     </div>
   );
 };
 
 export default Item;
+

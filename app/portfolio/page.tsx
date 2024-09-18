@@ -2,6 +2,7 @@
 
 import {
   Fragment,
+  SetStateAction,
   useContext,
   useEffect,
   useState,
@@ -50,6 +51,7 @@ const Portfolio = () => {
   const selectAirspace = (x) => {
     setSelectedAirspace(x);
   };
+  
 
   return (
     <Fragment>
@@ -72,11 +74,18 @@ const Portfolio = () => {
               selectedAirspace={selectedAirspace} 
               onCloseModal={onCloseModal}
               uploadedDoc={uploadedDoc} 
-              setUploadedDoc={setUploadedDoc}           
+              setUploadedDoc={setUploadedDoc}
+              setSelectedAirspace={setSelectedAirspace}            
             />
           </section>
           <section className="relative w-full h-full flex flex-wrap gap-6 py-[10px] md:hidden overflow-y-auto ">
-            <PortfolioListMobile selectAirspace={selectAirspace} uploadedDoc={uploadedDoc} setUploadedDoc={setUploadedDoc} />
+            <PortfolioListMobile
+              onCloseModal={onCloseModal}
+              selectAirspace={selectAirspace}
+              uploadedDoc={uploadedDoc}
+              setUploadedDoc={setUploadedDoc}
+              selectedAirspace={selectedAirspace}
+              setSelectedAirspace={setSelectedAirspace}/>
           </section>
         </div>
       </div>

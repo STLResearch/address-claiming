@@ -14,7 +14,7 @@ const AvailableBalance: FC = () => {
   return (
     <Item
       title={"Available Balance"}
-      icon={<WalletIcon isActive />}
+      icon={<WalletIcon />}
       linkText={"View funds"}
       href={"/funds"}
       style="h-fit"

@@ -3,6 +3,7 @@ import React from "react";
 import { MagnifyingGlassIcon } from "@/Components/Shared/Icons";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { handleSelectAddress } from "@/utils/addressUtils/addressFunction";
+import { useMobile } from "@/hooks/useMobile";
 
 interface SearchInputProps {
   address: string;
@@ -23,12 +24,37 @@ const SearchInput: React.FC<SearchInputProps> = ({
   setFlyToAddress,
   setShowOptions,
 }) => {
+  const { isMobile } = useMobile();
   return (
     <div>
-      <div
-        className="relative px-[22px] py-[16px] bg-white rounded-lg w-full"
+     
+      {isMobile ?(
+       <div>
+        <div
+          className="relative w-[230px] h-[49px] rounded-lg bg-white px-[22px] py-[10px]"
+          style={{ border: "1px solid #87878D" }}
+        >
+        <input
+          autoComplete="off"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          type="text"
+          name="searchAirspaces"
+          id="searchAirspaces"
+          placeholder="Search Airspaces"
+          className="w-full pr-[20px] outline-none text-sm"
+        />
+        <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
+          <MagnifyingGlassIcon />
+        </div>
+        </div>    
+        </div>
+      ):(
+        <div>
+        <div
+        className="relative px-[22px] py-[16px] rounded-lg w-full"
         style={{ border: "1px solid #87878D" }}
-      >
+        >
         <input
           autoComplete="off"
           value={address}
@@ -42,8 +68,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
           <MagnifyingGlassIcon />
         </div>
-      </div>
-      {showOptions && (
+        </div>
         <div className="overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white">
           {loading ? (
             <div className="pt-8 flex justify-center items-center">
@@ -74,7 +99,8 @@ const SearchInput: React.FC<SearchInputProps> = ({
             })
           )}
         </div>
-      )}
+        </div>
+        )}
     </div>
   );
 };
