@@ -1,20 +1,22 @@
 "use client";
 
-import React, { Dispatch, Fragment, SetStateAction, useState } from "react";
+import React, { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
 import {  CloseIconBlack, LocationPointIcon } from "../Icons";
 import { PropertyData, StatusTypes } from "@/types";
 import PropertiesService from "@/services/PropertiesService";
+import { fetchMapboxStaticImage } from "@/utils/getMapboxStaticImage";
 
 
 interface ModalProps {
-  airspace: any;
+  airspace: PropertyData;
   setShowCancelModal: React.Dispatch<React.SetStateAction<boolean>>;
   setAirspaceList: React.Dispatch<React.SetStateAction<PropertyData[]>>
   setSelectedAirspace: Dispatch<SetStateAction<null>>
 }
 
 const CancelClaimModal = ({airspace,setShowCancelModal,setSelectedAirspace,setAirspaceList}: ModalProps) => {
+  const[imageUrl, setImagaeUrl] = useState("")
 
   const [inputValue, setInputValue] = useState(airspace?.address);
   const { unclaimProperty } = PropertiesService();
@@ -24,7 +26,7 @@ const CancelClaimModal = ({airspace,setShowCancelModal,setSelectedAirspace,setAi
     setShowCancelModal(false)
   }
   const handleUnclaim = async () => {
-      await unclaimProperty(airspace?.id) 
+      await unclaimProperty(airspace?.id as number) 
       setAirspaceList((prev) => {
         return prev.filter(p => p.id !== airspace?.id);
     });
@@ -32,6 +34,14 @@ const CancelClaimModal = ({airspace,setShowCancelModal,setSelectedAirspace,setAi
       setShowCancelModal(false)
   }
 
+  useEffect(() => {
+    const handelAirspaceImage = async  () => {
+      const url = await fetchMapboxStaticImage(airspace.latitude, airspace.longitude)
+      setImagaeUrl(url)
+    }
+    handelAirspaceImage()
+  }, [])
+  
   return (
     <Fragment>
         <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-[500] md:z-50 flex flex-col gap-[15px]">
@@ -39,7 +49,7 @@ const CancelClaimModal = ({airspace,setShowCancelModal,setSelectedAirspace,setAi
           className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
         >
-        <h2 className="text-light-black text-center font-medium text-xl w-full">
+        <h2 className="text-light-black text-center font-medium text-xl w-full md:mt-0 mt-2 ">
           Cancel Claim
         </h2>
         <div  onClick={() =>(setShowCancelModal(false))}  className="absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer">
@@ -64,11 +74,11 @@ const CancelClaimModal = ({airspace,setShowCancelModal,setSelectedAirspace,setAi
 
        <div>
        <Image
-        src="/images/CancelMap.svg"
+        src={imageUrl}
         alt="Map"
-        width={100}
-        height={100}  
-        className="w-full h-auto object-cover "
+        width={50}
+        height={50}  
+        className="w-[631px] h-[130px] object-cover "
       />
        </div>
       <div className="flex gap-[20px] md:mt-[15px] mt-auto -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 py-[16px] md:py-0">

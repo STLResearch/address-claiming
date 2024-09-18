@@ -40,7 +40,6 @@ const usePortfolioList = () => {
     (async () => {
       try {
         if (web3auth && web3auth?.status !== "connected") return;
-        console.log("hhhhhhhhhh")
         let airspaces = [];
         setLoading(true);
         const assetId = airspaceList.length > 0 ? airspaceList.at(-1)?.id : "";
@@ -69,7 +68,6 @@ const usePortfolioList = () => {
             airspaces = airspaceResp.items;
           }
         } else if (activeTab === PortfolioTabEnum.PENDING_RENTAL) {
-          console.log("Blessing")
           const airspaceResp = await getRetrievePendingRentalAirspace(
             user?.blockchainAddress,
             pageNumber,
