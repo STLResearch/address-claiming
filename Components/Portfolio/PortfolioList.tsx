@@ -13,7 +13,7 @@ import CancelClaimModal from "./CancelClaimModal";
 interface PropsI {
   title: string;
   selectAirspace: (data: PropertyData) => void;
-  selectedAirspace: PropertyData | null;
+  selectedAirspace:any;
   onCloseModal: () => void;
   setUploadedDoc: any;
   uploadedDoc: any;

@@ -199,7 +199,7 @@ const AuthForm: FC<AuthFormProps> = ({
       <div style={{ width: "100%", height: "1px", background: "#00000033" }} />
       <p
         onClick={handleSwitchingBetweenLoginAndRegister}
-        className="text-[#87878D]"
+        className="text-[#87878D] mb-20 "
       >
         {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
         <span className="cursor-pointer font-bold text-[#0653EA]">

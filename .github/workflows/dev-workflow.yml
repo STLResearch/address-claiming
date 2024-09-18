@@ -6,7 +6,7 @@ on:
     branches: [ "dev-deploy" ]
   workflow_dispatch:
 env:
-  SRV_IP: "16.171.132.230"
+  SRV_IP: "16.170.155.29"
   build_env_var: ${{ vars.DEV_FRONTEND_ENV }}
 
 jobs:
