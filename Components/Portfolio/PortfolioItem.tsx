@@ -6,10 +6,13 @@ import AdditionalDocuments from "./AdditionalDocuments";
 import { RequestDocumentStatus } from "@/types";
 import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
 
-const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, requestDocument }) => {
+
+const PortfolioItem = ({ setShowCancelModal, airspaceName, refetchAirspaceRef, tags, type, selectAirspace,setUploadedDoc,requestDocument,}) => {
   const [showPopup, setShowPopup] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false)
+ 
+  
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -17,7 +20,12 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
 
   const closePopup = () => {
     setShowPopup(false);
-  };
+  }
+const handleAirspace = () => {
+  selectAirspace()
+  setShowCancelModal(true)
+  refetchAirspaceRef.current = true
+}
   const documentStatus = checkDocumentStatus(requestDocument);
   return (
     <div
@@ -56,7 +64,11 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
             </div>
           )}
 
+         <div onClick={handleAirspace} className="bg-[#4285F4] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
+            Cancel Claim
+          </div>
 
+        
           {(documentStatus === 'NOT_SUBMITTED' && !underReview) &&
             (<div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
               <p className="text-orange-500 font-normal text-sm">
@@ -104,6 +116,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
             <ChevronRightIcon />
           </div>
         </div>
+       
       </div>
 
       {(documentStatus ==='SUBMITTED' || underReview) && <UploadedDocuments requestDocument={requestDocument} />}

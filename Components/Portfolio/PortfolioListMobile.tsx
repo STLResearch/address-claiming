@@ -8,41 +8,48 @@ import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Modal from "../Portfolio/Modal";
 import { PropertyData, StatusTypes } from "@/types";
+import CancelClaimModal from "./CancelClaimModal";
 
 interface PropsI {
   selectAirspace: (data: PropertyData) => void;
-  selectedAirspace: PropertyData | null;
+  selectedAirspace: any;
   onCloseModal: () => void;
   setUploadedDoc: any;
   uploadedDoc: any;
+  setSelectedAirspace:any;
 }
 
-const PortfolioListMobile = ({ selectAirspace, selectedAirspace, onCloseModal, setUploadedDoc, uploadedDoc }: PropsI) => {
+const PortfolioListMobile = ({setSelectedAirspace, selectAirspace, setUploadedDoc, selectedAirspace,onCloseModal }: PropsI) => {
+  const [showCancelModal, setShowCancelModal] = useState(false)
 
-    const { user } = useAuth();
-    const router = useRouter();
-    const [showPopup, setShowPopup] = useState<boolean>(false);
+  const { user } = useAuth();
+  const router = useRouter();
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+
+
+  useEffect(() => {
+    if (user && user.KYCStatusId === StatusTypes.NotAttempted) {
+      setShowPopup(true);
+      return
+    }
+  }, [user?.KYCStatusId])
   
-    const {
-      handleTabSwitch,
-      handlePrevPage,
-      handleNextPage,
-      loading,
-      pageNumber,
-      airspaceList,
-      activeTab,
-      setAirspaceList
-    } = usePortfolioList()
-  
-    useEffect(() => {
-      if (user && user.KYCStatusId === StatusTypes.NotAttempted) {
-        setShowPopup(true);
-        return
-      }
-    }, [user?.KYCStatusId])
-  
+  const {
+    handleTabSwitch,
+    handlePrevPage,
+    handleNextPage,
+    loading,
+    airspaceList,
+    pageNumber,
+    activeTab,
+    setAirspaceList,
+    refetchAirspaceRef
+  } = usePortfolioList();
   return (
-    <>
+<>
+    {showCancelModal && (
+      <CancelClaimModal airspace={selectedAirspace} setShowCancelModal={setShowCancelModal} setSelectedAirspace={setSelectedAirspace} setAirspaceList={setAirspaceList}  />
+    )}
     {selectedAirspace !== null && (
       <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} setAirspaceList={setAirspaceList} />
     )}
@@ -127,6 +134,8 @@ const PortfolioListMobile = ({ selectAirspace, selectedAirspace, onCloseModal, s
                 requestDocument={airspace?.requestDocument}
                 selectAirspace={() => selectAirspace(airspace)}
                 setUploadedDoc={setUploadedDoc}
+                setShowCancelModal={setShowCancelModal} 
+                  refetchAirspaceRef={refetchAirspaceRef}  
                 />
               ))
             ) : (
