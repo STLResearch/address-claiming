@@ -22,7 +22,7 @@ const PolygonTool = ({ drawTool,isDrawMode, setDrawMode, map }: PolygonToolProps
   };
   
   return (
-    <div className='hidden sm:block'>
+    <div className='hidden md:block'>
     <div
       className="absolute top-0 right-0 bg-light-grey-100 rounded-lg z-20 m-4"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
