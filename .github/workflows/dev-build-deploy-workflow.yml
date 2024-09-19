@@ -114,8 +114,9 @@ jobs:
               cd $NEW_DEPLOY_SOURCE && bash "./dev_env.sh" || exit 1
               cd .. && ln -sfn `pwd`/$NEW_DEPLOY_SOURCE current && cd current && \
               pm2 flush && \
-              pm2 startOrRestart ecosystem.config.js --env dev --cwd `pwd` &&
-              tail -n 100 ~/.pm2/logs/sky.trade.frontend-*
+              pm2 startOrRestart ecosystem.config.js --env dev --cwd `pwd` && \
+              cd .. && ./clean_builds.sh
+              tail -n 100 ~/.pm2/logs/sky.trade.frontend-* 
 
             EOL
             
