@@ -6,7 +6,7 @@ import DocumentUploadServices from "@/services/DocumentUploadServices";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 import { toast } from "react-toastify";
 import { formatTextToReadable, isFileSizeValid, isValidFileType, uploadImage } from "@/utils/propertyUtils/fileUpload";
-import { requestDocument } from "@/types";
+import { RequestDocument } from "@/types";
 
 interface PopupProps {
   setUnderReview: Dispatch<SetStateAction<boolean>>;
@@ -14,7 +14,7 @@ interface PopupProps {
   closePopup: () => void;
   setUploadedDoc: Dispatch<SetStateAction<File[]>>;
   setShowSuccessToast: Dispatch<SetStateAction<boolean>>;
-  requestDocument: requestDocument;
+  requestDocument: RequestDocument;
 }
 
 const Popup: React.FC<PopupProps> = ({

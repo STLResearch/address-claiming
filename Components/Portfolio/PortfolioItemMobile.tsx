@@ -3,11 +3,33 @@ import { ChevronRightIcon, DocumentApprovedIcon, DocumentRejectedIcon, LocationP
 import AdditionalDocuments from "./AdditionalDocuments";
 import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import UploadedDocuments from "./UploadedDocuments";
-import { RequestDocumentStatus } from "@/types";
+import { RequestDocument } from "@/types";
 import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
-import CancelClaimModal from "./CancelClaimModal";
+import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 
-const PortfolioItemMobile = ({setShowCancelModal,refetchAirspaceRef, airspaceName, tags, type, selectAirspace, setUploadedDoc,requestDocument }) => {
+interface PropsI {
+  airspaceName: string;
+  activeTab: PortfolioTabEnum;
+  tags: Boolean[]
+  type: string | undefined;
+  requestDocument: RequestDocument[] | undefined;
+  selectAirspace: () => void;
+  setUploadedDoc: any;
+  refetchAirspaceRef: React.MutableRefObject<boolean>;
+  setShowCancelModal: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const PortfolioItemMobile = ({
+  setShowCancelModal,
+  refetchAirspaceRef, 
+  airspaceName, 
+  tags, 
+  type, 
+  selectAirspace, 
+  setUploadedDoc,
+  requestDocument,
+  activeTab
+}: PropsI) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false)
   const [underReview, setUnderReview] = useState<boolean>(false);
@@ -64,11 +86,15 @@ const PortfolioItemMobile = ({setShowCancelModal,refetchAirspaceRef, airspaceNam
                   Review Offer
                 </div>
               )}
-             <div 
-              onClick={handleAirspace} 
-              className="bg-[#4285F4] text-white text-sm font-normal px-2 cursor-pointer rounded-[3px] w-28 h-8 flex items-center justify-center">
-              Cancel Claim
-             </div>
+              {activeTab === PortfolioTabEnum.UNVERIFIED && (
+                <div
+                  onClick={handleAirspace}
+                  className="bg-[#4285F4] text-white text-sm font-normal px-2 cursor-pointer rounded-[3px] w-28 h-8 flex items-center justify-center"
+                >
+                  Cancel Claim
+                </div>
+              )}
+            
 
               {((documentStatus === 'SUBMITTED') || (underReview)) && (
                 <div className="flex justify-center items-center gap-2">
@@ -129,8 +155,8 @@ const PortfolioItemMobile = ({setShowCancelModal,refetchAirspaceRef, airspaceNam
 
 
 
-            {(documentStatus ==='SUBMITTED' || underReview) && <UploadedDocuments requestDocument={requestDocument} />}
-            {showPopup && !underReview && (
+            {(documentStatus === 'SUBMITTED' || underReview) && requestDocument && <UploadedDocuments requestDocument={requestDocument} />}
+            {showPopup && !underReview && requestDocument && (
               <AdditionalDocuments setUnderReview={setUnderReview} showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument={requestDocument[requestDocument?.length -1]} />
             )}
 
