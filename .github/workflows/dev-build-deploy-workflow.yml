@@ -88,9 +88,9 @@ jobs:
       
       - name: Prepare SSH-client on Agent
         run: | 
-            mkdir -p ~/.ssh
-            echo "$SSH_KEY" >> ~/.ssh/github-action
-            chmod 400 ~/.ssh/github-action
+            mkdir -p ~/.ssh          
+            [ -e ~/.ssh/github-action ] && rm ~/.ssh/github-action
+            echo "$SSH_KEY" > ~/.ssh/github-action && chmod 400 ~/.ssh/github-action
             echo -e "User ec2-user\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
                 
       - name: Verify if the Server has all Dependencies
