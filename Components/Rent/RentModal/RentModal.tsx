@@ -53,7 +53,7 @@ const RentModal: React.FC<RentModalProps> = ({
   const [finalAns, setFinalAns] = useState<
     { status: string; message?: string | undefined } | null | undefined
   >();
-  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } = useAuth();
+  const { user, web3authStatus, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } = useAuth();
 
   const { getNonceAccountEntry, createMintRentalToken, executeMintRentalToken } =
     AirspaceRentalService();
@@ -67,7 +67,6 @@ const RentModal: React.FC<RentModalProps> = ({
     if (user) {
       getTokenBalance(user, setTokenBalance);
     }
-
   }, [user]);
 
   const fetchAndSetRentedTimes = async () => {
@@ -78,10 +77,10 @@ const RentModal: React.FC<RentModalProps> = ({
 
 
   useEffect(() => {
-    if (rentData?.id) {
+    if (rentData?.id && web3authStatus) {
       fetchAndSetRentedTimes();
     }
-  }, [rentData]);
+  }, [rentData, web3authStatus]);
 
   const handleRentAirspace = async () => {
     try {
