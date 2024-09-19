@@ -133,13 +133,15 @@ const PortfolioList = ({ title,selectAirspace, selectedAirspace,setSelectedAirsp
                   <PortfolioItem
                     airspaceName={airspace?.address}
                     key={index}
+                    activeTab={activeTab}
                     tags={[true, false, false, false]}
                     type={airspace?.type}
                     requestDocument={airspace?.requestDocument}
                     selectAirspace={() => selectAirspace(airspace)}
                     setUploadedDoc={setUploadedDoc}
                     refetchAirspaceRef={refetchAirspaceRef}
-                    setShowCancelModal={setShowCancelModal}                     />
+                    setShowCancelModal={setShowCancelModal}                     
+                  />
                 ))
               ) : (
                 <AirspacesEmptyMessage />
