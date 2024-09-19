@@ -3,11 +3,33 @@ import { ChevronRightIcon, DocumentApprovedIcon, DocumentRejectedIcon, LocationP
 import UploadedDocuments from "./UploadedDocuments";
 import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import AdditionalDocuments from "./AdditionalDocuments";
-import { RequestDocumentStatus } from "@/types";
+import { RequestDocument } from "@/types";
 import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
+import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 
+interface PropsI {
+  airspaceName: string;
+  activeTab: PortfolioTabEnum;
+  tags: Boolean[]
+  type: string | undefined;
+  requestDocument: RequestDocument[] | undefined;
+  selectAirspace: () => void;
+  setUploadedDoc: any;
+  refetchAirspaceRef: React.MutableRefObject<boolean>;
+  setShowCancelModal: React.Dispatch<React.SetStateAction<boolean>>
+}
 
-const PortfolioItem = ({ setShowCancelModal, airspaceName, refetchAirspaceRef, tags, type, selectAirspace,setUploadedDoc,requestDocument,}) => {
+const PortfolioItem = ({ 
+  setShowCancelModal, 
+  airspaceName, 
+  refetchAirspaceRef, 
+  tags, 
+  type, 
+  selectAirspace,
+  setUploadedDoc,
+  requestDocument, 
+  activeTab
+}: PropsI) => {
   const [showPopup, setShowPopup] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false)
@@ -64,11 +86,13 @@ const handleAirspace = () => {
             </div>
           )}
 
-         <div onClick={handleAirspace} className="bg-[#4285F4] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
-            Cancel Claim
-          </div>
+          {activeTab === PortfolioTabEnum.UNVERIFIED && (
+            <div onClick={handleAirspace} className="bg-[#4285F4] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
+              Cancel Claim
+            </div>
+          )}
 
-        
+
           {(documentStatus === 'NOT_SUBMITTED' && !underReview) &&
             (<div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
               <p className="text-orange-500 font-normal text-sm">
@@ -119,9 +143,16 @@ const handleAirspace = () => {
        
       </div>
 
-      {(documentStatus ==='SUBMITTED' || underReview) && <UploadedDocuments requestDocument={requestDocument} />}
-      {showPopup && !underReview && (
-        <AdditionalDocuments setUnderReview={setUnderReview} showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument={requestDocument[requestDocument?.length -1]} />
+      {(documentStatus === 'SUBMITTED' || underReview) && requestDocument  && <UploadedDocuments requestDocument={requestDocument} />}
+      {showPopup && !underReview && requestDocument && (
+        <AdditionalDocuments 
+          setUnderReview={setUnderReview} 
+          showPopup={showPopup} 
+          setUploadedDoc={setUploadedDoc} 
+          setShowSuccessToast={setShowSuccessToast} 
+          closePopup={closePopup} 
+          requestDocument={requestDocument[requestDocument?.length -1]} 
+        />
       )}
 
       {showSuccessToast && <VerificationSuccessPopup />}
