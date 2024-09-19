@@ -64,17 +64,6 @@ export type propertyStatus = {
   type: string;
 };
 
-export type requestDocument ={
-  actionType: string;
-  dateCreated : string;
-  dateUpdated : string;
-  description : string;
-  id: number;
-  referenceId : number;
-  status : string;
-  userId: number;
-}
-
 type metadata = {
   endTime : Date;
 }
@@ -110,7 +99,7 @@ export type PropertyData = {
   status?:number;
   type?:string;
   hasPlanningPermission?:string | null;
-  requestDocument?:requestDocument;
+  requestDocument?: RequestDocument[];
   metadata?:metadata;
 };
 

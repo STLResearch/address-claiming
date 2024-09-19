@@ -195,6 +195,7 @@ const Modal = ({
       console.error(error);
     }
   };
+ 
 
   return (
     <Fragment>
@@ -217,12 +218,12 @@ const Modal = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-deep-blue">
+        <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-deep-blue max-w-full">
           <div className="w-6 h-6">
             <LocationPointIcon />
           </div>
           <input
-            className="font-normal text-light-black text-[14px] flex-1 border-none outline-none"
+            className="font-normal text-light-black text-[14px] flex-1 border-none outline-none whitespace-nowrap overflow-hidden text-ellipsis w-full max-w-full"
             type="text"
             value={inputValue}
             onChange={(e) => {
@@ -230,6 +231,7 @@ const Modal = ({
             }}
           />
         </div>
+
 
         <div className="flex gap-[15px]">
           <p className="text-[14px] font-normal text-light-black">ID:</p>

@@ -127,14 +127,15 @@ const PortfolioListMobile = ({setSelectedAirspace, selectAirspace, setUploadedDo
               airspaceList[0].address ? (
               airspaceList.map((airspace, index) => (
                 <PortfolioItemMobile
-                airspaceName={airspace?.address}
-                key={index}
-                tags={[true, false, false, false]}
-                type={airspace?.type}
-                requestDocument={airspace?.requestDocument}
-                selectAirspace={() => selectAirspace(airspace)}
-                setUploadedDoc={setUploadedDoc}
-                setShowCancelModal={setShowCancelModal} 
+                  activeTab={activeTab}
+                  airspaceName={airspace?.address}
+                  key={index}
+                  tags={[true, false, false, false]}
+                  type={airspace?.type}
+                  requestDocument={airspace?.requestDocument}
+                  selectAirspace={() => selectAirspace(airspace)}
+                  setUploadedDoc={setUploadedDoc}
+                  setShowCancelModal={setShowCancelModal} 
                   refetchAirspaceRef={refetchAirspaceRef}  
                 />
               ))
