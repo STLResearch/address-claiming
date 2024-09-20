@@ -1,0 +1,131 @@
+
+name: Staging Build/Deploy
+
+on:  
+  workflow_dispatch:
+env:
+  SRV_IP: "16.171.23.68"
+  
+jobs:
+  # Build job
+  build_and_deploy:
+    runs-on: sky-trade-dev
+    env:
+      AWS_INSTANCE_SG_ID: sg-05720297ca0f63b54
+      SSH_KEY: ${{secrets.DEV_EC2_DEPLOY_KEY}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check branch
+        if: ${{ github.ref == 'refs/heads/staging' }}
+        run: |
+          echo "This workflow can only run on the Staging branch"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.11.1"
+          cache: ${{ steps.detect-package-manager.outputs.manager }}
+      - name: Check if Yarn is installed
+        run: |
+          if ! command -v yarn > /dev/null; then
+            echo "Yarn is not installed. Installing yarn..."
+            npm install -g yarn
+          else
+            echo "Yarn is already installed."
+          fi
+      - name: Detect package manager
+        id: detect-package-manager
+        run: |
+          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "command=install" >> $GITHUB_OUTPUT
+            echo "runner=yarn" >> $GITHUB_OUTPUT
+            exit 0
+          elif [ -f "${{ github.workspace }}/package.json" ]; then
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=ci" >> $GITHUB_OUTPUT
+            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "Unable to determine package manager"
+            exit 1
+          fi
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .next/cache
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
+      - name: Install dependencies
+        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      - name: Build App
+        run: cat settings/env.staging > .env.local && cat .env.local && yarn build
+      - name: Create deployment artifact 
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: ls -all && tar -czf "ac-${GITHUB_SHA}".tar.gz `ls -A -1`
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+      - name: get runner ip address
+        run: echo "GITHUB_PUB_IP=`curl -s checkip.amazonaws.com`" >> $GITHUB_ENV
+      - name: whitelist runner ip address
+        run: |
+          aws ec2 authorize-security-group-ingress \
+            --group-id $AWS_INSTANCE_SG_ID \
+            --protocol tcp \
+            --port 4578 \
+            --cidr $GITHUB_PUB_IP/32    
+      
+      - name: Print Artifact location
+        shell: bash
+        run: pwd && ls ./
+      
+      - name: Prepare SSH-client on Agent
+        run: | 
+            mkdir -p ~/.ssh          
+            [ -e ~/.ssh/github-action ] && rm ~/.ssh/github-action
+            echo "$SSH_KEY" > ~/.ssh/github-action && chmod 400 ~/.ssh/github-action
+            echo -e "User ec2-user\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
+                
+      - name: Verify if the Server has all Dependencies
+        run: | 
+            ssh ec2-user@$SRV_IP -p 4578 -i ~/.ssh/github-action '[[ "$(command -v pm2)" ]] || { echo "pm2 is not installed" 1>&2 ; exit 1; }'
+            
+      - name: Send Artifact to Server 
+        run: | 
+            ssh -T ec2-user@$SRV_IP -p 4578 -i ~/.ssh/github-action 'mkdir -p address-claiming'
+            scp -P 4578 -i ~/.ssh/github-action ac-${GITHUB_SHA}.tar.gz ec2-user@$SRV_IP:~/address-claiming/
+
+      - name: Change Symlink/Deploy/Restart PM2 SSH Commands
+        run: |
+            ssh -T ec2-user@$SRV_IP -p 4578 -i ~/.ssh/github-action <<'EOL'
+              TIMESTAMP=$(date +%F_%H-%M-%S)
+              NEW_DEPLOY_SOURCE="ac_${TIMESTAMP}"
+              cd address-claiming && \
+              mkdir $NEW_DEPLOY_SOURCE && \
+              tar -xzf ac-${{ github.sha }}.tar.gz -C $NEW_DEPLOY_SOURCE && \
+              rm -f ac-${{ github.sha }}.tar.gz && \
+              cd $NEW_DEPLOY_SOURCE && bash "./staging_env.sh" || exit 1
+              cd .. && ln -sfn `pwd`/$NEW_DEPLOY_SOURCE current && cd current && \
+              pm2 flush && \
+              pm2 startOrRestart ecosystem.config.js --env dev --cwd `pwd` &&
+              tail -n 100 ~/.pm2/logs/sky.trade.frontend-*
+
+            EOL
+            
+      - name: revoke runner ip address
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id $AWS_INSTANCE_SG_ID \
+            --protocol tcp \
+            --port 4578 \
+            --cidr $GITHUB_PUB_IP/32
+        if: always()
