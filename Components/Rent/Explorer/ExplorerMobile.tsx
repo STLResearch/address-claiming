@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SearchInput from "./SearchInput";
 import { Map, Marker } from "mapbox-gl";
 import RentableAirspaceLists from "./RentableAirspaceLists/RentableAirspaceLists";
@@ -24,6 +24,7 @@ interface ExplorerMobileProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
   setRentData: React.Dispatch<React.SetStateAction<PropertyData>>;
+  setRegAdressShow:React.Dispatch<React.SetStateAction<boolean>>;
 }
 const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
   loadingReg,
@@ -44,7 +45,24 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
   setShowOptions,
   setLoadingRegAddresses,
   setRegisteredAddress,
+  setRegAdressShow,
+  
 }) => {
+
+  const divRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (divRef.current && !divRef.current.contains(event.target)) {
+        setShowOptions(false); 
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [divRef]);
+
   return (
     <div className="w-full z-[40]  items-center gap-[15px] ">
     <div className="flex items-center gap-[15px] z-[40] bg-white w-full px-[21px] py-6">
@@ -62,7 +80,7 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
 
       {showOptions && (
         <div className="px-[30px] py-[19px]">
-         <div className="overflow-y-scroll max-h-60 w-full flex-col z-40  border-t-4 rounded-lg border-blue-500 mt-6 ">
+         <div ref={divRef} className="overflow-y-scroll max-h-60 w-full flex-col z-40  border-t-4 rounded-lg border-blue-500 mt-6 ">
           {loading ? (
             <div className="pt-8 flex justify-center items-center">
               <BalanceLoader />
@@ -100,7 +118,7 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
         )}
       <RentableAirspaceLists
         loadingReg={loadingReg}
-         map={map} 
+        map={map}
         marker={marker}
         regAdressShow={regAdressShow}
         registeredAddress={registeredAddress}
@@ -109,8 +127,8 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
         setRegisteredAddress={setRegisteredAddress}
         setMarker={setMarker}
         setRentData={setRentData}
-        setShowClaimModal={setShowClaimModal}
-      />
+        setShowClaimModal={setShowClaimModal} 
+        setRegAdressShow={setRegAdressShow}      />
     </div>
   );
 };
