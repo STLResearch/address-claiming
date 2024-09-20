@@ -1,4 +1,4 @@
-interface IAirRightEstimateMetadataProps {
+interface IProps {
   title: string;
   value: string;
   icon: React.ReactNode;
@@ -6,7 +6,7 @@ interface IAirRightEstimateMetadataProps {
 
 const labelClassNames = "text-[#0E2B56] font-poppins";
 
-function AirRightEstimateMetadata(props: IAirRightEstimateMetadataProps) {
+function AirRightEstimateMetadata(props: IProps) {
   return (
     <div className="flex items-center rounded-xl bg-[#DEE9F8] px-5 py-1">
       <div className="w-5 h-5">{props.icon}</div>

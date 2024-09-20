@@ -367,12 +367,14 @@ const Airspaces: React.FC = () => {
   useEffect(() => {
     if (map && airRightEstimates && airRightEstimates.main.estimate) {
       removeMapMarker();
+      removeEstimateMarkers();
 
-      const markers = [airRightEstimates.main, ...airRightEstimates.nearby].map(
-        (est) => createAirRightEstimateMarker(map, est)
-      );
+      const newMarkers = [
+        airRightEstimates.main,
+        ...airRightEstimates.nearby,
+      ].map((est) => createAirRightEstimateMarker(map, est));
 
-      setAirRightEstimateMarkers(markers);
+      setAirRightEstimateMarkers(newMarkers);
     }
   }, [map, airRightEstimates]);
 
@@ -384,10 +386,7 @@ const Airspaces: React.FC = () => {
       );
 
       if (decodedPropertyAddress) {
-        setIsLoadingEstimates(true);
-        const estimates = await getAirRightEstimates(decodedPropertyAddress);
-        setAirRightEstimates(estimates);
-        setIsLoadingEstimates(false);
+        handleEstimateAirRights(decodedPropertyAddress);
       }
     }
 
@@ -426,7 +425,6 @@ const Airspaces: React.FC = () => {
     }
   }, [])
 
-
   const handleSelectAddress = async (
     placeName: string,
     fetchEstimates: boolean
@@ -437,14 +435,8 @@ const Airspaces: React.FC = () => {
     setAirRightEstimates(undefined);
 
     if (fetchEstimates) {
-      for (let i = 0; i < airRightEstimateMarkers.length; i++) {
-        airRightEstimateMarkers[i].remove();
-      }
-
-      setIsLoadingEstimates(true);
-      const estimates = await getAirRightEstimates(placeName);
-      setAirRightEstimates(estimates);
-      setIsLoadingEstimates(false);
+      removeEstimateMarkers();
+      await handleEstimateAirRights(placeName);
     }
   };
 
@@ -576,11 +568,7 @@ const Airspaces: React.FC = () => {
       const propertyAddress = searchParams?.get('propertyAddress')
       const geoLocation = searchParams?.get('geoLocation');
 
-      if (
-        propertyAddress ||
-        geoLocation ||
-        (airRightEstimates && airRightEstimates.main.estimate)
-      ) {
+      if (propertyAddress ||geoLocation) {
         //do nothing
       }
       else {
@@ -629,6 +617,18 @@ const Airspaces: React.FC = () => {
       setMarker(null);
     }
   };
+
+  const handleEstimateAirRights = async (address: string) => {
+    setIsLoadingEstimates(true);
+    const estimates = await getAirRightEstimates(address);
+    setAirRightEstimates(estimates);
+    setIsLoadingEstimates(false);
+  }
+
+  const removeEstimateMarkers = () => {
+    airRightEstimateMarkers.forEach((m) => m.remove());
+    setAirRightEstimateMarkers([]);
+  }
   
   const router = useRouter();
   return (
