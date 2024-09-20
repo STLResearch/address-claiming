@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 import {  DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon } from './Icons';
 import useAuth from '@/hooks/useAuth';
 import Link from 'next/link';
@@ -61,9 +61,25 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
       await signOut()
     };
 
+    const divRef = useRef<HTMLDivElement | null>(null); 
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (divRef.current && !divRef.current.contains(event.target)) {
+          console.log("Click detected outside, closing mobile navbar.");
+          setShowMobileNavbar(false);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        console.log("Cleanup: Removing event listener for outside click");
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [divRef])
+
    return ( 
     <div className=" w-full h-[70%] z-50">
-    <div className=" w-full h-[80%] fixed bottom-0">
+    <div ref={divRef}  className=" w-full h-[80%] fixed bottom-0">
     <div className=" w-full h-full bg-white rounded-t-3xl overflow-y-scroll">
         <div onClick={() => setShowMobileNavbar(false)}  className='mt-4 flex flex-col justify-center items-center gap-4'>
             <p className='mt-4 border-4 border-dark-grey w-[20%] rounded-md'></p>
