@@ -72,7 +72,6 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
       };
       document.addEventListener("mousedown", handleClickOutside);
       return () => {
-        console.log("Cleanup: Removing event listener for outside click");
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }, [divRef])
