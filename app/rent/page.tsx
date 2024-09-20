@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, SetStateAction } from "react";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import PageHeader from "@/Components/PageHeader";
@@ -233,7 +233,7 @@ const Rent = () => {
                 showOptions={showOptions}
                 regAdressShow={regAdressShow}
                 registeredAddress={registeredAddress}
-                 map={map} 
+                map={map}
                 marker={marker}
                 setMarker={setMarker}
                 setShowClaimModal={setShowClaimModal}
@@ -242,8 +242,9 @@ const Rent = () => {
                 setFlyToAddress={setFlyToAddress}
                 setShowOptions={setShowOptions}
                 setLoadingRegAddresses={setLoadingRegAddresses}
-                setRegisteredAddress={setRegisteredAddress}
-              />
+                setRegisteredAddress={setRegisteredAddress} 
+                setRegAdressShow={setRegAdressShow} 
+                />
             )} 
             <section
               className={
