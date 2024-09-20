@@ -66,7 +66,6 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
     useEffect(() => {
       const handleClickOutside = (event) => {
         if (divRef.current && !divRef.current.contains(event.target)) {
-          console.log("Click detected outside, closing mobile navbar.");
           setShowMobileNavbar(false);
         }
       };
