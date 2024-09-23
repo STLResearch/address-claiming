@@ -33,6 +33,8 @@ import React from "react";
 import VerificationPopup from "@/Components/MyAccount/VerificationPopup";
 import MyMobileAirspacesPage from "@/Components/Airspace/ClaimedAirspaceList";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
+import AirRightsEstimateService from "@/services/AirRightsEstimateService";
+import { createAirRightEstimateMarker } from "@/utils/maputils";
 
 interface Address {
   id: string;
@@ -104,7 +106,13 @@ const Airspaces: React.FC = () => {
   const [airspaces, setAirspaces] = useState<any[]>([]);
   const [totalAirspace, setTotalAirspace] = useState(0);
 
+  const [isLoadingEstimates, setIsLoadingEstimates] = useState(false);
+  const [airRightEstimates, setAirRightEstimates] = useState<any>(undefined);
+  const [airRightEstimateMarkers, setAirRightEstimateMarkers] = useState<any[]>(
+    []
+  );
 
+  const { getAirRightEstimates } = AirRightsEstimateService();
   const { getTotalAirspacesByUserAddress } = AirspaceRentalService();
 
   useEffect(() => {
@@ -355,6 +363,36 @@ const Airspaces: React.FC = () => {
     if (flyToAddress) setData((prev) => ({ ...prev, address: address }));
   }, [flyToAddress, address, pathname]);
 
+  // Update map markers when air right estimates are available
+  useEffect(() => {
+    if (map && airRightEstimates && airRightEstimates.main.estimate) {
+      removeMapMarker();
+      removeEstimateMarkers();
+
+      const newMarkers = [
+        airRightEstimates.main,
+        ...airRightEstimates.nearby,
+      ].map((est) => createAirRightEstimateMarker(map, est));
+
+      setAirRightEstimateMarkers(newMarkers);
+    }
+  }, [map, airRightEstimates]);
+
+  // Get air rights estimates for address
+  useEffect(() => {
+    async function getEstimates() {
+      const decodedPropertyAddress = decodeURIComponent(
+        searchParams.get("propertyAddress") || ""
+      );
+
+      if (decodedPropertyAddress) {
+        handleEstimateAirRights(decodedPropertyAddress);
+      }
+    }
+
+    getEstimates();
+  }, []);
+
   useEffect(() => {
     if (!showSuccessPopUp) return;
   }, [showSuccessPopUp]);
@@ -387,11 +425,19 @@ const Airspaces: React.FC = () => {
     }
   }, [])
 
-
-  const handleSelectAddress = (placeName) => {
+  const handleSelectAddress = async (
+    placeName: string,
+    fetchEstimates: boolean
+  ) => {
     setAddress(placeName);
     setFlyToAddress(placeName);
     setShowOptions(false);
+    setAirRightEstimates(undefined);
+
+    if (fetchEstimates) {
+      removeEstimateMarkers();
+      await handleEstimateAirRights(placeName);
+    }
   };
 
   useEffect(() => {
@@ -522,7 +568,7 @@ const Airspaces: React.FC = () => {
       const propertyAddress = searchParams?.get('propertyAddress')
       const geoLocation = searchParams?.get('geoLocation');
 
-      if (propertyAddress || geoLocation) {
+      if (propertyAddress ||geoLocation) {
         //do nothing
       }
       else {
@@ -564,6 +610,26 @@ const Airspaces: React.FC = () => {
     setShowHowToModal(false);
     setShowMobileMap(true);
   }
+
+  const removeMapMarker = () => {
+    if (marker) {
+      marker.remove();
+      setMarker(null);
+    }
+  };
+
+  const handleEstimateAirRights = async (address: string) => {
+    setIsLoadingEstimates(true);
+    const estimates = await getAirRightEstimates(address);
+    setAirRightEstimates(estimates);
+    setIsLoadingEstimates(false);
+  }
+
+  const removeEstimateMarkers = () => {
+    airRightEstimateMarkers.forEach((m) => m.remove());
+    setAirRightEstimateMarkers([]);
+  }
+  
   const router = useRouter();
   return (
     <Fragment>
@@ -585,7 +651,7 @@ const Airspaces: React.FC = () => {
                 setAddress={handleSetAddress}
                 addresses={addresses}
                 showOptions={showOptions}
-                handleSelectAddress={(value) => handleSelectAddress(value)}
+                handleSelectAddress={(value) => handleSelectAddress(value, false)}
               />
             )}
 
@@ -597,7 +663,7 @@ const Airspaces: React.FC = () => {
                     {addresses.slice(0, 1).map((item: Address) => (
                       <div
                         key={item.id}
-                        onClick={() => handleSelectAddress(item.place_name)}
+                        onClick={() => handleSelectAddress(item.place_name, true)}
                         className="w-full text-left text-[#222222]"
                       >
                         <div className="flex items-center">
@@ -616,7 +682,7 @@ const Airspaces: React.FC = () => {
                         onClick={() => {
                           setShowClaimModal(true);
                           setIsLoading(true);
-                          handleSelectAddress(addresses[0].place_name)
+                          handleSelectAddress(addresses[0].place_name, false)
                         }}
                         className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
                         style={{ maxWidth: "400px" }}
@@ -699,6 +765,8 @@ const Airspaces: React.FC = () => {
                   addresses={addresses}
                   showOptions={showOptions}
                   handleSelectAddress={handleSelectAddress}
+                  airRightEstimates={airRightEstimates}
+                  isLoadingEstimates={isLoadingEstimates}
                   onClaimAirspace={() => {
                     setShowClaimModal(true);
                     setIsLoading(true);
