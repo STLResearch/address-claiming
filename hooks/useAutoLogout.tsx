@@ -51,7 +51,7 @@ const useAutoLogout = () => {
     if (!web3auth) return;
 
     const routes = publicAccessRoutes.map(x => x.redirectTo).concat(["/auth", "/"]);
-    const authRoutes = ["/auth", "/auth/join"];
+    const authRoutes = ["/auth", "/auth/join", '/'];
 
     const userLocalstorage = localStorage.getItem('user');
 
