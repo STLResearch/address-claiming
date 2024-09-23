@@ -1,9 +1,11 @@
 "use client"
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 
 const NotificationBanner: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
+  const router = useRouter();
    useEffect(() => {
     if (localStorage.getItem("showbanner")) {
       setIsVisible(true);
@@ -19,7 +21,7 @@ const NotificationBanner: React.FC = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="w-full bg-[#2279FF] text-white py-2 px-8 flex justify-between items-center z-50 gap-3">
+    <div  onClick={() => router.push("/points")}  className="w-full bg-[#2279FF] text-white py-2 px-8 flex justify-between items-center z-50 gap-3 cursor-pointer">
       <div className="flex gap-5 items-center">
         <p>🚀</p>
         <p className='font-normal'>
