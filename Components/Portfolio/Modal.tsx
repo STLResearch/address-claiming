@@ -172,7 +172,7 @@ const Modal = ({
   const { getUnverifiedAirspaces } = AirspaceRentalService();
 
   const handleEdit = async () => {
-    if (!user || inputValue === airspace?.address) return;
+    if (!user?.blockchainAddress || inputValue === airspace?.address) return;
     try {
       setIsLoading(true);
       const editResponse = await editAirSpaceAddress({
@@ -181,7 +181,6 @@ const Modal = ({
       });
       if (editResponse) {
         const airspaceResp = await getUnverifiedAirspaces(
-          user?.blockchainAddress,
           pageNumber,
           10
         );

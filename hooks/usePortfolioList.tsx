@@ -39,28 +39,25 @@ const usePortfolioList = () => {
   useEffect(() => {
     (async () => {
       try {
-        if (web3auth && web3auth?.status !== "connected") return;
+        if ((web3auth && web3auth?.status !== "connected") || !user?.blockchainAddress) return;
         let airspaces = [];
         setLoading(true);
         const assetId = airspaceList.length > 0 ? airspaceList.at(-1)?.id : "";
 
         if (activeTab === PortfolioTabEnum.VERIFIED) {
           airspaces = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
             "landToken",
             10,
             String(assetId)
           );
         } else if (activeTab === PortfolioTabEnum.RENTED) {
           airspaces = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
             "rentalToken",
             10,
             String(assetId)
           );
         } else if (activeTab === PortfolioTabEnum.UNVERIFIED) {
           const airspaceResp = await getUnverifiedAirspaces(
-            user?.blockchainAddress,
             pageNumber,
             10
           );
@@ -69,7 +66,6 @@ const usePortfolioList = () => {
           }
         } else if (activeTab === PortfolioTabEnum.PENDING_RENTAL) {
           const airspaceResp = await getRetrievePendingRentalAirspace(
-            user?.blockchainAddress,
             pageNumber,
             10
           );
@@ -78,7 +74,6 @@ const usePortfolioList = () => {
           }
         } else {
           const airspaceResp = await getRejectedAirspaces(
-            user?.blockchainAddress,
             pageNumber,
             10
           );
@@ -94,7 +89,7 @@ const usePortfolioList = () => {
         setLoading(false);
       }
     })();
-  }, [activeTab, web3auth?.status, pageNumber, refetchRef.current]);
+  }, [activeTab, web3auth?.status, pageNumber, refetchRef.current, user?.blockchainAddress]);
 
   const handleNextPage = () => {
     if (airspaceList?.length < 9) return;

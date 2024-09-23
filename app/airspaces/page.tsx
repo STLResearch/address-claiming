@@ -94,7 +94,7 @@ const Airspaces: React.FC = () => {
   // database
   const { claimProperty } = PropertiesService();
 
-  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } = useAuth();
+  const { user, web3authStatus, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } = useAuth();
   const searchParams = useSearchParams()
   const pathname = usePathname()
 
@@ -119,27 +119,29 @@ const Airspaces: React.FC = () => {
     if (!user) return;
     (async () => {
       try {
-        const airspaces = await getTotalAirspacesByUserAddress(
-          user?.blockchainAddress
-        );
-
-        if (airspaces && airspaces.previews) {
-          let retrievedAirspaces = airspaces.previews.map((item: any) => ({
-            address: item.address,
-            id: item?.id,
-          }));
-          if (retrievedAirspaces.length > 0) {
-            setAirspaces(retrievedAirspaces);
-            setTotalAirspace(airspaces.total);
-          } else {
-            console.info("No airspaces found.");
+        if (user?.blockchainAddress && web3authStatus) {
+          const airspaces = await getTotalAirspacesByUserAddress();
+  
+          if (airspaces && airspaces.previews) {
+            let retrievedAirspaces = airspaces.previews.map((item: any) => ({
+              address: item.address,
+              id: item?.id,
+            }));
+            if (retrievedAirspaces.length > 0) {
+              setAirspaces(retrievedAirspaces);
+              setTotalAirspace(airspaces.total);
+            } else {
+              console.info("No airspaces found.");
+            }
           }
+  
         }
+
       } catch (error) {
         console.log(error);
       }
     })();
-  }, [user]);
+  }, [user?.blockchainAddress, web3authStatus]);
 
 
   //removes cached airspaceData when address is in coOrdinates
