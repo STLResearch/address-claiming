@@ -4,7 +4,6 @@ import { useEffect, useContext, Fragment, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Spinner from '@/Components/Spinner';
 import { Web3authContext } from '@/providers/web3authProvider';
-import Backdrop from "@/Components/Backdrop";
 import useAuthRedirect from '@/hooks/useAuthRedirect';
 import useInitAuth from '@/hooks/useInitAuth';
 import { useAppSelector } from '@/redux/store';
@@ -37,35 +36,15 @@ export default function Home() {
     return { isWaitingScreenVisible };
   }, shallowEqual);
 
-  const logout = () => {
-    sessionStorage.clear();
-    localStorage.clear();
-    router.push('/airspaces');
-  }
 
   useEffect(() => {
     setIsLoading(true);
-    if (web3auth) {
-      const referralCode = queryParams.get('ref');
-      if (referralCode && web3auth?.status !== "connected") {
-        localStorage.setItem("referralCode", String(referralCode));
-      } else {
-        if (web3auth.status === "connected") {
-          localStorage.removeItem("referralCode");
-
-          const userData = localStorage.getItem("user");
-          if (userData && userData !== "undefined") {
-            router.push('/dashboard');
-          } else {
-            logout();
-          }
-        }
-      }
-      
-    }
+    const referralCode = queryParams.get('ref');
+    if (referralCode) {
+      localStorage.setItem("referralCode", String(referralCode));
+    } 
     setIsLoading(false);
-
-  }, [web3auth?.status]);
+  }, []);
 
 
   const loginUser = async (isEmail: boolean) => {
@@ -117,7 +96,6 @@ export default function Home() {
 
   return (
     <Fragment>
-      {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
       {!isWaitingScreenVisible && !isRedirecting && (
         <div className="h-screen w-screen md:flex">
