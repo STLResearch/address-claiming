@@ -22,8 +22,7 @@ const useAutoLogout = () => {
 
   const redirectTo = () => {
     if (pathname) {
-      const isReferralPage = pathname.includes("/r/");
-      if (!isReferralPage && pathname !== "/") {
+      if (pathname !== "/") {
         router.push("/auth");
       } else {
         router.push("/airspaces");
@@ -51,13 +50,12 @@ const useAutoLogout = () => {
 
     if (!web3auth) return;
 
-    const routes = publicAccessRoutes.map(x => x.redirectTo).concat(["/auth"]);
+    const routes = publicAccessRoutes.map(x => x.redirectTo).concat(["/auth", "/"]);
     const authRoutes = ["/auth", "/auth/join"];
-    const isReferralPage = pathname?.includes("/r/");
 
     const userLocalstorage = localStorage.getItem('user');
 
-    if (routes.includes(String(pathname)) || isReferralPage){ 
+    if (routes.includes(String(pathname))){ 
       return;
     } else if (!userLocalstorage && !authRoutes.includes(String(pathname))) {
       logout()
