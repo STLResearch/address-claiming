@@ -28,10 +28,10 @@ const Dashboard: FC = () => {
     if (!user) return;
     (async () => {
       try {
+        if (!user?.blockchainAddress || !web3authStatus) return;
+
         setIsLoadingAirspace(true);
-        const airspaces = await getTotalAirspacesByUserAddress(
-          user?.blockchainAddress
-        );
+        const airspaces = await getTotalAirspacesByUserAddress();
 
         if (airspaces && airspaces.previews) {
           let retrievedAirspaces = airspaces.previews.map((item: any) => ({
@@ -51,7 +51,7 @@ const Dashboard: FC = () => {
         setIsLoadingAirspace(false);
       }
     })();
-  }, [user, web3authStatus]);
+  }, [user?.blockchainAddress, web3authStatus]);
 
   if (!user) {
     return <Spinner />;
