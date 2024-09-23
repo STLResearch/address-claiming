@@ -19,23 +19,34 @@ export const isValidFileType = (fileName: string) => {
     return allowedExtensions.includes(fileExtension);
   };
 
+export const uploadImage = async (response: { uploadUrl: { uploadUrl: string }}, file: File) => {
+  const url = response?.uploadUrl?.uploadUrl;
 
-export  const uploadImage = async (response: any,file:File) => {
-    const url = response?.uploadUrl?.uploadUrl;
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("url", url);
-    try {
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_FRONTEND_URI}/api/documentUpload`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      return response;
-    } catch {
-      return false;
-    }
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const result = await axios.put(url, formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    });
+    return {
+      data: {
+        status: 'SUCCESS',
+        message: 'File uploaded successfully'
+      }
+    };
+  } catch (error) {
+    console.error('Error uploading file', error);
+    return {
+      data: {
+        status: 'error',
+        message: 'Failed to upload file'
+      },
+      status: 500
+    };
+  }
 };
+
 export const checkDocumentStatus = (requestDocument) => {
   if (!requestDocument || requestDocument.length === 0) {
     return "NOT_REQUESTED";
