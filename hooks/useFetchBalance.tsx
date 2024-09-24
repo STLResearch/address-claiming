@@ -17,29 +17,29 @@ const useFetchBalance = () => {
     return { userUSDWalletBalance };
   }, shallowEqual);
 
-   const handleBalance = async () => {
+  const handleBalance = async () => {
     try {
-          const userBalance  = await fetchBalance(user)
-      
-          dispatch(
-            setUserUSDWalletBalance({
-              amount: userBalance ,
-              isLoading: false,
-            })
-          );
+      const userBalance = await fetchBalance(user);
+
+      dispatch(
+        setUserUSDWalletBalance({
+          amount: userBalance,
+          isLoading: false,
+        }),
+      );
     } catch (error) {
       dispatch(
         setUserUSDWalletBalance({
           amount: userUSDWalletBalance.amount,
           isLoading: false,
-        })
+        }),
       );
-    }   
     }
+  };
 
-   useEffect(() => {
+  useEffect(() => {
     if (user && user.blockchainAddress) {
-       handleBalance()
+      handleBalance();
     }
   }, [user, web3authStatus]);
 

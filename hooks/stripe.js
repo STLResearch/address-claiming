@@ -1,5 +1,4 @@
-import React, { ReactNode } from 'react';
-import { useState, useEffect, createContext } from 'react';
+import React, { useState, useEffect, createContext } from "react";
 
 const CryptoElementsContext = createContext(null);
 
@@ -41,7 +40,7 @@ export const OnrampElement = ({ clientSecret, appearance, ...props }) => {
   React.useEffect(() => {
     const containerRef = onrampElementRef.current;
     if (containerRef) {
-      containerRef.innerHTML = '';
+      containerRef.innerHTML = "";
 
       if (clientSecret && stripeOnramp) {
         stripeOnramp

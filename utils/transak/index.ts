@@ -1,4 +1,4 @@
-import { Transak, TransakConfig } from '@transak/transak-sdk';
+import { Transak, TransakConfig } from "@transak/transak-sdk";
 
 type InitializeTransakProps = {
   walletAddress?: string;
@@ -11,27 +11,27 @@ type InitializeTransakProps = {
 export const initializeTransak = ({
   walletAddress,
   email,
-  productsAvailed = 'BUY,SELL',
+  productsAvailed = "BUY,SELL",
   onSuccess,
   onFailure,
 }: InitializeTransakProps) => {
   const transakConfig: TransakConfig = {
     apiKey: String(process.env.NEXT_PUBLIC_TRANSAK_PUBLISHABLE_KEY),
     environment:
-      String(process.env.NEXT_PUBLIC_ENVIRONMENT) === 'PRODUCTION'
+      String(process.env.NEXT_PUBLIC_ENVIRONMENT) === "PRODUCTION"
         ? Transak.ENVIRONMENTS.PRODUCTION
         : Transak.ENVIRONMENTS.STAGING,
     walletAddress,
     email,
-    defaultNetwork: 'solana',
-    defaultCryptoCurrency: 'USDC',
-    cryptoCurrencyList: 'USDC',
-    networks: 'solana',
+    defaultNetwork: "solana",
+    defaultCryptoCurrency: "USDC",
+    cryptoCurrencyList: "USDC",
+    networks: "solana",
     productsAvailed,
     hideMenu: true,
-    widgetHeight: '520px',
-    widgetWidth: '500px',
-    disableWalletAddressForm:true
+    widgetHeight: "520px",
+    widgetWidth: "500px",
+    disableWalletAddressForm: true,
   };
 
   const transak = new Transak(transakConfig);

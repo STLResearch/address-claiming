@@ -1,20 +1,19 @@
-"use client"
+"use client";
 
-import { useEffect, useContext, Fragment, useState, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Spinner from '@/Components/Spinner';
-import { Web3authContext } from '@/providers/web3authProvider';
-import useAuthRedirect from '@/hooks/useAuthRedirect';
-import useInitAuth from '@/hooks/useInitAuth';
-import { useAppSelector } from '@/redux/store';
-import { shallowEqual } from 'react-redux';
-import { toast } from 'react-toastify';
-import { WALLET_ADAPTERS } from '@web3auth/base';
+import { useEffect, useContext, Fragment, useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Spinner from "@/Components/Spinner";
+import { Web3authContext } from "@/providers/web3authProvider";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useInitAuth from "@/hooks/useInitAuth";
+import { useAppSelector } from "@/redux/store";
+import { shallowEqual } from "react-redux";
+import { toast } from "react-toastify";
+import { WALLET_ADAPTERS } from "@web3auth/base";
 import Image from "next/image";
-import EmailInput from '@/Components/Auth/EmailInput';
+import EmailInput from "@/Components/Auth/EmailInput";
 import Link from "next/link";
-import LoadingMessage from '@/Components/Auth/LoadingMessage';
-
+import LoadingMessage from "@/Components/Auth/LoadingMessage";
 
 export default function Home() {
   const router = useRouter();
@@ -28,7 +27,7 @@ export default function Home() {
 
   const emailRef = useRef<HTMLInputElement>(null);
 
-  const { web3auth, setProvider } = useContext(Web3authContext)
+  const { web3auth, setProvider } = useContext(Web3authContext);
   const { init } = useInitAuth();
 
   const { isWaitingScreenVisible } = useAppSelector((state) => {
@@ -36,16 +35,14 @@ export default function Home() {
     return { isWaitingScreenVisible };
   }, shallowEqual);
 
-
   useEffect(() => {
     setIsLoading(true);
-    const referralCode = queryParams.get('ref');
+    const referralCode = queryParams.get("ref");
     if (referralCode) {
       localStorage.setItem("referralCode", String(referralCode));
-    } 
+    }
     setIsLoading(false);
   }, []);
-
 
   const loginUser = async (isEmail: boolean) => {
     try {
@@ -88,7 +85,6 @@ export default function Home() {
     }
   };
 
-
   const isEmailValid = (email) => {
     const regex = /^\S+@\S+\.\S+$/;
     return regex.test(email);
@@ -101,7 +97,12 @@ export default function Home() {
         <div className="h-screen w-screen md:flex">
           <div className="flex-1 bg-white flex items-center justify-center">
             <div className="flex flex-col gap-[15px] px-[30px] py-[40px] items-center justify-center max-w-[577px]">
-              <Image src={'/images/logo-1.svg'} alt="Company's logo" width={199} height={77} />
+              <Image
+                src={"/images/logo-1.svg"}
+                alt="Company's logo"
+                width={199}
+                height={77}
+              />
               <p className="font-normal text-xl text-[#222222] text-center">
                 Welcome to SkyTrade
               </p>
@@ -241,8 +242,6 @@ export default function Home() {
         </div>
       )}
       {isWaitingScreenVisible && <LoadingMessage />}
-
     </Fragment>
   );
-
 }

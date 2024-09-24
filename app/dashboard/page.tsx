@@ -34,7 +34,7 @@ const Dashboard: FC = () => {
         const airspaces = await getTotalAirspacesByUserAddress();
 
         if (airspaces && airspaces.previews) {
-          let retrievedAirspaces = airspaces.previews.map((item: any) => ({
+          const retrievedAirspaces = airspaces.previews.map((item: any) => ({
             address: item.address,
             id: item?.id,
           }));
@@ -46,7 +46,7 @@ const Dashboard: FC = () => {
           }
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         setIsLoadingAirspace(false);
       }
@@ -76,10 +76,10 @@ const Dashboard: FC = () => {
                   </h2>
                   <p className="font-normal text-base text-[#87878D] hidden md:flex">
                     Claim your airspace on the dashboard to kickstart your
-                    passive income journey. Don't forget to share the love—refer
-                    friends using your code or link and watch your earnings
-                    grow. Welcome to the community, where the future is yours to
-                    seize! 🌟🚀
+                    passive income journey. Don&apos;t forget to share the
+                    love—refer friends using your code or link and watch your
+                    earnings grow. Welcome to the community, where the future is
+                    yours to seize! 🌟🚀
                   </p>
 
                   <div className="flex flex-col md:flex-row justify-evenly gap-2">
@@ -97,48 +97,48 @@ const Dashboard: FC = () => {
                   </div>
                 </div>
                 <div className="md:overflow-y-scroll  md:overflow-x-hidden  md:min-h-screen md:w-1/2 m-0 ">
-                <Link
-                  href={"/airspaces"}
-                  className="gap-20 md:flex-1 flex flex-col md:items-center md:justify-between h-[500px] md:bg-cover md:bg-no-repeat md:bg-center md:-mt-[53px] md:-mr-[53px] md:pt-[42px] px-[18px] md:pb-[40px] md:h-full md:overflow-y-scroll "
-                  style={{ backgroundImage: "url('/images/map-bg.png')" }}
-                >
-                  <div
-                    className="bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex flex-col items-center gap-[15px] max-w-[362px] mt-10"
-                    style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+                  <Link
+                    href={"/airspaces"}
+                    className="gap-20 md:flex-1 flex flex-col md:items-center md:justify-between h-[500px] md:bg-cover md:bg-no-repeat md:bg-center md:-mt-[53px] md:-mr-[53px] md:pt-[42px] px-[18px] md:pb-[40px] md:h-full md:overflow-y-scroll "
+                    style={{ backgroundImage: "url('/images/map-bg.png')" }}
                   >
-                    <div className="flex gap-[5px] items-center">
-                      <p className="text-xl font-medium text-[#222222]">
-                        Claim Airspace
-                      </p>
-                      <div className="w-5 h-5 items-center justify-center">
-                        <InfoIcon />
-                      </div>
-                    </div>
-                    <p className="text-[15px] font-normal text-[#222222]">
-                      Ready to claim your airspace? No registered airspace yet,
-                      but exciting times ahead!
-                    </p>
                     <div
-                      className="relative px-[22px] py-[16px] bg-white rounded-lg w-full"
-                      style={{ border: "1px solid #87878D" }}
+                      className="bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex flex-col items-center gap-[15px] max-w-[362px] mt-10"
+                      style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
                     >
-                      <input
-                        type="text"
-                        name="searchAirspaces"
-                        id="searchAirspaces"
-                        placeholder="Search Airspaces"
-                        className="outline-none w-full pr-[20px]"
-                      />
-                      <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
-                        <MagnifyingGlassIcon />
+                      <div className="flex gap-[5px] items-center">
+                        <p className="text-xl font-medium text-[#222222]">
+                          Claim Airspace
+                        </p>
+                        <div className="w-5 h-5 items-center justify-center">
+                          <InfoIcon />
+                        </div>
+                      </div>
+                      <p className="text-[15px] font-normal text-[#222222]">
+                        Ready to claim your airspace? No registered airspace
+                        yet, but exciting times ahead!
+                      </p>
+                      <div
+                        className="relative px-[22px] py-[16px] bg-white rounded-lg w-full"
+                        style={{ border: "1px solid #87878D" }}
+                      >
+                        <input
+                          type="text"
+                          name="searchAirspaces"
+                          id="searchAirspaces"
+                          placeholder="Search Airspaces"
+                          className="outline-none w-full pr-[20px]"
+                        />
+                        <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
+                          <MagnifyingGlassIcon />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px] mt-10">
-                    Claim Airspace
-                  </div>
-                </Link>
-              </div>
+                    <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px] mt-10">
+                      Claim Airspace
+                    </div>
+                  </Link>
+                </div>
               </div>
             </section>
           </div>

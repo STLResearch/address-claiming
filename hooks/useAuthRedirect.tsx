@@ -10,7 +10,6 @@ import UserService from "@/services/UserService";
 import { useRouter } from "next/navigation";
 import { setCategory } from "@/redux/slices/userSlice";
 
-
 const useAuthRedirect = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
@@ -44,7 +43,7 @@ const useAuthRedirect = () => {
           if (responseData?.id) {
             localStorage.setItem("user", JSON.stringify(responseData));
             signIn({ user: responseData });
-            customRedirect()
+            customRedirect();
           } else {
             const categoryData = {
               email: userInformation.email,
@@ -65,8 +64,6 @@ const useAuthRedirect = () => {
       }
     })();
   }, [web3auth?.status]);
-
-  console.log("web3auth.status", web3auth?.status);
 
   return { isRedirecting };
 };

@@ -1,13 +1,10 @@
 import React, { Fragment, useState } from "react";
-import {
-  useTimezoneSelect,
-  allTimezones,
-} from "react-timezone-select";
+import { useTimezoneSelect, allTimezones } from "react-timezone-select";
 import { defaultData } from "../../../../types";
 
 interface PropsI {
   setTimeZone: (timeZone: string) => void;
-  data: defaultData
+  data: defaultData;
 }
 
 const TimeZoneSelect = ({ data, setTimeZone }: PropsI) => {
@@ -22,7 +19,7 @@ const TimeZoneSelect = ({ data, setTimeZone }: PropsI) => {
     timezones,
   });
 
-  const selectedLabel = data.timezone
+  const selectedLabel = data.timezone;
   const handleTimeZoneChange = (event) => {
     const selectedTimeZone = event.target.value;
     setTimeZone(selectedTimeZone);

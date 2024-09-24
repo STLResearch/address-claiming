@@ -46,7 +46,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
                   item.place_name,
                   setAddress,
                   setFlyToAddress,
-                  setShowOptions
+                  setShowOptions,
                 )
               }
               className="w-full p-5 text-left text-light-black border-t-[0.2px] border-light-black"

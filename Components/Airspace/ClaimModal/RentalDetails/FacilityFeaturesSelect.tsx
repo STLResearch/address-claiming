@@ -2,7 +2,7 @@ import React from "react";
 import FeatureCheckbox from "./FeatureCheckbox";
 interface FacilityFeaturesSelectProps {
   hasLandingDeck: boolean;
-  hasChargingStation:boolean;
+  hasChargingStation: boolean;
   hasStorageHub: boolean;
   setData: React.Dispatch<React.SetStateAction<any>>;
 }
@@ -11,12 +11,9 @@ const FacilityFeaturesSelect: React.FC<FacilityFeaturesSelectProps> = ({
   setData,
   hasLandingDeck,
   hasChargingStation,
-  hasStorageHub
+  hasStorageHub,
 }) => {
-  const handleChange = (
-    feature: string,
-    value: boolean
-  ): void => {
+  const handleChange = (feature: string, value: boolean): void => {
     setData((prev) => ({ ...prev, [feature]: value }));
   };
 

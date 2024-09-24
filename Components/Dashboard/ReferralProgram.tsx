@@ -1,7 +1,7 @@
 import { FC, Fragment } from "react";
 
 import Item from "@/Components/Dashboard/Item";
-import { EarthIcon, GiftIcon, ShareIcon,GiftIconSm } from "../Shared/Icons";
+import { EarthIcon, GiftIcon, ShareIcon, GiftIconSm } from "../Shared/Icons";
 import ReferralProgramItem from "./ReferralProgramItem";
 import Path from "./Path";
 
@@ -9,7 +9,7 @@ const ReferralProgram: FC = () => {
   return (
     <Item
       title={"Referral Program"}
-      icon={<GiftIcon  />}
+      icon={<GiftIcon />}
       linkText={"View referral program"}
       href={"/points"}
       style={"h-fit"}

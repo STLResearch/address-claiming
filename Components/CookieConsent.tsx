@@ -7,7 +7,7 @@ const CookieConsent: React.FC = () => {
 
   useEffect(() => {
     const localConsent = localStorage.getItem("localConsent");
-    if (!localConsent) setShowConsent(true)
+    if (!localConsent) setShowConsent(true);
   }, []);
 
   const acceptCookie = () => {
@@ -25,9 +25,9 @@ const CookieConsent: React.FC = () => {
         <p className="text-justify">
           Welcome to SkyTrade! Like many websites, we use cookies to enhance
           your browsing experience, analyze site traffic, and personalize
-          content. By clicking "Accept" you agree to the storing of cookies on
-          your device. You can manage your preferences or withdraw your consent
-          at any time by accessing our Cookie Settings.
+          content. By clicking &ldquo; Accept &rdquo; you agree to the storing
+          of cookies on your device. You can manage your preferences or withdraw
+          your consent at any time by accessing our Cookie Settings.
         </p>
         <button
           className="bg-blue-400 py-2 px-8 rounded text-white"

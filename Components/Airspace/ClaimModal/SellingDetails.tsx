@@ -9,12 +9,12 @@ interface SellingDetailsProps {
 
 const SellingDetails: React.FC<SellingDetailsProps> = ({
   sellingPrice,
-  setData
+  setData,
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   const handleSellPrice = (e) => {
-    let inputVal = e.target.value;
-    let parsedVal = parseFloat(inputVal);
+    const inputVal = e.target.value;
+    const parsedVal = parseFloat(inputVal);
     if (parsedVal >= 0 && !Number.isNaN(parsedVal)) {
       setData((prev) => {
         return {

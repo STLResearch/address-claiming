@@ -5,7 +5,6 @@ import { PropertyData } from "@/types";
 interface PlanningPermissionProps {
   isActive: boolean | null | undefined;
   setData: React.Dispatch<React.SetStateAction<PropertyData>>;
-
 }
 
 const PlanningPermission: React.FC<PlanningPermissionProps> = ({
@@ -18,7 +17,7 @@ const PlanningPermission: React.FC<PlanningPermissionProps> = ({
         Do you currently have zoning or planning permission to develop above
         your land or property?{" "}
         <span className="italic text-[12px] md:text-[10px]">
-          (Your answer won't affect your claim)
+          (Your answer won&apos;t affect your claim)
           <span className="text-[#E04F64]">*</span>
         </span>{" "}
       </p>

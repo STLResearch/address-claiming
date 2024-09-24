@@ -4,7 +4,7 @@ Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
   // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for tracing.
+  // Of transactions for tracing.
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
 
@@ -12,5 +12,5 @@ Sentry.init({
 
   // Note: if you want to override the automatic release value, do not set a
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
-  // that it will also get attached to your source maps
+  // That it will also get attached to your source maps
 });

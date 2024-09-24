@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 const ErrorPage = () => {
   const router = useRouter();

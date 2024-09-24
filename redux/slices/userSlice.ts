@@ -50,7 +50,7 @@ const userSlice: Slice<UserState> = createSlice({
     },
     setUserUSDWalletBalance: (
       state,
-      action: PayloadAction<UserUSDWalletBalanceI>
+      action: PayloadAction<UserUSDWalletBalanceI>,
     ) => {
       state.userUSDWalletBalance = action.payload;
     },

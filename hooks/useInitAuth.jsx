@@ -1,7 +1,6 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect } from "react";
 
-import { Web3authContext } from '@/providers/web3authProvider';
-
+import { Web3authContext } from "@/providers/web3authProvider";
 
 import { Web3AuthNoModal } from "@web3auth/no-modal";
 import { SolanaPrivateKeyProvider } from "@web3auth/solana-provider";
@@ -23,15 +22,16 @@ const useInitAuth = () => {
         tickerName: "Solana Token",
       };
 
-      const privateKeyProvider = new SolanaPrivateKeyProvider({ config: { chainConfig } });
+      const privateKeyProvider = new SolanaPrivateKeyProvider({
+        config: { chainConfig },
+      });
 
       const web3auth = new Web3AuthNoModal({
         clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
         web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
         privateKeyProvider,
-        chainConfig
+        chainConfig,
       });
-
 
       setWeb3auth(web3auth);
 
@@ -39,7 +39,7 @@ const useInitAuth = () => {
         privateKeyProvider,
         adapterSettings: {
           uxMode: UX_MODE.REDIRECT,
-        }
+        },
       });
       web3auth.configureAdapter(openloginAdapter);
 

@@ -2,7 +2,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { HelpQuestionIcon } from "../Icons";
 
-const MobileMapSection = ({ setShowHowToModal,showMobileMap,setShowMobileMap }) => {
+const MobileMapSection = ({
+  setShowHowToModal,
+  showMobileMap,
+  setShowMobileMap,
+}) => {
   return (
     <>
       {!showMobileMap && (

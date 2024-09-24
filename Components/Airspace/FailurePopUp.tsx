@@ -3,7 +3,6 @@ interface PropsI {
   errorMessages: string[];
 }
 
-
 const FailurePopUp = ({ isVisible, errorMessages }: PropsI) => {
   return (
     <div
@@ -12,13 +11,17 @@ const FailurePopUp = ({ isVisible, errorMessages }: PropsI) => {
       🛑
       <div>
         {errorMessages?.length > 0 ? (
-          <div >
-            {errorMessages?.map((error) => (
-              <h1 className="text-black text-base">{error}</h1>
+          <div>
+            {errorMessages?.map((error, index) => (
+              <h1 key={index} className="text-black text-base">
+                {error}
+              </h1>
             ))}
           </div>
         ) : (
-          <div> Claim Failed! Please review your submission and ensure all
+          <div>
+            {" "}
+            Claim Failed! Please review your submission and ensure all
             information is correct.
           </div>
         )}
@@ -26,5 +29,5 @@ const FailurePopUp = ({ isVisible, errorMessages }: PropsI) => {
     </div>
   );
 };
-  
+
 export default FailurePopUp;

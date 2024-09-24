@@ -46,8 +46,9 @@ const Slider = () => {
           <div className="flex flex-col">
             <p className="font-bold">Claim Airspace</p>
             <p>
-              Click the 'Claim Airspace' button to confirm your airspace
-              address. Your Airspace is saved. Modify your details anytime.
+              Click the &lsquo;Claim Airspace&rsquo; button to confirm your
+              airspace airspace airspace address. Your Airspace is saved. Modify
+              your anytime.
             </p>
           </div>
         </div>
@@ -73,8 +74,8 @@ const Slider = () => {
         </div>
       </div>
       <div className="font-normal text-[15px] text-[#222222] text-center">
-        Let's get started on creating the future and receiving passive income
-        from your skies. 🚀✨
+        Let&apos;s get started on creating the future and receiving passive
+        income from your skies. 🚀✨
       </div>
     </div>
   );

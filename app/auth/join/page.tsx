@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, Fragment, FormEvent } from "react";
+import React, { useEffect, useRef, useState, Fragment, FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { shallowEqual } from "react-redux";
 import swal from "sweetalert";
@@ -35,7 +35,7 @@ const IndividualSignup: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const referralCodeRef = useRef<HTMLInputElement>(null);
 
-  const [referralCode, setReferralCode] = useState<string>('');
+  const [referralCode, setReferralCode] = useState<string>("");
   const [status, setStatus] = useState<number | null>(null);
   const [isNameValid, setIsNameValid] = useState(true);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
@@ -63,7 +63,6 @@ const IndividualSignup: React.FC = () => {
     }
   }, []);
 
-
   const isEmailValid = (email: string) => {
     const regex = /^\S+@\S+\.\S+$/;
     return regex.test(email);
@@ -73,7 +72,6 @@ const IndividualSignup: React.FC = () => {
     e.preventDefault();
 
     try {
-
       if (name === "") {
         setIsNameValid(false);
       }
@@ -125,7 +123,7 @@ const IndividualSignup: React.FC = () => {
         router.replace("/dashboard");
       }
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       swal({
         title: "Sorry!",
         text: error.message,
@@ -145,10 +143,7 @@ const IndividualSignup: React.FC = () => {
         <title>StyTrade - Login</title>
       </Head>
       {isLoading &&
-        createPortal(
-          <Backdrop onClick={() => {}} />,
-          document.getElementById("backdrop-root")!
-        )}
+        createPortal(<Backdrop />, document.getElementById("backdrop-root")!)}
       {isLoading &&
         createPortal(<Spinner />, document.getElementById("backdrop-root")!)}
 
@@ -269,7 +264,7 @@ const IndividualSignup: React.FC = () => {
                       name="individual"
                       id="individual"
                     />
-                    I'm an individual
+                    I&apos;m an individual
                   </label>
                   <label
                     className="rounded-lg py-4 px-[22px] flex gap-[14.5px] items-center text-[14px]"
@@ -298,7 +293,7 @@ const IndividualSignup: React.FC = () => {
                       name="corporate"
                       id="corporate"
                     />
-                    I'm a corporate entity
+                    I&apos;m a corporate entity
                   </label>
                 </div>
                 {!isStatusValid && (
@@ -311,7 +306,7 @@ const IndividualSignup: React.FC = () => {
                 <label
                   className="text-[14px] font-normal"
                   style={{
-                    color: "rgba(0, 0, 0, 0.50)"
+                    color: "rgba(0, 0, 0, 0.50)",
                   }}
                 >
                   Referral Code
@@ -327,7 +322,7 @@ const IndividualSignup: React.FC = () => {
                   disabled={referralDisabled}
                   className="rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none"
                   style={{
-                    border: "1px solid #87878D"
+                    border: "1px solid #87878D",
                   }}
                 />
               </div>

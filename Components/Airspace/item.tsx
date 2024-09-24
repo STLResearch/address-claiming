@@ -8,12 +8,7 @@ interface ItemProps {
   style?: string;
 }
 
-const Item: FC<ItemProps> = ({
-  title,
-  icon,
-  href,
-  style,
-}) => {
+const Item: FC<ItemProps> = ({ title, icon, href, style }) => {
   return (
     <div
       className={`${style || ""} relative flex flex-col pt-[17px] pb-[21px] pr-[18px] pl-[25px] rounded-[30px] bg-white gap-[15px] md:w-[343px] w-full`}
@@ -21,8 +16,7 @@ const Item: FC<ItemProps> = ({
     >
       <div className="flex justify-between items-center">
         <p className="text-xl font-medium text-[#222222]">{title} </p>
-        <Link
-          href={href}>
+        <Link href={href}>
           <div className="h-10 w-10">{icon}</div>
         </Link>
       </div>
@@ -31,4 +25,3 @@ const Item: FC<ItemProps> = ({
 };
 
 export default Item;
-

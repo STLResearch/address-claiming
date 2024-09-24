@@ -1,7 +1,7 @@
 import Account from "@/Components/MyAccount";
 
 const MyAccount = () => {
-    return <Account/>
-}
+  return <Account />;
+};
 
-export default MyAccount
+export default MyAccount;
