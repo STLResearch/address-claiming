@@ -12,7 +12,7 @@ import Head from "next/head";
 import ZoomControllers from "@/Components/ZoomControllers";
 import ExplorerMobile from "@/Components/Rent/Explorer/ExplorerMobile";
 import RentModal from "@/Components/Rent/RentModal/RentModal";
-import { getAddresses, goToAddress } from "@/utils/apiUtils/apiFunctions";
+import { goToAddress } from "@/utils/apiUtils/apiFunctions";
 import { Coordinates, PropertyData } from "@/types";
 import Sidebar from "@/Components/Shared/Sidebar";
 import PropertiesService from "../../services/PropertiesService";

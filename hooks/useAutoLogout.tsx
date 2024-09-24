@@ -61,7 +61,7 @@ const useAutoLogout = () => {
     const userLocalstorage = localStorage.getItem("user");
 
     if (routes.includes(String(pathname))) {
-      return null;
+      return undefined;
     } else if (!userLocalstorage && !authRoutes.includes(String(pathname))) {
       logout();
     } else if (web3auth?.status === "ready") {
