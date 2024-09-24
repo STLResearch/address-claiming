@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 export type Coordinates = {
   longitude: number;
@@ -38,25 +38,25 @@ export type layers = {
 };
 
 export interface Document {
-    id: number;
-    filePath: string;
-    userId: number;
-    requestDocumentId: number;
-    createdAt: string;
-    updateAt: string;
+  id: number;
+  filePath: string;
+  userId: number;
+  requestDocumentId: number;
+  createdAt: string;
+  updateAt: string;
 }
 
 export interface RequestDocument {
-    id: number;
-    userId: number;
-    actionType: string;
-    status: string;
-    description: string;
-    referenceId: number;
-    dateCreated: string;
-    dateUpdated: string;
-    document: Document;
-    previewUrl: string;
+  id: number;
+  userId: number;
+  actionType: string;
+  status: string;
+  description: string;
+  referenceId: number;
+  dateCreated: string;
+  dateUpdated: string;
+  document: Document;
+  previewUrl: string;
 }
 
 export type propertyStatus = {
@@ -65,8 +65,8 @@ export type propertyStatus = {
 };
 
 type metadata = {
-  endTime : Date;
-}
+  endTime: Date;
+};
 
 export type PropertyData = {
   id?: number | string;
@@ -96,11 +96,11 @@ export type PropertyData = {
   updateAt?: Date;
   layers?: layers[];
   propertyStatus?: propertyStatus;
-  status?:number;
-  type?:string;
-  hasPlanningPermission?:string | null;
+  status?: number;
+  type?: string;
+  hasPlanningPermission?: string | null;
   requestDocument?: RequestDocument[];
-  metadata?:metadata;
+  metadata?: metadata;
 };
 
 export type User = {
@@ -129,7 +129,7 @@ export type User = {
   } | null;
   usedReferralCodeId: number | null;
   isUserRewardClaimed: boolean;
-  requestDocument: RequestDocument[]
+  requestDocument: RequestDocument[];
 };
 
 interface Reward {
@@ -164,7 +164,6 @@ export interface UserRewards {
   stats: RewardStats;
   rewards: Reward[];
 }
-
 
 export type Bounds = {
   _ne: {
@@ -266,28 +265,58 @@ export interface KeyI {
 }
 
 export type defaultData = {
-  address:string,
-  title:string,
-  rent: boolean,
-  sell: boolean,
-  hasPlanningPermission: boolean|null|string,
-  hasChargingStation: boolean,
-  hasLandingDeck: boolean,
-  hasStorageHub: boolean,
-  sellingPrice: string,
-  timezone: string,
-  transitFee:string,
-  isFixedTransitFee: boolean,
-  noFlyZone: boolean,
+  address: string;
+  title: string;
+  rent: boolean;
+  sell: boolean;
+  hasPlanningPermission: boolean | null | string;
+  hasChargingStation: boolean;
+  hasLandingDeck: boolean;
+  hasStorageHub: boolean;
+  sellingPrice: string;
+  timezone: string;
+  transitFee: string;
+  isFixedTransitFee: boolean;
+  noFlyZone: boolean;
   weekDayRanges: [
-    { fromTime: number, toTime: 21, isAvailable: boolean, weekDayId: 0 },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-  ],
+    { fromTime: number; toTime: 21; isAvailable: boolean; weekDayId: 0 },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+  ];
 };
 
 export enum StatusTypes {
@@ -303,8 +332,8 @@ export enum StatusTypes {
 }
 
 export enum RequestDocumentStatus {
-  NOT_SUBMITTED = 'NOT_SUBMITTED',
-  SUBMITTED = 'SUBMITTED',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
+  NOT_SUBMITTED = "NOT_SUBMITTED",
+  SUBMITTED = "SUBMITTED",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
 }

@@ -1,5 +1,4 @@
-import React, { ReactNode } from "react";
-import { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { LoadingSpinner } from "../Shared/Icons";
 
 interface PropsI {
@@ -10,7 +9,13 @@ interface PropsI {
   className?: string;
 }
 
-const LoadingButton = ({ children, onClick, isLoading, color, className }: PropsI) => {
+const LoadingButton = ({
+  children,
+  onClick,
+  isLoading,
+  color,
+  className,
+}: PropsI) => {
   const [loading, setLoading] = useState(isLoading);
   const handleClick = async () => {
     setLoading(true);

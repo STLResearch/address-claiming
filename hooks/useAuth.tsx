@@ -15,7 +15,7 @@ const useAuth = () => {
   const { web3auth, setProvider } = useContext(Web3authContext);
 
   const { userData } = useAppSelector((state: any) => {
-    return { userData: state?.userReducer?.user as User | null};
+    return { userData: state?.userReducer?.user as User | null };
   }, shallowEqual);
 
   useEffect(() => {
@@ -55,15 +55,17 @@ const useAuth = () => {
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
-  const setAndClearOtherPublicRouteData = (localStorageKey: string, data: any) => {
+  const setAndClearOtherPublicRouteData = (
+    localStorageKey: string,
+    data: any,
+  ) => {
     for (const route of publicAccessRoutes) {
-      if(route.localStorageKey !== localStorageKey) {
-        localStorage.removeItem(route.localStorageKey)
+      if (route.localStorageKey !== localStorageKey) {
+        localStorage.removeItem(route.localStorageKey);
       }
     }
     localStorage.setItem(localStorageKey, JSON.stringify(data));
   };
-
 
   const customRedirect = () => {
     const routes = publicAccessRoutes || [];
@@ -79,14 +81,14 @@ const useAuth = () => {
   };
 
   const redirectIfUnauthenticated = () => {
-    if(web3auth && web3auth.status === "connected") return false;
-    else {
-      router.push("/auth");
-      toast.success("Congratulation!!! To ensure your your actions are saved and recognized, register now with SkyTrade.")  
-      return true;
-    }
-  }
+    if (web3auth && web3auth.status === "connected") return false;
 
+    router.push("/auth");
+    toast.success(
+      "Congratulation!!! To ensure your your actions are saved and recognized, register now with SkyTrade.",
+    );
+    return true;
+  };
 
   return {
     signIn,
@@ -96,7 +98,7 @@ const useAuth = () => {
     web3authStatus,
     customRedirect,
     redirectIfUnauthenticated,
-    setAndClearOtherPublicRouteData
+    setAndClearOtherPublicRouteData,
   };
 };
 

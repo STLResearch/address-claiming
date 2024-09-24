@@ -6,8 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
-  },
+    "lint": "next lint",
+    "compile-ts": "npx tsc --noEmit",
+    "format": "npx prettier --write .",
+    "prepare": "husky",
+    "lint-fix": "eslint --fix './**/*.{js,jsx,ts,tsx}'"
+},
   "engines": {
     "node": "20.11.1",
     "npm": "10.2.4"
@@ -44,7 +48,6 @@
     "bs58": "^5.0.0",
     "dayjs": "^1.11.10",
     "encoding": "^0.1.13",
-    "flowbite": "^2.2.1",
     "mapbox-gl": "^2.15.0",
     "maplibre-gl": "^3.2.0",
     "moment": "^2.29.4",
@@ -77,9 +80,13 @@
     "@types/node": "^20.12.11",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
-    "eslint-config-prettier": "^9.0.0",
-    "prettier": "^3.0.3",
-    "prettier-plugin-tailwindcss": "^0.5.7",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.5",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^9.0.11",
+    "prettier": "^3.3.2",
+    "prettier-plugin-tailwindcss": "^0.6.6",
     "typescript": "5.4.5"
   }
 }

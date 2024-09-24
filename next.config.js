@@ -1,22 +1,21 @@
 module.exports = {
-    images: {
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: 'api.mapbox.com',
-          port: '',
-          pathname: '/styles/**',
-        },
-        {
-          protocol: 'https',
-          hostname: 'maps.locationiq.com',
-          port: '',
-          pathname: '/v3/**',
-        },
-        
-      ],
-    },
-  }
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "api.mapbox.com",
+        port: "",
+        pathname: "/styles/**",
+      },
+      {
+        protocol: "https",
+        hostname: "maps.locationiq.com",
+        port: "",
+        pathname: "/v3/**",
+      },
+    ],
+  },
+};
 
 // Injected content via Sentry wizard below
 
@@ -44,7 +43,7 @@ module.exports = withSentryConfig(
 
     // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers. (increases server load)
     // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
-    // side errors will fail.
+    // Side errors will fail.
     tunnelRoute: "/monitoring",
 
     // Hides source maps from generated client bundles
@@ -58,5 +57,5 @@ module.exports = withSentryConfig(
     // https://docs.sentry.io/product/crons/
     // https://vercel.com/docs/cron-jobs
     automaticVercelMonitors: true,
-  }
+  },
 );

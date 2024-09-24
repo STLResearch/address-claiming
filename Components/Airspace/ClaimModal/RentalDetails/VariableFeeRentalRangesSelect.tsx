@@ -39,5 +39,4 @@ const VariableFeeRentalRangesSelect = ({ fee, setFee }: PropsI) => {
   );
 };
 
-
 export default VariableFeeRentalRangesSelect;

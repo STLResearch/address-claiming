@@ -19,7 +19,6 @@ import {
 import { useAppSelector } from "@/redux/store";
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 
-
 interface ModalProps {
   airspace: any;
   onCloseModal: () => void;
@@ -37,7 +36,6 @@ const Certificate = ({
   latitude,
   amount,
 }) => {
-
   const styles = StyleSheet.create({
     page: {
       backgroundColor: "#fff",
@@ -83,7 +81,7 @@ const Certificate = ({
       marginVertical: 10,
     },
   });
-  
+
   return (
     <Document>
       <Page style={styles.page}>
@@ -110,13 +108,14 @@ const Certificate = ({
         <View style={styles.section}>
           <Text>
             This rental agreement is valid for the specified date and time frame
-            mentioned above. This agreement is subject to SkyTrade's Rental
+            mentioned above. This agreement is subject to SkyTrade&apos;s Rental
             Agreement and Terms of Service.
           </Text>
 
           <Text>
-            If you have any questions or require more information, please contact
-            the SkyTrade team and we will reach out at our earliest convenience.
+            If you have any questions or require more information, please
+            contact the SkyTrade team and we will reach out at our earliest
+            convenience.
           </Text>
         </View>
         <View style={styles.footer}>
@@ -126,7 +125,7 @@ const Certificate = ({
         </View>
       </Page>
     </Document>
-  )
+  );
 };
 
 const Modal = ({
@@ -180,10 +179,7 @@ const Modal = ({
         propertyId: airspace.id,
       });
       if (editResponse) {
-        const airspaceResp = await getUnverifiedAirspaces(
-          pageNumber,
-          10
-        );
+        const airspaceResp = await getUnverifiedAirspaces(pageNumber, 10);
         setAirspaceList(airspaceResp.items);
         setIsLoading(false);
       } else {
@@ -194,7 +190,6 @@ const Modal = ({
       console.error(error);
     }
   };
- 
 
   return (
     <Fragment>
@@ -212,7 +207,7 @@ const Modal = ({
           <div
             onClick={onCloseModal}
             className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
-           >
+          >
             <CloseIcon />
           </div>
         </div>
@@ -230,7 +225,6 @@ const Modal = ({
             }}
           />
         </div>
-
 
         <div className="flex gap-[15px]">
           <p className="text-[14px] font-normal text-light-black">ID:</p>

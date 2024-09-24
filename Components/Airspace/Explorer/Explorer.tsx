@@ -87,7 +87,7 @@ const Explorer = ({
               return (
                 <div
                   key={item.id}
-                  // value={item.place_name}
+                  // Value={item.place_name}
                   onClick={() => handleSelectAddress(item.place_name, true)}
                   className="w-full p-4 text-left text-[#222222]"
                   style={{

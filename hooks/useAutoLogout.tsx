@@ -7,8 +7,8 @@ import { useDispatch } from "react-redux";
 import { setIsWaitingScreenVisible } from "@/redux/slices/userSlice";
 
 const useAutoLogout = () => {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
 
   const { web3auth } = useContext(Web3authContext);
   const { user } = useAuth();
@@ -17,7 +17,7 @@ const useAutoLogout = () => {
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    redirectTo()
+    redirectTo();
   };
 
   const redirectTo = () => {
@@ -40,37 +40,42 @@ const useAutoLogout = () => {
     const isConnecting = web3auth?.status === "connecting";
 
     dispatch(setIsWaitingScreenVisible(isConnecting));
-    localStorage.setItem("isWaitingScreenVisible", JSON.stringify(isConnecting));
+    localStorage.setItem(
+      "isWaitingScreenVisible",
+      JSON.stringify(isConnecting),
+    );
   }, [web3auth?.status]);
 
   useEffect(() => {
-    console.log("user", user);
-    console.log("web3auth status", web3auth?.status);
-    console.log("web3auth connected", web3auth?.connected);
+    console.info("user", user);
+    console.info("web3auth status", web3auth?.status);
+    console.info("web3auth connected", web3auth?.connected);
 
     if (!web3auth) return;
 
-    const routes = publicAccessRoutes.map(x => x.redirectTo).concat(["/auth", "/"]);
-    const authRoutes = ["/auth", "/auth/join", '/'];
+    const routes = publicAccessRoutes
+      .map((x) => x.redirectTo)
+      .concat(["/auth", "/"]);
+    const authRoutes = ["/auth", "/auth/join", "/"];
 
-    const userLocalstorage = localStorage.getItem('user');
+    const userLocalstorage = localStorage.getItem("user");
 
-    if (routes.includes(String(pathname))){ 
-      return;
+    if (routes.includes(String(pathname))) {
+      return undefined;
     } else if (!userLocalstorage && !authRoutes.includes(String(pathname))) {
-      logout()
-    }else if (web3auth?.status === "ready") {
-      const fetchedToken = JSON.parse(String(localStorage.getItem('openlogin_store')));
+      logout();
+    } else if (web3auth?.status === "ready") {
+      const fetchedToken = JSON.parse(
+        String(localStorage.getItem("openlogin_store")),
+      );
       if (!fetchedToken?.sessionId) {
-        redirectTo()
+        redirectTo();
         localStorage.removeItem("user");
       }
     }
-  }, [web3auth?.status, user, pathname]); //included router.pathname in the dependency array so that it checks for autologout on every page..  
+  }, [web3auth?.status, user, pathname]);
 
   return null;
 };
-
-
 
 export default useAutoLogout;

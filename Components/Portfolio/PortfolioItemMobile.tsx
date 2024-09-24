@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { ChevronRightIcon, DocumentApprovedIcon, DocumentRejectedIcon, LocationPointIcon, ReviewVerificationIcon } from "../Icons";
+import {
+  ChevronRightIcon,
+  DocumentApprovedIcon,
+  DocumentRejectedIcon,
+  LocationPointIcon,
+  ReviewVerificationIcon,
+} from "../Icons";
 import AdditionalDocuments from "./AdditionalDocuments";
 import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import UploadedDocuments from "./UploadedDocuments";
@@ -10,30 +16,30 @@ import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 interface PropsI {
   airspaceName: string;
   activeTab: PortfolioTabEnum;
-  tags: Boolean[]
+  tags: Boolean[];
   type: string | undefined;
   requestDocument: RequestDocument[] | undefined;
   selectAirspace: () => void;
   setUploadedDoc: any;
   refetchAirspaceRef: React.MutableRefObject<boolean>;
-  setShowCancelModal: React.Dispatch<React.SetStateAction<boolean>>
+  setShowCancelModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const PortfolioItemMobile = ({
   setShowCancelModal,
-  refetchAirspaceRef, 
-  airspaceName, 
-  tags, 
-  type, 
-  selectAirspace, 
+  refetchAirspaceRef,
+  airspaceName,
+  tags,
+  type,
+  selectAirspace,
   setUploadedDoc,
   requestDocument,
-  activeTab
+  activeTab,
 }: PropsI) => {
   const [showPopup, setShowPopup] = useState(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false)
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
-  
+
   const handleButtonClick = () => {
     setShowPopup(true);
   };
@@ -43,31 +49,33 @@ const PortfolioItemMobile = ({
   };
 
   const handleAirspace = () => {
-    selectAirspace()
-    setShowCancelModal(true)
-    refetchAirspaceRef.current = true
-  }
+    selectAirspace();
+    setShowCancelModal(true);
+    refetchAirspaceRef.current = true;
+  };
   const documentStatus = checkDocumentStatus(requestDocument);
 
   return (
     <div>
-      <div
-        className=" shadow-md px-4 py-6 items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer w-screen"
-      >
-
+      <div className=" shadow-md px-4 py-6 items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer w-screen">
         <div className="items-center justify-between gap-[10px] rounded-lg">
           <div className="flex items-center gap-[10px] flex-1">
             <div className="w-6 h-6">
               <LocationPointIcon />
             </div>
             <p className="font-normal text-[#222222] text-[14px] flex-1">
-              {airspaceName.length > 15 ? airspaceName.slice(0, 25) + ' ...' : airspaceName}
+              {airspaceName.length > 15
+                ? airspaceName.slice(0, 25) + " ..."
+                : airspaceName}
             </p>
           </div>
           <div className="">
             <div className="flex justify-between mt-2 gap-[10px] items-center w-full">
               {!!tags[0] && (
-                <div onClick={selectAirspace} className="w-20 h-8 bg-[#DBDBDB] text-[#222222] text-sm font-normal p-2 cursor-pointer rounded-[3px] flex items-center justify-center">
+                <div
+                  onClick={selectAirspace}
+                  className="w-20 h-8 bg-[#DBDBDB] text-[#222222] text-sm font-normal p-2 cursor-pointer rounded-[3px] flex items-center justify-center"
+                >
                   {type === "land" ? "On Claim" : "On Rent"}
                 </div>
               )}
@@ -94,9 +102,8 @@ const PortfolioItemMobile = ({
                   Cancel Claim
                 </div>
               )}
-            
 
-              {((documentStatus === 'SUBMITTED') || (underReview)) && (
+              {(documentStatus === "SUBMITTED" || underReview) && (
                 <div className="flex justify-center items-center gap-2">
                   <div className="w-6 h-6">
                     <ReviewVerificationIcon />
@@ -106,7 +113,7 @@ const PortfolioItemMobile = ({
                   </p>
                 </div>
               )}
-              {(documentStatus === 'APPROVED' && !underReview) &&(
+              {documentStatus === "APPROVED" && !underReview && (
                 <div className="flex justify-center items-center gap-2">
                   <div className="w-6 h-6">
                     <DocumentApprovedIcon />
@@ -116,57 +123,71 @@ const PortfolioItemMobile = ({
                   </p>
                 </div>
               )}
-              {((documentStatus === 'REJECTED' || documentStatus === 'RE_UPLOAD') &&  !underReview) &&(
-                <div className="">
-                  <div className="flex justify-end items-center ">
-                    <div className="w-4 h-4 mr-[10px]">
-                      <DocumentRejectedIcon />
+              {(documentStatus === "REJECTED" ||
+                documentStatus === "RE_UPLOAD") &&
+                !underReview && (
+                  <div className="">
+                    <div className="flex justify-end items-center ">
+                      <div className="w-4 h-4 mr-[10px]">
+                        <DocumentRejectedIcon />
+                      </div>
+                      <p className="text-[#E04F64] font-normal text-sm">
+                        Documents rejected
+                      </p>
                     </div>
-                    <p className="text-[#E04F64] font-normal text-sm">
-                      Documents rejected
-                    </p>
                   </div>
-                 
-                </div>
-              )}
-         </div>
+                )}
+            </div>
             {
               <div>
-              {
-              (documentStatus === 'RE_UPLOAD' && !underReview) &&
-              <button onClick={handleButtonClick} className="flex items-center mt-4 rounded-[3px] border-[1px] text-[12px] leading-[26px] font border-[#F79663] px-[7px] text-[#F79663]"><pre>Re-updload</pre></button>
-              }
+                {documentStatus === "RE_UPLOAD" && !underReview && (
+                  <button
+                    onClick={handleButtonClick}
+                    className="flex items-center mt-4 rounded-[3px] border-[1px] text-[12px] leading-[26px] font border-[#F79663] px-[7px] text-[#F79663]"
+                  >
+                    <pre>Re-updload</pre>
+                  </button>
+                )}
               </div>
             }
 
-            {(documentStatus === 'NOT_SUBMITTED' && !underReview) &&
-              (
-                <div className="flex justify-between items-center gap-12 w-full mt-4">
-                  <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
-                    <p className="text-orange-500 font-normal text-sm">
-                      Additional documents requested
-                    </p>
-                  </div>
-                  <div className="w-[7px] h-[14px]">
-                    <ChevronRightIcon />
-                  </div>
+            {documentStatus === "NOT_SUBMITTED" && !underReview && (
+              <div className="flex justify-between items-center gap-12 w-full mt-4">
+                <div
+                  onClick={handleButtonClick}
+                  className="p-2 border border-orange-500 rounded-md"
+                >
+                  <p className="text-orange-500 font-normal text-sm">
+                    Additional documents requested
+                  </p>
                 </div>
+                <div className="w-[7px] h-[14px]">
+                  <ChevronRightIcon />
+                </div>
+              </div>
+            )}
+
+            {(documentStatus === "SUBMITTED" || underReview) &&
+              requestDocument && (
+                <UploadedDocuments requestDocument={requestDocument} />
               )}
-
-
-
-            {(documentStatus === 'SUBMITTED' || underReview) && requestDocument && <UploadedDocuments requestDocument={requestDocument} />}
             {showPopup && !underReview && requestDocument && (
-              <AdditionalDocuments setUnderReview={setUnderReview} showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument={requestDocument[requestDocument?.length -1]} />
+              <AdditionalDocuments
+                setUnderReview={setUnderReview}
+                showPopup={showPopup}
+                setUploadedDoc={setUploadedDoc}
+                setShowSuccessToast={setShowSuccessToast}
+                closePopup={closePopup}
+                requestDocument={requestDocument[requestDocument?.length - 1]}
+              />
             )}
 
             {showSuccessToast && <VerificationSuccessPopup />}
-
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default PortfolioItemMobile;

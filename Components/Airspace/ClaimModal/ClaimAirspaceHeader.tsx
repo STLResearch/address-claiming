@@ -5,7 +5,9 @@ interface ClaimAirspaceHeaderProps {
   onCloseModal: () => void;
 }
 
-const ClaimAirspaceHeader: React.FC<ClaimAirspaceHeaderProps> = ({ onCloseModal }) => {
+const ClaimAirspaceHeader: React.FC<ClaimAirspaceHeaderProps> = ({
+  onCloseModal,
+}) => {
   return (
     <div className="relative flex items-center gap-[20px] md:p-0">
       <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}>

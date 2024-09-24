@@ -3,23 +3,29 @@ import { LocationPointIcon } from "@/Components/Icons";
 import { PropertyData } from "@/types";
 
 interface AirspaceInfoProps {
-  address:string;
-  title:string
+  address: string;
+  title: string;
   setData: React.Dispatch<React.SetStateAction<PropertyData>>;
 }
 
-const AirspaceInfo: React.FC<AirspaceInfoProps> = ({ address,title, setData }) => {
+const AirspaceInfo: React.FC<AirspaceInfoProps> = ({
+  address,
+  title,
+  setData,
+}) => {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData((prev) => ({ ...prev, title: e.target.value }));
   };
 
   return (
     <>
-      <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-[#4285F4]" >
+      <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-[#4285F4]">
         <div className="w-6 h-6">
           <LocationPointIcon />
         </div>
-        <p className="font-normal text-[#222222] text-[14px] flex-1">{address}</p>
+        <p className="font-normal text-[#222222] text-[14px] flex-1">
+          {address}
+        </p>
       </div>
       <div className="flex flex-col gap-[5px] mt-3 md:mt-4">
         <label htmlFor="title">

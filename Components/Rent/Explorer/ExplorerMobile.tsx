@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import SearchInput from "./SearchInput";
 import { Map, Marker } from "mapbox-gl";
 import RentableAirspaceLists from "./RentableAirspaceLists/RentableAirspaceLists";
@@ -17,14 +17,14 @@ interface ExplorerMobileProps {
   loading: boolean;
   regAdressShow: boolean;
   registeredAddress: PropertyData[];
-   map: Map | null; 
+  map: Map | null;
   setRegisteredAddress: React.Dispatch<React.SetStateAction<PropertyData[]>>;
   marker: Marker | null | undefined;
   setMarker: React.Dispatch<React.SetStateAction<Marker>>;
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
   setRentData: React.Dispatch<React.SetStateAction<PropertyData>>;
-  setRegAdressShow:React.Dispatch<React.SetStateAction<boolean>>;
+  setRegAdressShow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
   loadingReg,
@@ -35,7 +35,7 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
   showOptions,
   regAdressShow,
   registeredAddress,
-   map, 
+  map,
   marker,
   setMarker,
   setShowClaimModal,
@@ -46,15 +46,13 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
   setLoadingRegAddresses,
   setRegisteredAddress,
   setRegAdressShow,
-  
 }) => {
-
   const divRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (divRef.current && !divRef.current.contains(event.target)) {
-        setShowOptions(false); 
+        setShowOptions(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -65,8 +63,8 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
 
   return (
     <div className="w-full z-[40]  items-center gap-[15px] ">
-    <div className="flex items-center gap-[15px] z-[40] bg-white w-full px-[21px] py-6">
-       <h1 className="text-xl font-medium">Rent</h1>
+      <div className="flex items-center gap-[15px] z-[40] bg-white w-full px-[21px] py-6">
+        <h1 className="text-xl font-medium">Rent</h1>
         <SearchInput
           address={address}
           addresses={addresses}
@@ -76,46 +74,51 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
           setShowOptions={setShowOptions}
           showOptions={showOptions}
         />
-    </div>
+      </div>
 
       {showOptions && (
         <div className="px-[30px] py-[19px]">
-         <div ref={divRef} className="overflow-y-scroll max-h-60 w-full flex-col z-40  border-t-4 rounded-lg border-blue-500 mt-6 ">
-          {loading ? (
-            <div className="pt-8 flex justify-center items-center">
-              <BalanceLoader />
-            </div>
-          ) : (
-            addresses.map((item) => {
-              return (
-            <div className="w-full flex items-center justify-center">
-               <div className="p-4 w-full flex flex-col items-center justify-center  border-b-2 rounded-sm"> 
-                <div
-                 className="w-full text-left text-[#222222]"
-                  key={item.id}
-                  data-value={item.place_name}
-                  onClick={() =>
-                    handleSelectAddress(
-                      item.place_name,
-                      setAddress,
-                      setFlyToAddress,
-                      setShowOptions
-                    )
-                  }
+          <div
+            ref={divRef}
+            className="overflow-y-scroll max-h-60 w-full flex-col z-40  border-t-4 rounded-lg border-blue-500 mt-6 "
+          >
+            {loading ? (
+              <div className="pt-8 flex justify-center items-center">
+                <BalanceLoader />
+              </div>
+            ) : (
+              addresses.map((item, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="w-full flex items-center justify-center"
                   >
-                    <div className="w-[90%] text-[14px]">
-                            {item.place_name}
-                     </div> 
-                </div>
-                </div>
-                </div>
-               
-            );
-            })
-          )}
+                    <div className="p-4 w-full flex flex-col items-center justify-center  border-b-2 rounded-sm">
+                      <div
+                        className="w-full text-left text-[#222222]"
+                        key={item.id}
+                        data-value={item.place_name}
+                        onClick={() =>
+                          handleSelectAddress(
+                            item.place_name,
+                            setAddress,
+                            setFlyToAddress,
+                            setShowOptions,
+                          )
+                        }
+                      >
+                        <div className="w-[90%] text-[14px]">
+                          {item.place_name}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
-        </div>
-        )}
+      )}
       <RentableAirspaceLists
         loadingReg={loadingReg}
         map={map}
@@ -127,8 +130,9 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
         setRegisteredAddress={setRegisteredAddress}
         setMarker={setMarker}
         setRentData={setRentData}
-        setShowClaimModal={setShowClaimModal} 
-        setRegAdressShow={setRegAdressShow}      />
+        setShowClaimModal={setShowClaimModal}
+        setRegAdressShow={setRegAdressShow}
+      />
     </div>
   );
 };

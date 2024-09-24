@@ -1,22 +1,21 @@
-import Service from "./Service"
+import Service from "./Service";
 
 const NewslettersService = () => {
   const { getRequest } = Service();
 
-  const getNewsLetters = async ()=>{
+  const getNewsLetters = async () => {
     try {
       const response = await getRequest({
         uri: `/public/newsletters`,
         isPublic: true,
-      })
+      });
       return response?.data;
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-
-  return { 
+  return {
     getNewsLetters,
   };
 };

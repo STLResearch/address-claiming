@@ -1,5 +1,9 @@
 import React from "react";
-import { ArrowLeftIcon, LocationPointIcon, MagnifyingGlassIcon } from "../../Icons";
+import {
+  ArrowLeftIcon,
+  LocationPointIcon,
+  MagnifyingGlassIcon,
+} from "../../Icons";
 import { useTour } from "@reactour/tour";
 import { useSearchParams } from "next/navigation";
 interface Address {
@@ -12,7 +16,7 @@ interface PropsI {
   setAddress: React.Dispatch<React.SetStateAction<string>>;
   addresses: Address[];
   showOptions: boolean;
-  handleSelectAddress: (value: any) => void
+  handleSelectAddress: (value: any) => void;
   onGoBack: () => void;
 }
 
@@ -46,7 +50,7 @@ const ExplorerMobile = ({
         <div className="absolute right-[20px] top-1/2 h-[15px] w-[15px] -translate-y-1/2">
           <MagnifyingGlassIcon />
         </div>
-          </div>
+      </div>
     </div>
   );
 };

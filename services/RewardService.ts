@@ -1,20 +1,20 @@
-import Service from "./Service"
+import Service from "./Service";
 
 const RewardService = () => {
   const { getRequest } = Service();
 
-  const getUserRewardsInfo = async ()=>{
+  const getUserRewardsInfo = async () => {
     try {
       const response = await getRequest({
         uri: `/private/reward/get-reward-info`,
-      })
+      });
       return response?.data;
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-  return { 
+  return {
     getUserRewardsInfo,
   };
 };

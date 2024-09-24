@@ -3,12 +3,16 @@ import Checkbox from "./Checkbox";
 import { PropertyData } from "@/types";
 
 interface AirspaceOptionsProps {
-  isRentableAirspace:boolean;
-  sell:boolean | undefined;
+  isRentableAirspace: boolean;
+  sell: boolean | undefined;
   setData: React.Dispatch<React.SetStateAction<PropertyData>>;
 }
 
-const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({ isRentableAirspace,sell, setData }) => {
+const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({
+  isRentableAirspace,
+  sell,
+  setData,
+}) => {
   const handleRentChange = () => {
     setData((prev) => ({
       ...prev,
@@ -46,6 +50,5 @@ const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({ isRentableAirspace,se
     </div>
   );
 };
-
 
 export default AirspaceOptions;

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 interface SocialShareButtonProps {
   platform: "facebook" | "linkedin" | "twitter";

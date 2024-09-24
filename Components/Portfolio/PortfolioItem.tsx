@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { ChevronRightIcon, DocumentApprovedIcon, DocumentRejectedIcon, LocationPointIcon, ReviewVerificationIcon } from "../Icons";
+import {
+  ChevronRightIcon,
+  DocumentApprovedIcon,
+  DocumentRejectedIcon,
+  LocationPointIcon,
+  ReviewVerificationIcon,
+} from "../Icons";
 import UploadedDocuments from "./UploadedDocuments";
 import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import AdditionalDocuments from "./AdditionalDocuments";
@@ -10,31 +16,29 @@ import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 interface PropsI {
   airspaceName: string;
   activeTab: PortfolioTabEnum;
-  tags: Boolean[]
+  tags: Boolean[];
   type: string | undefined;
   requestDocument: RequestDocument[] | undefined;
   selectAirspace: () => void;
   setUploadedDoc: any;
   refetchAirspaceRef: React.MutableRefObject<boolean>;
-  setShowCancelModal: React.Dispatch<React.SetStateAction<boolean>>
+  setShowCancelModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PortfolioItem = ({ 
-  setShowCancelModal, 
-  airspaceName, 
-  refetchAirspaceRef, 
-  tags, 
-  type, 
+const PortfolioItem = ({
+  setShowCancelModal,
+  airspaceName,
+  refetchAirspaceRef,
+  tags,
+  type,
   selectAirspace,
   setUploadedDoc,
-  requestDocument, 
-  activeTab
+  requestDocument,
+  activeTab,
 }: PropsI) => {
   const [showPopup, setShowPopup] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false)
- 
-  
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -42,20 +46,19 @@ const PortfolioItem = ({
 
   const closePopup = () => {
     setShowPopup(false);
-  }
-const handleAirspace = () => {
-  selectAirspace()
-  setShowCancelModal(true)
-  refetchAirspaceRef.current = true
-}
+  };
+  const handleAirspace = () => {
+    selectAirspace();
+    setShowCancelModal(true);
+    refetchAirspaceRef.current = true;
+  };
   const documentStatus = checkDocumentStatus(requestDocument);
   return (
     <div
       className="p-[11px] items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
-      <div
-        className="flex items-center justify-between gap-[10px]  cursor-pointer" >
+      <div className="flex items-center justify-between gap-[10px]  cursor-pointer">
         <div className="flex items-center gap-[10px] flex-1">
           <div className="w-6 h-6">
             <LocationPointIcon />
@@ -66,7 +69,10 @@ const handleAirspace = () => {
         </div>
         <div className="flex gap-[10px] items-center">
           {!!tags[0] && (
-            <div onClick={selectAirspace} className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
+            <div
+              onClick={selectAirspace}
+              className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]"
+            >
               {type === "land" ? "On Claim" : "On Rent"}
             </div>
           )}
@@ -87,20 +93,25 @@ const handleAirspace = () => {
           )}
 
           {activeTab === PortfolioTabEnum.UNVERIFIED && (
-            <div onClick={handleAirspace} className="bg-[#4285F4] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
+            <div
+              onClick={handleAirspace}
+              className="bg-[#4285F4] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]"
+            >
               Cancel Claim
             </div>
           )}
 
-
-          {(documentStatus === 'NOT_SUBMITTED' && !underReview) &&
-            (<div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
+          {documentStatus === "NOT_SUBMITTED" && !underReview && (
+            <div
+              onClick={handleButtonClick}
+              className="p-2 border border-orange-500 rounded-md"
+            >
               <p className="text-orange-500 font-normal text-sm">
                 Additional documents requested
               </p>
             </div>
-            )}
-          {((documentStatus === 'SUBMITTED') || (underReview)) && (
+          )}
+          {(documentStatus === "SUBMITTED" || underReview) && (
             <div className="flex justify-center items-center gap-2">
               <div className="w-6 h-6">
                 <ReviewVerificationIcon />
@@ -110,7 +121,7 @@ const handleAirspace = () => {
               </p>
             </div>
           )}
-          {(documentStatus === 'APPROVED' && !underReview) &&(
+          {documentStatus === "APPROVED" && !underReview && (
             <div className="flex justify-center items-center gap-2">
               <div className="w-6 h-6">
                 <DocumentApprovedIcon />
@@ -120,38 +131,44 @@ const handleAirspace = () => {
               </p>
             </div>
           )}
-          {((documentStatus === 'REJECTED' || documentStatus === 'RE_UPLOAD') &&   !underReview )&& (
-            <div className="flex justify-center items-center">
-              <div className="flex justify-center items-center w-full">
-                <div className="w-4 h-4 mr-[10px]">
-                  <DocumentRejectedIcon />
+          {(documentStatus === "REJECTED" || documentStatus === "RE_UPLOAD") &&
+            !underReview && (
+              <div className="flex justify-center items-center">
+                <div className="flex justify-center items-center w-full">
+                  <div className="w-4 h-4 mr-[10px]">
+                    <DocumentRejectedIcon />
+                  </div>
+                  <p className="text-[#E04F64] font-normal text-sm">
+                    Documents rejected
+                  </p>
                 </div>
-                <p className="text-[#E04F64] font-normal text-sm">
-                  Documents rejected
-                </p>
+                {documentStatus === "RE_UPLOAD" && (
+                  <button
+                    onClick={handleButtonClick}
+                    className="flex items-center rounded-[3px] border-[1px] text-[12px] leading-[26px] font border-[#F79663] px-[7px] ml-[10px] text-[#F79663]"
+                  >
+                    <pre>Re-upload</pre>
+                  </button>
+                )}
               </div>
-              {
-                documentStatus === 'RE_UPLOAD' && 
-                <button onClick={handleButtonClick} className="flex items-center rounded-[3px] border-[1px] text-[12px] leading-[26px] font border-[#F79663] px-[7px] ml-[10px] text-[#F79663]"><pre>Re-upload</pre></button>
-              }
-            </div>
-          )}
+            )}
           <div className="w-[7px] h-[14px]">
             <ChevronRightIcon />
           </div>
         </div>
-       
       </div>
 
-      {(documentStatus === 'SUBMITTED' || underReview) && requestDocument  && <UploadedDocuments requestDocument={requestDocument} />}
+      {(documentStatus === "SUBMITTED" || underReview) && requestDocument && (
+        <UploadedDocuments requestDocument={requestDocument} />
+      )}
       {showPopup && !underReview && requestDocument && (
-        <AdditionalDocuments 
-          setUnderReview={setUnderReview} 
-          showPopup={showPopup} 
-          setUploadedDoc={setUploadedDoc} 
-          setShowSuccessToast={setShowSuccessToast} 
-          closePopup={closePopup} 
-          requestDocument={requestDocument[requestDocument?.length -1]} 
+        <AdditionalDocuments
+          setUnderReview={setUnderReview}
+          showPopup={showPopup}
+          setUploadedDoc={setUploadedDoc}
+          setShowSuccessToast={setShowSuccessToast}
+          closePopup={closePopup}
+          requestDocument={requestDocument[requestDocument?.length - 1]}
         />
       )}
 
