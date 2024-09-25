@@ -31,7 +31,7 @@ const ExplorerMobile = ({
   const searchParams = useSearchParams();
   const { isOpen } = useTour();
   return (
-    <div className="enter-address-step z-[30] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
+    <div className="enter-address-step z-[20] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
       <h1 className="text-xl font-medium">Airspaces</h1>
       <div
         className="relative w-[230px] h-[49px] rounded-lg bg-white px-[22px] py-[10px]"

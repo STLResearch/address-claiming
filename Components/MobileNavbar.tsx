@@ -118,12 +118,12 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
   }, [divRef]);
 
   return (
-    <div className=" w-full h-[70%] z-50">
-      <div ref={divRef} className=" w-full h-[80%] fixed bottom-0">
+    <div className=" w-full h-[70%] ">
+      <div ref={divRef} className=" w-full h-[70%] fixed bottom-0 z-50">
         <div className=" w-full h-full bg-white rounded-t-3xl overflow-y-scroll">
           <div
             onClick={() => setShowMobileNavbar(false)}
-            className="mt-4 flex flex-col justify-center items-center gap-4"
+            className="flex flex-col justify-center items-center gap-4"
           >
             <p className="mt-4 border-4 border-dark-grey w-[20%] rounded-md"></p>
             <p className="font-medium text-xl">Menu</p>
