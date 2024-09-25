@@ -36,7 +36,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle }) => {
               <div className="w-6 h-6">
                 <UserIcon />
               </div>
-              <p className="truncate max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+              <p className="truncate max-w-[300px] overflow-hidden text-ellipsis whitespace-nowrap">
                 {user?.name}
               </p>
             </Link>
