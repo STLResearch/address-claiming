@@ -737,7 +737,7 @@ const Airspaces: React.FC = () => {
               onClick={() => {
                 setShowAirspacePage(true);
               }}
-              className="flex fixed bottom-[76px] left-0 w-full z-40 bg-white"
+              className="flex fixed bottom-[76px] left-0 w-full z-10 bg-white"
             >
               <div className="bg-white w-full p-4 shadow-md flex items-center">
                 <div className="flex items-center justify-between  gap-8 w-[375px] h-[50px] px-4">
@@ -766,7 +766,7 @@ const Airspaces: React.FC = () => {
               id="map"
               style={{
                 opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",
-                zIndex: !isMobile ? "20" : showMobileMap ? "10" : "-20",
+                zIndex: !isMobile ? "20" : showMobileMap ? "5" : "-20",
               }}
             />
             {isMobile && (
