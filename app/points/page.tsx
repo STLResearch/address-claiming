@@ -44,7 +44,7 @@ const Points = () => {
 
         const [referralData, rewardsInfo] = await Promise.all([
           retrieveUserReferralData(),
-          getUserRewardsInfo()
+          getUserRewardsInfo(),
         ]);
 
         if (referralData) setData(referralData);
@@ -52,9 +52,9 @@ const Points = () => {
 
         setFetchingCode(false);
       } catch (error) {
-        console.log(error);
+        console.error(error);
         setFetchingCode(false);
-      } 
+      }
     };
 
     fetchData();
@@ -64,11 +64,10 @@ const Points = () => {
   const handleClick = (index) => {
     setActiveIndex(index);
   };
-  const {isMobile} = useMobile();
+  const { isMobile } = useMobile();
 
-
-  const skyPoint: string | null = userRewards?.stats._sum.point?.toString() ?? '0';
-
+  const skyPoint: string | null =
+    userRewards?.stats._sum.point?.toString() ?? "0";
 
   return (
     <Fragment>
@@ -80,71 +79,75 @@ const Points = () => {
         <Sidebar />
         <div className="w-full h-full flex flex-col">
           <PageHeader pageTitle={"Points Program"} />
-          <section className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll">
-               <Switcher
-               sections={sections}
-               activeSection={activeIndex}
-               setActiveSection={setActiveIndex}
-             />
-           
+          <div className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll">
+            <Switcher
+              sections={sections}
+              activeSection={activeIndex}
+              setActiveSection={setActiveIndex}
+            />
+
             <AlertMessage />
 
-           
             <div className="md:flex justify-between items-center w-full">
-            <PointBalance point={skyPoint} isLoading={fetchingCode} />
-            <ReferralActivities />
+              <PointBalance point={skyPoint} isLoading={fetchingCode} />
+              <ReferralActivities />
             </div>
-              <div>
+            <div>
               <div className="flex flex-col items-center">
                 {!isMobile && (
-                <div className="flex  gap-10 border-b-4 border-[#D3D3D3] w-[95%]">
-                {['The Program', 'Share Referral Link', 'Your Referral History', ' Leaderboard'].map((item, index) => (
-                  <div
-                  key={index}
-                  onClick={() => handleClick(index)}
-                  className="text-[#7E939A]  text-[16px] relative px-8 py-1.5 cursor-pointer transition ease-linear delay-75"
-                >
-                  <span>{item}</span>
-                  {activeIndex === index && (
-                    <div className="absolute bottom-[-4px] left-0 right-0 h-1 bg-[#0653EA] text-[#222222] "></div>
-                  )}
-                </div>
-              ))}
-            </div>
+                  <div className="flex  gap-10 border-b-4 border-[#D3D3D3] w-[95%]">
+                    {[
+                      "The Program",
+                      "Share Referral Link",
+                      "Your Referral History",
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleClick(index)}
+                        className=" text-[#222222] text-[16px] relative px-8 py-1.5 cursor-pointer transition ease-linear delay-75"
+                      >
+                        <span>{item}</span>
+                        {activeIndex === index && (
+                          <div className="absolute bottom-[-4px] left-0 right-0 h-1 bg-[#0653EA]"></div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 )}
 
                 <div className="mt-8 w-full mx-auto">
-                {activeIndex === 0 &&  
-                <ReferralProgramOverview
-                  activeSection={activeSection}
-                  section={0}
-                />
-                }
-                {activeIndex === 1 &&  
-                <div>
-                  <Share
-                    isLoading={fetchingCode}
-                    referralCode={data?.referralCode}
-                  />
-                  <InviteYourFriends referralCode={data?.referralCode} /> 
-                </div>
-                }
-                {activeIndex === 2 && 
-                  <div className="container mx-auto p-4">
-                  <div className="flex flex-wrap-reverse w-full h-full gap-10 justify-center">
-                    <div className="md:p-8 w-full md:w-[55%] md:bg-white rounded-2xl">
-                      <ReferralHistoryTable />
-                    </div>
-                    <div className=" md:w-[40%]">
-                      <YourReferrals
-                        registeredFriends={data.registeredFriends}
-                        registeredAirspaces={data.registeredAirspaces}
-                        validatedProperties={data.validatedProperties}
+                  {activeIndex === 0 && (
+                    <ReferralProgramOverview
+                      activeSection={activeSection}
+                      section={0}
+                    />
+                  )}
+                  {activeIndex === 1 && (
+                    <div>
+                      <Share
+                        isLoading={fetchingCode}
+                        referralCode={data?.referralCode}
                       />
+                      <InviteYourFriends referralCode={data?.referralCode} />
                     </div>
-                  </div>
+                  )}
+                  {activeIndex === 2 && (
+                    <div className="container mx-auto p-4">
+                      <div className="flex flex-wrap-reverse w-full h-full gap-10 justify-center">
+                        <div className="md:p-8 w-full md:w-[55%] md:bg-white rounded-2xl">
+                          <ReferralHistoryTable />
+                        </div>
+                        <div className=" md:w-[40%]">
+                          <YourReferrals
+                            registeredFriends={data.registeredFriends}
+                            registeredAirspaces={data.registeredAirspaces}
+                            validatedProperties={data.validatedProperties}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                }
                 {activeIndex === 3 && 
                   <div className="container mx-auto p-4">
                     <UserBalanceTable />
@@ -153,7 +156,6 @@ const Points = () => {
                 </div>  
               </div>
             </div>
-          </section>
         </div>
       </div>
     </Fragment>

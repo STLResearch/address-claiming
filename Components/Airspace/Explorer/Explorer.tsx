@@ -1,16 +1,24 @@
-import React, { useState } from "react";
-import { InfoIcon, LocationPointIcon, MagnifyingGlassIcon } from "../../Icons";
-import { useSearchParams } from "next/navigation";
 import { useTour } from "@reactour/tour";
+import React, { useState } from "react";
+import {
+  BuildingsIcon,
+  CircleDollarIcon,
+  InfoIcon,
+  LocationPointIcon,
+  MagnifyingGlassIcon,
+} from "../../Icons";
+import AirRightEstimateMetadata from "./AirRightEstimateMetadata";
 
 interface PropsI {
-  address: string; 
-  setAddress: React.Dispatch<React.SetStateAction<string>>; 
-  addresses: { id: string; place_name: string; }[];
+  address: string;
+  setAddress: React.Dispatch<React.SetStateAction<string>>;
+  addresses: { id: string; place_name: string }[];
   showOptions: boolean;
-  onClaimAirspace: () => void; 
-  handleSelectAddress: (value: string) => void; 
-  flyToAddress: string; 
+  onClaimAirspace: () => void;
+  handleSelectAddress: (value: string, fetchEstimates: boolean) => void;
+  flyToAddress: string;
+  airRightEstimates: any;
+  isLoadingEstimates: boolean;
 }
 
 const Explorer = ({
@@ -21,10 +29,15 @@ const Explorer = ({
   handleSelectAddress,
   onClaimAirspace,
   flyToAddress,
+  airRightEstimates,
+  isLoadingEstimates,
 }: PropsI) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
-  const searchParams = useSearchParams();
   const { isOpen } = useTour();
+
+  const mainEstimate = airRightEstimates
+    ? airRightEstimates.main.estimate
+    : undefined;
 
   return (
     <div
@@ -74,8 +87,8 @@ const Explorer = ({
               return (
                 <div
                   key={item.id}
-                  // value={item.place_name}
-                  onClick={() => handleSelectAddress(item.place_name)}
+                  // Value={item.place_name}
+                  onClick={() => handleSelectAddress(item.place_name, true)}
                   className="w-full p-4 text-left text-[#222222]"
                   style={{
                     borderBottom: "0.2px solid #DBDBDB",
@@ -86,9 +99,7 @@ const Explorer = ({
                       <LocationPointIcon />
                     </div>
 
-                    <div className="w-[90%]">
-                      {item.place_name}
-                    </div>
+                    <div className="w-[90%]">{item.place_name}</div>
                   </div>
                 </div>
               );
@@ -96,32 +107,72 @@ const Explorer = ({
           </div>
         )}
       </div>
-      {(flyToAddress && address  || isOpen )&& (
-        <div>
-        <p className="my-4 text-[20px] text-center font-medium">My Airspaces</p>
-         <p className="  text-[15px] font-normal text-[#222222]">
-         Please ensure the address entered matches the registered property address to accurately claim this area.
-         </p>
 
-       <div className="bg-white w-[304px] mt-4 p-4  rounded-2xl">
-        <div className="flex  items-center mb-6">
-        <div className="w-[10%] h-6 mr-2">
-          <LocationPointIcon />
-        </div>
-        <div className="w-[90%]">
-          {address}
-        </div>
-       </div>
-        <div
-          onClick={onClaimAirspace}
-          className="Claim-airspacebtn-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
-        >
-          Claim Airspace
-        </div>
-        </div>
+      {((flyToAddress && address) || isOpen) && (
+        <div>
+          {isLoadingEstimates && (
+            <p className="text-[15px] text-light-black animate-pulse">
+              Estimating Airspace Value...
+            </p>
+          )}
+
+          {!isLoadingEstimates && !mainEstimate && (
+            <>
+              <p className="my-4 text-[20px] text-center font-medium">
+                My Airspaces
+              </p>
+
+              <p className="  text-[15px] font-normal text-[#222222]">
+                Please ensure the address entered matches the registered
+                property address to accurately claim this area.
+              </p>
+            </>
+          )}
+
+          <div className="bg-white w-[304px] mt-4 p-4 rounded-2xl">
+            <div className="flex items-center mb-3">
+              <div className="w-[10%] h-6 mr-2">
+                <LocationPointIcon />
+              </div>
+              <div className="w-[90%]">{address}</div>
+            </div>
+
+            {!isLoadingEstimates && mainEstimate && (
+              <>
+                <AirRightEstimateMetadata
+                  title="Est. Price Per Square Foot*"
+                  value={mainEstimate.value}
+                  icon={<BuildingsIcon />}
+                />
+
+                <div className="my-3">
+                  <AirRightEstimateMetadata
+                    title="Est. Annual Passive Income*"
+                    value={mainEstimate.annualProjection}
+                    icon={<CircleDollarIcon />}
+                  />
+                </div>
+              </>
+            )}
+
+            <div
+              onClick={onClaimAirspace}
+              className="Claim-airspacebtn-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+            >
+              Claim Airspace
+            </div>
+
+            {!isLoadingEstimates && mainEstimate && (
+              <div className="mt-2">
+                <span className="text-sm italic text-[#93B1ED]">
+                  *Estimated Property Value (USA Beta version)
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       )}
-      </div>
+    </div>
   );
 };
 

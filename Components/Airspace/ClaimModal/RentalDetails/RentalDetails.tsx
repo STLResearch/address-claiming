@@ -6,16 +6,24 @@ import WeekDayRangesForm from "./WeekDayRangesForm";
 import FacilityFeaturesSelect from "./FacilityFeaturesSelect";
 import { defaultData, WeekDayRange } from "@/types";
 interface RentalDetailsProps {
-  transitFee:string;
-  data:defaultData;
-  weekDayRanges:WeekDayRange[];
-  hasLandingDeck:boolean;
-  hasChargingStation:boolean;
-  hasStorageHub:boolean;
+  transitFee: string;
+  data: defaultData;
+  weekDayRanges: WeekDayRange[];
+  hasLandingDeck: boolean;
+  hasChargingStation: boolean;
+  hasStorageHub: boolean;
   setData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-  const RentalDetails: React.FC<RentalDetailsProps> = ({ transitFee, data,weekDayRanges,hasLandingDeck,hasChargingStation,hasStorageHub,setData }) => {
+const RentalDetails: React.FC<RentalDetailsProps> = ({
+  transitFee,
+  data,
+  weekDayRanges,
+  hasLandingDeck,
+  hasChargingStation,
+  hasStorageHub,
+  setData,
+}) => {
   return (
     <Fragment>
       <h2 className="text-[#222222] font-normal text-[20px] leading-[3rem]">
@@ -39,7 +47,9 @@ interface RentalDetailsProps {
         </div>
         <div className="flex-1 mt-4 md:mt-0">
           <TimeZoneSelect
-            setTimeZone={(timezone) => setData((prev) => ({ ...prev, timezone }))}
+            setTimeZone={(timezone) =>
+              setData((prev) => ({ ...prev, timezone }))
+            }
             data={data}
           />
         </div>
@@ -49,7 +59,12 @@ interface RentalDetailsProps {
           Select extra features your facility provides
           <span className="text-[#E04F64]">*</span>
         </p>
-        <FacilityFeaturesSelect hasLandingDeck={hasLandingDeck} hasChargingStation={hasChargingStation} hasStorageHub={hasStorageHub} setData={setData} />
+        <FacilityFeaturesSelect
+          hasLandingDeck={hasLandingDeck}
+          hasChargingStation={hasChargingStation}
+          hasStorageHub={hasStorageHub}
+          setData={setData}
+        />
       </div>
       <div className="flex flex-col gap-[15px] mt-2">
         <p>

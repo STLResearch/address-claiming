@@ -17,7 +17,8 @@ const usersData: User[] = [
   
 const PER_PAGE = 6;
 
-const UserBalanceTable: React.FC = () => {
+
+const UserBalanceTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(usersData.length / PER_PAGE);

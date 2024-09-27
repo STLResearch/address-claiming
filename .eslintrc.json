@@ -1,3 +1,99 @@
 {
-  "extends": ["next", "prettier"]
+	"env": {
+		"browser": true,
+		"es2021": true
+	},
+	"extends": [
+		"next",
+		"next/core-web-vitals",
+		"plugin:@next/next/recommended",
+		"eslint:recommended",
+		"plugin:prettier/recommended"
+	],
+	"plugins": ["prettier"],
+	"rules": {
+		"react-hooks/exhaustive-deps": "off",
+		"no-async-promise-executor": "error",
+		"no-console": ["error", { "allow": ["warn", "error", "info"] }],
+		"no-sparse-arrays": "error",
+		"no-unexpected-multiline": "error",
+		"no-unreachable": "error",
+		"no-unsafe-finally": "error",
+		"no-unsafe-negation": "error",
+		"no-unsafe-optional-chaining": "error",
+		"block-scoped-var": "error",
+		"capitalized-comments": "error",
+		"no-unused-vars": "warn",
+		"valid-typeof": "error",
+		"no-cond-assign": "error",
+		"no-dupe-else-if": "error",
+		"no-const-assign": "error",
+		"no-func-assign": "error",
+		"no-import-assign": "error",
+		"no-dupe-args": "error",
+		"no-dupe-keys": "error",
+		"no-duplicate-case": "error",
+		"no-duplicate-imports": "error",
+		"no-fallthrough": "error",
+		"curly": ["error", "multi-line"],
+		"no-redeclare": "error",
+		"dot-notation": "error",
+		"eqeqeq": "error",
+		"no-else-return": "error",
+		"no-empty": "error",
+		"no-empty-function": "error",
+		"no-nested-ternary": "warn", //TODO: change to error
+		"no-loop-func": "error",
+		"no-lonely-if": "error",
+		"no-lone-blocks": "error",
+		"no-global-assign": "error",
+		"no-extra-boolean-cast": "error",
+		"no-nonoctal-decimal-escape": "error",
+		"no-param-reassign": "error",
+		"no-undef-init": "error",
+		"no-useless-catch": "error",
+		"no-unneeded-ternary": "error",
+		"no-useless-return": "error",
+		"no-throw-literal": "error",
+		"no-shadow-restricted-names": "error",
+		"no-sequences": "error",
+		"no-return-assign": "error",
+		"strict": "error",
+		"no-eq-null": "error",
+		"prefer-const": "error",
+		"max-depth": ["error", 4],
+		"no-undefined": "warn", //TODO: change to error
+		"no-shadow": "warn", //TODO: change to error
+		"require-await": "warn", //TODO: change to error
+		"max-params": ["warn", 2],
+		"no-magic-numbers": "warn",
+		"func-style": ["warn", "expression", { "allowArrowFunctions": true }],
+		"no-irregular-whitespace": "warn",
+		"no-loss-of-precision": "warn",
+		"prefer-destructuring": "warn",
+		"no-negated-condition": "warn", //TODO: change to error
+		"camelcase": "warn",
+		"default-case": "warn",
+		"no-var": "warn",
+		"complexity": "warn",
+		"consistent-return": "warn",
+		"yoda": "warn",
+		"prettier/prettier": [
+			"warn",
+			{
+				"endOfLine": "auto"
+			},
+			{
+				"usePrettierrc": false
+			}
+		]
+	},
+	"settings": {
+		"import/resolver": {
+			"node": {
+				"extensions": [".js", ".jsx", ".ts", ".tsx"],
+				"moduleDirectory": ["/"]
+			}
+		}
+	}
 }

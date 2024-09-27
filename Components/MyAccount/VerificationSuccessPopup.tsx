@@ -1,70 +1,76 @@
-import React, { useState, useEffect} from 'react';
-import { CancelIconWhite, SuccessIcon, SuccessIconwhite} from "../Icons";
-import { useMobile } from '@/hooks/useMobile';
-
+import React, { useState, useEffect } from "react";
+import { CancelIconWhite, SuccessIcon, SuccessIconwhite } from "../Icons";
+import { useMobile } from "@/hooks/useMobile";
 
 const VerificationSuccessPopup: React.FC = () => {
-    const { isMobile } = useMobile();
-    const [showPopup, setShowPopup] = useState(true);
-
+  const { isMobile } = useMobile();
+  const [showPopup, setShowPopup] = useState(true);
 
   const handleClose = () => {
-    setShowPopup(false); 
+    setShowPopup(false);
   };
-
-
 
   return (
     <>
-    {showPopup && (
-      <div className={`fixed ${isMobile ? 'inset-0 bg-green-500' : 'top-24 right-0 '}  flex flex-col items-center justify-center p-4 z-50 gap-12`}>
-        <div className="absolute top-4 right-4">
-          <button onClick={handleClose} className="text-white h-6 w-6">
-            <CancelIconWhite />
-          </button>
-        </div>
-        {isMobile ? (
-          <>
-            <div className="flex justify-center items-center w-24 h-24">
-              <SuccessIconwhite />
-            </div>
-            <div className="flex flex-col gap-6 text-center text-white w-60">
-              <p className="text-xl font-medium">
-                Thanks, your additional documents have been successfully submitted.
-              </p>
-              <p className="text-sm font-normal ">
-                Wait for our team to review your documents. Once your KYC verification is successfully completed, you'll instantly earn 10 SKY points.
-              </p>
-              <div className="flex justify-center items-center">
-                <button onClick={handleClose} className="w-[174px] text-white text-sm py-3 border rounded">
-                  Close
-                </button>
+      {showPopup && (
+        <div
+          className={`fixed ${isMobile ? "inset-0 bg-green-500" : "top-24 right-0 "}  flex flex-col items-center justify-center p-4 z-50 gap-12`}
+        >
+          <div className="absolute top-4 right-4">
+            <button onClick={handleClose} className="text-white h-6 w-6">
+              <CancelIconWhite />
+            </button>
+          </div>
+          {isMobile ? (
+            <>
+              <div className="flex justify-center items-center w-24 h-24">
+                <SuccessIconwhite />
               </div>
-            </div>
-          </>
-        ) : (
-          <div className="w-auto bg-white  rounded">
-            <div className="flex items-center justify-between p-4">
-              <div className="w-4 h-4">
-                <SuccessIcon />
+              <div className="flex flex-col gap-6 text-center text-white w-60">
+                <p className="text-xl font-medium">
+                  Thanks, your additional documents have been successfully
+                  submitted.
+                </p>
+                <p className="text-sm font-normal ">
+                  Wait for our team to review your documents. Once your KYC
+                  verification is successfully completed, you&apos;ll instantly
+                  earn 10 SKY points.
+                </p>
+                <div className="flex justify-center items-center">
+                  <button
+                    onClick={handleClose}
+                    className="w-[174px] text-white text-sm py-3 border rounded"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
-              <div className="p-2 text-green-500 text-[14px]">
-                <p>Thanks, your additional documents have been successfully submitted.</p>
-              </div>
-             
-            
-              <button
+            </>
+          ) : (
+            <div className="w-auto bg-white  rounded">
+              <div className="flex items-center justify-between p-4">
+                <div className="w-4 h-4">
+                  <SuccessIcon />
+                </div>
+                <div className="p-2 text-green-500 text-[14px]">
+                  <p>
+                    Thanks, your additional documents have been successfully
+                    submitted.
+                  </p>
+                </div>
+
+                <button
                   className="text-black rounded-full w-4 h-4 flex items-center justify-center text-sm cursor-pointer"
                   onClick={handleClose}
                 >
                   ✖
                 </button>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-    )}
-  </>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 

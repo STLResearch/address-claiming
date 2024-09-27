@@ -1,21 +1,38 @@
 
-name: DEV Build/Publish/Deploy
+name: Staging Build/Deploy
 
-on:
-  push:
-    branches: [ "dev-deploy" ]
+on:  
   workflow_dispatch:
 env:
-  SRV_IP: "16.171.132.230"
-  build_env_var: ${{ vars.DEV_FRONTEND_ENV }}
-
+  SRV_IP: "16.171.23.68"
+  
 jobs:
   # Build job
-  build_and_publish:
-    runs-on: ubuntu-latest
+  build_and_deploy:
+    runs-on: sky-trade-dev
+    env:
+      AWS_INSTANCE_SG_ID: sg-05720297ca0f63b54
+      SSH_KEY: ${{secrets.DEV_EC2_DEPLOY_KEY}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Check branch
+        if: ${{ github.ref == 'refs/heads/staging' }}
+        run: |
+          echo "This workflow can only run on the Staging branch"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.11.1"
+          cache: ${{ steps.detect-package-manager.outputs.manager }}
+      - name: Check if Yarn is installed
+        run: |
+          if ! command -v yarn > /dev/null; then
+            echo "Yarn is not installed. Installing yarn..."
+            npm install -g yarn
+          else
+            echo "Yarn is already installed."
+          fi
       - name: Detect package manager
         id: detect-package-manager
         run: |
@@ -33,11 +50,6 @@ jobs:
             echo "Unable to determine package manager"
             exit 1
           fi
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.11.1"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
       - name: Restore cache
         uses: actions/cache@v4
         with:
@@ -51,25 +63,11 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Build App
-        run: echo "$build_env_var" > .env.local && cat .env.local && yarn build
+        run: cat settings/env.staging > .env.local && cat .env.local && yarn build
       - name: Create deployment artifact 
         env:
           GITHUB_SHA: ${{ github.sha }}
         run: ls -all && tar -czf "ac-${GITHUB_SHA}".tar.gz `ls -A -1`
-      - name: Store artifact for distribution
-        uses: actions/upload-artifact@v4
-        with:
-          name: ac-${{ github.sha }}
-          path: ac-${{ github.sha }}.tar.gz 
-          retention-days: 1      
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [build_and_publish] 
-    env:
-      AWS_INSTANCE_SG_ID: sg-05720297ca0f63b54
-      SSH_KEY: ${{secrets.DEV_EC2_DEPLOY_KEY}}
-    steps:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -86,28 +84,25 @@ jobs:
             --port 4578 \
             --cidr $GITHUB_PUB_IP/32    
       
-      - name: Download Artifact for Deploy
-        uses: actions/download-artifact@v4
-      
       - name: Print Artifact location
         shell: bash
-        run: ls ac-${GITHUB_SHA}
+        run: pwd && ls ./
       
       - name: Prepare SSH-client on Agent
         run: | 
-            mkdir ~/.ssh
-            echo "$SSH_KEY" >> ~/.ssh/github-action
-            chmod 400 ~/.ssh/github-action
-            echo -e "User ec2-user\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" >> ~/.ssh/config
+            mkdir -p ~/.ssh          
+            [ -e ~/.ssh/github-action ] && rm ~/.ssh/github-action
+            echo "$SSH_KEY" > ~/.ssh/github-action && chmod 400 ~/.ssh/github-action
+            echo -e "User ec2-user\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
                 
       - name: Verify if the Server has all Dependencies
         run: | 
             ssh ec2-user@$SRV_IP -p 4578 -i ~/.ssh/github-action '[[ "$(command -v pm2)" ]] || { echo "pm2 is not installed" 1>&2 ; exit 1; }'
-           
+            
       - name: Send Artifact to Server 
         run: | 
             ssh -T ec2-user@$SRV_IP -p 4578 -i ~/.ssh/github-action 'mkdir -p address-claiming'
-            scp -P 4578 -i ~/.ssh/github-action ac-${GITHUB_SHA}/ac-${GITHUB_SHA}.tar.gz ec2-user@$SRV_IP:~/address-claiming/
+            scp -P 4578 -i ~/.ssh/github-action ac-${GITHUB_SHA}.tar.gz ec2-user@$SRV_IP:~/address-claiming/
 
       - name: Change Symlink/Deploy/Restart PM2 SSH Commands
         run: |
@@ -118,11 +113,11 @@ jobs:
               mkdir $NEW_DEPLOY_SOURCE && \
               tar -xzf ac-${{ github.sha }}.tar.gz -C $NEW_DEPLOY_SOURCE && \
               rm -f ac-${{ github.sha }}.tar.gz && \
-              cd $NEW_DEPLOY_SOURCE && bash "./dev_env.sh" || exit 1
+              cd $NEW_DEPLOY_SOURCE && bash "./staging_env.sh" || exit 1
               cd .. && ln -sfn `pwd`/$NEW_DEPLOY_SOURCE current && cd current && \
               pm2 flush && \
               pm2 startOrRestart ecosystem.config.js --env dev --cwd `pwd` &&
-              cd ../ && ./clean_builds.sh &&
+              cd .. && ./clean_builds.sh
               tail -n 100 ~/.pm2/logs/sky.trade.frontend-*
 
             EOL

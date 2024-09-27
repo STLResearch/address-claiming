@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { createPortal } from "react-dom";
 
@@ -13,14 +13,13 @@ import { toast } from "react-toastify";
 import AccountVerification from "../../Components/MyAccount/AccountVerification";
 import PersonalInformation from "../../Components/MyAccount/PersonalInformation";
 import { User } from "../../types";
-import React from "react";
 import Sidebar from "../Shared/Sidebar";
 import { checkPhoneIsValid } from "../Auth/PhoneValidation";
 
 const Account = () => {
   const { user, updateProfile, signIn, web3authStatus } = useAuth();
   const { updateUser, getUser } = UserService();
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
   const [newUserDetail, setNewUserDetail] = useState<User | null>(null);
@@ -37,11 +36,10 @@ const Account = () => {
       if (data) {
         setNewUserDetail({ ...data });
       }
-    })()
+    })();
   }, [user?.KYCStatusId, user?.name, user?.phoneNumber, web3authStatus]);
 
   const updateDataHandler = async (e) => {
-
     e.preventDefault();
     if (!user || !newUserDetail) return toast.error("User not logged in");
 
@@ -81,7 +79,7 @@ const Account = () => {
         toast.error("Something went wrong");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
@@ -91,6 +89,7 @@ const Account = () => {
   const onVerifyMyAccount = async () => {
     setIsLoading(true);
     // @ts-ignore
+    // eslint-disable-next-line no-undef
     const client = await new Persona.Client({
       templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
       referenceId: user?.id.toString(),
@@ -102,21 +101,17 @@ const Account = () => {
       onComplete: async () => {
         const responseData = await getUser();
         if (responseData) {
-          setNewUserDetail({ ...responseData })
+          setNewUserDetail({ ...responseData });
           signIn({ user: responseData });
         }
-      }
+      },
     });
   };
-
 
   return (
     <Fragment>
       {isLoading &&
-        createPortal(
-          <Backdrop onClick={() => { }} />,
-          document.getElementById("backdrop-root")!
-        )}
+        createPortal(<Backdrop />, document.getElementById("backdrop-root")!)}
       {isLoading &&
         createPortal(<Spinner />, document.getElementById("backdrop-root")!)}
 

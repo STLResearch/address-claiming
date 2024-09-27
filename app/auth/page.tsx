@@ -19,8 +19,6 @@ const Signup: React.FC = () => {
     return { isWaitingScreenVisible };
   }, shallowEqual);
 
-
-
   return (
     <>
       <Head>

@@ -1,11 +1,11 @@
 import React, { ReactNode } from "react";
 
-
 type CryptoElementsContextType = {
   onramp: any | null;
 } | null;
 
-const CryptoElementsContext = React.createContext<CryptoElementsContextType>(null);
+const CryptoElementsContext =
+  React.createContext<CryptoElementsContextType>(null);
 
 export const CryptoElements = ({
   stripeOnramp,
@@ -14,7 +14,9 @@ export const CryptoElements = ({
   stripeOnramp: Promise<any>;
   children: ReactNode;
 }) => {
-  const [ctx, setContext] = React.useState<CryptoElementsContextType>(() => ({ onramp: null }));
+  const [ctx, setContext] = React.useState<CryptoElementsContextType>(() => ({
+    onramp: null,
+  }));
 
   React.useEffect(() => {
     let isMounted = true;
@@ -40,7 +42,9 @@ export const CryptoElements = ({
 export const useStripeOnramp = () => {
   const context = React.useContext(CryptoElementsContext);
   if (!context) {
-    throw new Error("useStripeOnramp must be used within a CryptoElementsProvider");
+    throw new Error(
+      "useStripeOnramp must be used within a CryptoElementsProvider",
+    );
   }
   return context.onramp;
 };

@@ -18,8 +18,8 @@ const LoadingMessage: React.FC = () => {
           Welcome to SkyTrade
         </p>
         <p className="text-center text-[14px] font-normal text-light-grey">
-          Thanks for waiting. We're moving you to a new page. Please don't
-          refresh while we do this.
+          Thanks for waiting. We&apos;re moving you to a new page. Please
+          don&apos;t refresh while we do this.
         </p>
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import {
   Fragment,
+  SetStateAction,
   useContext,
   useEffect,
   useState,
@@ -20,11 +21,11 @@ import { Web3authContext } from "@/providers/web3authProvider";
 
 const Portfolio = () => {
   const [selectedAirspace, setSelectedAirspace] = useState(null);
-  const {getPropertyById} = PropertiesService()
-  const { getSingleAsset } = AirspaceRentalService()
-  const searchParams = useSearchParams()
-  const [uploadedDoc, setUploadedDoc] =useState<any[]>([])
-  
+  const { getPropertyById } = PropertiesService();
+  const { getSingleAsset } = AirspaceRentalService();
+  const searchParams = useSearchParams();
+  const [uploadedDoc, setUploadedDoc] = useState<any[]>([]);
+
   const id = searchParams?.get("id");
 
   const { web3auth } = useContext(Web3authContext);
@@ -62,21 +63,27 @@ const Portfolio = () => {
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
-
           <PageHeader pageTitle={"Portfolio"} />
           <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
-
             <PortfolioList
               title={"My Airspaces"}
-              selectAirspace={selectAirspace} 
-              selectedAirspace={selectedAirspace} 
+              selectAirspace={selectAirspace}
+              selectedAirspace={selectedAirspace}
               onCloseModal={onCloseModal}
-              uploadedDoc={uploadedDoc} 
-              setUploadedDoc={setUploadedDoc}           
+              uploadedDoc={uploadedDoc}
+              setUploadedDoc={setUploadedDoc}
+              setSelectedAirspace={setSelectedAirspace}
             />
           </section>
           <section className="relative w-full h-full flex flex-wrap gap-6 py-[10px] md:hidden overflow-y-auto ">
-            <PortfolioListMobile selectAirspace={selectAirspace} uploadedDoc={uploadedDoc} setUploadedDoc={setUploadedDoc} />
+            <PortfolioListMobile
+              onCloseModal={onCloseModal}
+              selectAirspace={selectAirspace}
+              uploadedDoc={uploadedDoc}
+              setUploadedDoc={setUploadedDoc}
+              selectedAirspace={selectedAirspace}
+              setSelectedAirspace={setSelectedAirspace}
+            />
           </section>
         </div>
       </div>

@@ -15,13 +15,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
 
 import type { Metadata } from "next";
-import { Head } from "next/document";
-import NextTopLoader from 'nextjs-toploader';
-import { TourProvider } from "@reactour/tour";
+import NextTopLoader from "nextjs-toploader";
 import React from "react";
 import { OnboardingTour } from "../Components/Tours";
 import NotificationBanner from "@/Components/NotificationBanner";
-
 
 export const metadata: Metadata = {
   title: "Sky Trade",
@@ -40,7 +37,12 @@ export default function RootLayout({
           href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
           rel="stylesheet"
         />
-        <link rel="icon" href="/favicon-1.ico" sizes="any" type="image/x-icon" />
+        <link
+          rel="icon"
+          href="/favicon-1.ico"
+          sizes="any"
+          type="image/x-icon"
+        />
         <link
           href="https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css"
           rel="stylesheet"
@@ -76,6 +78,20 @@ export default function RootLayout({
                 s1.setAttribute('crossorigin','*');
                 s0.parentNode.insertBefore(s1,s0);
                 })();
+              Tawk_API.customStyle = {
+              visibility : {
+                mobile : {
+                  position : 'br',
+                  xOffset : 10,
+                  yOffset : 80
+                },
+                bubble : {
+                  rotate : '0deg',
+                  xOffset : -20,
+                  yOffset : 0
+                }
+              }
+            };
               `,
             }}
           />
@@ -85,22 +101,20 @@ export default function RootLayout({
               <ToastContainer style={{ width: "500px" }} />
               <div id="backdrop-root"></div>
               <div id="modal-root"></div>
-              
-            <NextTopLoader
-              color="#2299DD"
-              initialPosition={0.08}
-              crawlSpeed={200}
-              height={3}
-              crawl={true}
-              showSpinner={false}
-              easing="ease"
-              speed={300}
-              shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+
+              <NextTopLoader
+                color="#2299DD"
+                initialPosition={0.08}
+                crawlSpeed={200}
+                height={3}
+                crawl={true}
+                showSpinner={false}
+                easing="ease"
+                speed={300}
+                shadow="0 0 10px #2299DD,0 0 5px #2299DD"
               />
               <NotificationBanner />
-              <OnboardingTour>
-                {children}
-              </OnboardingTour>
+              <OnboardingTour>{children}</OnboardingTour>
             </SidebarProvider>
             <CookieConsent />
           </Web3authProvider>

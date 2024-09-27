@@ -5,7 +5,6 @@ import useInitAuth from "@/hooks/useInitAuth";
 import useAutoLogout from "@/hooks/useAutoLogout";
 import useTawk from "@/hooks/useTawk";
 
-
 interface ContextI {
   isCollapsed: boolean;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -13,7 +12,8 @@ interface ContextI {
 
 const defaultValue: ContextI = {
   isCollapsed: false,
-  setIsCollapsed: () => { },
+  // eslint-disable-next-line no-empty-function
+  setIsCollapsed: () => {},
 };
 
 export const SidebarContext = createContext<ContextI>(defaultValue);
@@ -24,7 +24,6 @@ export const SidebarProvider = ({ children }) => {
   useFetchBalance();
 
   useAutoLogout();
-
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 

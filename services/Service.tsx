@@ -15,7 +15,7 @@ interface RequestI {
 }
 
 const TIMEOUT = 300000;
-const CUSTOM_ERROR_MESSAGE = "An Error occured! Please try again later."
+const CUSTOM_ERROR_MESSAGE = "An Error occured! Please try again later.";
 
 const Service = () => {
   const { provider } = useContext(Web3authContext);
@@ -23,22 +23,23 @@ const Service = () => {
   const isLocalhostUrl = (url: string): boolean => {
     const localhostRegex = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/.*)?$/;
     return localhostRegex.test(url);
-  }
+  };
 
   const getRequestUrl = (uri: string): string => {
     const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
 
-    return `${serverUrl}${uri}`
-  }
+    return `${serverUrl}${uri}`;
+  };
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
-    console.log(error)
-    if (
-      !suppressErrorReporting &&
-      error.response
-    ) {
-
-      const backendError = error.response.data.errorMesagge || error.response.data.data.message
+    console.error(error);
+    if (!navigator.onLine) {
+      toast.error("Network unavailable. Please check your connection and try again.");
+      return;
+    }
+    if (!suppressErrorReporting && error.response) {
+      const backendError =
+        error.response.data.errorMesagge || error.response.data.data.message;
 
       if (backendError && backendError !== "UNAUTHORIZED") {
         toast.error(backendError);
@@ -49,7 +50,10 @@ const Service = () => {
     Sentry.captureException(error);
   };
 
-  const createHeader = async ({ isPublic, uri }: {
+  const createHeader = async ({
+    isPublic,
+    uri,
+  }: {
     uri: string;
     isPublic?: boolean;
   }) => {
@@ -72,9 +76,7 @@ const Service = () => {
         const header = { t: "sip99" };
         const network = "solana";
 
-        let message = new SIWWeb3({ header, payload, network });
-
-        console.log({ message })
+        const message = new SIWWeb3({ header, payload, network });
 
         const messageText = message.prepareMessage();
         const msg = new TextEncoder().encode(messageText);
@@ -90,7 +92,6 @@ const Service = () => {
           sign_nonce: message.payload.nonce,
           sign_address: accounts[0],
         };
-
       } else {
         newHeader = {
           "Content-Type": "application/json",
@@ -100,14 +101,17 @@ const Service = () => {
       return {
         ...newHeader,
         api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY, // TODO: remove
-      }
-
+      };
     } catch (error) {
       console.error(error);
     }
   };
 
-  const getRequest = async ({ uri, isPublic, suppressErrorReporting }: RequestI) => {
+  const getRequest = async ({
+    uri,
+    isPublic,
+    suppressErrorReporting,
+  }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 

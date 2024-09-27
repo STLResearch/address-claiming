@@ -25,8 +25,7 @@ const Item: FC<ItemProps> = ({
     >
       <div className="flex justify-between items-center">
         <p className="text-xl font-medium text-[#222222]">{title} </p>
-        <Link
-          href={href}>
+        <Link href={href}>
           <div className="h-10 w-10">{icon}</div>
         </Link>
       </div>

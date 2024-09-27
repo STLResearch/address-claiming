@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import moment from "moment-timezone";
 
 interface TimezoneSelectComponentProps {
@@ -8,7 +8,7 @@ interface TimezoneSelectComponentProps {
 }
 
 const TimezoneSelectComponent: React.FC<TimezoneSelectComponentProps> = (
-  props
+  props,
 ) => {
   const [timezone, setTimezone] = useState<string>("UTC");
 

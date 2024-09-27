@@ -1,10 +1,13 @@
 import { formatDate } from "@/utils";
 
 const { Fragment } = require("react");
-const { ArrowLeftIcon, CloseIcon, LocationPointIcon } = require("../Shared/Icons");
+const {
+  ArrowLeftIcon,
+  CloseIcon,
+  LocationPointIcon,
+} = require("../Shared/Icons");
 
 const Modal = ({ airspace, onCloseModal, isOffer }) => {
-  console.log({ airspace });
   return (
     <Fragment>
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
@@ -65,7 +68,7 @@ const Modal = ({ airspace, onCloseModal, isOffer }) => {
                 Offer received
               </p>
               <p className="font-bold text-2xl text-[#222222]">
-                {USDollar.format(99.87)}
+                {/* {USDollar.format(99.87)} */}
               </p>
             </div>
             <div

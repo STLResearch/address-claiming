@@ -3,8 +3,8 @@
 import store from "@/redux/store";
 import React, { createContext, useState, ReactNode } from "react";
 import { Provider } from "react-redux";
-// import { persistStore } from "redux-persist";
-// import { PersistGate } from "redux-persist/integration/react";
+// Import { persistStore } from "redux-persist";
+// Import { PersistGate } from "redux-persist/integration/react";
 
 interface Web3authContextType {
   web3auth: any;
@@ -15,8 +15,10 @@ interface Web3authContextType {
 
 const defaultValue: Web3authContextType = {
   web3auth: null,
+  // eslint-disable-next-line no-empty-function
   setWeb3auth: () => {},
   provider: null,
+  // eslint-disable-next-line no-empty-function
   setProvider: () => {},
 };
 
@@ -26,7 +28,7 @@ interface Web3authProviderProps {
   children: ReactNode;
 }
 
-// const persistor = persistStore(store);
+// Const persistor = persistStore(store);
 
 export const Web3authProvider: React.FC<Web3authProviderProps> = ({
   children,
@@ -37,11 +39,11 @@ export const Web3authProvider: React.FC<Web3authProviderProps> = ({
   return (
     <Provider store={store}>
       {/* <PersistGate loading={null} persistor={persistor}> */}
-        <Web3authContext.Provider
-          value={{ web3auth, setWeb3auth, provider, setProvider }}
-        >
-          {children}
-        </Web3authContext.Provider>
+      <Web3authContext.Provider
+        value={{ web3auth, setWeb3auth, provider, setProvider }}
+      >
+        {children}
+      </Web3authContext.Provider>
       {/* </PersistGate> */}
     </Provider>
   );

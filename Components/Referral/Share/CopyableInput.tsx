@@ -1,5 +1,5 @@
+import React, { ChangeEvent, MouseEvent } from "react";
 import { BalanceLoader } from "@/Components/Wrapped";
-import { ChangeEvent, MouseEvent } from "react";
 
 interface CopyableInputProps {
   isLoading?: boolean;

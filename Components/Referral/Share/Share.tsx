@@ -1,7 +1,7 @@
+import React, { useEffect, useState, MouseEvent, ChangeEvent } from "react";
 import useOrigin from "@/hooks/useOrigin";
 import ReferralCodeService from "@/services/ReferralCodeService";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, MouseEvent, ChangeEvent } from "react";
 import { toast } from "react-toastify";
 import { FacebookIcon, LinkedInIcon, XIcon } from "../../Shared/Icons";
 import CopyableInput from "./CopyableInput";
@@ -14,11 +14,7 @@ interface ShareProps {
   isLoading: boolean;
 }
 
-const Share: React.FC<ShareProps> = ({
-  referralCode,
-  isLoading,
-}) => {
-
+const Share: React.FC<ShareProps> = ({ referralCode, isLoading }) => {
   const { user } = useAuth();
   const [isCopied, setIsCopied] = useState({ code: false, link: false });
   const [temporalReferralCode, setTemporalReferralCode] =
@@ -29,6 +25,7 @@ const Share: React.FC<ShareProps> = ({
 
   useEffect(() => {
     if (!isCopied.code) return;
+    // eslint-disable-next-line no-undef
     let timeoutId: NodeJS.Timeout;
     (() => {
       timeoutId = setTimeout(() => {
@@ -41,6 +38,7 @@ const Share: React.FC<ShareProps> = ({
 
   useEffect(() => {
     if (!isCopied.link) return;
+    // eslint-disable-next-line no-undef
     let timeoutId: NodeJS.Timeout;
     (() => {
       timeoutId = setTimeout(() => {
@@ -95,13 +93,12 @@ const Share: React.FC<ShareProps> = ({
               code: temporalReferralCode,
               codeChanged: true,
             },
-          })
+          }),
         );
         router.refresh();
       } else if (resp && resp.errorMessage) {
-        toast.error(resp.errorMessage)
-      }
-      else toast.error("Error when updating referral")
+        toast.error(resp.errorMessage);
+      } else toast.error("Error when updating referral");
     } catch (error) {
       console.error(error);
       toast.error(error.message);
@@ -141,11 +138,11 @@ const Share: React.FC<ShareProps> = ({
             <CopyableInput
               isLoading={isLoading}
               isReferralLink={false}
-              value={`${origin}/r/${referralCode}`}
+              value={`${origin}?ref=${referralCode}`}
               canCopy={canCopy}
               isCopied={isCopied.link}
               handleCopy={(e) =>
-                handleCopy(e, `${origin}/r/${referralCode}`, false)
+                handleCopy(e, `${origin}?ref=${referralCode}`, false)
               }
               disabled={true}
             />
@@ -153,8 +150,8 @@ const Share: React.FC<ShareProps> = ({
               platform="facebook"
               onClick={() =>
                 window.open(
-                  `https://www.facebook.com/sharer/sharer.php?u=${origin}/r/${referralCode}`,
-                  "_blank"
+                  `https://www.facebook.com/sharer/sharer.php?u=${origin}?ref=${referralCode}`,
+                  "_blank",
                 )
               }
             >
@@ -164,8 +161,8 @@ const Share: React.FC<ShareProps> = ({
               platform="linkedin"
               onClick={() =>
                 window.open(
-                  `https://www.linkedin.com/sharing/share-offsite/?url=${origin}/r/${referralCode}`,
-                  "_blank"
+                  `https://www.linkedin.com/sharing/share-offsite/?url=${origin}?ref=${referralCode}`,
+                  "_blank",
                 )
               }
             >
@@ -175,8 +172,8 @@ const Share: React.FC<ShareProps> = ({
               platform="twitter"
               onClick={() =>
                 window.open(
-                  `https://twitter.com/intent/tweet?text=${origin}/r/${referralCode}`,
-                  "_blank"
+                  `https://twitter.com/intent/tweet?text=${origin}?ref=${referralCode}`,
+                  "_blank",
                 )
               }
             >

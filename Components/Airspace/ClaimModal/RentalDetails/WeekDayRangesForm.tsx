@@ -97,5 +97,4 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }: PropsI) => {
   });
 };
 
-
 export default WeekDayRangesForm;

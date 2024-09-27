@@ -19,7 +19,6 @@ import {
 import { useAppSelector } from "@/redux/store";
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 
-
 interface ModalProps {
   airspace: any;
   onCloseModal: () => void;
@@ -37,7 +36,6 @@ const Certificate = ({
   latitude,
   amount,
 }) => {
-
   const styles = StyleSheet.create({
     page: {
       backgroundColor: "#fff",
@@ -83,7 +81,7 @@ const Certificate = ({
       marginVertical: 10,
     },
   });
-  
+
   return (
     <Document>
       <Page style={styles.page}>
@@ -110,13 +108,14 @@ const Certificate = ({
         <View style={styles.section}>
           <Text>
             This rental agreement is valid for the specified date and time frame
-            mentioned above. This agreement is subject to SkyTrade's Rental
+            mentioned above. This agreement is subject to SkyTrade&apos;s Rental
             Agreement and Terms of Service.
           </Text>
 
           <Text>
-            If you have any questions or require more information, please contact
-            the SkyTrade team and we will reach out at our earliest convenience.
+            If you have any questions or require more information, please
+            contact the SkyTrade team and we will reach out at our earliest
+            convenience.
           </Text>
         </View>
         <View style={styles.footer}>
@@ -126,7 +125,7 @@ const Certificate = ({
         </View>
       </Page>
     </Document>
-  )
+  );
 };
 
 const Modal = ({
@@ -172,7 +171,7 @@ const Modal = ({
   const { getUnverifiedAirspaces } = AirspaceRentalService();
 
   const handleEdit = async () => {
-    if (!user || inputValue === airspace?.address) return;
+    if (!user?.blockchainAddress || inputValue === airspace?.address) return;
     try {
       setIsLoading(true);
       const editResponse = await editAirSpaceAddress({
@@ -180,11 +179,7 @@ const Modal = ({
         propertyId: airspace.id,
       });
       if (editResponse) {
-        const airspaceResp = await getUnverifiedAirspaces(
-          user?.blockchainAddress,
-          pageNumber,
-          10
-        );
+        const airspaceResp = await getUnverifiedAirspaces(pageNumber, 10);
         setAirspaceList(airspaceResp.items);
         setIsLoading(false);
       } else {
@@ -217,12 +212,12 @@ const Modal = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-deep-blue">
+        <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-deep-blue max-w-full">
           <div className="w-6 h-6">
             <LocationPointIcon />
           </div>
           <input
-            className="font-normal text-light-black text-[14px] flex-1 border-none outline-none"
+            className="font-normal text-light-black text-[14px] flex-1 border-none outline-none whitespace-nowrap overflow-hidden text-ellipsis w-full max-w-full"
             type="text"
             value={inputValue}
             onChange={(e) => {

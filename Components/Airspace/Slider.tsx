@@ -7,7 +7,7 @@ const Slider = () => {
   return (
     <div
       onClick={() => setIsFullyVisible((prev) => !prev)}
-      className={`cursor-pointer rounded-t-[30px] absolute ${isFullyVisible ? "bottom-0" : "-bottom-[530px]"} right-6 flex flex-col items-center gap-[34px] py-[43px] px-[23px] bg-white max-w-[362px] duration-5000 z-20`}
+      className={`fixed cursor-pointer rounded-t-[30px]  ${isFullyVisible ? "bottom-80" : "-bottom-[530px]"} right-6 flex flex-col items-center gap-[34px] py-[43px] px-[23px] bg-white max-w-[362px] duration-5000 z-20`}
     >
       <div className="flex items-center gap-[4px]">
         <div className="flex items-center justify-center w-[24px] h-[24px]">
@@ -46,8 +46,9 @@ const Slider = () => {
           <div className="flex flex-col">
             <p className="font-bold">Claim Airspace</p>
             <p>
-              Click the 'Claim Airspace' button to confirm your airspace
-              address. Your Airspace is saved. Modify your details anytime.
+              Click the &lsquo;Claim Airspace&rsquo; button to confirm your
+              airspace airspace airspace address. Your Airspace is saved. Modify
+              your anytime.
             </p>
           </div>
         </div>
@@ -73,8 +74,8 @@ const Slider = () => {
         </div>
       </div>
       <div className="font-normal text-[15px] text-[#222222] text-center">
-        Let's get started on creating the future and receiving passive income
-        from your skies. 🚀✨
+        Let&apos;s get started on creating the future and receiving passive
+        income from your skies. 🚀✨
       </div>
     </div>
   );

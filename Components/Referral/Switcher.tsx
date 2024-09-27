@@ -1,10 +1,15 @@
+import React from "react";
 interface SwitcherProps {
-  sections:string[], 
-  activeSection:number;
-  setActiveSection:React.Dispatch<React.SetStateAction<number>>;
+  sections: string[];
+  activeSection: number;
+  setActiveSection: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Switcher:React.FC<SwitcherProps> = ({ sections, activeSection, setActiveSection }) => {
+const Switcher: React.FC<SwitcherProps> = ({
+  sections,
+  activeSection,
+  setActiveSection,
+}) => {
   return (
     <div className="md:hidden flex items-center gap-[14px] mx-auto">
       {sections.map((text, index) => (
@@ -19,5 +24,5 @@ const Switcher:React.FC<SwitcherProps> = ({ sections, activeSection, setActiveSe
     </div>
   );
 };
-  
+
 export default Switcher;

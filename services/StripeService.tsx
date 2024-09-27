@@ -1,4 +1,4 @@
-import Service from "./Service"
+import Service from "./Service";
 
 const StripeService = () => {
   const { postRequest } = Service();
@@ -6,18 +6,17 @@ const StripeService = () => {
   const createStripe = async (postData: any) => {
     try {
       const response = await postRequest({
-        uri: '/public/stripe/create',
+        uri: "/public/stripe/create",
         postData,
         isPublic: true,
-      })
+      });
       return response?.data;
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-
-  return { 
+  return {
     createStripe,
   };
 };

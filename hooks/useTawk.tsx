@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { useMobile } from "@/hooks/useMobile";
 
-
 export default function useTawk() {
-
   const { isMobile } = useMobile();
   const [doItAgain, setDoItAgain] = useState(false);
 
   useEffect(() => {
-    var Tawk_API = global?.Tawk_API || undefined;
+    const Tawk_API = global?.Tawk_API || undefined;
     if (!Tawk_API) return;
 
     if (isMobile) {
@@ -17,12 +15,10 @@ export default function useTawk() {
       } else if (!doItAgain) {
         setDoItAgain(true);
       }
-    } else {
-      if (Tawk_API.showWidget !== undefined) {
-        Tawk_API.showWidget();
-      } else if (doItAgain) {
-        setDoItAgain(false);
-      }
+    } else if (Tawk_API.showWidget !== undefined) {
+      Tawk_API.showWidget();
+    } else if (doItAgain) {
+      setDoItAgain(false);
     }
   }, [isMobile, global.Tawk_API, doItAgain]);
 

@@ -1,3 +1,5 @@
+import React from "react";
+
 import { EarthIcon, FriendsIcon, PropertyIcon } from "@/Components/Icons";
 import YourReferralsItem from "./YourReferralsItem";
 interface YourReferralsProps {
