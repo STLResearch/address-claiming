@@ -33,6 +33,10 @@ const Service = () => {
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
     console.error(error);
+    if (!navigator.onLine) {
+      toast.error("Network unavailable. Please check your connection and try again.");
+      return;
+    }
     if (!suppressErrorReporting && error.response) {
       const backendError =
         error.response.data.errorMesagge || error.response.data.data.message;
