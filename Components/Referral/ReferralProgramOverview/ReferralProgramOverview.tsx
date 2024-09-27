@@ -71,11 +71,10 @@ const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
         />
       </div>
 
-      <div className="w-full h-full md:h-screen px-4 mt-8 md:px-[51px]">
+      <div className="w-full h-full flex justify-center items-center mt-10">
         <Image
           src={"/images/Sky_Trade_Infographi.svg"}
           alt="Infographi"
-          className="w-[100%] h-auto mx-auto md:w-full md:h-full object-contain"
           width={1055}
           height={682}
         />
