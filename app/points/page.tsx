@@ -100,6 +100,7 @@ const Points = () => {
                       "The Program",
                       "Share Referral Link",
                       "Your Referral History",
+                      "Leaderboard",
                     ].map((item, index) => (
                       <div
                         key={index}
@@ -147,12 +148,12 @@ const Points = () => {
                       </div>
                     </div>
                   )}
+                  {activeIndex === 3 && (
+                     <div className="container mx-auto p-4">
+                     <UserBalanceTable />
+                    </div>
+                  )}
                 </div>
-                {activeIndex === 3 && 
-                  <div className="container mx-auto p-4">
-                    <UserBalanceTable />
-                </div>
-                }
                 </div>  
               </div>
             </div>
