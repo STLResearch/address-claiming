@@ -95,16 +95,17 @@ const ReferralHistoryTable: React.FC = () => {
               </button>
             ),
           )}
-          <div className="flex justify-center items-center">
-            <button
-              onClick={handleNextPage}
-              disabled={referralList?.length < 9}
-              className="ml-2 px-3 py-1 rounded text-[#5D7285]"
-            >
-              Next
-            </button>
-            <HistoryArrowIcon />
-          </div>
+          {referralList?.length >= 9 && (
+            <div className="flex justify-center items-center">
+              <button
+                onClick={handleNextPage}
+                className="ml-2 px-3 py-1 rounded text-[#5D7285] hover:bg-[#5D7285] hover:text-white"
+              >
+                Next
+              </button>
+              <HistoryArrowIcon />
+            </div>
+          )}
         </div>
       ) : (
         <p className="text-center mt-8">Loading...</p>
