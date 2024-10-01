@@ -23,6 +23,7 @@ interface PropsI {
   setUploadedDoc: any;
   refetchAirspaceRef: React.MutableRefObject<boolean>;
   setShowCancelModal: React.Dispatch<React.SetStateAction<boolean>>;
+  modalRef: React.MutableRefObject<boolean>;
 }
 
 const PortfolioItemMobile = ({
@@ -35,6 +36,7 @@ const PortfolioItemMobile = ({
   setUploadedDoc,
   requestDocument,
   activeTab,
+  modalRef,
 }: PropsI) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
@@ -48,10 +50,15 @@ const PortfolioItemMobile = ({
     setShowPopup(false);
   };
 
-  const handleAirspace = () => {
+  const handleCancelClaim = () => {
     selectAirspace();
     setShowCancelModal(true);
     refetchAirspaceRef.current = true;
+    modalRef.current = true;
+  };
+  const handleOnClaim = () => {
+    selectAirspace();
+    modalRef.current = false;
   };
   const documentStatus = checkDocumentStatus(requestDocument);
 
@@ -73,7 +80,7 @@ const PortfolioItemMobile = ({
             <div className="flex justify-between mt-2 gap-[10px] items-center w-full">
               {!!tags[0] && (
                 <div
-                  onClick={selectAirspace}
+                  onClick={handleOnClaim}
                   className="w-20 h-8 bg-[#DBDBDB] text-[#222222] text-sm font-normal p-2 cursor-pointer rounded-[3px] flex items-center justify-center"
                 >
                   {type === "land" ? "On Claim" : "On Rent"}
@@ -96,7 +103,7 @@ const PortfolioItemMobile = ({
               )}
               {activeTab === PortfolioTabEnum.UNVERIFIED && (
                 <div
-                  onClick={handleAirspace}
+                  onClick={handleCancelClaim}
                   className="bg-[#4285F4] text-white text-sm font-normal px-2 cursor-pointer rounded-[3px] w-28 h-8 flex items-center justify-center"
                 >
                   Cancel Claim

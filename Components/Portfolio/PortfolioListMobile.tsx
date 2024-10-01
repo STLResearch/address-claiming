@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-magic-numbers */
+import React, { useEffect, useRef, useState } from "react";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import Spinner from "../Spinner";
 import PortfolioItemMobile from "./PortfolioItemMobile";
@@ -38,6 +39,8 @@ const PortfolioListMobile = ({
     }
   }, [user?.KYCStatusId]);
 
+  const modalRef = useRef(false);
+
   const {
     handleTabSwitch,
     handlePrevPage,
@@ -59,7 +62,7 @@ const PortfolioListMobile = ({
           setAirspaceList={setAirspaceList}
         />
       )}
-      {selectedAirspace !== null && (
+      {selectedAirspace !== null && !modalRef.current && (
         <Modal
           airspace={selectedAirspace}
           onCloseModal={onCloseModal}
@@ -169,6 +172,7 @@ const PortfolioListMobile = ({
                     tags={[true, false, false, false]}
                     type={airspace?.type}
                     requestDocument={airspace?.requestDocument}
+                    modalRef={modalRef}
                     selectAirspace={() => selectAirspace(airspace)}
                     setUploadedDoc={setUploadedDoc}
                     setShowCancelModal={setShowCancelModal}
