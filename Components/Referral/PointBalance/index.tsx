@@ -24,7 +24,7 @@ const PointBalance: FC<PropsI> = ({ point, isLoading }) => {
         </div>
         <div className="mt-9 mb-4">
           {isLoading ? (
-            <div className=" md:h-14 flex justify-start items-center">
+            <div className="md:h-14 flex justify-start items-center">
               <BalanceLoader />
             </div>
           ) : (

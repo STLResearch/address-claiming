@@ -1,20 +1,9 @@
-import Service from "./Service";
-
-interface CurrentLeaderboardSummaryI {
-  startDate: string; // ISO Date string
-  endDate: string; // ISO Date string
-  currentPeriodPoints: {
-    email: string;
-    totalPoints: number;
-  }[];
-  position: number | null; // Nullable number
-}
-
-interface LeaderboardSummaryI {
-  periodStartDate: string; // ISO Date string
-  periodEndDate: string; // ISO Date string
-  totalPoints: number; // Number
-}
+import Service from "../Service";
+import {
+  CurrentLeaderboardSummaryI,
+  LeaderboardPositionI,
+  LeaderboardOverallSummaryI,
+} from "./types";
 
 const RewardService = () => {
   const { getRequest } = Service();
@@ -44,9 +33,20 @@ const RewardService = () => {
   const getUserOverallLeaderboardSummary = async () => {
     try {
       const response = await getRequest({
-        uri: `private/reward/overral-leaderboard-info`,
+        uri: `/private/reward/overral-leaderboard-info`,
       });
-      return response?.data as LeaderboardSummaryI;
+      return response?.data as LeaderboardOverallSummaryI;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getUserCurrentLeaderBoardPosition = async (currentLimit: number) => {
+    try {
+      const response = await getRequest({
+        uri: `/private/reward/current-leaderboard-position?currentLimit=${currentLimit}`,
+      });
+      return response?.data as LeaderboardPositionI;
     } catch (error) {
       console.error(error);
     }
@@ -56,6 +56,7 @@ const RewardService = () => {
     getUserRewardsInfo,
     getCurrentLeaderBoardInfo,
     getUserOverallLeaderboardSummary,
+    getUserCurrentLeaderBoardPosition,
   };
 };
 

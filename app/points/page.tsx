@@ -15,10 +15,10 @@ import Sidebar from "@/Components/Shared/Sidebar";
 import PointBalance from "@/Components/Referral/PointBalance";
 import { useMobile } from "@/hooks/useMobile";
 import ReferralActivities from "@/Components/Referral/ReferralActivities";
-import RewardService from "@/services/RewardService";
+import RewardService from "@/services/reward";
 import { UserRewards } from "@/types";
 import ReferralHistoryTable from "@/Components/Referral/ReferralHistoryTable";
-import UserBalanceTable from "@/Components/Referral/Leaderboard";
+import LeaderboardTable from "@/Components/Referral/LeaderboardTable";
 
 const Points = () => {
   const [fetchingCode, setFetchingCode] = useState<boolean>(false);
@@ -149,14 +149,17 @@ const Points = () => {
                     </div>
                   )}
                   {activeIndex === 3 && (
-                     <div className="container mx-auto p-4">
-                     <UserBalanceTable />
+                    <div className="container mx-auto p-4">
+                      <LeaderboardTable
+                        point={skyPoint}
+                        isLoadingSkyBalance={fetchingCode}
+                      />
                     </div>
                   )}
                 </div>
-                </div>  
               </div>
             </div>
+          </div>
         </div>
       </div>
     </Fragment>
