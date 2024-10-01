@@ -15,9 +15,10 @@ import Sidebar from "@/Components/Shared/Sidebar";
 import PointBalance from "@/Components/Referral/PointBalance";
 import { useMobile } from "@/hooks/useMobile";
 import ReferralActivities from "@/Components/Referral/ReferralActivities";
-import RewardService from "@/services/RewardService";
+import RewardService from "@/services/reward";
 import { UserRewards } from "@/types";
 import ReferralHistoryTable from "@/Components/Referral/ReferralHistoryTable";
+import LeaderboardTable from "@/Components/Referral/LeaderboardTable";
 
 const Points = () => {
   const [fetchingCode, setFetchingCode] = useState<boolean>(false);
@@ -31,7 +32,7 @@ const Points = () => {
   const { user, web3authStatus } = useAuth();
   const { retrieveUserReferralData } = UserService();
   const { getUserRewardsInfo } = RewardService();
-  const sections = ["The Program", "Share", "My Referrals"];
+  const sections = ["The Program", "Share", "History", "Leaderboard"];
 
   const [userRewards, setUserRewards] = useState<UserRewards | null>(null);
 
@@ -78,7 +79,7 @@ const Points = () => {
         <Sidebar />
         <div className="w-full h-full flex flex-col">
           <PageHeader pageTitle={"Points Program"} />
-          <section className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll">
+          <div className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll">
             <Switcher
               sections={sections}
               activeSection={activeIndex}
@@ -99,6 +100,7 @@ const Points = () => {
                       "The Program",
                       "Share Referral Link",
                       "Your Referral History",
+                      "Leaderboard",
                     ].map((item, index) => (
                       <div
                         key={index}
@@ -146,10 +148,18 @@ const Points = () => {
                       </div>
                     </div>
                   )}
+                  {activeIndex === 3 && (
+                    <div className="container mx-auto p-4">
+                      <LeaderboardTable
+                        point={skyPoint}
+                        isLoadingSkyBalance={fetchingCode}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          </section>
+          </div>
         </div>
       </div>
     </Fragment>

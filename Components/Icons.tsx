@@ -1378,3 +1378,42 @@ export const LocationPointMarkerIcon = () => {
     </svg>
   );
 };
+
+export const ArrowRightIcon = () => {
+  return (
+    <svg
+      width="12"
+      height="8"
+      viewBox="0 0 12 8"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clip-path="url(#clip0_1_8236)">
+        <path
+          d="M6.93359 7.80078L10.8004 3.93397L6.93359 0.0671611"
+          stroke="#5D7285"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M10.8008 3.93335H0.771484"
+          stroke="#5D7285"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_1_8236">
+          <rect
+            width="11"
+            height="8"
+            fill="white"
+            transform="translate(0.771484)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};
