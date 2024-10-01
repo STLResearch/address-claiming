@@ -45,16 +45,19 @@ const Explorer: React.FC<ExplorerProps> = ({
   setShowOptions,
 }) => {
   return (
-    <div
-      className="hidden md:flex bg-white py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]"
-      style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-    >
-      <div className="flex gap-[5px] items-center">
-        <p className="text-xl font-medium text-[#222222]">SkyMarket Hub</p>
+    // <div
+    //   className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]"
+    //   style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+    // >
+    <div className="hidden md:block w-[518px] h-[668px] z-20 bg-white m-8 rounded-[30px] p-6 shadow-md overflow-hidden ">    
+      <div>
+      <div className="text-[18px] font-semibold text-center py-4">
+        SkyMarket Hub
       </div>
-      <p className="text-[15px] font-normal text-[#222222]">
+      <p className="text-[14px]">
         Explore and Own Low-Altitude Airspaces, Your Gateway to Aerial Freedom.
       </p>
+      </div>
       <SearchInput
         address={address}
         addresses={addresses}
