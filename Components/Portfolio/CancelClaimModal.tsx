@@ -66,8 +66,8 @@ const CancelClaimModal = ({
             Cancel Claim
           </h2>
           <div
-            onClick={() => setShowCancelModal(false)}
-            className="absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
+            onClick={handleCancelBtn}
+            className="absolute top-0 right-0 w-[15px] h-[15px] md:m-0 m-4 cursor-pointer"
           >
             <CloseIconBlack />
           </div>
