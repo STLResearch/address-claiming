@@ -1,58 +1,48 @@
 import { ArrowRightIcon } from "@/Components/Icons";
-import { useState } from "react";
+import RewardService from "@/services/RewardService";
+import { xdefi } from "@lifi/wallet-management";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 
-interface User {
-  id: string;
-  balance?: number;
-}
+interface User { email: string; totalPoints: number; }
 
-const usersData: User[] = [
-  { id: "#1 c664hucnh..", balance: 500 },
-  { id: "#2 urji8H4..", balance: 200 },
-  { id: "#3 ftg8hi..", balance: 150 },
-  { id: "#4 Vjguè83d..", balance: 500 },
-  { id: "#5 jf7uvdnh..", balance: 500 },
-  { id: "#6 j9gEt5j..", balance: 500 },
-  { id: "#7 c664hucnh..", balance: 500 },
-  { id: "#8 urji8H4..", balance: 200 },
-  { id: "#9 ftg8hi..", balance: 150 },
-  { id: "#10 Vjguè83d..", balance: 500 },
-  { id: "#11 jf7uvdnh..", balance: 500 },
-  { id: "#12 j9gEt5j..", balance: 500 },
-  { id: "#13 c664hucnh..", balance: 500 },
-  { id: "#14 urji8H4..", balance: 200 },
-  { id: "#15 ftg8hi..", balance: 150 },
-  { id: "#16 Vjguè83d..", balance: 500 },
-  { id: "#17 jf7uvdnh..", balance: 500 },
-  { id: "#18 j9gEt5j..", balance: 500 },
-  { id: "#13 c664hucnh..", balance: 500 },
-  { id: "#14 urji8H4..", balance: 200 },
-  { id: "#15 ftg8hi..", balance: 150 },
-  { id: "#16 Vjguè83d..", balance: 500 },
-  { id: "#17 jf7uvdnh..", balance: 500 },
-  { id: "#18 j9gEt5j..", balance: 500 },
-  { id: "#13 c664hucnh..", balance: 500 },
-  { id: "#14 urji8H4..", balance: 200 },
-  { id: "#15 ftg8hi..", balance: 150 },
-  { id: "#16 Vjguè83d..", balance: 500 },
-  { id: "#17 jf7uvdnh..", balance: 500 },
-  { id: "#18 j9gEt5j..", balance: 500 },
-];
+ 
 
 const PER_PAGE = 6;
 
 const UserBalanceTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const { getCurrentLeaderBoardInfo, getUserOverallLeaderboardSummary } =
+    RewardService();
+  const [usersData, setUserData] = useState<User[]>([]);
+
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * PER_PAGE;
+    const endIndex = startIndex + PER_PAGE;
+    return usersData.slice(startIndex, endIndex);
+  }, [currentPage, usersData]);
 
   const totalPages = Math.ceil(usersData.length / PER_PAGE);
-  const paginatedUsers = usersData.slice(
-    (currentPage - 1) * PER_PAGE,
-    currentPage * PER_PAGE,
-  );
 
   const goToPage = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
+
+  useEffect(() => {
+    const fetchCurrentLeaderBoard = async () => {
+      const currentLeaderBoardData = await getCurrentLeaderBoardInfo(0, 1000);
+      setUserData(currentLeaderBoardData?.currentPeriodPoints || []);
+    };
+    fetchCurrentLeaderBoard();
+  }, []);
+
+  useEffect(() => {
+    const fetchUserOverallLeaderBoard = async () => {
+      const overallLeaderBoardSummary = await getUserOverallLeaderboardSummary();
+      console.log(overallLeaderBoardSummary);
+    };
+    fetchUserOverallLeaderBoard();
+  }, []);
 
   return (
     <div className="md:flex w-full md:p-4 p-2 ">
@@ -69,17 +59,16 @@ const UserBalanceTable = () => {
           </thead>
           <tbody>
             {paginatedUsers.map((user, index) => {
-              const [userNumber, userId] = user.id.split(" ");
               return (
                 <tr key={index}>
                   <td className="border-b px-4 py-4">
-                    <span className="text-slate-blue text-base font-bold mr-2">
-                      {userNumber}
-                    </span>{" "}
-                    <span className="text-[#87878D] text-base">{userId}</span>
+                    {/* <span className="text-slate-blue text-base font-bold mr-2">
+                      {index}
+                    </span>{" "} */}
+                    <span className="text-[#87878D] text-base">{user.email}</span>
                   </td>
                   <td className="border-b px-4 py-4 text-[#87878D] text-right">
-                    {user.balance}
+                    {user.totalPoints}
                   </td>
                 </tr>
               );

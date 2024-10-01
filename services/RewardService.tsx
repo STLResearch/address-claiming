@@ -44,7 +44,7 @@ const RewardService = () => {
   const getUserOverallLeaderboardSummary = async () => {
     try {
       const response = await getRequest({
-        uri: `private/reward/overral-leaderboard-info`,
+        uri: `/private/reward/overral-leaderboard-info`,
       });
       return response?.data as LeaderboardSummaryI;
     } catch (error) {
