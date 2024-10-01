@@ -39,7 +39,6 @@ const UserBalanceTable = () => {
   useEffect(() => {
     const fetchUserOverallLeaderBoard = async () => {
       const overallLeaderBoardSummary = await getUserOverallLeaderboardSummary();
-      console.log(overallLeaderBoardSummary);
     };
     fetchUserOverallLeaderBoard();
   }, []);
