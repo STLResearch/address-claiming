@@ -30,7 +30,6 @@ const RentableAirspace: React.FC<RentableAirspaceProps> =  ({
     setRentData(item);
     setShowClaimModal(true);
   };
-  console.log(item,'items')
   const getMapboxStaticImage = (lat, lng) => {
     const accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
     return `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${lng},${lat},14/600x600?access_token=${accessToken}`;
@@ -93,23 +92,30 @@ const RentableAirspace: React.FC<RentableAirspaceProps> =  ({
       </div> */}
 
     <div
-      className="w-[350px] md:w-full h-[278px] rounded-lg shadow-md overflow-hidden"
+      className="w-[350px] md:w-full rounded-lg shadow-md overflow-hidden"
       style={{ boxShadow: "0px 4px 10px 0px #0000001a" }}
     >
        <div className="relative w-full h-[130px]">
         <Carousel images={images} />
       </div>
-      <div className="px-4 py-2 flex items-start justify-between">
-        <div className="text-sm truncate w-[95%] border text-left text-black font-bold flex items-center justify-between ">
-        {item.title}
+      <div className="px-4 py-2 flex justify-between w-full">
+        <div className="text-[14px] leading-[20px] truncate w-[60%] text-left text-black font-semibold ">
+        {item?.title}
         </div>
-        <div>
-          <div className="text-xs text-[#727272]">rental price</div>
-          <div>price</div>
+        <div >
+          <div className="text-xs leading-4 text-[#727272]">Rental Price</div>
+          <div className="text-[#050505] text-xs font-bold leading-[26px] text-right">&#36;{item?.price && item?.price.toFixed(2)}</div>
         </div>
-        {/* <div className="text-sm text-[#727272] truncate w-[95%] text-left">
-          {item.title}
-        </div> */}
+      </div>
+      <div className="flex justify-center px-[15px] py-[10px] h-[51px]">
+        <div className=" bg-[#0653EA] w-full flex items-center rounded-lg h-[31px]">
+          <button
+            onClick={onClickRent}
+            className="w-full text-white text-[14px] leading-[21px]"
+          >
+            Rent
+          </button>
+        </div>
       </div>
 
     </div>

@@ -33,6 +33,7 @@ const Carousel = ({ images }) => {
               layout="fill"
               objectFit="cover"
               className="rounded-lg"
+              loading="lazy"
             />
           </div>
         ))}
