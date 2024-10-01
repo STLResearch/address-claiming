@@ -133,7 +133,7 @@ const Rent = () => {
               popup.on("open", () => {
                 const popupElement = popup.getElement();
                 if (popupElement) {
-                  popupElement.style.zIndex = "40";
+                  popupElement.style.zIndex = "10";
                   popupElement.addEventListener("click", function () {
                     setRentData(responseData[i]);
                     setShowClaimModal(true);
