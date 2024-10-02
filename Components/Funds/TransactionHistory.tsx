@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { MagnifyingGlassIcon, RefreshIcon } from "../../Components/Icons";
+import { MagnifyingGlassIcon , RefreshIconTransaction } from "../../Components/Icons";
 import { useMobile } from "@/hooks/useMobile";
 import { Connection, PublicKey } from "@solana/web3.js";
 import moment from "moment";
@@ -34,6 +34,9 @@ const TransactionHistory = () => {
     [],
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const[refresh, setRefresh] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
+
 
   useEffect(() => {
     (async () => {
@@ -143,7 +146,7 @@ const TransactionHistory = () => {
         setIsLoading(false);
       }
     })();
-  }, [web3auth?.status, pageNumber, user?.blockchainAddress, isNext]);
+  }, [web3auth?.status, pageNumber, user?.blockchainAddress, isNext,refresh]);
 
   const handleNextPage = () => {
     if (transactionList?.length < limit - 1) return;
@@ -158,8 +161,11 @@ const TransactionHistory = () => {
   };
 
   const handleReset = () => {
-    setPageNumber(1);
-    setIsNext(true);
+    setRefresh((prev) => !prev);
+    setIsSpinning(true);
+    setTimeout(() => {
+      setIsSpinning(false);
+    }, 3000);
   };
 
   const renderTransactionRows = () => {
@@ -225,8 +231,7 @@ const TransactionHistory = () => {
         </p>
         <div className="flex md:px-0 px-2 justify-end items-center md:w-full ">
           <div
-            className="relative px-[22px] md:py-[16px] py-3 bg-white rounded-lg"
-            style={{ border: "1px solid #87878D" }}
+            className="relative bg-white p-[1px] rounded-lg border border-[#87878D]"
           >
             <input
               type="text"
@@ -234,17 +239,22 @@ const TransactionHistory = () => {
               id="searchTransactions"
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Transactions"
-              className="outline-none w-full pr-[20px]"
+              className="outline-none w-full pr-[20px] h-[49px] px-[22px] md:py-[16px] py-3"
             />
-            <div className="w-[17px] cursor-pointer h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
+            <div className=" w-[17px] cursor-pointer h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
               <MagnifyingGlassIcon />
             </div>
           </div>
+          <div className="ml-5">
           <div
-            className="w-12 h-12 md:h-12  md:w-12 cursor-pointer  bg-[#0653EA] text-center font-medium ml-5 p-1 rounded-md"
+            className="flex justify-center items-center w-12 h-12 cursor-pointer  bg-[#0653EA] text-center font-medium p-1 rounded-[8px] py-4"
             onClick={handleReset}
           >
-            <RefreshIcon />
+            <div className={isSpinning ? "spin w-6 h-6" : "w-6 h-6"}
+            >
+            <RefreshIconTransaction color={'white'}/>
+            </div>
+          </div>
           </div>
         </div>
       </div>
