@@ -9,10 +9,11 @@ import {
 import AdditionalDocuments from "./AdditionalDocuments";
 import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import UploadedDocuments from "./UploadedDocuments";
-import { RequestDocument } from "@/types";
+import { PropertyData, RequestDocument } from "@/types";
 import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
-import useAuth from "@/hooks/useAuth";
+import Modal from "./Modal";
+import CancelClaimModal from "./CancelClaimModal";
 
 interface PropsI {
   airspaceName: string;
@@ -22,12 +23,15 @@ interface PropsI {
   selectAirspace: () => void;
   setUploadedDoc: any;
   refetchAirspaceRef: React.MutableRefObject<boolean>;
-  setShowCancelModal: React.Dispatch<React.SetStateAction<boolean>>;
   modalRef: React.MutableRefObject<boolean>;
+  onCloseModal: () => void;
+  setAirspaceList:React.Dispatch<React.SetStateAction<PropertyData[]>>
+  selectedAirspace: any;
+  requestDocument: RequestDocument[] | undefined;
+  setSelectedAirspace: any;
 }
 
 const PortfolioItemMobile = ({
-  setShowCancelModal,
   refetchAirspaceRef,
   airspaceName,
   tags,
@@ -36,12 +40,16 @@ const PortfolioItemMobile = ({
   setUploadedDoc,
   activeTab,
   modalRef,
+  onCloseModal,
+  setAirspaceList,
+  selectedAirspace,
+  requestDocument,
+  setSelectedAirspace,
 }: PropsI) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
-  const {user} = useAuth()
-  const requestDocument = user?.requestDocument?.[0]
+  const [showModal, setShowModal] = useState(false);
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -60,10 +68,31 @@ const PortfolioItemMobile = ({
   const handleOnClaim = () => {
     selectAirspace();
     modalRef.current = false;
+    setShowModal(true)
   };
-  const documentStatus = checkDocumentStatus(user?.requestDocument?.[0]);
+  const documentStatus = checkDocumentStatus(requestDocument);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  
 
   return (
+    <div>
+    {showModal && (
+      <Modal
+          airspace={selectedAirspace}
+          onCloseModal={onCloseModal}
+          setAirspaceList={setAirspaceList}
+          requestDocument={requestDocument || []}
+          setShowModal={setShowModal}  
+          />
+    )}
+    {showCancelModal && (
+        <CancelClaimModal
+          airspace={selectedAirspace}
+          setShowCancelModal={setShowCancelModal}
+          setSelectedAirspace={setSelectedAirspace}
+          setAirspaceList={setAirspaceList}
+        />
+      )}
     <div>
       <div className=" shadow-md px-4 py-6 items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer w-screen">
         <div className="items-center justify-between gap-[10px] rounded-lg">
@@ -159,7 +188,8 @@ const PortfolioItemMobile = ({
               </div>
             }
 
-            {(documentStatus === "NOT_REQUESTED" || underReview) &&
+            {documentStatus === "NOT_SUBMITTED" &&
+              !underReview &&
               requestDocument && (
                 <div className="flex justify-between items-center gap-12 w-full mt-4">
                   <div
@@ -178,7 +208,7 @@ const PortfolioItemMobile = ({
 
             {(documentStatus === "SUBMITTED" || underReview) &&
               requestDocument && (
-                <UploadedDocuments requestDocument={user?.requestDocument} />
+                <UploadedDocuments requestDocument={requestDocument} />
               )}
             {showPopup && !underReview && requestDocument && (
               <AdditionalDocuments
@@ -187,7 +217,7 @@ const PortfolioItemMobile = ({
                 setUploadedDoc={setUploadedDoc}
                 setShowSuccessToast={setShowSuccessToast}
                 closePopup={closePopup}
-                requestDocument={requestDocument as RequestDocument}
+                requestDocument={requestDocument[requestDocument?.length - 1]}
               />
             )}
 
@@ -195,6 +225,7 @@ const PortfolioItemMobile = ({
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

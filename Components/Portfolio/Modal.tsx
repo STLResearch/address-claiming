@@ -3,7 +3,7 @@
 import React, { Fragment, SetStateAction, useState } from "react";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
-import { PropertyData } from "@/types";
+import { PropertyData, RequestDocument } from "@/types";
 import { formatDate } from "@/utils";
 
 import { ArrowLeftIcon, CloseIcon, LocationPointIcon } from "../Icons";
@@ -18,6 +18,8 @@ import {
 } from "@react-pdf/renderer";
 import { useAppSelector } from "@/redux/store";
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
+import UploadVerifiedDocuments from "./UploadedVerifiedDocuments";
+import Backdrop from "../Backdrop";
 
 interface ModalProps {
   airspace: any;
@@ -25,6 +27,8 @@ interface ModalProps {
   isOffer?: boolean;
   pageNumber?: number;
   setAirspaceList: (value: SetStateAction<PropertyData[]>) => void;
+  requestDocument: RequestDocument[];
+  setShowModal:React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const Certificate = ({
@@ -134,6 +138,8 @@ const Modal = ({
   isOffer,
   pageNumber = 0,
   setAirspaceList,
+  requestDocument,
+  setShowModal,
 }: ModalProps) => {
   const { user, activePortfolioTab } = useAppSelector((state) => {
     const { user, activePortfolioTab } = state.userReducer;
@@ -193,6 +199,7 @@ const Modal = ({
 
   return (
     <Fragment>
+      <Backdrop  />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-[500] md:z-50 flex flex-col gap-[15px]">
         <div
           className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
@@ -232,8 +239,7 @@ const Modal = ({
             {airspace?.id}
           </p>
         </div>
-
-        {airspace?.metadata?.endTime && (
+         {airspace?.metadata?.endTime && (
           <div className="flex gap-[15px]">
             <p className="text-[14px] font-normal text-light-black">
               Expiration Date:
@@ -243,6 +249,11 @@ const Modal = ({
             </p>
           </div>
         )}
+        <div>
+          <UploadVerifiedDocuments
+            requestDocument={requestDocument}
+          />
+        </div>
 
         {isOffer ? (
           <div
@@ -272,7 +283,7 @@ const Modal = ({
         ) : (
           <div className="flex gap-[20px] md:mt-[15px] mt-auto -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 py-[16px] md:py-0">
             <div
-              onClick={onCloseModal}
+              onClick={() => {setShowModal(false)}}
               className="flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
               style={{ border: "1px solid #0653EA" }}
             >

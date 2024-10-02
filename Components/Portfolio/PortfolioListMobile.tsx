@@ -7,9 +7,7 @@ import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import Modal from "../Portfolio/Modal";
 import { PropertyData, StatusTypes } from "@/types";
-import CancelClaimModal from "./CancelClaimModal";
 
 interface PropsI {
   selectAirspace: (data: PropertyData) => void;
@@ -21,14 +19,13 @@ interface PropsI {
 }
 
 const PortfolioListMobile = ({
-  setSelectedAirspace,
   selectAirspace,
   setUploadedDoc,
   selectedAirspace,
   onCloseModal,
+  setSelectedAirspace,
 }: PropsI) => {
-  const [showCancelModal, setShowCancelModal] = useState(false);
-
+  
   const { user } = useAuth();
   const router = useRouter();
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -53,22 +50,6 @@ const PortfolioListMobile = ({
     refetchAirspaceRef,
   } = usePortfolioList();
   return (
-    <>
-      {showCancelModal && (
-        <CancelClaimModal
-          airspace={selectedAirspace}
-          setShowCancelModal={setShowCancelModal}
-          setSelectedAirspace={setSelectedAirspace}
-          setAirspaceList={setAirspaceList}
-        />
-      )}
-      {selectedAirspace !== null && !modalRef.current && (
-        <Modal
-          airspace={selectedAirspace}
-          onCloseModal={onCloseModal}
-          setAirspaceList={setAirspaceList}
-        />
-      )}
       <div className="overflow-x-hidden mb-24">
         <div
           className="flex items-center overflow-x-scroll border-b border-[#5D7285]/50 gap-12"
@@ -174,9 +155,12 @@ const PortfolioListMobile = ({
                     modalRef={modalRef}
                     selectAirspace={() => selectAirspace(airspace)}
                     setUploadedDoc={setUploadedDoc}
-                    setShowCancelModal={setShowCancelModal}
                     refetchAirspaceRef={refetchAirspaceRef}
-                  />
+                    onCloseModal={onCloseModal}
+                    setAirspaceList={setAirspaceList}
+                    selectedAirspace={selectedAirspace}
+                    requestDocument={airspace?.requestDocument}
+                    setSelectedAirspace={setSelectedAirspace}                   />
                 ))
               ) : (
                 <AirspacesEmptyMessage />
@@ -204,7 +188,6 @@ const PortfolioListMobile = ({
           </div>
         )}
       </div>
-    </>
   );
 };
 export default PortfolioListMobile;

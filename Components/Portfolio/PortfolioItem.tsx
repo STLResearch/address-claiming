@@ -9,9 +9,10 @@ import {
 import UploadedDocuments from "./UploadedDocuments";
 import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import AdditionalDocuments from "./AdditionalDocuments";
-import { RequestDocument } from "@/types";
+import { PropertyData, RequestDocument } from "@/types";
 import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
+import Modal from "./Modal";
 
 interface PropsI {
   airspaceName: string;
@@ -23,6 +24,9 @@ interface PropsI {
   setUploadedDoc: any;
   refetchAirspaceRef: React.MutableRefObject<boolean>;
   setShowCancelModal: React.Dispatch<React.SetStateAction<boolean>>;
+  onCloseModal: () => void;
+  setAirspaceList:React.Dispatch<React.SetStateAction<PropertyData[]>>
+  selectedAirspace: any;
 }
 
 const PortfolioItem = ({
@@ -35,11 +39,15 @@ const PortfolioItem = ({
   setUploadedDoc,
   requestDocument,
   activeTab,
+  onCloseModal,
+  setAirspaceList,
+  selectedAirspace,
 }: PropsI) => {
   const [showPopup, setShowPopup] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
-
+  const [showModel, setShowModal] = useState(false);
+ 
   const handleButtonClick = () => {
     setShowPopup(true);
   };
@@ -52,8 +60,23 @@ const PortfolioItem = ({
     setShowCancelModal(true);
     refetchAirspaceRef.current = true;
   };
+  const handleOnClaim = ()=>{
+    selectAirspace()
+    setShowModal(true)
+  }
   const documentStatus = checkDocumentStatus(requestDocument);
   return (
+
+    <div>
+    {showModel && (
+      <Modal
+          airspace={selectedAirspace}
+          onCloseModal={onCloseModal}
+          setAirspaceList={setAirspaceList}
+          requestDocument={requestDocument || []}
+          setShowModal={setShowModal}  
+          />
+    )}
     <div
       className="p-[11px] items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -70,7 +93,7 @@ const PortfolioItem = ({
         <div className="flex gap-[10px] items-center">
           {!!tags[0] && (
             <div
-              onClick={selectAirspace}
+              onClick={handleOnClaim}
               className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]"
             >
               {type === "land" ? "On Claim" : "On Rent"}
@@ -173,6 +196,7 @@ const PortfolioItem = ({
       )}
 
       {showSuccessToast && <VerificationSuccessPopup />}
+    </div>
     </div>
   );
 };

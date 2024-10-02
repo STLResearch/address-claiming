@@ -32,6 +32,7 @@ const PortfolioList = ({
   const router = useRouter();
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  
 
   const {
     handleTabSwitch,
@@ -53,13 +54,7 @@ const PortfolioList = ({
 
   return (
     <>
-      {selectedAirspace !== null && (
-        <Modal
-          airspace={selectedAirspace}
-          onCloseModal={onCloseModal}
-          setAirspaceList={setAirspaceList}
-        />
-      )}
+     
 
       {showCancelModal && (
         <CancelClaimModal
@@ -175,7 +170,10 @@ const PortfolioList = ({
                     setUploadedDoc={setUploadedDoc}
                     refetchAirspaceRef={refetchAirspaceRef}
                     setShowCancelModal={setShowCancelModal}
-                  />
+                    onCloseModal={onCloseModal}
+                    setAirspaceList={setAirspaceList}
+                    selectedAirspace={selectedAirspace} 
+                    />  
                 ))
               ) : (
                 <AirspacesEmptyMessage />
