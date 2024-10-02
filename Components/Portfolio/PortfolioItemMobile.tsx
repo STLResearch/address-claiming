@@ -12,13 +12,13 @@ import UploadedDocuments from "./UploadedDocuments";
 import { RequestDocument } from "@/types";
 import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
+import useAuth from "@/hooks/useAuth";
 
 interface PropsI {
   airspaceName: string;
   activeTab: PortfolioTabEnum;
   tags: Boolean[];
   type: string | undefined;
-  requestDocument: RequestDocument[] | undefined;
   selectAirspace: () => void;
   setUploadedDoc: any;
   refetchAirspaceRef: React.MutableRefObject<boolean>;
@@ -34,13 +34,14 @@ const PortfolioItemMobile = ({
   type,
   selectAirspace,
   setUploadedDoc,
-  requestDocument,
   activeTab,
   modalRef,
 }: PropsI) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
+  const {user} = useAuth()
+  const requestDocument = user?.requestDocument?.[0]
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -60,7 +61,7 @@ const PortfolioItemMobile = ({
     selectAirspace();
     modalRef.current = false;
   };
-  const documentStatus = checkDocumentStatus(requestDocument);
+  const documentStatus = checkDocumentStatus(user?.requestDocument?.[0]);
 
   return (
     <div>
@@ -158,25 +159,26 @@ const PortfolioItemMobile = ({
               </div>
             }
 
-            {documentStatus === "NOT_SUBMITTED" && !underReview && (
-              <div className="flex justify-between items-center gap-12 w-full mt-4">
-                <div
-                  onClick={handleButtonClick}
-                  className="p-2 border border-orange-500 rounded-md"
-                >
-                  <p className="text-orange-500 font-normal text-sm">
-                    Additional documents requested
-                  </p>
+            {(documentStatus === "NOT_REQUESTED" || underReview) &&
+              requestDocument && (
+                <div className="flex justify-between items-center gap-12 w-full mt-4">
+                  <div
+                    onClick={handleButtonClick}
+                    className="p-2 border border-orange-500 rounded-md"
+                  >
+                    <p className="text-orange-500 font-normal text-sm">
+                      Additional documents requested
+                    </p>
+                  </div>
+                  <div className="w-[7px] h-[14px]">
+                    <ChevronRightIcon />
+                  </div>
                 </div>
-                <div className="w-[7px] h-[14px]">
-                  <ChevronRightIcon />
-                </div>
-              </div>
-            )}
+              )}
 
             {(documentStatus === "SUBMITTED" || underReview) &&
               requestDocument && (
-                <UploadedDocuments requestDocument={requestDocument} />
+                <UploadedDocuments requestDocument={user?.requestDocument} />
               )}
             {showPopup && !underReview && requestDocument && (
               <AdditionalDocuments
@@ -185,7 +187,7 @@ const PortfolioItemMobile = ({
                 setUploadedDoc={setUploadedDoc}
                 setShowSuccessToast={setShowSuccessToast}
                 closePopup={closePopup}
-                requestDocument={requestDocument[requestDocument?.length - 1]}
+                requestDocument={requestDocument as RequestDocument}
               />
             )}
 

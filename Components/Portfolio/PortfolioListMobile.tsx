@@ -171,7 +171,6 @@ const PortfolioListMobile = ({
                     key={index}
                     tags={[true, false, false, false]}
                     type={airspace?.type}
-                    requestDocument={airspace?.requestDocument}
                     modalRef={modalRef}
                     selectAirspace={() => selectAirspace(airspace)}
                     setUploadedDoc={setUploadedDoc}

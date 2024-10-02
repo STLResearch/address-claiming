@@ -75,7 +75,7 @@ export const checkDocumentStatus = (requestDocument) => {
     return "NOT_REQUESTED";
   }
   const lastItem = requestDocument[requestDocument.length - 1];
-  switch (lastItem.status) {
+  switch (lastItem?.status) {
     case RequestDocumentStatus.APPROVED:
       return "APPROVED";
     case RequestDocumentStatus.SUBMITTED:
