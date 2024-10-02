@@ -32,6 +32,7 @@ const PortfolioListMobile = ({
   const { user } = useAuth();
   const router = useRouter();
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const requestDocument = user?.requestDocument || []
 
   useEffect(() => {
     if (user && user.KYCStatusId === StatusTypes.NotAttempted) {
@@ -67,6 +68,7 @@ const PortfolioListMobile = ({
           airspace={selectedAirspace}
           onCloseModal={onCloseModal}
           setAirspaceList={setAirspaceList}
+          requestDocument={requestDocument}
         />
       )}
       <div className="overflow-x-hidden mb-24">
