@@ -9,7 +9,6 @@ import {
 } from "react";
 
 import PageHeader from "@/Components/PageHeader";
-import Backdrop from "@/Components/Backdrop";
 import Head from "next/head";
 import { PortfolioList, PortfolioListMobile } from "@/Components/Portfolio";
 
@@ -58,7 +57,6 @@ const Portfolio = () => {
         <title>SkyTrade - Portfolio</title>
       </Head>
 
-      {selectedAirspace !== null && <Backdrop onClick={onCloseModal} />}
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
