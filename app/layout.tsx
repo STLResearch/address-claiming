@@ -21,7 +21,10 @@ import { OnboardingTour } from "../Components/Tours";
 import NotificationBanner from "@/Components/NotificationBanner";
 
 export const metadata: Metadata = {
-  title: "Sky Trade",
+  title: {
+    template: "%s - SkyTrade",
+    default: "SkyTrade",
+  },
   description: "Airspace Hub",
 };
 
@@ -33,20 +36,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link
-          href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
-          rel="stylesheet"
-        />
-        <link
-          rel="icon"
-          href="/favicon-1.ico"
-          sizes="any"
-          type="image/x-icon"
-        />
-        <link
-          href="https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css"
-          rel="stylesheet"
-        />
+        <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
+        <link rel="icon" href="/favicon-1.ico" sizes="any" type="image/x-icon" />
+        <link href="https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css" rel="stylesheet" />
       </head>
       <body>
         <div id="backdrop-root"></div>
