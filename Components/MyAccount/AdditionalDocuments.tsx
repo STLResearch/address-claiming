@@ -14,6 +14,7 @@ import {
 } from "@/utils/propertyUtils/fileUpload";
 import LoadingButton from "../LoadingButton/LoadingButton";
 import { RequestDocumentStatus } from "@/types";
+import S3UploadServices from "@/services/s3upload";
 
 interface PopupProps {
   showPopup: boolean;
@@ -36,7 +37,8 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
   const { user, signIn } = useAuth();
   const { getUser } = UserService();
 
-  const { generateS3UploadUrl, updateDocument } = DocumentUploadServices();
+  const { updateDocument } = DocumentUploadServices();
+  const { generatePublicFileUploadUrl } = S3UploadServices();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -79,7 +81,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
     setLoading(true);
 
     try {
-      const generatedRes = await generateS3UploadUrl({
+      const generatedRes = await generatePublicFileUploadUrl({
         fileType: selectedFiles[0]?.type,
         requestId: requestDocument.id,
       });

@@ -12,6 +12,7 @@ import {
   uploadImage,
 } from "@/utils/propertyUtils/fileUpload";
 import { RequestDocument } from "@/types";
+import S3UploadServices from "@/services/s3upload";
 
 interface PopupProps {
   setUnderReview: Dispatch<SetStateAction<boolean>>;
@@ -31,7 +32,8 @@ const Popup: React.FC<PopupProps> = ({
   requestDocument,
 }) => {
   const { isMobile } = useMobile();
-  const { generateS3UploadUrl, updateDocument } = DocumentUploadServices();
+  const { updateDocument } = DocumentUploadServices();
+  const { generatePublicFileUploadUrl } = S3UploadServices();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -66,7 +68,7 @@ const Popup: React.FC<PopupProps> = ({
     setLoading(true);
 
     try {
-      const generatedRes = await generateS3UploadUrl({
+      const generatedRes = await generatePublicFileUploadUrl({
         fileType: selectedFiles[0]?.type,
         requestId: requestDocument.id,
       });
