@@ -60,7 +60,7 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
         <div
           ref={divRef}
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-          className="w-full grid grid-cols-2 gap-4  mt-2 bg-white flex-col h-[440px] overflow-y-scroll"
+          className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4  mt-2 bg-white flex-col h-[440px] overflow-y-scroll"
         >
           {registeredAddress.map((item) => (
             <RentableAirspace

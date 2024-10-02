@@ -15,7 +15,10 @@ interface RentableAirspaceProps {
   setRentData: React.Dispatch<React.SetStateAction<PropertyData>>;
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
+export const getMapboxStaticImage = (lat, lng) => {
+  const accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+  return `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${lng},${lat},14/600x600?access_token=${accessToken}`;
+};
 const RentableAirspace: React.FC<RentableAirspaceProps> =  ({
   item,
   map,
@@ -30,10 +33,7 @@ const RentableAirspace: React.FC<RentableAirspaceProps> =  ({
     setRentData(item);
     setShowClaimModal(true);
   };
-  const getMapboxStaticImage = (lat, lng) => {
-    const accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
-    return `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${lng},${lat},14/600x600?access_token=${accessToken}`;
-  };
+
   const images = [
     { image_url: "/images/imagetest1.jpg" },
     { image_url: "/images/imagetest2.jpg" },
@@ -92,7 +92,7 @@ const RentableAirspace: React.FC<RentableAirspaceProps> =  ({
       </div> */}
 
     <div
-      className="w-[350px] md:w-full rounded-lg shadow-md overflow-hidden"
+      className="w-full rounded-lg shadow-md overflow-hidden"
       style={{ boxShadow: "0px 4px 10px 0px #0000001a" }}
     >
        <div className="relative w-full h-[130px]">

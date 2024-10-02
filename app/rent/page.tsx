@@ -16,6 +16,8 @@ import { goToAddress } from "@/utils/apiUtils/apiFunctions";
 import { Coordinates, PropertyData } from "@/types";
 import Sidebar from "@/Components/Shared/Sidebar";
 import PropertiesService from "../../services/PropertiesService";
+import RentPreview from "@/Components/Rent/RentPreview/RentPreview";
+import dayjs from "dayjs";
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingAddresses, setLoadingAddresses] = useState<boolean>(false);
@@ -28,6 +30,11 @@ const Rent = () => {
   );
   const [mapMove, setMapMove] = useState();
   const [address, setAddress] = useState<string>("");
+  const defaultValueDate = dayjs()
+  .add(1, "h")
+  .set("minute", 30)
+  .startOf("minute");
+  const [date, setDate] = useState(defaultValueDate);
   const [addressData, setAddressData] = useState<
     | { mapbox_id: string; short_code: string; wikidata: string }
     | null
@@ -41,6 +48,7 @@ const Rent = () => {
   const [marker, setMarker] = useState<Marker | null | undefined>();
   const [rentData, setRentData] = useState<PropertyData | undefined>();
   const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
+  const [showRentPreview, setShowRentPreview] = useState<boolean>(false);
   const { user } = useAuth();
   const [regAdressShow, setRegAdressShow] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
@@ -307,6 +315,19 @@ const Rent = () => {
               )}
               {showClaimModal && (
                 <RentModal
+                date={date}
+                setDate={setDate}
+                setShowRentPreview={setShowRentPreview}
+                  setShowClaimModal={setShowClaimModal}
+                  rentData={rentData}
+                  setIsLoading={setIsLoading}
+                  isLoading={isLoading}
+                />
+              )}
+              {showRentPreview && (
+                <RentPreview
+                date={date}
+                  setShowRentPreview={setShowRentPreview}
                   setShowClaimModal={setShowClaimModal}
                   rentData={rentData}
                   setIsLoading={setIsLoading}

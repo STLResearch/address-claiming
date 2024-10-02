@@ -31,26 +31,33 @@ import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 import { createNonceIx } from "../../../helpers/solanaHelper";
 
 import PropertiesService from "@/services/PropertiesService";
+import Carousel from "@/Components/Shared/Carousel";
+import { getMapboxStaticImage } from "../Explorer/RentableAirspaceLists/RentableAirspace";
 
 interface RentModalProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowRentPreview: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
+  date:any;
+  setDate:any;
 }
 const RentModal: React.FC<RentModalProps> = ({
+  setShowRentPreview,
   setShowClaimModal,
   rentData,
   setIsLoading,
   isLoading,
+  date,
+  setDate
 }) => {
-  const defaultValueDate = dayjs()
-    .add(1, "h")
-    .set("minute", 30)
-    .startOf("minute");
+  // const defaultValueDate = dayjs()
+  //   .add(1, "h")
+  //   .set("minute", 30)
+  //   .startOf("minute");
   const maxDate = dayjs().add(29, "day");
   const [tokenBalance, setTokenBalance] = useState<string>("0");
-  const [date, setDate] = useState(defaultValueDate);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const { isMobile } = useMobile();
   const [finalAns, setFinalAns] = useState<
@@ -232,6 +239,18 @@ const RentModal: React.FC<RentModalProps> = ({
     return isTimeRented;
   };
 
+  const handleShowRentPreview = () => {
+    setShowClaimModal(false);
+    setShowRentPreview(true);
+  };
+  const images = [
+    { image_url: "/images/imagetest1.jpg" },
+    { image_url: "/images/imagetest2.jpg" },
+    { image_url: "/images/imagetest3.jpg" },
+  ];
+  const imageUrl = getMapboxStaticImage(rentData.latitude, rentData.longitude);
+  images.unshift({ image_url: imageUrl });
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}> */}
@@ -244,12 +263,9 @@ const RentModal: React.FC<RentModalProps> = ({
       )}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation fixed top-0 md:top-1/2  left-0 md:left-2/3 md:-translate-x-1/2 md:-translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
+        className="touch-manipulation fixed bottom-0 left-0  sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] sm:py-[30px] gap-[15px] rounded-t-[30px] md:rounded-[30px]  w-full h-[610px] sm:h-[525px] md:w-[689px] z-[100] md:z-40 flex flex-col  overflow-auto sm:overflow-hidden"
       >
-        <div
-          className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
-          style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-        >
+        <div className="flex flex-col px-[29px] gap-[15px]">
           <div
             className="w-[16px] h-[12px] md:hidden"
             onClick={() => {
@@ -285,6 +301,9 @@ const RentModal: React.FC<RentModalProps> = ({
             {rentData ? rentData.address : ""}
           </p>
         </div>
+        <div className="relative w-full h-[130px]">
+        <Carousel images={images} />
+      </div>
         <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
           <div className="flex touch-manipulation flex-col gap-[5px] w-full">
             <label htmlFor="rentalDate">
@@ -334,7 +353,7 @@ const RentModal: React.FC<RentModalProps> = ({
             Cancel
           </div>
           <LoadingButton
-            onClick={handleRentAirspace}
+            onClick={handleShowRentPreview}
             isLoading={isLoading}
             className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
