@@ -32,6 +32,7 @@ const PortfolioList = ({
   const router = useRouter();
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const requestDocument = user?.requestDocument || []
 
   const {
     handleTabSwitch,
@@ -57,8 +58,9 @@ const PortfolioList = ({
         <Modal
           airspace={selectedAirspace}
           onCloseModal={onCloseModal}
-          setAirspaceList={setAirspaceList}
-        />
+          setAirspaceList={setAirspaceList} 
+          requestDocument={requestDocument}  
+          />
       )}
 
       {showCancelModal && (

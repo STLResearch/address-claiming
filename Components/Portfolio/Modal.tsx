@@ -3,7 +3,7 @@
 import React, { Fragment, SetStateAction, useState } from "react";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
-import { PropertyData } from "@/types";
+import { PropertyData, RequestDocument } from "@/types";
 import { formatDate } from "@/utils";
 
 import { ArrowLeftIcon, CloseIcon, LocationPointIcon } from "../Icons";
@@ -18,6 +18,7 @@ import {
 } from "@react-pdf/renderer";
 import { useAppSelector } from "@/redux/store";
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
+import UploadVerifiedDocuments from "./UploadedVerifiedDocuments";
 
 interface ModalProps {
   airspace: any;
@@ -25,6 +26,7 @@ interface ModalProps {
   isOffer?: boolean;
   pageNumber?: number;
   setAirspaceList: (value: SetStateAction<PropertyData[]>) => void;
+  requestDocument: RequestDocument[];
 }
 
 const Certificate = ({
@@ -134,6 +136,7 @@ const Modal = ({
   isOffer,
   pageNumber = 0,
   setAirspaceList,
+  requestDocument,
 }: ModalProps) => {
   const { user, activePortfolioTab } = useAppSelector((state) => {
     const { user, activePortfolioTab } = state.userReducer;
@@ -232,8 +235,7 @@ const Modal = ({
             {airspace?.id}
           </p>
         </div>
-
-        {airspace?.metadata?.endTime && (
+         {airspace?.metadata?.endTime && (
           <div className="flex gap-[15px]">
             <p className="text-[14px] font-normal text-light-black">
               Expiration Date:
@@ -243,6 +245,11 @@ const Modal = ({
             </p>
           </div>
         )}
+        <div>
+          <UploadVerifiedDocuments
+            requestDocument={requestDocument}
+          />
+        </div>
 
         {isOffer ? (
           <div

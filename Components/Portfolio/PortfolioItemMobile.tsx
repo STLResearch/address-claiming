@@ -159,7 +159,8 @@ const PortfolioItemMobile = ({
               </div>
             }
 
-            {(documentStatus === "NOT_REQUESTED" || underReview) &&
+            {documentStatus === "NOT_SUBMITTED" &&
+              !underReview &&
               requestDocument && (
                 <div className="flex justify-between items-center gap-12 w-full mt-4">
                   <div
