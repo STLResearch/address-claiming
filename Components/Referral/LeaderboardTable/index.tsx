@@ -7,10 +7,10 @@ import {
   CurrentPeriodPointsI,
   LeaderboardPeriodSummaryI,
 } from "@/services/reward/types";
+import { useRouter } from "next/navigation";
 import { FC, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-const PER_PAGE = 6;
 const LIMIT = 10;
 
 interface PropsI {
@@ -19,10 +19,11 @@ interface PropsI {
 }
 
 const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
-  const [currentPage, setCurrentPage] = useState(0);
+  const router = useRouter();
+
+  const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [showCurrentPosition, setShowCurrentPosition] =
-    useState<boolean>(false);
+  const [userCurrentPosition, setUserCurrentPosition] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [currentPeriodPoints, setCurrentPeriodPoints] = useState<
     CurrentPeriodPointsI[]
@@ -77,26 +78,19 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
     })();
   }, [web3auth?.status]);
 
-  const totalPages = Math.ceil(totalCount / PER_PAGE);
+  const totalPages = Math.ceil(totalCount / LIMIT);
 
   const handleGetUserCurrentLeaderBoardPosition = async () => {
     setIsLoading(true);
 
-    const isFound = currentPeriodPoints.find(
-      (x) => x.blockchainAddress === user?.blockchainAddress,
-    );
-
-    if (isFound) {
-      setShowCurrentPosition(true);
-    } else {
-      const data = await getUserCurrentLeaderBoardPosition(LIMIT);
-      if (data) {
-        if (data.page === null) {
-          toast.error("No points earned in this current period");
-        } else {
-          setCurrentPage(data.page);
-          setShowCurrentPosition(true);
-        }
+    const data = await getUserCurrentLeaderBoardPosition(LIMIT);
+    if (data) {
+      if (data.page === null) {
+        toast.error("No points earned in this current period");
+      } else {
+        setCurrentPage(data.page);
+        router.push(`/points#${userCurrentPosition}`)
+        setUserCurrentPosition(data.position);
       }
     }
 
@@ -104,10 +98,7 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
   };
 
   const getPosition = (index: number) => {
-    if (currentPage === 0) {
-      return `# ${index + 1 + LIMIT * currentPage}`;
-    }
-    return `# ${index + 1 + LIMIT * (currentPage - 1)}`;
+    return index + 1 + LIMIT * (currentPage - 1);
   };
 
   const handleNextPage = () => {
@@ -136,21 +127,21 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
             {!isLoading &&
               currentPeriodPoints.map(
                 ({ blockchainAddress, totalPoints }, index) => (
-                  <tr key={index}>
+                  <tr key={index} id={`${getPosition(index)}`}>
                     <td className="border-b px-4 py-4">
                       <span
-                        className={`${user?.blockchainAddress === blockchainAddress && showCurrentPosition ? "text-blue" : "text-slate-blue"} text-base font-bold mr-2`}
+                        className={`${getPosition(index) === userCurrentPosition ? "text-blue" : "text-slate-blue"} text-base font-bold mr-2`}
                       >
-                        {getPosition(index)}
+                        {`# ${getPosition(index)}`}
                       </span>{" "}
                       <span
-                        className={`${user?.blockchainAddress === blockchainAddress && showCurrentPosition ? "text-blue" : "text-[#87878D]"} text-base`}
+                        className={`${getPosition(index) === userCurrentPosition ? "text-blue" : "text-[#87878D]"} text-base`}
                       >
                         {blockchainAddress}
                       </span>
                     </td>
                     <td
-                      className={`${user?.blockchainAddress === blockchainAddress && showCurrentPosition ? "text-blue" : "text-[#87878D]"} border-b px-4 py-4 text-right`}
+                      className={`${getPosition(index) === userCurrentPosition ? "text-blue" : "text-[#87878D]"} border-b px-4 py-4 text-right`}
                     >
                       {totalPoints}
                     </td>
@@ -159,6 +150,12 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
               )}
           </tbody>
         </table>
+
+        {isLoading && <p className="text-center mt-8">Loading...</p>}
+
+        {!isLoading && currentPeriodPoints.length === 0 && (
+          <p className="text-center mt-8">No record found</p>
+        )}
 
         {!isLoading && (
           <div className="w-full md:flex justify-between items-center  my-4 px-4">
@@ -176,9 +173,9 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
                 return (
                   <button
                     key={index}
-                    onClick={() => handlePrevPage(index)}
+                    onClick={() => handlePrevPage(index + 1)}
                     className={`w-8 h-8 flex items-center justify-center rounded-full text-xl ${
-                      currentPage === index
+                      currentPage === index + 1
                         ? "bg-slate-blue text-white"
                         : "text-slate-blue"
                     } transition-all duration-300`}
@@ -204,8 +201,6 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
             </div>
           </div>
         )}
-
-        {isLoading && <p className="text-center mt-8">Loading...</p>}
       </div>
 
       <div className="md:w-1/3 md:ml-8 md:p-4 p-2 mt-8">
