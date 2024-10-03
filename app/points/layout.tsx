@@ -1,4 +1,4 @@
-// app/rent/layout.tsx (server-side, no "use client")
+import React from "react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

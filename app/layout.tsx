@@ -1,3 +1,4 @@
+import React from "react";
 import "./global.css";
 import { Provider } from "react-redux";
 import store from "../store/store";
@@ -16,7 +17,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
-import React from "react";
 import { OnboardingTour } from "../Components/Tours";
 import NotificationBanner from "@/Components/NotificationBanner";
 
