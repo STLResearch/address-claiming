@@ -68,12 +68,88 @@ type metadata = {
   endTime: Date;
 };
 
+export type AirspaceItem = {
+  type: string;
+  receivedBid: {
+    id: number;
+    price: number;
+    bidder: string;
+    transaction: string;
+    auctionId: number;
+  };
+  auction: {
+    id: number;
+    assetId: string;
+    seller: string;
+    pdaAddress: string;
+    initialPrice: number;
+    endDate: string;
+    currentPrice: number;
+    currentBidder: string;
+    paymentToken: string;
+    transactions: string[];
+    isCancelled: boolean;
+    isExecuted: boolean;
+    AuctionBid: {
+      id: number;
+      price: number;
+      bidder: string;
+      transaction: string;
+      auctionId: number;
+    }[];
+    layer: {
+      id: number;
+      createdAt: string;
+      updateAt: string;
+      tokenId: string;
+      propertyId: number;
+      isCurrentlyInAuction: boolean;
+      property: {
+        id: number;
+        createdAt: string;
+        updateAt: string;
+        title: string;
+        transitFee: string;
+        address: string;
+        timezone: string;
+        hasLandingDeck: boolean;
+        hasChargingStation: boolean;
+        hasStorageHub: boolean;
+        isFixedTransitFee: boolean;
+        isRentableAirspace: boolean;
+        ownerId: number;
+        noFlyZone: boolean;
+        isBoostedArea: boolean;
+        latitude: number;
+        longitude: number;
+        propertyStatusId: number;
+        isActive: boolean;
+        isPropertyRewardClaimed: boolean;
+        isSoftDelete: boolean;
+      };
+    };
+  };
+};
+
+export type requestDocument = {
+  actionType: string;
+  dateCreated: string;
+  dateUpdated: string;
+  description: string;
+  id: number;
+  referenceId: number;
+  status: string;
+  userId: number;
+};
+
 export type PropertyData = {
   id?: number | string;
   address: string;
   ownerId?: number;
   propertyStatusId?: number;
   propertyId?: number;
+  property?: any;
+  auction?: AirspaceItem;
   hasChargingStation: boolean;
   hasLandingDeck: boolean;
   hasStorageHub: boolean;
@@ -99,7 +175,7 @@ export type PropertyData = {
   status?: number;
   type?: string;
   hasPlanningPermission?: string | null;
-  requestDocument?: RequestDocument[];
+  requestDocument?: requestDocument;
   metadata?: metadata;
 };
 
@@ -319,6 +395,94 @@ export type defaultData = {
   ];
 };
 
+export interface AuctionPropertyI {
+  id?: string;
+  propertyId?: number;
+  address?: string;
+  latitude?: number;
+  property?: PropertyData;
+  longitude?: number;
+  transitFee: number;
+  owner?: string;
+  imageUrl: string;
+  area?: number[][];
+  name?: string;
+  highest_bid?: string;
+  time_left?: string;
+  price?: number;
+  currentUserBid?: number;
+}
+
+export type AuctionListingI = {
+  assetId: string;
+  seller: string;
+  initialPrice: number;
+  secsDuration: number;
+};
+
+export type AuctionSubmitI = {
+  signatures: string[];
+  assetId: string | undefined;
+};
+
+export enum ToastEnum {
+  ERROR,
+  SUCCESS,
+}
+
+export type AuctionDataI = {
+  id: number;
+  assetId: string;
+  seller: string;
+  pdaAddress: string;
+  initialPrice: number;
+  endDate: string;
+  currentPrice: number;
+  currentBidder: string;
+  paymentToken: string;
+  transactions: string[];
+  isCancelled: boolean;
+  isExecuted: boolean;
+  AuctionBid: {
+    id: number;
+    price: number;
+    bidder: string;
+    transaction: string;
+    auctionId: number;
+  }[];
+  layer: {
+    id: number;
+    createdAt: string;
+    updateAt: string;
+    tokenId: string;
+    propertyId: number;
+    isCurrentlyInAuction: boolean;
+    property: {
+      id: number;
+      createdAt: string;
+      updateAt: string;
+      title: string;
+      transitFee: string;
+      address: string;
+      timezone: string;
+      hasLandingDeck: boolean;
+      hasChargingStation: boolean;
+      hasStorageHub: boolean;
+      isFixedTransitFee: boolean;
+      isRentableAirspace: boolean;
+      ownerId: number;
+      noFlyZone: boolean;
+      isBoostedArea: boolean;
+      latitude: number;
+      longitude: number;
+      propertyStatusId: number;
+      isActive: boolean;
+      isPropertyRewardClaimed: boolean;
+      vertexes?: [];
+    };
+  };
+};
+
 export enum StatusTypes {
   NotAttempted = 0,
   Pending = 1,
@@ -330,6 +494,8 @@ export enum StatusTypes {
   Declined = 7,
   DocumentError = 8,
 }
+
+
 
 export enum RequestDocumentStatus {
   NOT_SUBMITTED = "NOT_SUBMITTED",

@@ -7,13 +7,13 @@ import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Modal from "../Portfolio/Modal";
-import { PropertyData, StatusTypes } from "@/types";
+import { AirspaceItem, PropertyData, StatusTypes } from "@/types";
 import CancelClaimModal from "./CancelClaimModal";
 
 interface PropsI {
   title: string;
   selectAirspace: (data: PropertyData) => void;
-  selectedAirspace: any;
+  selectedAirspace: PropertyData;
   onCloseModal: () => void;
   setUploadedDoc: any;
   uploadedDoc: any;
@@ -24,16 +24,16 @@ const PortfolioList = ({
   title,
   selectAirspace,
   selectedAirspace,
-  setSelectedAirspace,
   onCloseModal,
   setUploadedDoc,
+  uploadedDoc,
+  setSelectedAirspace,
 }: PropsI) => {
   const { user } = useAuth();
   const router = useRouter();
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
-  
-
+  const [uniqueAirspaceList, setUniqueAirspaceList] = useState<PropertyData[]>();
   const {
     handleTabSwitch,
     handlePrevPage,
@@ -43,8 +43,18 @@ const PortfolioList = ({
     pageNumber,
     activeTab,
     setAirspaceList,
-    refetchAirspaceRef,
   } = usePortfolioList();
+
+  function getUniqueItemsByAssetId(items: PropertyData[]) {
+    const uniqueItemsMap = new Map<string, PropertyData>();
+
+    items.forEach((item) => {
+      //@ts-ignore
+      uniqueItemsMap.set(item?.auction?.assetId, item);
+    });
+
+    return Array.from(uniqueItemsMap.values());
+  }
 
   useEffect(() => {
     if (user && user.KYCStatusId === StatusTypes.NotAttempted) {
@@ -52,9 +62,16 @@ const PortfolioList = ({
     }
   }, [user?.KYCStatusId]);
 
+  useEffect(() => {
+    if (airspaceList.length > 0) {
+      const uniqueList = getUniqueItemsByAssetId(airspaceList);
+      setUniqueAirspaceList(uniqueList);
+    }
+  }, [airspaceList]);
+
   return (
     <>
-     
+      {selectedAirspace !== null && <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} />}
 
       {showCancelModal && (
         <CancelClaimModal
@@ -64,86 +81,79 @@ const PortfolioList = ({
           setAirspaceList={setAirspaceList}
         />
       )}
-
       <div
-        className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1"
+        className="flex min-w-[516px] flex-1 flex-col gap-[43px] rounded-[30px] bg-white px-[29px] py-[43px]"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
       >
-        <h2 className="font-medium text-xl text-[#222222] text-center">
-          {title}
-        </h2>
-        <div className="flex items-center gap-16">
+        <h2 className="text-center text-xl font-medium text-[#222222]">{title}</h2>
+        <div className="flex items-center gap-2">
           <div
-            className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear delay-75 text-base font-bold`}
+            className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-8 py-2 transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.VERIFIED)}
           >
-            Verified Airspaces
+            Verified
           </div>
           <div
-            className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
+            className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-8 py-2 transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
           >
-            Rented Airspaces
-          </div>
-          <div className="flex gap-10">
-            <div
-              className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
-              onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
-            >
-              Pending Rented Airspaces
-            </div>
-            <div
-              className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
-              onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
-            >
-              Pending Verification
-            </div>
+            Rented
           </div>
           <div
-            className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
+            className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-8 py-2 transition delay-75 ease-linear`}
+            onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
+          >
+            Pending Rented
+          </div>
+
+          <div
+            className={`${activeTab === PortfolioTabEnum.BIDS ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-8 py-2 transition delay-75 ease-linear`}
+            onClick={() => handleTabSwitch(PortfolioTabEnum.BIDS)}
+          >
+            Bids and Offers
+          </div>
+
+          <div
+            className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-8 py-2 transition delay-75 ease-linear`}
+            onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
+          >
+            Pending Verification
+          </div>
+          <div
+            className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-8 py-2 transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
           >
-            Rejected Airspaces
+            Rejected
           </div>
         </div>
-        {loading ? (
+        {loading ?
           <div>
             {" "}
             <Spinner />
           </div>
-        ) : (
-          <>
-            <div className="flex flex-col gap-[15px] min-h-[20rem]">
+        : <>
+            <div className="flex min-h-[20rem] flex-col gap-[15px]">
               {activeTab === PortfolioTabEnum.UNVERIFIED && showPopup && (
                 <div
-                  className="flex w-full rounded-[30px] gap-[15px] bg-white"
+                  className="flex w-full gap-[15px] rounded-[30px] bg-white"
                   style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
                 >
-                  <div className="md:w-[50%]  p-6  flex flex-col justify-center items-center md:gap-6 gap-4">
-                    <h1 className="text-xl font-medium text-[#222222]  text-center">
-                      🚀 Attention Airspace Owner!
-                    </h1>
-                    <h1 className="text-xl font-medium text-[#222222] block md:hidden">
-                      Account verification
-                    </h1>
-                    <p className="text-sm font-normal text-[#838187] text-center leading-6">
-                      Your airspace awaits verification by our operation team.
-                      Your account is not verified. We verify the identity of
-                      our customers to assess potential risks, prevent fraud,
-                      and comply with legal and regulatory requirements.
-                      Complete your KYC to expedite the process and ensure swift
-                      approval. Plus,
-                      <span className="text-[#87878D] text-sm font-bold">
-                        {" "}
-                        earn 10 SKY points{" "}
-                      </span>{" "}
-                      as a token of our appreciation! Don&apos;t delay - verify
-                      now and unlock the full potential of your airspace!
+                  <div className="flex flex-col items-center justify-center gap-4 p-6 md:w-[50%] md:gap-6">
+                    <h1 className="text-center text-xl font-medium text-[#222222]">🚀 Attention Airspace Owner!</h1>
+                    <h1 className="block text-xl font-medium text-[#222222] md:hidden">Account verification</h1>
+                    <p className="text-center text-sm font-normal leading-6 text-[#838187]">
+                      Your airspace awaits verification by our operation team. Your account is not verified. We verify
+                      the identity of our customers to assess potential risks, prevent fraud, and comply with legal and
+                      regulatory requirements. Complete your KYC to expedite the process and ensure swift approval.
+                      Plus,
+                      <span className="text-sm font-bold text-[#87878D]"> earn 10 SKY points </span>{" "}
+                      {`as a token of our
+                      appreciation! Don't delay - verify now and unlock the full potential of your airspace!`}
                     </p>
 
                     <button
                       onClick={() => router.push("/my-account")}
-                      className="text-sm font-medium w-full px-6 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                      className="w-full rounded bg-blue-500 px-6 py-2 text-sm font-medium text-white hover:bg-blue-600"
                     >
                       Verify my identity Now
                     </button>
@@ -152,39 +162,29 @@ const PortfolioList = ({
                     <img
                       src="/images/portfolio.png"
                       alt="Verification Image"
-                      className="h-full w-full object-cover rounded-r-[30px]"
+                      className="h-full w-full rounded-r-[30px] object-cover"
                     />
                   </div>
                 </div>
               )}
-              {airspaceList && airspaceList[0] && airspaceList[0].address ? (
-                airspaceList?.map((airspace, index) => (
+              {airspaceList && airspaceList[0] ?
+                (activeTab === PortfolioTabEnum.BIDS ? uniqueAirspaceList : airspaceList)?.map((airspace, index) => (
                   <PortfolioItem
-                    airspaceName={airspace?.address}
+                    airspace={airspace}
                     key={index}
-                    activeTab={activeTab}
-                    tags={[true, false, false, false]}
-                    type={airspace?.type}
                     requestDocument={airspace?.requestDocument}
                     selectAirspace={() => selectAirspace(airspace)}
                     setUploadedDoc={setUploadedDoc}
-                    refetchAirspaceRef={refetchAirspaceRef}
-                    setShowCancelModal={setShowCancelModal}
-                    onCloseModal={onCloseModal}
-                    setAirspaceList={setAirspaceList}
-                    selectedAirspace={selectedAirspace} 
-                    />  
+                  />
                 ))
-              ) : (
-                <AirspacesEmptyMessage />
-              )}
+              : <AirspacesEmptyMessage />}
             </div>
-            <div className="flex flex-col w-full text-gray-600">
-              <div className="flex self-end items-center gap-2 w-[5rem]">
+            <div className="flex w-full flex-col text-gray-600">
+              <div className="flex w-[5rem] items-center gap-2 self-end">
                 <button
                   onClick={handlePrevPage}
                   disabled={pageNumber === 1}
-                  className={`${pageNumber === 1 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
+                  className={`${pageNumber === 1 ? "cursor-not-allowed" : "cursor-pointer"} rounded-lg border border-gray-200 p-1`}
                 >
                   <RxCaretLeft />
                 </button>
@@ -192,14 +192,14 @@ const PortfolioList = ({
                 <button
                   onClick={handleNextPage}
                   disabled={airspaceList?.length < 9}
-                  className={`${airspaceList?.length < 9 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
+                  className={`${airspaceList?.length < 9 ? "cursor-not-allowed" : "cursor-pointer"} rounded-lg border border-gray-200 p-1`}
                 >
                   <RxCaretRight />
                 </button>
               </div>
             </div>
           </>
-        )}
+        }
       </div>
     </>
   );

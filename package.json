@@ -11,7 +11,7 @@
     "format": "npx prettier --write .",
     "prepare": "husky",
     "lint-fix": "eslint --fix './**/*.{js,jsx,ts,tsx}'"
-},
+  },
   "engines": {
     "node": "20.11.1",
     "npm": "10.2.4"
@@ -59,13 +59,15 @@
     "postcss": "8.4.31",
     "react": "18.2.0",
     "react-copy-to-clipboard": "^5.1.0",
-    "react-datepicker": "^6.1.0",
+    "react-datepicker": "^7.4.0",
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
     "react-icons": "^5.1.0",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-international-phone": "^4.3.0",
     "react-redux": "^8.1.2",
     "react-select": "^5.8.0",
+    "react-slider": "^2.0.6",
     "react-timezone-select": "^3.2.3",
     "react-toastify": "^10.0.4",
     "redux-persist": "^6.0.0",
