@@ -137,7 +137,7 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
                       <span
                         className={`${getPosition(index) === userCurrentPosition ? "text-blue" : "text-[#87878D]"} text-base`}
                       >
-                        {blockchainAddress}
+                        {`${blockchainAddress.slice(0, 6)}...${blockchainAddress.slice(-4)}`}
                       </span>
                     </td>
                     <td
@@ -168,13 +168,13 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
                 View my position
               </button>
             </div>
-            <div className="flex items-center justify-center mt-4 md:w-[60%] gap-2">
+            <div className="flex items-center md:justify-center mt-4 md:w-[60%] md:gap-2 ">
               {[...Array(totalPages)].map((_, index) => {
                 return (
                   <button
                     key={index}
                     onClick={() => handlePrevPage(index + 1)}
-                    className={`w-8 h-8 flex items-center justify-center rounded-full text-xl ${
+                    className={`md:w-8 md:h-8 w-8 h-8  flex items-center justify-center rounded-full md:text-xl text-[16px] ${
                       currentPage === index + 1
                         ? "bg-slate-blue text-white"
                         : "text-slate-blue"
