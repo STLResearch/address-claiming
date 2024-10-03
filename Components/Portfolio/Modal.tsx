@@ -120,7 +120,6 @@ const Certificate = ({ user, rentalId, dateOfRent, timeFrame, longitude, latitud
 const Modal = ({ airspace, onCloseModal, isOffer, pageNumber = 0 }: ModalProps) => {
   const router = useRouter();
 
-  const { getAuctionWithBid } = MarketplaceService();
   const [bids, setBids] = useState([]);
   const [loading, setLoading] = useState(false);
   const property = airspace?.auction?.layer?.property;
