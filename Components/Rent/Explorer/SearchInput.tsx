@@ -68,6 +68,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
               <MagnifyingGlassIcon />
             </div>
           </div>
+          {showOptions &&
           <div className="overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white">
             {loading ? (
               <div className="pt-8 flex justify-center items-center">
@@ -79,14 +80,12 @@ const SearchInput: React.FC<SearchInputProps> = ({
                   <div
                     key={item.id}
                     data-value={item.place_name}
-                    onClick={() =>
-                      handleSelectAddress(
-                        item.place_name,
-                        setAddress,
-                        setFlyToAddress,
-                        setShowOptions,
-                      )
-                    }
+                    onClick={() => handleSelectAddress(
+                      item.place_name,
+                      setAddress,
+                      setFlyToAddress,
+                      setShowOptions,
+                    )}
                     className="w-full p-5 text-left text-[#222222]  "
                     style={{
                       borderTop: "0.2px solid #222222",
@@ -98,6 +97,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
               })
             )}
           </div>
+          }
         </div>
       )}
     </div>

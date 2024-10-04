@@ -1,70 +1,48 @@
-import { CloseIcon, InfoIcon, LocationPointIcon } from "@/Components/Icons";
+import { CloseIcon, CloseIconBlack, LocationPointIcon } from "@/Components/Icons";
 import useAuth from "@/hooks/useAuth";
 import { Web3authContext } from "@/providers/web3authProvider";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
-import {
-  DatePicker,
-  DateTimePicker,
-  LocalizationProvider,
-  TimePicker,
-} from "@mui/x-date-pickers";
-import dayjs from "dayjs";
-import Image from "next/image";
+import { Connection, VersionedTransaction, PublicKey } from "@solana/web3.js";
 import React, { useContext, useEffect, useState } from "react";
 import SuccessModal from "../SuccessModal";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { VersionedTransaction } from "@solana/web3.js";
 import { getTokenBalance } from "@/utils/apiUtils/apiFunctions";
 import { validateRental } from "@/utils/rent/rentalValidation";
 import { handleMintResponse } from "@/utils/rent/mintResponseHandler";
 import { executeTransaction } from "@/utils/rent/transactionExecutor";
-import { handleExecuteResponse } from "@/utils/rent/executeResponseHandler";
 import { PropertyData } from "@/types";
 import { toast } from "react-toastify";
 import Backdrop from "@/Components/Backdrop";
 import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
 import { useMobile } from "@/hooks/useMobile";
-import { TextField, Box } from "@mui/material";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
-import { getMapboxStaticImage } from "../Explorer/RentableAirspaceLists/RentableAirspace";
+import { getMapboxStaticImage } from "@/utils/getMapboxStaticImage";
 import { ArrowLeftIcon } from "@/Components/Icons";
 import Carousel from "@/Components/Shared/Carousel";
-
+import { createNonceIx } from "../../../helpers/solanaHelper";
 interface RentPreviewProps {
   setShowRentPreview: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowRentDetail: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
-  date:any;
+  date: any;
 }
 const RentPreview: React.FC<RentPreviewProps> = ({
   setShowRentPreview,
-  setShowClaimModal,
+  setShowRentDetail,
   rentData,
   setIsLoading,
   isLoading,
   date,
 }) => {
-  const defaultValueDate = dayjs()
-    .add(1, "h")
-    .set("minute", 30)
-    .startOf("minute");
-  const maxDate = dayjs().add(29, "day");
-  const [landAssetIds, setLandAssetIds] = useState([]);
   const [tokenBalance, setTokenBalance] = useState<string>("0");
-  // const [date, setDate] = useState(defaultValueDate);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const { isMobile } = useMobile();
   const [finalAns, setFinalAns] = useState<
-    | { status: string; message?: string | undefined; tokenId?: string }
-    | null
-    | undefined
+    { status: string; message?: string | undefined; tokenId?: string } | null | undefined
   >();
-  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } =
-    useAuth();
-  const { createMintRentalToken, executeMintRentalToken } =
-    AirspaceRentalService();
+  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } = useAuth();
+  const { getNonceAccountEntry, createMintRentalToken, executeMintRentalToken } = AirspaceRentalService();
   const { provider } = useContext(Web3authContext);
 
   localStorage.setItem("rentData", JSON.stringify(rentData));
@@ -77,6 +55,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
   const handleRentAirspace = async () => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
+      const connection = new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string);
       if (isRedirecting) {
         setAndClearOtherPublicRouteData("rentData", rentData);
         return;
@@ -85,41 +64,48 @@ const RentPreview: React.FC<RentPreviewProps> = ({
       const startDate = new Date(date.toString());
       const endDate = new Date(startDate.getTime() + 30 * 60000);
 
-      if (
-        !validateRental(
-          currentDate,
-          startDate,
-          endDate,
-          tokenBalance,
-          setFinalAns,
-          setShowSuccess
-        )
-      )
+      if (!rentData?.price) {
+        toast.error("Price for airspace not found");
         return;
+      }
+
+      if (
+        !validateRental(rentData?.price, currentDate, startDate, endDate, tokenBalance, setFinalAns, setShowSuccess)
+      ) {
+        return;
+      }
 
       setIsLoading(true);
       if (rentData?.layers) {
+        const nonceAccountEntry = await getNonceAccountEntry();
+        if (!nonceAccountEntry) {
+          toast.error("something went wrong!");
+          return;
+        }
+        const nonceAccount = await createNonceIx(connection, new PublicKey(nonceAccountEntry.publicKey));
+
         const postData = {
           callerAddress: user?.blockchainAddress,
           startTime: startDate.toISOString(),
           endTime: endDate.toISOString(),
           landAssetIds: [rentData.layers[0].tokenId],
+          nonceAccount,
+          nonceAccountEntry,
         };
 
         const createMintResponse = await createMintRentalToken({ postData });
-        const mintResponse = await handleMintResponse(
-          createMintResponse,
-          setIsLoading,
-          setShowSuccess,
-          setFinalAns
-        );
+        let mintResponse;
+        if (createMintResponse) {
+          mintResponse = await handleMintResponse(createMintResponse, setIsLoading, setShowSuccess, setFinalAns);
+        } else {
+          toast.error("some thing went wrong!");
+          return;
+        }
         if (!mintResponse) return;
-        const transaction = VersionedTransaction.deserialize(
-          new Uint8Array(Buffer.from(createMintResponse, "base64"))
-        );
+        const transaction = VersionedTransaction.deserialize(new Uint8Array(Buffer.from(createMintResponse, "base64")));
         const txString = await executeTransaction(transaction, provider);
-        if (!txString) return;
 
+        if (!txString) return;
         const postExecuteMintData = {
           transaction: txString,
           landAssetIds: [rentData?.layers[0].tokenId],
@@ -131,15 +117,34 @@ const RentPreview: React.FC<RentPreviewProps> = ({
           postData: { ...postExecuteMintData },
         });
 
-        handleExecuteResponse(executionResponse, setFinalAns, setShowSuccess);
+        if (executionResponse && executionResponse.errorMessage) {
+          toast.error(executionResponse.errorMessage);
+          return;
+        }
+        if (executionResponse) {
+          if (executionResponse.data && executionResponse.data.status === "success") {
+            setFinalAns({
+              status: "Rent Successful",
+              message: executionResponse.data.message,
+            });
+          } else if (executionResponse.data) {
+            setFinalAns({
+              status: "Rent failed",
+              message: executionResponse.data.message,
+            });
+          }
+          setShowSuccess(true);
+        }
       } else {
         toast.error("something went wrong!");
       }
+      localStorage.removeItem("rentData");
     } catch (error) {
+      console.error("error here", error);
       setFinalAns({ status: "Rent failed", message: error.message });
+      localStorage.removeItem("rentData");
     } finally {
       setIsLoading(false);
-      localStorage.removeItem("rentData");
     }
   };
 
@@ -149,16 +154,14 @@ const RentPreview: React.FC<RentPreviewProps> = ({
         setShowSuccess={setShowSuccess}
         finalAns={finalAns}
         rentData={rentData}
-        setShowClaimModal={setShowClaimModal}
+        setShowRentDetail={setShowRentDetail}
       />
     );
   }
-  // console.log(rentData, "the rent data");
-  const formattedDate = date.format('DD MMMM YYYY');
 
-  // Format the time as "9:00 - 09:30"
-  const formattedTimeStart = date.format('H:mm');
-  const formattedTimeEnd = date.add(30, 'minute').format('H:mm');
+  const formattedDate = date.format("DD MMMM YYYY");
+  const formattedTimeStart = date.format("H:mm");
+  const formattedTimeEnd = date.add(30, "minute").format("H:mm");
   const formattedTime = `${formattedTimeStart} - ${formattedTimeEnd}`;
 
   const images = [
@@ -166,129 +169,99 @@ const RentPreview: React.FC<RentPreviewProps> = ({
     { image_url: "/images/imagetest2.jpg" },
     { image_url: "/images/imagetest3.jpg" },
   ];
-  const imageUrl = getMapboxStaticImage(rentData.latitude, rentData.longitude);
-  images.unshift({ image_url: imageUrl });
+  if(rentData){
+    const imageUrl = getMapboxStaticImage(rentData.latitude, rentData.longitude);
+    images.unshift({ image_url: imageUrl });
+  }
   return (
     <div>
       {!isMobile && <Backdrop />}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation fixed bottom-0 left-0  sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] gap-[15px] sm:pb-[30px] rounded-t-[30px] md:rounded-[30px]  w-full h-[415px] sm:h-[406px] md:w-[689px] z-[100] md:z-40 flex flex-col overflow-auto sm:overflow-hidden"
+        className="fixed bottom-[74px] left-0 z-[100] flex h-[415px] w-full touch-manipulation flex-col gap-[15px] overflow-auto rounded-t-[30px] bg-white pt-[30px] sm:left-1/2 sm:top-1/2 sm:h-[406px] sm:overflow-hidden sm:pb-[30px] md:z-40 md:w-[689px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[30px]"
       >
         <div className="flex flex-col gap-[15px] px-[30px]">
-        <div
-          className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 pt-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
-          //   style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-        >
-          <div
-            className="hidden sm:block w-[16px] h-[12px] cursor-pointer "
-            onClick={() => {
-              //   removePubLicUserDetailsFromLocalStorageOnClose("rentData");
-              setShowRentPreview(false);
-              setShowClaimModal(true);
-            }}
-          >
-            <ArrowLeftIcon />
-          </div>
-          <div
-            // onClick={() => setToggleTray(!toggleTray)}
-            onClick={() => {
-              setShowRentPreview(false);
-              removePubLicUserDetailsFromLocalStorageOnClose("rentData");
-            }}
-            className="flex flex-col items-center justify-center gap-4 sm:gap-0 w-full"
-          >
-            <div className="block sm:hidden  w-16 animate-pulse h-2 sm:h-0 rounded-3xl bg-light-grey"></div>
-            {/* <h4>{registeredAddress?.length} Airspaces available</h4> */}
-            <div className="flex items-center w-full justify-center">
-              <h2 className="text-[#222222] font-medium text-xl leading-[30px] text-center">
-                Rental Preview
-              </h2>
+          <div className="relative -mx-[29px] -mt-[30px] flex touch-manipulation items-center gap-[20px] px-[29px] pt-[20px] md:mx-0 md:my-0 md:p-0 md:shadow-none">
+            <div
+              onClick={() => {
+                setShowRentPreview(false);
+                setShowRentDetail(true);
+              }}
+              className="absolute right-3 top-1 ml-auto hidden h-[15px] w-[15px] cursor-pointer sm:block"
+            >
+              <CloseIconBlack />
+            </div>
+            <div
+              className="hidden h-[12px] w-[16px] cursor-pointer sm:block"
+              onClick={() => {
+                setShowRentPreview(false);
+                setShowRentDetail(true);
+              }}
+            >
+              <ArrowLeftIcon />
+            </div>
+            <div
+              onClick={() => {
+                setShowRentPreview(false);
+                removePubLicUserDetailsFromLocalStorageOnClose("rentData");
+              }}
+              className="flex w-full flex-col items-center justify-center gap-4 sm:gap-0"
+            >
+              <div className="block h-2 w-16 animate-pulse rounded-3xl bg-light-grey sm:hidden sm:h-0"></div>
+              {/* <h4>{registeredAddress?.length} Airspaces available</h4> */}
+              <div className="flex w-full items-center justify-center">
+                <h2 className="text-center text-xl font-medium leading-[30px] text-[#222222]">Rental Preview</h2>
+              </div>
+            </div>
+
+            <div
+              onClick={() => {
+                setShowRentPreview(false);
+                removePubLicUserDetailsFromLocalStorageOnClose("rentData");
+              }}
+              className="absolute right-0 top-0 ml-auto hidden h-[15px] w-[15px] cursor-pointer md:block"
+            >
+              <CloseIcon />
             </div>
           </div>
-
-          <div
-            onClick={() => {
-              setShowRentPreview(false);
-              removePubLicUserDetailsFromLocalStorageOnClose("rentData");
-            }}
-            className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
-          >
-            <CloseIcon />
+          <div className="flex touch-manipulation items-center gap-[10px] rounded-lg border border-[#4285F4] p-[11px]">
+            <div className="flex h-full w-6 items-center">
+              <LocationPointIcon />
+            </div>
+            <p className="flex flex-1 items-center text-[14px] font-normal text-[#222222]">
+              {rentData ? rentData.address : ""}
+            </p>
           </div>
-        </div>
-        <div className="touch-manipulation flex items-center gap-[10px] p-[11px] rounded-lg border border-[#4285F4]">
-          <div className="w-6 h-full flex items-center">
-            <LocationPointIcon />
+          <div>
+            <div className="relative h-[130px] w-full">
+              <Carousel images={images} />
+            </div>
           </div>
-          <p className="flex items-center font-normal text-[#222222] text-[14px] flex-1">
-            {rentData ? rentData.address : ""}
-          </p>
-        </div>
-        <div>
-        <div className="relative w-full h-[130px]">
-        <Carousel images={images} />
-      </div>
-        </div>
-          <div className="flex justify-between ">
-            <div className="flex flex-col gap-y-[15px] text-[14px] text-light-black leading-[21px]">
-              {/* <div className="flex ">
-                <div>Owner:</div>
-                <div className="text-light-grey pl-[15px]">
-                  {rentData?.owner?.name}
-                </div>
-              </div> */}
+          <div className="flex justify-between">
+            <div className="flex flex-col gap-y-[15px] text-[14px] leading-[21px] text-light-black">
               <div className="flex">
                 <div>ID::</div>
-                <div className="text-light-grey pl-[15px]">{rentData?.id}</div>
+                <div className="pl-[15px] text-light-grey">{rentData?.id}</div>
               </div>
-              {/* <div className="flex">
-                <div>Fees:</div>
-                <div className="text-light-grey pl-[15px]">
-                  {rentData?.transitFee}
-                </div>
-              </div> */}
             </div>
           </div>
-          <hr className="hidden sm:flex"/>
+          <hr className="hidden sm:flex" />
         </div>
 
-        <div className="touch-manipulation flex items-center justify-between gap-[20px] text-[14px]  sm:shadow-none shadow-[0px_0px_4.2px_0px_rgba(0,0,0,0.25)] px-[29px] py-[20px] sm:py-0">
-          {/* <div
-            onClick={() => {
-              setShowClaimModal(false);
-              removePubLicUserDetailsFromLocalStorageOnClose("rentData");
-            }}
-            className="text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2"
-            style={{ border: "1px solid #0653EA" }}
-          >
-            Cancel
-          </div> */}
-          <div className="flex justify-center items-center ">
-            <div className="text-light-black pr-[10px]">
-              <div className="font-bold text-2xl leading-9">
-                &#36;{rentData?.price}
-              </div>
+        <div className="flex touch-manipulation items-center justify-between gap-[20px] px-[29px] py-[20px] text-[14px] shadow-[0px_0px_4.2px_0px_rgba(0,0,0,0.25)] sm:py-0 sm:shadow-none">
+          <div className="flex items-center justify-center">
+            <div className="pr-[10px] text-light-black">
+              <div className="text-2xl font-bold leading-9">&#36;{rentData?.price}</div>
             </div>
-            {/* <div className="border-l-2 h-full border-[#000] border-opacity-20 pr-[10px]" /> */}
-
             <div className="border-l-[1px] border-[#000] border-opacity-20 pl-[10px]">
-              <p className="text-[11px] text-light-dark leading-[16.5px] ">
-                {/* 10 january 2024 */}
-                {/* {date} */}
-                {formattedDate}
-              </p>
-              <p className="text-[11px] text-light-dark leading-[16.5px]">
-                {/* 9:00 - 09:30 */}
-                {/* {date} */}
-                {formattedTime}
-              </p>
+              <p className="text-[11px] leading-[16.5px] text-light-dark">{formattedDate}</p>
+              <p className="text-[11px] leading-[16.5px] text-light-dark">{formattedTime}</p>
             </div>
           </div>
           <LoadingButton
             onClick={handleRentAirspace}
             isLoading={isLoading}
-            className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
+            className="flex w-1/2 cursor-pointer touch-manipulation items-center justify-center rounded-[5px] bg-[#0653EA] px-[22px] py-[10px] text-center text-white"
           >
             {isMobile ? "Confirm Rental" : "Confirm Rental now"}
           </LoadingButton>

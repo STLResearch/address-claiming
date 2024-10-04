@@ -1,7 +1,6 @@
 "use client";
-import { Fragment, useState, useEffect, SetStateAction } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
-import maplibregl from "maplibre-gl";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
@@ -11,13 +10,15 @@ import { useMobile } from "@/hooks/useMobile";
 import Head from "next/head";
 import ZoomControllers from "@/Components/ZoomControllers";
 import ExplorerMobile from "@/Components/Rent/Explorer/ExplorerMobile";
-import RentModal from "@/Components/Rent/RentModal/RentModal";
+import RentDetail from "@/Components/Rent/RentDetail/RentDetail";
 import { goToAddress } from "@/utils/apiUtils/apiFunctions";
 import { Coordinates, PropertyData } from "@/types";
 import Sidebar from "@/Components/Shared/Sidebar";
 import PropertiesService from "../../services/PropertiesService";
 import RentPreview from "@/Components/Rent/RentPreview/RentPreview";
 import dayjs from "dayjs";
+import { handleMouseEvent } from "@/utils/eventHandlerUtils/eventHandlers";
+import RentSearchMobile from "@/Components/Rent/Explorer/RentSearchMobile";
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingAddresses, setLoadingAddresses] = useState<boolean>(false);
@@ -28,7 +29,6 @@ const Rent = () => {
   const [registeredAddress, setRegisteredAddress] = useState<PropertyData[]>(
     [],
   );
-  const [mapMove, setMapMove] = useState();
   const [address, setAddress] = useState<string>("");
   const defaultValueDate = dayjs()
   .add(1, "h")
@@ -47,12 +47,14 @@ const Rent = () => {
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [marker, setMarker] = useState<Marker | null | undefined>();
   const [rentData, setRentData] = useState<PropertyData | undefined>();
-  const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
+  const [showRentDetail, setShowRentDetail] = useState<boolean>(false);
   const [showRentPreview, setShowRentPreview] = useState<boolean>(false);
   const { user } = useAuth();
   const [regAdressShow, setRegAdressShow] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
+  const [responseData, setResponseData] = useState<PropertyData[]>([]);
   const { findPropertiesByCoordinates } = PropertiesService();
+  const markersRef = useRef({});
   useEffect(() => {
     if (map) return;
     const createMap = () => {
@@ -63,12 +65,12 @@ const Rent = () => {
         style: "mapbox://styles/mapbox/streets-v12",
         center: [-104.718243, 40.413869],
         zoom: 5,
-        // AttributionControl: false
       });
+  
       newMap.on("render", function () {
         newMap.resize();
       });
-
+  
       newMap.on("load", function () {
         newMap.addLayer({
           id: "maine",
@@ -91,16 +93,16 @@ const Rent = () => {
         });
         newMap.zoomOut({ duration: 4 });
       });
-
+  
       let timeoutId;
-
+  
       newMap.on("move", async (e) => {
         setLoadingRegAddresses(true);
-
+  
         clearTimeout(timeoutId);
         timeoutId = setTimeout(async () => {
           const crds = e.target.getBounds();
-
+  
           const responseData = await findPropertiesByCoordinates({
             postData: {
               minLongitude: crds._sw.lng,
@@ -109,7 +111,7 @@ const Rent = () => {
               maxLatitude: crds._ne.lat,
             },
           });
-
+  
           let formattedProperties = [];
           if (responseData) {
             formattedProperties = responseData.filter((property) => {
@@ -123,52 +125,56 @@ const Rent = () => {
               }
             });
           }
-
+  
           setRegisteredAddress(formattedProperties);
           setLoadingRegAddresses(false);
-
-          if (responseData.length > 0) {
-            for (let i = 0; i < responseData.length; i++) {
-              const lngLat = new mapboxgl.LngLat(
-                responseData[i].longitude,
-                responseData[i].latitude,
-              );
-
-              const popup = new mapboxgl.Popup({ offset: 25 })
-                .trackPointer()
-                .setHTML(`<strong>${responseData[i].address}</strong>`);
-
-              popup.on("open", () => {
-                const popupElement = popup.getElement();
-                if (popupElement) {
-                  popupElement.style.zIndex = "10";
-                  popupElement.addEventListener("click", function () {
-                    setRentData(responseData[i]);
-                    setShowClaimModal(true);
-                  });
-                }
-              });
-
-              const marker = new mapboxgl.Marker({
-                color: "#3FB1CE",
-              })
-                .setLngLat(lngLat)
-                .setPopup(popup)
-                .addTo(newMap);
-
-              marker.getElement().addEventListener("click", function () {
-                setRentData(responseData[i]);
-                setShowClaimModal(true);
-              });
-            }
-          }
+          setResponseData(formattedProperties); 
         }, 3000);
       });
-
+  
       setMap(newMap);
     };
     createMap();
   }, []);
+  
+  useEffect(() => {
+    if (responseData?.length === 0 || !map) return;
+  
+    for (let i = 0; i < responseData.length; i++) {
+      const { longitude, latitude } = responseData[i];
+      if (longitude === undefined || latitude === undefined) continue;
+      const lngLat = new mapboxgl.LngLat(
+        longitude ,
+        latitude 
+      );
+  
+      if (!markersRef.current[i]) {
+        const marker = new mapboxgl.Marker({
+          color: "#3FB1CE",
+        })
+          .setLngLat(lngLat)
+          .addTo(map);
+  
+        markersRef.current[i] = marker;
+        const markerElement = marker.getElement();
+  
+        if (markerElement && marker && map) {
+          handleMouseEvent(
+            isMobile,
+            markerElement,
+            marker,
+            map,
+            responseData[i],
+            setShowRentDetail,
+            setRentData
+          );
+        }
+      } else {
+        markersRef.current[i].setLngLat(lngLat);
+      }
+    }
+  }, [responseData, isMobile, map, setShowRentDetail, setRentData]);
+  
 
   useEffect(() => {
     if (registeredAddress.length > 0) {
@@ -237,7 +243,7 @@ const Rent = () => {
     if (parsedInitialRentData && parsedInitialRentData?.address?.length > 2) {
       setRentData(parsedInitialRentData);
       setFlyToAddress(parsedInitialRentData.address);
-      setShowClaimModal(true);
+      setShowRentDetail(true);
     } else {
       console.info("no initial datta");
     }
@@ -258,25 +264,10 @@ const Rent = () => {
 
             {isMobile && (
               <ExplorerMobile
-                loadingReg={loadingRegAddresses}
-                loading={loadingAddresses}
-                address={address}
-                setAddress={setAddress}
-                addresses={addresses}
-                showOptions={showOptions}
-                regAdressShow={regAdressShow}
                 registeredAddress={registeredAddress}
-                map={map}
-                marker={marker}
-                setMarker={setMarker}
-                setShowClaimModal={setShowClaimModal}
-                rentData={rentData}
+                setShowRentDetail={setShowRentDetail}
                 setRentData={setRentData}
-                setFlyToAddress={setFlyToAddress}
                 setShowOptions={setShowOptions}
-                setLoadingRegAddresses={setLoadingRegAddresses}
-                setRegisteredAddress={setRegisteredAddress}
-                setRegAdressShow={setRegAdressShow}
               />
             )}
             <section
@@ -288,13 +279,20 @@ const Rent = () => {
                 className={"!absolute !left-0 !top-0 !m-0 !h-screen !w-screen"}
                 id="map"
               />
+              <RentSearchMobile
+                address={address}
+                setAddress={setAddress}
+                addresses={addresses}
+                setFlyToAddress={setFlyToAddress}
+                setShowOptions={setShowOptions}
+                showOptions={showOptions}
+                
+              />
 
               {!isMobile && (
                 <div className="flex items-start justify-start">
                   <Explorer
-                    setLoadingRegAddresses={setLoadingRegAddresses}
                     loadingReg={loadingRegAddresses}
-                    setRegisteredAddress={setRegisteredAddress}
                     loading={loadingAddresses}
                     address={address}
                     setAddress={setAddress}
@@ -302,25 +300,20 @@ const Rent = () => {
                     showOptions={showOptions}
                     regAdressShow={regAdressShow}
                     registeredAddress={registeredAddress}
-                    map={map}
-                    marker={marker}
-                    setMarker={setMarker}
-                    setShowClaimModal={setShowClaimModal}
-                    rentData={rentData}
+                    setShowRentDetail={setShowRentDetail}
                     setRentData={setRentData}
                     setFlyToAddress={setFlyToAddress}
                     setShowOptions={setShowOptions}
                   />
                 </div>
               )}
-              {showClaimModal && (
-                <RentModal
+              {showRentDetail && (
+                <RentDetail
                 date={date}
                 setDate={setDate}
                 setShowRentPreview={setShowRentPreview}
-                  setShowClaimModal={setShowClaimModal}
+                setShowRentDetail={setShowRentDetail}
                   rentData={rentData}
-                  setIsLoading={setIsLoading}
                   isLoading={isLoading}
                 />
               )}
@@ -328,7 +321,7 @@ const Rent = () => {
                 <RentPreview
                 date={date}
                   setShowRentPreview={setShowRentPreview}
-                  setShowClaimModal={setShowClaimModal}
+                  setShowRentDetail={setShowRentDetail}
                   rentData={rentData}
                   setIsLoading={setIsLoading}
                   isLoading={isLoading}

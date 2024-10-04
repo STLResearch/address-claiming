@@ -1,61 +1,39 @@
-import { CloseIcon, LocationPointIcon } from "@/Components/Icons";
+import {  CloseIconBlack, LocationPointIcon } from "@/Components/Icons";
 import useAuth from "@/hooks/useAuth";
-import { Web3authContext } from "@/providers/web3authProvider";
-import AirspaceRentalService from "@/services/AirspaceRentalService";
 import {
-  ArrowLeftIcon,
   DateTimePicker,
   LocalizationProvider,
 } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SuccessModal from "../SuccessModal";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {
-  Connection,
-  VersionedTransaction,
-  NonceAccount,
-  PublicKey,
-} from "@solana/web3.js";
 import { getTokenBalance } from "@/utils/apiUtils/apiFunctions";
-import { validateRental } from "@/utils/rent/rentalValidation";
-import { handleMintResponse } from "@/utils/rent/mintResponseHandler";
-import { executeTransaction } from "@/utils/rent/transactionExecutor";
 import { PropertyData } from "@/types";
-import { toast } from "react-toastify";
 import Backdrop from "@/Components/Backdrop";
 import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
 import { useMobile } from "@/hooks/useMobile";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
-
-import { createNonceIx } from "../../../helpers/solanaHelper";
-
 import PropertiesService from "@/services/PropertiesService";
 import Carousel from "@/Components/Shared/Carousel";
-import { getMapboxStaticImage } from "../Explorer/RentableAirspaceLists/RentableAirspace";
+import { getMapboxStaticImage } from "@/utils/getMapboxStaticImage";
 
-interface RentModalProps {
-  setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
+interface RentDetailProps {
+  setShowRentDetail: React.Dispatch<React.SetStateAction<boolean>>;
   setShowRentPreview: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
   date:any;
   setDate:any;
 }
-const RentModal: React.FC<RentModalProps> = ({
+const RentDetail: React.FC<RentDetailProps> = ({
   setShowRentPreview,
-  setShowClaimModal,
+  setShowRentDetail,
   rentData,
-  setIsLoading,
   isLoading,
   date,
   setDate
 }) => {
-  // const defaultValueDate = dayjs()
-  //   .add(1, "h")
-  //   .set("minute", 30)
-  //   .startOf("minute");
   const maxDate = dayjs().add(29, "day");
   const [tokenBalance, setTokenBalance] = useState<string>("0");
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
@@ -66,17 +44,7 @@ const RentModal: React.FC<RentModalProps> = ({
   const {
     user,
     web3authStatus,
-    redirectIfUnauthenticated,
-    setAndClearOtherPublicRouteData,
   } = useAuth();
-
-  const {
-    getNonceAccountEntry,
-    createMintRentalToken,
-    executeMintRentalToken,
-  } = AirspaceRentalService();
-
-  const { provider } = useContext(Web3authContext);
   const { getRentedTimes } = PropertiesService();
   localStorage.setItem("rentData", JSON.stringify(rentData));
   const rentedTimes = useRef([]);
@@ -99,123 +67,13 @@ const RentModal: React.FC<RentModalProps> = ({
     }
   }, [rentData, web3authStatus]);
 
-  const handleRentAirspace = async () => {
-    try {
-      const isRedirecting = redirectIfUnauthenticated();
-      const connection = new Connection(
-        process.env.NEXT_PUBLIC_RPC_TARGET as string,
-      );
-      if (isRedirecting) {
-        setAndClearOtherPublicRouteData("rentData", rentData);
-        return;
-      }
-      const currentDate = new Date();
-      const startDate = new Date(date.toString());
-      const endDate = new Date(startDate.getTime() + 30 * 60000);
-
-      if (!rentData?.price) {
-        toast.error("Price for air rights not found");
-        return;
-      }
-
-      if (
-        !validateRental(
-          rentData?.price,
-          currentDate,
-          startDate,
-          endDate,
-          tokenBalance,
-          setFinalAns,
-          setShowSuccess,
-        )
-      ) {
-        return;
-      }
-
-      setIsLoading(true);
-      if (rentData?.layers) {
-        const nonceAccountEntry = await getNonceAccountEntry();
-
-        const nonceAccount = await createNonceIx(
-          connection,
-          new PublicKey(nonceAccountEntry.publicKey),
-        );
-
-        const postData = {
-          callerAddress: user?.blockchainAddress,
-          startTime: startDate.toISOString(),
-          endTime: endDate.toISOString(),
-          landAssetIds: [rentData.layers[0].tokenId],
-          nonceAccount,
-          nonceAccountEntry,
-        };
-
-        const createMintResponse = await createMintRentalToken({ postData });
-        const mintResponse = await handleMintResponse(
-          createMintResponse,
-          setIsLoading,
-          setShowSuccess,
-          setFinalAns,
-        );
-        if (!mintResponse) return;
-        const transaction = VersionedTransaction.deserialize(
-          new Uint8Array(Buffer.from(createMintResponse, "base64")),
-        );
-        const txString = await executeTransaction(transaction, provider);
-
-        if (!txString) return;
-        const postExecuteMintData = {
-          transaction: txString,
-          landAssetIds: [rentData?.layers[0].tokenId],
-          startTime: startDate.toISOString(),
-          endTime: endDate.toISOString(),
-        };
-
-        const executionResponse = await executeMintRentalToken({
-          postData: { ...postExecuteMintData },
-        });
-
-        if (executionResponse && executionResponse.errorMessage) {
-          toast.error(executionResponse.errorMessage);
-          return;
-        }
-        if (executionResponse) {
-          if (
-            executionResponse.data &&
-            executionResponse.data.status === "success"
-          ) {
-            setFinalAns({
-              status: "Rent Successful",
-              message: executionResponse.data.message,
-            });
-          } else if (executionResponse.data) {
-            setFinalAns({
-              status: "Rent failed",
-              message: executionResponse.data.message,
-            });
-          }
-          setShowSuccess(true);
-        }
-      } else {
-        toast.error("something went wrong!");
-      }
-      localStorage.removeItem("rentData");
-    } catch (error) {
-      console.error("error here", error);
-      setFinalAns({ status: "Rent failed", message: error.message });
-      localStorage.removeItem("rentData");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   if (showSuccess) {
     return (
       <SuccessModal
         setShowSuccess={setShowSuccess}
         finalAns={finalAns}
         rentData={rentData}
-        setShowClaimModal={setShowClaimModal}
+        setShowRentDetail={setShowRentDetail}
       />
     );
   }
@@ -240,7 +98,7 @@ const RentModal: React.FC<RentModalProps> = ({
   };
 
   const handleShowRentPreview = () => {
-    setShowClaimModal(false);
+    setShowRentDetail(false);
     setShowRentPreview(true);
   };
   const images = [
@@ -248,32 +106,32 @@ const RentModal: React.FC<RentModalProps> = ({
     { image_url: "/images/imagetest2.jpg" },
     { image_url: "/images/imagetest3.jpg" },
   ];
-  const imageUrl = getMapboxStaticImage(rentData.latitude, rentData.longitude);
-  images.unshift({ image_url: imageUrl });
+  if(rentData){
+    const imageUrl = getMapboxStaticImage(rentData.latitude, rentData.longitude);
+    images.unshift({ image_url: imageUrl });
+  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}> */}
       {!isMobile && (
         <Backdrop
           onClick={() => {
-            setShowClaimModal(false);
+            setShowRentDetail(false);
           }}
         />
       )}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation fixed bottom-0 left-0  sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] sm:py-[30px] gap-[15px] rounded-t-[30px] md:rounded-[30px]  w-full h-[610px] sm:h-[525px] md:w-[689px] z-[100] md:z-40 flex flex-col  overflow-auto sm:overflow-hidden"
+        className="touch-manipulation fixed bottom-[74px] left-0 px-[29px] sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] sm:py-[30px] gap-[15px] rounded-t-[30px] md:rounded-[30px]  w-full h-[400px] sm:h-[480px] md:w-[689px] z-[100] md:z-40 flex flex-col  overflow-auto sm:overflow-hidden"
       >
-        <div className="flex flex-col px-[29px] gap-[15px]">
-          <div
-            className="w-[16px] h-[12px] md:hidden"
+        <div className="flex flex-col gap-[15px]">
+          <div 
             onClick={() => {
               removePubLicUserDetailsFromLocalStorageOnClose("rentData");
-              setShowClaimModal(false);
+              setShowRentDetail(false);
             }}
-          >
-            <ArrowLeftIcon />
+          className="flex flex-col items-center justify-center gap-4 sm:hidden">
+            <div className="w-16 animate-pulse h-2 rounded-3xl bg-light-grey"></div>
           </div>
           <div className="flex items-center w-full justify-center">
             <h2 className="text-[#222222] font-medium text-xl text-center">
@@ -282,12 +140,12 @@ const RentModal: React.FC<RentModalProps> = ({
           </div>
           <div
             onClick={() => {
-              setShowClaimModal(false);
+              setShowRentDetail(false);
               removePubLicUserDetailsFromLocalStorageOnClose("rentData");
             }}
-            className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
+            className="hidden sm:block absolute top-7 right-7 w-[15px] h-[15px] ml-auto cursor-pointer"
           >
-            <CloseIcon />
+            <CloseIconBlack />
           </div>
         </div>
         <div
@@ -324,14 +182,13 @@ const RentModal: React.FC<RentModalProps> = ({
                     {
                       name: "offset",
                       options: {
-                        offset: [-10, 10],
+                        offset: [-10, -30],
                       },
                     },
                     {
                       name: "preventOverflow",
                       options: {
                         altAxis: true,
-                        rootBoundary: "viewport",
                       },
                     },
                   ],
@@ -344,7 +201,7 @@ const RentModal: React.FC<RentModalProps> = ({
         <div className="touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
           <div
             onClick={() => {
-              setShowClaimModal(false);
+              setShowRentDetail(false);
               removePubLicUserDetailsFromLocalStorageOnClose("rentData");
             }}
             className="text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2"
@@ -361,8 +218,7 @@ const RentModal: React.FC<RentModalProps> = ({
           </LoadingButton>
         </div>
       </div>
-      {/* </Box> */}
     </LocalizationProvider>
   );
 };
-export default RentModal;
+export default RentDetail;
