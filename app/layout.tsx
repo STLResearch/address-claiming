@@ -19,6 +19,7 @@ import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
 import { OnboardingTour } from "../Components/Tours";
 import NotificationBanner from "@/Components/NotificationBanner";
+import TawkMessengerComponent from "./TawkMessenger";
 
 export const metadata: Metadata = {
   title: {
@@ -58,35 +59,6 @@ export default function RootLayout({
             `}
           </Script>
           <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-                (function(){
-                var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-                s1.async=true;
-                s1.src='https://embed.tawk.to/655381bacec6a912820fc8a3/1hf735gcu';
-                s1.charset='UTF-8';
-                s1.setAttribute('crossorigin','*');
-                s0.parentNode.insertBefore(s1,s0);
-                })();
-              Tawk_API.customStyle = {
-              visibility : {
-                mobile : {
-                  position : 'br',
-                  xOffset : 10,
-                  yOffset : 80
-                },
-                bubble : {
-                  rotate : '0deg',
-                  xOffset : -20,
-                  yOffset : 0
-                }
-              }
-            };
-              `,
-            }}
-          />
           {/* <Provider store={store}> */}
           <Web3authProvider>
             <SidebarProvider>
@@ -106,6 +78,7 @@ export default function RootLayout({
                 shadow="0 0 10px #2299DD,0 0 5px #2299DD"
               />
               <NotificationBanner />
+              <TawkMessengerComponent />
               <OnboardingTour>{children}</OnboardingTour>
             </SidebarProvider>
             <CookieConsent />
