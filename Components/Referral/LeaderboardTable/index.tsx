@@ -10,6 +10,7 @@ import {
 import { useRouter } from "next/navigation";
 import { FC, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useMobile } from "@/hooks/useMobile";
 
 const LIMIT = 10;
 
@@ -109,6 +110,7 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
   const handlePrevPage = (page: number) => {
     setCurrentPage(page);
   };
+  const { isMobile } = useMobile();
 
   return (
     <div className="md:flex w-full md:p-4 p-2 ">
@@ -137,7 +139,10 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
                       <span
                         className={`${getPosition(index) === userCurrentPosition ? "text-blue" : "text-[#87878D]"} text-base`}
                       >
-                        {`${blockchainAddress.slice(0, 6)}...${blockchainAddress.slice(-4)}`}
+                         {isMobile
+                                ? `${blockchainAddress.slice(0, 3)}...${blockchainAddress.slice(-2)}`
+                                : blockchainAddress
+                                }
                       </span>
                     </td>
                     <td
@@ -172,16 +177,16 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
               {[...Array(totalPages)].map((_, index) => {
                 return (
                   <button
-                    key={index}
-                    onClick={() => handlePrevPage(index + 1)}
-                    className={`md:w-8 md:h-8 w-8 h-8  flex items-center justify-center rounded-full md:text-xl text-[16px] ${
-                      currentPage === index + 1
-                        ? "bg-slate-blue text-white"
-                        : "text-slate-blue"
-                    } transition-all duration-300`}
-                  >
-                    {index + 1}
-                  </button>
+                  key={index}
+                  onClick={() => handlePrevPage(index + 1)}
+                  className={`w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full text-sm md:text-xl ${
+                    currentPage === index + 1
+                      ? "bg-slate-blue text-white"
+                      : "text-slate-blue"
+                  } transition-all duration-300`}
+                >
+                  {index + 1}
+                </button>
                 );
               })}
               {currentPage < totalPages &&
