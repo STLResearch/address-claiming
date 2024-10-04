@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   description: "Claim and Verify an Airspace",
 };
 
-export default function RentLayout({ children }: { children: React.ReactNode }) {
+export default function AirspacesLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

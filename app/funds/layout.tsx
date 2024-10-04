@@ -7,6 +7,6 @@ export const metadata: Metadata = {
     "Deposit, withdraw, and manage your funds effortlessly on the SkyTrade Funds page. Keep track of your transactions and balances.",
 };
 
-export default function RentLayout({ children }: { children: React.ReactNode }) {
+export default function FundsLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

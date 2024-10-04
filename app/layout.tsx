@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s - SkyTrade",
     default: "SkyTrade",
   },
-  description: "Airspace Hub",
+  description: "The Ultimate Airspace Hub",
 };
 
 export default function RootLayout({

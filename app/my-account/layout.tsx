@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   description: "Manage your Profile Informartion",
 };
 
-export default function RentLayout({ children }: { children: React.ReactNode }) {
+export default function AccountLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
