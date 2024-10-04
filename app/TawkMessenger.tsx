@@ -8,8 +8,7 @@ const TawkMessengerComponent = () => {
   const tawkMessengerRef = useRef<TawkMessenger>(null);
 
   return (
-    <div className="z-10">
-
+    <div>
       <TawkMessengerReact
         propertyId="655381bacec6a912820fc8a3"
         widgetId="1hf735gcu"
