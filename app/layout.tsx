@@ -19,7 +19,7 @@ import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
 import { OnboardingTour } from "../Components/Tours";
 import NotificationBanner from "@/Components/NotificationBanner";
-import TawkMessengerComponent from "./TawkMessenger";
+import TawkMessengerComponent from "@/Components/TawkMessenger";
 
 export const metadata: Metadata = {
   title: {
@@ -60,7 +60,7 @@ export default function RootLayout({
           </Script>
           <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
           {/* <Provider store={store}> */}
-          <Web3authProvider>
+            <Web3authProvider>
             <SidebarProvider>
               <ToastContainer style={{ width: "500px" }} />
               <div id="backdrop-root"></div>
@@ -78,10 +78,10 @@ export default function RootLayout({
                 shadow="0 0 10px #2299DD,0 0 5px #2299DD"
               />
               <NotificationBanner />
-              <TawkMessengerComponent />
               <OnboardingTour>{children}</OnboardingTour>
             </SidebarProvider>
-            <CookieConsent />
+            <CookieConsent />          
+          <TawkMessengerComponent />
           </Web3authProvider>
           {/* </Provider> */}
         </>
