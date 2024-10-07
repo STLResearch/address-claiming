@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const Carousel = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-    console.log(images,"hello images");
+  
   const nextSlide = () => {
     if (currentIndex < images.length - 1) {
       setCurrentIndex(currentIndex + 1);
@@ -28,7 +28,7 @@ const Carousel = ({ images }) => {
             style={{ transform: `translateX(${(index - currentIndex) * 100}%)` }}
           >
             <Image
-              src={image?.image_url}
+              src={image}
               alt={`Slide ${index + 1}`}
               layout="fill"
               objectFit="cover"
@@ -88,7 +88,6 @@ const Carousel = ({ images }) => {
         )}
       </div>
 
-      {/* Dots */}
       <div className="absolute bottom-0 left-0 right-0 flex justify-center space-x-2 py-2">
         {images.map((_, index) => (
           <button

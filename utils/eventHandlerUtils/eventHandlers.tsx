@@ -1,6 +1,6 @@
 
 import RentPopup from "@/Components/Rent/RentMarkerPopup";
-import mapboxgl, { Map, Marker } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import { createRoot } from "react-dom/client";
 import '@/Components/Rent/RentMarkerPopup.css'
 export const handleMouseEvent = (

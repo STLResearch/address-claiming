@@ -3,13 +3,9 @@ import React from "react";
 import { getMapboxStaticImage } from "@/utils/getMapboxStaticImage";
 
 const RentCard = ({ onClickRent, price, title, item }: any) => {
-  const images = [
-    { image_url: "/images/imagetest1.jpg" },
-    { image_url: "/images/imagetest2.jpg" },
-    { image_url: "/images/imagetest3.jpg" },
-  ];
+  const images = item?.images || []
   const imageUrl = getMapboxStaticImage(item.latitude, item.longitude);
-  images.unshift({ image_url: imageUrl });
+  images.unshift(imageUrl);
   return (
     <div>
       <div className="w-full overflow-hidden rounded-lg shadow-md" style={{ boxShadow: "0px 4px 10px 0px #0000001a" }}>

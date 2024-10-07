@@ -13,13 +13,9 @@ const RentPopup: React.FC<RentPopupProps> = ({ rent, setShowBidDetail, setAuctio
     setShowBidDetail(true);
     setAuctionDetailData(item);
   };
-  const images = [
-    { image_url: "/images/imagetest1.jpg" },
-    { image_url: "/images/imagetest2.jpg" },
-    { image_url: "/images/imagetest3.jpg" },
-  ];
+  const images = rent?.images || [];
   const imageUrl = getMapboxStaticImage(rent.latitude, rent.longitude);
-  images.unshift({ image_url: imageUrl });
+  images.unshift(imageUrl);
   return (
     <div
       className={

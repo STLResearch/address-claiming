@@ -101,6 +101,7 @@ export type PropertyData = {
   hasZoningPermission?: boolean;
   requestDocument?: RequestDocument[];
   metadata?: metadata;
+  images?:string[];
 };
 
 export type User = {

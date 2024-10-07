@@ -164,21 +164,17 @@ const RentPreview: React.FC<RentPreviewProps> = ({
   const formattedTimeEnd = date.add(30, "minute").format("H:mm");
   const formattedTime = `${formattedTimeStart} - ${formattedTimeEnd}`;
 
-  const images = [
-    { image_url: "/images/imagetest1.jpg" },
-    { image_url: "/images/imagetest2.jpg" },
-    { image_url: "/images/imagetest3.jpg" },
-  ];
+  const images = rentData?.images || []
   if(rentData){
     const imageUrl = getMapboxStaticImage(rentData.latitude, rentData.longitude);
-    images.unshift({ image_url: imageUrl });
+    images.unshift(imageUrl);
   }
   return (
     <div>
       {!isMobile && <Backdrop />}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="fixed bottom-[74px] left-0 z-[100] flex h-[415px] w-full touch-manipulation flex-col gap-[15px] overflow-auto rounded-t-[30px] bg-white pt-[30px] sm:left-1/2 sm:top-1/2 sm:h-[406px] sm:overflow-hidden sm:pb-[30px] md:z-40 md:w-[689px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[30px]"
+        className="fixed bottom-[74px] left-0 z-[100] flex h-[426px] w-full touch-manipulation flex-col gap-[15px] overflow-auto rounded-t-[30px] bg-white pt-[30px] sm:left-1/2 sm:top-1/2 sm:h-[406px] sm:overflow-hidden sm:pb-[30px] md:z-40 md:w-[689px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[30px]"
       >
         <div className="flex flex-col gap-[15px] px-[30px]">
           <div className="relative -mx-[29px] -mt-[30px] flex touch-manipulation items-center gap-[20px] px-[29px] pt-[20px] md:mx-0 md:my-0 md:p-0 md:shadow-none">

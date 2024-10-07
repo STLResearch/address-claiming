@@ -101,14 +101,11 @@ const RentDetail: React.FC<RentDetailProps> = ({
     setShowRentDetail(false);
     setShowRentPreview(true);
   };
-  const images = [
-    { image_url: "/images/imagetest1.jpg" },
-    { image_url: "/images/imagetest2.jpg" },
-    { image_url: "/images/imagetest3.jpg" },
-  ];
+  const images = rentData?.images || [];
+
   if(rentData){
     const imageUrl = getMapboxStaticImage(rentData.latitude, rentData.longitude);
-    images.unshift({ image_url: imageUrl });
+    images.unshift( imageUrl );
   }
 
   return (
