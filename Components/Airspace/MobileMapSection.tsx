@@ -19,10 +19,10 @@ const MobileMapSection = ({
             <div className="w-full rounded-[20px] bg-[#222222] p-[12px] text-center text-base font-normal text-white">
               Exciting times ahead!
               <br />
-              Claim your airspace 🚀✨
+              Claim your air rights 🚀✨
             </div>
             <div className="w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
-              Claim your airspace
+              Claim your air rights
             </div>
           </div>
           <div className="flex flex-1 flex-col gap-[23px] px-[13px] py-[29px]">

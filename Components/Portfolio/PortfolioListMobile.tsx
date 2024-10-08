@@ -114,7 +114,7 @@ const PortfolioListMobile = ({
                       Account verification
                     </h1>
                     <p className="text-sm font-normal text-[#838187] text-center leading-6">
-                      Your airspace awaits verification by our operation team.
+                      Your air rights awaits verification by our operation team.
                       Your account is not verified. We verify the identity of
                       our customers to assess potential risks, prevent fraud,
                       and comply with legal and regulatory requirements.
@@ -125,7 +125,7 @@ const PortfolioListMobile = ({
                         earn 10 SKY points{" "}
                       </span>{" "}
                       as a token of our appreciation! Don&apos;t delay - verify
-                      now and unlock the full potential of your airspace!
+                      now and unlock the full potential of your air rights!
                     </p>
 
                     <button

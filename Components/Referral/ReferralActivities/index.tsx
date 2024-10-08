@@ -25,7 +25,7 @@ const ReferralActivities: React.FC = () => {
                 </span>
               </div>
               <div className="flex justify-between">
-                <p className="text-sm font-semibold">Claim your airspace</p>
+                <p className="text-sm font-semibold">Claim your air rights</p>
                 <span className="text-[#4285F4] text-sm font-medium">
                   100 SKY points
                 </span>
@@ -50,7 +50,7 @@ const ReferralActivities: React.FC = () => {
                 </span>{" "}
               </p>
               <p className="text-sm font-semibold">
-                Claim your airspace
+                Claim your air rights
                 <span className="text-[#D3D3D3] text-sm font-light">
                   {" "}
                   ----------

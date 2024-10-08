@@ -52,14 +52,14 @@ const VerificationPopup: React.FC<VerificationPopupProps> = ({
                     Account verification
                   </h1>
                   <p className="text-base font-normal text-[#838187] text-center leading-7 w-[235px] ">
-                    Your airspace awaits verification by our operation team.
+                    Your air rights awaits verification by our operation team.
                     Complete your KYC to expedite the process and ensure swift
                     approval. Plus,{" "}
                     <span className="text-[#87878D] text-base font-bold">
                       earn 10 SKY points
                     </span>{" "}
                     as a token of our appreciation! Don&apos;t delay - verify
-                    now and unlock the full potential of your airspace!
+                    now and unlock the full potential of your air rights!
                   </p>
                   <button
                     onClick={onVerifyMyAccount}

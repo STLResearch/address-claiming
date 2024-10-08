@@ -169,7 +169,7 @@ export const ClaimModal = ({
             </div>
             <div className="flex flex-col gap-[5px] mt-3 md:mt-4">
               <label htmlFor="name">
-                Name of airspace<span className="text-[#E04F64]">*</span>
+                Name of air rights<span className="text-[#E04F64]">*</span>
               </label>
 
               <input
@@ -187,7 +187,7 @@ export const ClaimModal = ({
             </div>
             <div className="flex flex-col gap-[10px] mt-2 md:mt-3">
               <p className="text-[14px] font-normal text-[#838187] ">
-                Are you looking to Rent or Sell your airspace?
+                Are you looking to Rent or Sell your air rights?
               </p>
               <div className="flex items-center gap-[7px]">
                 <input
