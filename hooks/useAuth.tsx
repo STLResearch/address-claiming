@@ -55,7 +55,10 @@ const useAuth = () => {
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
-  const setAndClearOtherPublicRouteData = (localStorageKey: string, data: any) => {
+  const setAndClearOtherPublicRouteData = (
+    localStorageKey: string,
+    data: any,
+  ) => {
     for (const route of publicAccessRoutes) {
       if (route.localStorageKey !== localStorageKey) {
         localStorage.removeItem(route.localStorageKey);
@@ -82,7 +85,7 @@ const useAuth = () => {
 
     router.push("/auth");
     toast.success(
-      "Congratulation!!! To ensure your your actions are saved and recognized, register now with SkyTrade."
+      "Congratulation!!! To ensure your your actions are saved and recognized, register now with SkyTrade.",
     );
     return true;
   };

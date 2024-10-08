@@ -1,24 +1,36 @@
 import React from "react";
 import Checkbox from "./Checkbox";
 import { PropertyData } from "@/types";
+import { ClaimAirspaceSteps } from "../ClaimModal";
 
 interface AirspaceOptionsProps {
-  isRentableAirspace: boolean;
+  rent: boolean;
   sell: boolean | undefined;
   setData: React.Dispatch<React.SetStateAction<PropertyData>>;
+  noFlyZone: boolean;
+  setisNoFlyZone: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowselldetails: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowrentdetails: React.Dispatch<React.SetStateAction<boolean>>;
+  setSteps: React.Dispatch<React.SetStateAction<ClaimAirspaceSteps>>;
 }
 
 const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({
-  isRentableAirspace,
+  rent,
   sell,
   setData,
+  noFlyZone,
+  setisNoFlyZone,
+  setShowselldetails,
+  setShowrentdetails,
+  setSteps,
 }) => {
   const handleRentChange = () => {
     setData((prev) => ({
       ...prev,
-      isRentableAirspace: !prev.isRentableAirspace,
+      rent: true,
       sell: false,
     }));
+    setShowrentdetails((prev) => !prev);
   };
 
   const handleSellChange = () => {
@@ -27,24 +39,30 @@ const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({
       sell: !prev.sell,
       rent: false,
     }));
+    setShowselldetails((prev) => !prev);
+    // SetShowrentdetails(false);
   };
 
+  const handlenoFlyZone = () => {
+    setData((prev) => ({
+      ...prev,
+      noFlyZone: true,
+      rent: false,
+      sell: false,
+    }));
+  };
   return (
     <div className="flex flex-col gap-[10px] mt-2 md:mt-3">
       <p className="text-[14px] font-normal text-[#838187]">
         Are you looking to Rent or Sell your airspace?
       </p>
       <div className="flex items-center gap-[7px]">
+        <Checkbox label="Rent" checked={!!rent} onChange={handleRentChange} />
+        <Checkbox label="Sell" checked={!!sell} onChange={handleSellChange} />
         <Checkbox
-          label="Rent"
-          checked={isRentableAirspace}
-          onChange={handleRentChange}
-        />
-        <Checkbox
-          label="Sell"
-          checked={sell ? sell : false}
-          disabled
-          onChange={handleSellChange}
+          label="No-Fly Zone"
+          checked={!!noFlyZone}
+          onChange={handlenoFlyZone}
         />
       </div>
     </div>

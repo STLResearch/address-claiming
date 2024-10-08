@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   description: "Manage your Airspaces, Bids and Offers",
 };
 
-export default function PortfolioLayout({ children }: { children: React.ReactNode }) {
+export default function PortfolioLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <>{children}</>;
 }

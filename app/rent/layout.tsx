@@ -7,6 +7,10 @@ export const metadata: Metadata = {
     "Browse available airspace for rent, view pricing, and manage your rental agreements on the SkyTrade Rent page.",
 };
 
-export default function RentLayout({ children }: { children: React.ReactNode }) {
+export default function RentLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <>{children}</>;
 }

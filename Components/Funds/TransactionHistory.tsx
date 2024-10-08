@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { MagnifyingGlassIcon , RefreshIconTransaction } from "../../Components/Icons";
+import {
+  MagnifyingGlassIcon,
+  RefreshIconTransaction,
+} from "../../Components/Icons";
 import { useMobile } from "@/hooks/useMobile";
 import { Connection, PublicKey } from "@solana/web3.js";
 import moment from "moment";
@@ -34,9 +37,8 @@ const TransactionHistory = () => {
     [],
   );
   const [searchQuery, setSearchQuery] = useState("");
-  const[refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
-
 
   useEffect(() => {
     (async () => {
@@ -146,7 +148,7 @@ const TransactionHistory = () => {
         setIsLoading(false);
       }
     })();
-  }, [web3auth?.status, pageNumber, user?.blockchainAddress, isNext,refresh]);
+  }, [web3auth?.status, pageNumber, user?.blockchainAddress, isNext, refresh]);
 
   const handleNextPage = () => {
     if (transactionList?.length < limit - 1) return;
@@ -230,9 +232,7 @@ const TransactionHistory = () => {
           Transaction History
         </p>
         <div className="flex md:px-0 px-2 justify-end items-center md:w-full ">
-          <div
-            className="relative bg-white p-[1px] rounded-lg border border-[#87878D]"
-          >
+          <div className="relative bg-white p-[1px] rounded-lg border border-[#87878D]">
             <input
               type="text"
               name="searchTransactions"
@@ -246,15 +246,14 @@ const TransactionHistory = () => {
             </div>
           </div>
           <div className="ml-5">
-          <div
-            className="flex justify-center items-center w-12 h-12 cursor-pointer  bg-[#0653EA] text-center font-medium p-1 rounded-[8px] py-4"
-            onClick={handleReset}
-          >
-            <div className={isSpinning ? "spin w-6 h-6" : "w-6 h-6"}
+            <div
+              className="flex justify-center items-center w-12 h-12 cursor-pointer  bg-[#0653EA] text-center font-medium p-1 rounded-[8px] py-4"
+              onClick={handleReset}
             >
-            <RefreshIconTransaction color={'white'}/>
+              <div className={isSpinning ? "spin w-6 h-6" : "w-6 h-6"}>
+                <RefreshIconTransaction color={"white"} />
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </div>

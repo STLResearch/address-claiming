@@ -10,7 +10,7 @@
     "compile-ts": "npx tsc --noEmit",
     "format": "npx prettier --write .",
     "prepare": "husky",
-    "lint-fix": "eslint --fix './**/*.{js,jsx,ts,tsx}'"
+    "lint-fix": "eslint --fix ./**/*.{js,jsx,ts,tsx}"
   },
   "engines": {
     "node": "20.11.1",

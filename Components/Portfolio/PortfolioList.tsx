@@ -32,7 +32,6 @@ const PortfolioList = ({
   const router = useRouter();
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
-  
 
   const {
     handleTabSwitch,
@@ -54,8 +53,6 @@ const PortfolioList = ({
 
   return (
     <>
-     
-
       {showCancelModal && (
         <CancelClaimModal
           airspace={selectedAirspace}
@@ -172,8 +169,8 @@ const PortfolioList = ({
                     setShowCancelModal={setShowCancelModal}
                     onCloseModal={onCloseModal}
                     setAirspaceList={setAirspaceList}
-                    selectedAirspace={selectedAirspace} 
-                    />  
+                    selectedAirspace={selectedAirspace}
+                  />
                 ))
               ) : (
                 <AirspacesEmptyMessage />

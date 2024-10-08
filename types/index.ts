@@ -98,7 +98,7 @@ export type PropertyData = {
   propertyStatus?: propertyStatus;
   status?: number;
   type?: string;
-  hasPlanningPermission?: string | null;
+  hasZoningPermission?: boolean;
   requestDocument?: RequestDocument[];
   metadata?: metadata;
 };
@@ -267,9 +267,8 @@ export interface KeyI {
 export type defaultData = {
   address: string;
   title: string;
-  rent: boolean;
+  rent: boolean | null;
   sell: boolean;
-  hasPlanningPermission: boolean | null | string;
   hasChargingStation: boolean;
   hasLandingDeck: boolean;
   hasStorageHub: boolean;
@@ -317,6 +316,10 @@ export type defaultData = {
       weekDayId: number;
     },
   ];
+  hasZoningPermission: boolean | null;
+  orderPhotoforGeneratedMap: boolean;
+  assessorParcelNumber: string;
+  images: string[];
 };
 
 export enum StatusTypes {

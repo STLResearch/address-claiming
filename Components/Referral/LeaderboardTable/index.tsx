@@ -1,6 +1,7 @@
 import { ArrowRightIcon } from "@/Components/Icons";
 import { BalanceLoader } from "@/Components/Wrapped";
 import useAuth from "@/hooks/useAuth";
+import { useMobile } from "@/hooks/useMobile";
 import { Web3authContext } from "@/providers/web3authProvider";
 import RewardService from "@/services/reward";
 import {
@@ -10,7 +11,6 @@ import {
 import { useRouter } from "next/navigation";
 import { FC, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useMobile } from "@/hooks/useMobile";
 
 const LIMIT = 10;
 
@@ -90,7 +90,7 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
         toast.error("No points earned in this current period");
       } else {
         setCurrentPage(data.page);
-        router.push(`/points#${userCurrentPosition}`)
+        router.push(`/points#${userCurrentPosition}`);
         setUserCurrentPosition(data.position);
       }
     }
@@ -139,10 +139,9 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
                       <span
                         className={`${getPosition(index) === userCurrentPosition ? "text-blue" : "text-[#87878D]"} text-base`}
                       >
-                         {isMobile
-                                ? `${blockchainAddress.slice(0, 3)}...${blockchainAddress.slice(-2)}`
-                                : blockchainAddress
-                                }
+                        {isMobile
+                          ? `${blockchainAddress.slice(0, 3)}...${blockchainAddress.slice(-2)}`
+                          : blockchainAddress}
                       </span>
                     </td>
                     <td
@@ -177,16 +176,16 @@ const LeaderboardTable: FC<PropsI> = ({ point, isLoadingSkyBalance }) => {
               {[...Array(totalPages)].map((_, index) => {
                 return (
                   <button
-                  key={index}
-                  onClick={() => handlePrevPage(index + 1)}
-                  className={`w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full text-sm md:text-xl ${
-                    currentPage === index + 1
-                      ? "bg-slate-blue text-white"
-                      : "text-slate-blue"
-                  } transition-all duration-300`}
-                >
-                  {index + 1}
-                </button>
+                    key={index}
+                    onClick={() => handlePrevPage(index + 1)}
+                    className={`w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full text-sm md:text-xl ${
+                      currentPage === index + 1
+                        ? "bg-slate-blue text-white"
+                        : "text-slate-blue"
+                    } transition-all duration-300`}
+                  >
+                    {index + 1}
+                  </button>
                 );
               })}
               {currentPage < totalPages &&

@@ -68,9 +68,9 @@ const Airspaces: React.FC = () => {
   const defaultData: defaultData = {
     address: address,
     title: "",
-    rent: true,
+    rent: null,
     sell: false,
-    hasPlanningPermission: null,
+    hasZoningPermission: null,
     hasChargingStation: false,
     hasLandingDeck: false,
     hasStorageHub: false,
@@ -88,6 +88,9 @@ const Airspaces: React.FC = () => {
       { fromTime: 0, toTime: 24, isAvailable: true, weekDayId: 5 },
       { fromTime: 0, toTime: 24, isAvailable: true, weekDayId: 6 },
     ],
+    orderPhotoforGeneratedMap: false,
+    assessorParcelNumber: "",
+    images: [],
   };
   // Showing
   const [showOptions, setShowOptions] = useState<boolean>(false);
@@ -479,7 +482,7 @@ const Airspaces: React.FC = () => {
     }
   }, [isOpen]);
 
-  const onClaim = async (_address?: string) => {
+  const onClaim = async (images: [], _address?: string) => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
 
@@ -489,14 +492,13 @@ const Airspaces: React.FC = () => {
         return;
       }
       if (!user) return;
-
       setClaimButtonLoading(true);
       const {
         address,
         title,
         hasChargingStation,
         hasLandingDeck,
-        hasPlanningPermission,
+        hasZoningPermission,
         hasStorageHub,
         rent,
         timezone,
@@ -504,6 +506,8 @@ const Airspaces: React.FC = () => {
         noFlyZone,
         isFixedTransitFee,
         weekDayRanges,
+        orderPhotoforGeneratedMap,
+        assessorParcelNumber,
       } = data;
       const latitude = Number(coordinates.latitude);
       const longitude = Number(coordinates.longitude);
@@ -528,7 +532,7 @@ const Airspaces: React.FC = () => {
         latitude,
         longitude,
         timezone,
-        isActive: hasPlanningPermission,
+        hasZoningPermission,
         vertexes: [
           { latitude: latitude + 0.0001, longitude: longitude + 0.0001 },
           { latitude: latitude + 0.0001, longitude: longitude - 0.0001 },
@@ -536,12 +540,10 @@ const Airspaces: React.FC = () => {
           { latitude: latitude - 0.0001, longitude: longitude - 0.0001 },
         ],
         weekDayRanges,
+        orderPhotoforGeneratedMap,
+        assessorParcelNumber,
+        images,
       };
-      if (!rent) {
-        errors.push(
-          "Please ensure to check the rental checkbox before claiming airspace.",
-        );
-      }
       if (!weekDayRanges.some((item) => item.isAvailable)) {
         errors.push("Kindly ensure that at least one day is made available.");
       }
@@ -553,7 +555,6 @@ const Airspaces: React.FC = () => {
       }
 
       const responseData = await claimProperty({ postData });
-
       if (!responseData) {
         setShowFailurePopUp(true);
       } else {

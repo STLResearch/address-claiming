@@ -19,16 +19,23 @@ import PropertiesService from "../../services/PropertiesService";
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingAddresses, setLoadingAddresses] = useState<boolean>(false);
-  const [loadingRegAddresses, setLoadingRegAddresses] = useState<boolean>(false);
+  const [loadingRegAddresses, setLoadingRegAddresses] =
+    useState<boolean>(false);
   const [map, setMap] = useState<Map | null>(null);
   const { isMobile } = useMobile();
-  const [registeredAddress, setRegisteredAddress] = useState<PropertyData[]>([]);
+  const [registeredAddress, setRegisteredAddress] = useState<PropertyData[]>(
+    [],
+  );
   const [mapMove, setMapMove] = useState();
   const [address, setAddress] = useState<string>("");
   const [addressData, setAddressData] = useState<
-    { mapbox_id: string; short_code: string; wikidata: string } | null | undefined
+    | { mapbox_id: string; short_code: string; wikidata: string }
+    | null
+    | undefined
   >();
-  const [addresses, setAddresses] = useState<{ id: string; place_name: string }[]>([]);
+  const [addresses, setAddresses] = useState<
+    { id: string; place_name: string }[]
+  >([]);
   const [flyToAddress, setFlyToAddress] = useState<string>("");
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [marker, setMarker] = useState<Marker | null | undefined>();
@@ -114,7 +121,10 @@ const Rent = () => {
 
           if (responseData.length > 0) {
             for (let i = 0; i < responseData.length; i++) {
-              const lngLat = new mapboxgl.LngLat(responseData[i].longitude, responseData[i].latitude);
+              const lngLat = new mapboxgl.LngLat(
+                responseData[i].longitude,
+                responseData[i].latitude,
+              );
 
               const popup = new mapboxgl.Popup({ offset: 25 })
                 .trackPointer()
@@ -196,7 +206,15 @@ const Rent = () => {
 
   useEffect(() => {
     if (!flyToAddress) return;
-    goToAddress(flyToAddress, setCoordinates, setAddressData, setIsLoading, setMarker, map, marker);
+    goToAddress(
+      flyToAddress,
+      setCoordinates,
+      setAddressData,
+      setIsLoading,
+      setMarker,
+      map,
+      marker,
+    );
   }, [flyToAddress, map]);
 
   useEffect(() => {
@@ -205,7 +223,9 @@ const Rent = () => {
 
   useEffect(() => {
     const inintialRentDataString = localStorage.getItem("rentData");
-    const parsedInitialRentData = inintialRentDataString ? JSON.parse(inintialRentDataString) : null;
+    const parsedInitialRentData = inintialRentDataString
+      ? JSON.parse(inintialRentDataString)
+      : null;
     if (parsedInitialRentData && parsedInitialRentData?.address?.length > 2) {
       setRentData(parsedInitialRentData);
       setFlyToAddress(parsedInitialRentData.address);
@@ -251,8 +271,15 @@ const Rent = () => {
                 setRegAdressShow={setRegAdressShow}
               />
             )}
-            <section className={"relative mb-[79px] flex h-full w-full items-start justify-start md:mb-0 "}>
-              <div className={"!absolute !left-0 !top-0 !m-0 !h-screen !w-screen"} id="map" />
+            <section
+              className={
+                "relative mb-[79px] flex h-full w-full items-start justify-start md:mb-0 "
+              }
+            >
+              <div
+                className={"!absolute !left-0 !top-0 !m-0 !h-screen !w-screen"}
+                id="map"
+              />
 
               {!isMobile && (
                 <div className="flex items-start justify-start">

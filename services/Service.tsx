@@ -34,7 +34,9 @@ const Service = () => {
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
     console.error(error);
     if (!navigator.onLine) {
-      toast.error("Network unavailable. Please check your connection and try again.");
+      toast.error(
+        "Network unavailable. Please check your connection and try again.",
+      );
       return;
     }
     if (!suppressErrorReporting && error.response) {
