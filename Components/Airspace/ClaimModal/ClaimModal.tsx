@@ -239,7 +239,7 @@ export const ClaimModal = ({
                 </div>
                 <div className="flex flex-col gap-[5px] mt-3 md:mt-4">
                   <label htmlFor="name">
-                    Name of airspace<span className="text-[#E04F64]">*</span>
+                  Name of air rights<span className="text-[#E04F64]">*</span>
                   </label>
 
                   <input

@@ -138,7 +138,7 @@ export default function Home() {
                   <span className="font-bold">
                     Secure Access with SkyTrade:
                   </span>{" "}
-                  Register to control land and airspace, ensuring permissions
+                  Register to control land and air rights, ensuring permissions
                   and receive direct fees into your account.
                 </p>
               </div>

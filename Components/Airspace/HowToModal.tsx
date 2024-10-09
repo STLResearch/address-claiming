@@ -18,7 +18,7 @@ const stepsData = [
   {
     title: "Claim Airspace",
     description:
-      "Click the 'Claim Airspace' button to confirm your airspace address. Your Airspace is saved. Modify your details anytime.",
+      "Click the 'Claim Airspace' button to confirm your air rights address. Your Airspace is saved. Modify your details anytime.",
   },
   {
     title: "Checking the details",
@@ -56,7 +56,7 @@ const HowToModal = ({ goBack, handleOpenAirspaceMap }: PropsI) => {
             <EarthIcon isActive={true} />
           </div>
           <p className="px-[30px] text-center text-[15px] text-[#222222]">
-            Ready to claim your airspace? No registered airspace yet, but
+            Ready to claim your air rights? No registered air rights yet, but
             exciting times ahead! 🚀✨
           </p>
           <div

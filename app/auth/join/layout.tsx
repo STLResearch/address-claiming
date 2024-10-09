@@ -3,8 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Join",
-  description:
-    "Create your SkyTrade account to manage your airspace, funds, and referrals with ease.",
+  description: "Create your SkyTrade account to manage your air rights, funds, and referrals with ease.",
 };
 
 export default function JoinLayout({

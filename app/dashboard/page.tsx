@@ -75,7 +75,7 @@ const Dashboard: FC = () => {
                     Welcome to SkyTrade!
                   </h2>
                   <p className="font-normal text-base text-[#87878D] hidden md:flex">
-                    Claim your airspace on the dashboard to kickstart your
+                    Claim your air rights on the dashboard to kickstart your
                     passive income journey. Don&apos;t forget to share the
                     love—refer friends using your code or link and watch your
                     earnings grow. Welcome to the community, where the future is
@@ -115,7 +115,7 @@ const Dashboard: FC = () => {
                         </div>
                       </div>
                       <p className="text-[15px] font-normal text-[#222222]">
-                        Ready to claim your airspace? No registered airspace
+                        Ready to claim your air rights? No registered air rights
                         yet, but exciting times ahead!
                       </p>
                       <div

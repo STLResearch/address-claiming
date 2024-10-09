@@ -75,7 +75,7 @@ const CancelClaimModal = ({
           </div>
         </div>
         <div>
-          Are you sure you want to cancel the claim of the following airspace?
+          Are you sure you want to cancel the claim of the following air rights?
         </div>
 
         <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-deep-blue">
