@@ -10,9 +10,11 @@ const S3UploadServices = () => {
     requestId,
   }: GeneratePublicFileUploadUrlParams) => {
     try {
+      const postData = {contentTypes:fileType,requestId:requestId}
       if (!fileType || !requestId) return;
       const response = await postRequest({
-        uri: `/private/s3Upload/generate-public-file-upload-url?contentType=${fileType}&requestId=${requestId}`,
+        uri: `/private/request-document/generate-upload-url`,
+        postData
       });
       return response?.data;
     } catch (error) {

@@ -42,15 +42,18 @@ const Popup: React.FC<PopupProps> = ({
 
   const onDrop = (acceptedFiles: File[]) => {
     const isValid = acceptedFiles.every((file) => isFileSizeValid(file));
-
     if (isValid) {
-      setSelectedFiles(acceptedFiles);
+      setSelectedFiles(prevFiles => [...prevFiles, ...acceptedFiles]);
     } else {
       toast.error("File size must be less than 20MB!");
     }
   };
 
-  const { getRootProps } = useDropzone({ onDrop, multiple: false });
+  const removeFile = (file: File) => {
+    setSelectedFiles(prevFiles => prevFiles.filter(f => f !== file));
+  };
+
+  const { getRootProps , getInputProps , isDragActive } = useDropzone({ onDrop, multiple: true  });
 
   if (!showPopup) return null;
 
@@ -60,27 +63,30 @@ const Popup: React.FC<PopupProps> = ({
       return;
     }
 
-    if (!isValidFileType(selectedFiles[0].name)) {
-      toast.error("Invalid file type!");
-      return;
-    }
+    // if (!isValidFileType(selectedFiles[0])) {
+    //   toast.error("Invalid file type!");
+    //   return;
+    // }
 
     setLoading(true);
 
+    function getContentTypes(files: File[]): string[] {
+      return files.map(file => file.type);
+    }
     try {
       const generatedRes = await generatePublicFileUploadUrl({
-        fileType: selectedFiles[0]?.type,
+        fileType: getContentTypes(selectedFiles),
         requestId: requestDocument.id,
       });
-
+      console.log(generatedRes,'generatedRes')
       if (!generatedRes?.uploadUrl?.uploadUrl || !generatedRes?.key) {
         throw new Error("Failed to upload file ");
       }
 
-      const imageRes = await uploadImage(generatedRes, selectedFiles[0]);
-      if ((imageRes && imageRes?.data?.status !== "SUCCESS") || !imageRes) {
-        throw new Error("Failed to upload file ");
-      }
+      // const imageRes = await uploadImage(generatedRes, selectedFiles[0]);
+      // if ((imageRes && imageRes?.data?.status !== "SUCCESS") || !imageRes) {
+      //   throw new Error("Failed to upload file ");
+      // }
 
       const path = generatedRes.key.toString();
       const updateResponse = await updateDocument({
@@ -154,23 +160,33 @@ const Popup: React.FC<PopupProps> = ({
             </p>
           </>
         )}
+        <div className="file-upload">
+          <div
+            {...getRootProps({
+              className: `dropzone ${isDragActive ? 'active' : ''}`,
+            })}
+            className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500"
+          >
+            <input {...getInputProps()}/>
+            {isMobile ? (
+              <p className="text-base font-medium text-[#87878D]">
+                Click to upload Document
+              </p>
+            ) : (
+              <p className="text-base font-medium text-[#87878D]">
+                Drag here or click to upload
+              </p>
+            )} 
 
-        <div
-          {...(getRootProps() as DropzoneRootProps)}
-          className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500"
-        >
-          {selectedFiles[0] ? (
-            <div>{selectedFiles[0].name}</div>
-          ) : isMobile ? (
-            <p className="text-base font-medium text-[#87878D]">
-              Click to upload Document
-            </p>
-          ) : (
-            <p className="text-base font-medium text-[#87878D]">
-              Drag here or click to upload
-            </p>
-          )}
+          </div>
         </div>
+        {selectedFiles?.length > 0 && 
+          selectedFiles.map((selectedFile,index)=>(
+            <div className="flex justify-between w-full">
+            <div key={index}>{selectedFile.name}</div>
+            <button onClick={() => removeFile(selectedFile)} className="text-red-400 mr-3">Remove</button>
+            </div>
+        ))}
 
         {requestDocument?.description === "PROOF_OF_OWNERSHIP" && (
           <div>

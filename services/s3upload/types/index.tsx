@@ -1,4 +1,4 @@
 export interface GeneratePublicFileUploadUrlParams {
-  fileType: string;
+  fileType: string[];
   requestId: string | number;
 }
