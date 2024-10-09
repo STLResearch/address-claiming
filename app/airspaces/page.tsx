@@ -715,7 +715,7 @@ const Airspaces: React.FC = () => {
                         className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
                         style={{ maxWidth: "400px" }}
                       >
-                        Claim Airspace
+                       Claim Airspace 
                       </div>
                     )}
                   </div>

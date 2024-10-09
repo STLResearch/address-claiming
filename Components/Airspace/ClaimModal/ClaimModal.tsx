@@ -20,7 +20,7 @@ import { defaultData, PropertyData } from "../../../types";
 import { useMobile } from "@/hooks/useMobile";
 import { useDropzone, DropzoneRootProps } from "react-dropzone";
 import { toast } from "react-toastify";
-import { isFileSizeValid } from "@/utils/propertyUtils/fileUpload";
+import { isFileSizeValid, uploadImage } from "@/utils/propertyUtils/fileUpload";
 import RentalDetails from "./RentalDetails/RentalDetails";
 import AirspacePhotoUpload from "./AirspacePhotoUpload";
 import PlanningPermission from "./PlanningPermission/PlanningPermission";
@@ -57,16 +57,6 @@ export const ClaimModal = ({
   const endOfDivRef = useRef(null);
   const { currentStep } = useTour();
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
-  const handelUpload = async (file: File) => {
-    const generatedRes = await generateArispacePublicFileUploadUrl({
-      fileType: file?.type,
-      referenceId: data.address,
-    });
-    if (generatedRes?.previewUrl) {
-      return generatedRes.previewUrl;
-    }
-    return [];
-  };
 
   useEffect(() => {
     if (endOfDivRef.current && currentStep === 3) {
@@ -99,18 +89,28 @@ export const ClaimModal = ({
   const [steps, setSteps] = useState<ClaimAirspaceSteps>(
     ClaimAirspaceSteps.UNSELECTED,
   );
-  const disableRef = useRef(false);
-  const isDisabled =
-    disableRef.current === true || data.hasZoningPermission === null;
+  const isDisabled =  data.hasZoningPermission === null;
 
   const handleClaim = async () => {
     if (selectedFile.length > 0) {
       const imageList: string[] = [];
-      selectedFile.forEach(async (file) => {
-        const image: string = await handelUpload(file);
-        imageList.push(image);
+      const uploadPromises = selectedFile.map(async (file) => {
+        const generatedRes = await generateArispacePublicFileUploadUrl({
+          fileType: file?.type,
+          referenceId: data.address,
+        });
+        generatedRes.uploadUrl = {
+          uploadUrl: generatedRes.uploadUrl,
+        };
+        const imageRes = await uploadImage(generatedRes, file);
+  
+        if (!imageRes || imageRes?.data?.status !== "SUCCESS") {
+          throw new Error("Failed to upload file");
+        }
+        const path = generatedRes.key.toString();
+        imageList.push(path);
       });
-
+      await Promise.all(uploadPromises);
       onClaim(imageList, inputAddress);
     } else {
       onClaim([], inputAddress);
@@ -154,7 +154,6 @@ export const ClaimModal = ({
         setSteps(ClaimAirspaceSteps.UPLOAD_IMAGE);
       }
     } else if (steps === ClaimAirspaceSteps.UPLOAD_IMAGE) {
-      disableRef.current = true;
       handleClaim();
     } else if (steps === ClaimAirspaceSteps.RENT) {
       setStepCounter(stepsCounter + 1);
