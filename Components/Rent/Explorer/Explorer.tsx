@@ -46,7 +46,7 @@ const Explorer: React.FC<ExplorerProps> = ({
 }) => {
   return (
     <div
-      className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]"
+      className="hidden md:flex bg-white py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
       <div className="flex gap-[5px] items-center">
