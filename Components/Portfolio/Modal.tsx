@@ -197,6 +197,8 @@ const Modal = ({
     }
   };
 
+  const submittedDocumentsCount = requestDocument.filter((doc) => doc.status === 'SUBMITTED').length
+
   return (
     <Fragment>
       <Backdrop />
@@ -249,9 +251,13 @@ const Modal = ({
             </p>
           </div>
         )}
+        {
+          requestDocument && requestDocument?.length > 0 && submittedDocumentsCount > 0 &&
+          
         <div>
           <UploadVerifiedDocuments requestDocument={requestDocument} />
         </div>
+        }
 
         {isOffer ? (
           <div

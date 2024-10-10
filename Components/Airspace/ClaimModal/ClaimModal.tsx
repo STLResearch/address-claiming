@@ -83,34 +83,38 @@ export const ClaimModal = ({
   const [inputAddress, setInputAddress] = useState("");
   const { isMobile } = useMobile();
   const [currentMode, setCurrentMode] = useState("Claim Airspace");
-  const { generateArispacePublicFileUploadUrl } = S3UploadServices();
+  const { generatePublicFileUploadUrls } = S3UploadServices();
   const [stepsCounter, setStepCounter] = useState(1);
 
   const [steps, setSteps] = useState<ClaimAirspaceSteps>(
     ClaimAirspaceSteps.UNSELECTED,
   );
-  const isDisabled =  data.hasZoningPermission === null;
+  const isDisabled = data.hasZoningPermission === null;
 
   const handleClaim = async () => {
     if (selectedFile.length > 0) {
       const imageList: string[] = [];
-      const uploadPromises = selectedFile.map(async (file) => {
-        const generatedRes = await generateArispacePublicFileUploadUrl({
-          fileType: file?.type,
-          referenceId: data.address,
-        });
-        generatedRes.uploadUrl = {
-          uploadUrl: generatedRes.uploadUrl,
-        };
-        const imageRes = await uploadImage(generatedRes, file);
-  
-        if (!imageRes || imageRes?.data?.status !== "SUCCESS") {
-          throw new Error("Failed to upload file");
-        }
-        const path = generatedRes.key.toString();
-        imageList.push(path);
+      const contentTypes = selectedFile.map((file) => file.type);
+
+      const params = await generatePublicFileUploadUrls({
+        contentTypes,
+        referenceId: data.address,
       });
-      await Promise.all(uploadPromises);
+
+      if (params) {
+        const uploadPromises = params.map(async (param, index) => {
+          const imageRes = await uploadImage(
+            param.uploadUrl,
+            selectedFile[index],
+          );
+
+          if (!imageRes || imageRes?.data?.status !== "SUCCESS") {
+            throw new Error("Failed to upload file");
+          }
+          imageList.push(param.key);
+        });
+        await Promise.all(uploadPromises);
+      }
       onClaim(imageList, inputAddress);
     } else {
       onClaim([], inputAddress);
@@ -238,7 +242,7 @@ export const ClaimModal = ({
                 </div>
                 <div className="flex flex-col gap-[5px] mt-3 md:mt-4">
                   <label htmlFor="name">
-                  Name of air rights<span className="text-[#E04F64]">*</span>
+                    Name of air rights<span className="text-[#E04F64]">*</span>
                   </label>
 
                   <input
