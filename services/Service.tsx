@@ -18,12 +18,8 @@ const TIMEOUT = 300000;
 const CUSTOM_ERROR_MESSAGE = "An Error occured! Please try again later.";
 
 const Service = () => {
-  const { provider } = useContext(Web3authContext);
+  const { provider, web3auth } = useContext(Web3authContext);
 
-  const isLocalhostUrl = (url: string): boolean => {
-    const localhostRegex = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/.*)?$/;
-    return localhostRegex.test(url);
-  };
 
   const getRequestUrl = (uri: string): string => {
     const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
@@ -84,13 +80,15 @@ const Service = () => {
 
         const signature = base58.encode(result);
 
+        const userInformation = await web3auth.getUserInfo();
+
         newHeader = {
           "Content-Type": "application/json",
           sign: signature,
-          // Support localhost
           sign_issue_at: message.payload.issuedAt,
           sign_nonce: message.payload.nonce,
           sign_address: accounts[0],
+          email_address: userInformation.email,
         };
       } else {
         newHeader = {

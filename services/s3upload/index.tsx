@@ -13,7 +13,7 @@ const S3UploadServices = () => {
       const postData = {contentTypes:fileType,requestId:requestId}
       if (!fileType || !requestId) return;
       const response = await postRequest({
-        uri: `/private/request-document/generate-upload-url`,
+        uri: `/private/s3Upload/generate-private-file-upload-url`,
         postData
       });
       return response?.data;

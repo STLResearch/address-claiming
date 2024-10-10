@@ -56,7 +56,7 @@ export interface RequestDocument {
   dateCreated: string;
   dateUpdated: string;
   document: Document;
-  previewUrl: string;
+  previewUrl: string[] | [];
 }
 
 export type propertyStatus = {
