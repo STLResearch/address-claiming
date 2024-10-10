@@ -313,7 +313,6 @@ export const ClaimModal = ({
                     onClick={handleNextButton}
                     isLoading={claimButtonLoading}
                     color="white"
-                    disable={isDisabled}
                   >
                     {isClaimAirspace ? "Claim Airspace" : "Next"}
                   </LoadingButton>
