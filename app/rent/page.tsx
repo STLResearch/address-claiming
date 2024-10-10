@@ -16,19 +16,28 @@ import { goToAddress } from "@/utils/apiUtils/apiFunctions";
 import { Coordinates, PropertyData } from "@/types";
 import Sidebar from "@/Components/Shared/Sidebar";
 import PropertiesService from "../../services/PropertiesService";
+import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
+
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingAddresses, setLoadingAddresses] = useState<boolean>(false);
-  const [loadingRegAddresses, setLoadingRegAddresses] = useState<boolean>(false);
+  const [loadingRegAddresses, setLoadingRegAddresses] =
+    useState<boolean>(false);
   const [map, setMap] = useState<Map | null>(null);
   const { isMobile } = useMobile();
-  const [registeredAddress, setRegisteredAddress] = useState<PropertyData[]>([]);
+  const [registeredAddress, setRegisteredAddress] = useState<PropertyData[]>(
+    [],
+  );
   const [mapMove, setMapMove] = useState();
   const [address, setAddress] = useState<string>("");
   const [addressData, setAddressData] = useState<
-    { mapbox_id: string; short_code: string; wikidata: string } | null | undefined
+    | { mapbox_id: string; short_code: string; wikidata: string }
+    | null
+    | undefined
   >();
-  const [addresses, setAddresses] = useState<{ id: string; place_name: string }[]>([]);
+  const [addresses, setAddresses] = useState<
+    { id: string; place_name: string }[]
+  >([]);
   const [flyToAddress, setFlyToAddress] = useState<string>("");
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [marker, setMarker] = useState<Marker | null | undefined>();
@@ -38,30 +47,47 @@ const Rent = () => {
   const [regAdressShow, setRegAdressShow] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const { findPropertiesByCoordinates } = PropertiesService();
+  // Define the shape of the data you're receiving
+  interface Area {
+    type: string;
+    message: string;
+    region: {
+      type: string;
+      coordinates: number[][] | number[][][];
+    };
+  }
+
   useEffect(() => {
     if (map) return;
+
     const createMap = () => {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
+
       const newMap = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
         center: [-104.718243, 40.413869],
         zoom: 5,
       });
+
       newMap.on("render", function () {
         newMap.resize();
       });
+
       newMap.on("load", async function () {
-        let restrictedAreas = [];
+        let restrictedAreas: Area[] = [];
         try {
-          const response = await fetch("https://dev-api.sky.trade/restrictions?geoHash=gcp");
-          restrictedAreas = await response.json();
+          const response = await fetch(
+            "https://dev-api.sky.trade/restrictions?geoHash=gcp",
+          );
+          restrictedAreas = (await response.json()) as Area[]; // Type assertion for restricted areas
         } catch (error) {
           console.error("Error fetching restricted areas:", error);
         }
+
         const geoJsonData = {
-          type: "FeatureCollection",
-          features: restrictedAreas.map((area, index) => ({
+          type: "FeatureCollection", // Make sure this is a literal "FeatureCollection"
+          features: restrictedAreas.map((area) => ({
             type: "Feature",
             properties: {
               type: area.type,
@@ -73,10 +99,12 @@ const Rent = () => {
             },
           })),
         };
+
         newMap.addSource("restricted-areas", {
           type: "geojson",
           data: geoJsonData,
         });
+
         newMap.addLayer({
           id: "restricted-areas-layer",
           type: "fill",
@@ -87,8 +115,10 @@ const Rent = () => {
             "fill-opacity": 0.5,
           },
         });
+
         newMap.zoomOut({ duration: 4 });
-        let timeoutId;
+
+        let timeoutId: ReturnType<typeof setTimeout>;
         newMap.on("move", async (e) => {
           setLoadingRegAddresses(true);
           clearTimeout(timeoutId);
@@ -114,11 +144,16 @@ const Rent = () => {
                 );
               });
             }
+
             setRegisteredAddress(formattedProperties);
             setLoadingRegAddresses(false);
+
             if (responseData.length > 0) {
               for (let i = 0; i < responseData.length; i++) {
-                const lngLat = new mapboxgl.LngLat(responseData[i].longitude, responseData[i].latitude);
+                const lngLat = new mapboxgl.LngLat(
+                  responseData[i].longitude,
+                  responseData[i].latitude,
+                );
                 const popup = new mapboxgl.Popup({ offset: 25 })
                   .trackPointer()
                   .setHTML(`<strong>${responseData[i].address}</strong>`);
@@ -128,7 +163,7 @@ const Rent = () => {
                   .setLngLat(lngLat)
                   .setPopup(popup)
                   .addTo(newMap);
-                // Optional: Add event listeners to marker for interactivity
+
                 marker.getElement().addEventListener("click", function () {
                   setRentData(responseData[i]);
                   setShowClaimModal(true);
@@ -138,6 +173,7 @@ const Rent = () => {
           }, 1000);
         });
       });
+
       setMap(newMap);
     };
 
@@ -188,7 +224,15 @@ const Rent = () => {
 
   useEffect(() => {
     if (!flyToAddress) return;
-    goToAddress(flyToAddress, setCoordinates, setAddressData, setIsLoading, setMarker, map, marker);
+    goToAddress(
+      flyToAddress,
+      setCoordinates,
+      setAddressData,
+      setIsLoading,
+      setMarker,
+      map,
+      marker,
+    );
   }, [flyToAddress, map]);
 
   useEffect(() => {
@@ -258,8 +302,15 @@ const Rent = () => {
                 setRegAdressShow={setRegAdressShow}
               />
             )}
-            <section className={"relative mb-[79px] flex h-full w-full items-start justify-start md:mb-0"}>
-              <div className={"!absolute !left-0 !top-0 !m-0 !h-screen !w-screen"} id="map" />
+            <section
+              className={
+                "relative mb-[79px] flex h-full w-full items-start justify-start md:mb-0"
+              }
+            >
+              <div
+                className={"!absolute !left-0 !top-0 !m-0 !h-screen !w-screen"}
+                id="map"
+              />
 
               {!isMobile && (
                 <div className="flex items-start justify-start">
