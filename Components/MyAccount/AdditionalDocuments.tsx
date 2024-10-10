@@ -69,12 +69,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
   });
 
   if (!showPopup) return null;
-  function getContentTypes(files: File[]): string[] {
-    return files.map((file) => file.type);
-  }
-  function getFilePaths(response: any[]): string[] {
-    return response.map((file) => file.key);
-  }
+
   const handleClick = async () => {
     if (!requestDocument) {
       toast.error("No document request at the moment");
@@ -103,8 +98,8 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
         requestId: requestDocument.id,
       });
 
-      if (params?.length === 0) {
-        throw new Error("Failed to upload file ");
+      if (!params) {
+        toast.error("Failed to upload file ");
       }
 
       if (params) {
