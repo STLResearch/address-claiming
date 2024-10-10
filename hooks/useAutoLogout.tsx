@@ -40,10 +40,7 @@ const useAutoLogout = () => {
     const isConnecting = web3auth?.status === "connecting";
 
     dispatch(setIsWaitingScreenVisible(isConnecting));
-    localStorage.setItem(
-      "isWaitingScreenVisible",
-      JSON.stringify(isConnecting),
-    );
+    localStorage.setItem("isWaitingScreenVisible", JSON.stringify(isConnecting));
   }, [web3auth?.status]);
 
   useEffect(() => {
@@ -53,9 +50,7 @@ const useAutoLogout = () => {
 
     if (!web3auth) return;
 
-    const routes = publicAccessRoutes
-      .map((x) => x.redirectTo)
-      .concat(["/auth", "/"]);
+    const routes = publicAccessRoutes.map((x) => x.redirectTo).concat(["/auth", "/"]);
     const authRoutes = ["/auth", "/auth/join", "/"];
 
     const userLocalstorage = localStorage.getItem("user");
@@ -65,9 +60,7 @@ const useAutoLogout = () => {
     } else if (!userLocalstorage && !authRoutes.includes(String(pathname))) {
       logout();
     } else if (web3auth?.status === "ready") {
-      const fetchedToken = JSON.parse(
-        String(localStorage.getItem("openlogin_store")),
-      );
+      const fetchedToken = JSON.parse(String(localStorage.getItem("openlogin_store")));
       if (!fetchedToken?.sessionId) {
         redirectTo();
         localStorage.removeItem("user");

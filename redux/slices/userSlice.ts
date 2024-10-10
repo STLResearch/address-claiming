@@ -48,10 +48,7 @@ const userSlice: Slice<UserState> = createSlice({
     setUser: (state, action: PayloadAction<User | null>) => {
       state.user = action.payload;
     },
-    setUserUSDWalletBalance: (
-      state,
-      action: PayloadAction<UserUSDWalletBalanceI>,
-    ) => {
+    setUserUSDWalletBalance: (state, action: PayloadAction<UserUSDWalletBalanceI>) => {
       state.userUSDWalletBalance = action.payload;
     },
     setActivePortfolioTab: (state, action: PayloadAction<PortfolioTabEnum>) => {

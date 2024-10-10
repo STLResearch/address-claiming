@@ -8,18 +8,15 @@ interface PropsI {
 const SuccessPopUp = ({ isVisible, setShowSuccessPopUp }: PropsI) => {
   return (
     <div
-      className={` z-20 absolute top-3.5 ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5`}
+      className={`absolute top-3.5 z-20 ${isVisible ? "right-0" : "-right-[100%]"} flex items-center gap-5 bg-white p-5`}
     >
-      <div className="flex items-center justify-center w-5 h-5">
+      <div className="flex h-5 w-5 items-center justify-center">
         <SuccessIcon />
       </div>
-      <div className="text-light-green text-base gap-3">
+      <div className="gap-3 text-base text-light-green">
         Congratulations on claiming your piece of the sky successfully!
       </div>
-      <div
-        className=" cursor-pointer text-light-green text-lg font-bold"
-        onClick={() => setShowSuccessPopUp(false)}
-      >
+      <div className="cursor-pointer text-lg font-bold text-light-green" onClick={() => setShowSuccessPopUp(false)}>
         X
       </div>
     </div>

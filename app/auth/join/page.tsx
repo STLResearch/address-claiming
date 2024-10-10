@@ -88,12 +88,7 @@ const IndividualSignup: React.FC = () => {
       if (status === null) {
         setIsStatusValid(false);
       }
-      if (
-        name === "" ||
-        !phoneCheck.status ||
-        status === null ||
-        !isEmailValid(category.email)
-      ) {
+      if (name === "" || !phoneCheck.status || status === null || !isEmailValid(category.email)) {
         return;
       }
 
@@ -142,23 +137,16 @@ const IndividualSignup: React.FC = () => {
       <Head>
         <title>StyTrade - Login</title>
       </Head>
-      {isLoading &&
-        createPortal(<Backdrop />, document.getElementById("backdrop-root")!)}
-      {isLoading &&
-        createPortal(<Spinner />, document.getElementById("backdrop-root")!)}
+      {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root")!)}
+      {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root")!)}
 
-      <div className="bg-[#F6FAFF]  max-sm:bg-[white]  md:w-full md:h-full  w-screen h-screen flex items-center justify-center mx-auto">
-        <div className=" w-full md:w-[449px]  flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] justify-center m-auto">
-          <Image
-            src={"/images/logo-1.svg"}
-            alt="Company's logo"
-            width={199}
-            height={77}
-          />
+      <div className="mx-auto flex h-screen w-screen items-center justify-center bg-[#F6FAFF] max-sm:bg-[white] md:h-full md:w-full">
+        <div className="m-auto flex w-full flex-col items-center justify-center gap-[15px] bg-white px-[30px] py-[40px] md:w-[449px]">
+          <Image src={"/images/logo-1.svg"} alt="Company's logo" width={199} height={77} />
           {part === 0 && <PartOne setPart={setPart} />}
           {part === 1 && (
             <Fragment>
-              <div className="relative flex flex-col gap-[5px] w-full">
+              <div className="relative flex w-full flex-col gap-[5px]">
                 <label
                   className="text-[14px] font-normal"
                   style={{
@@ -175,36 +163,26 @@ const IndividualSignup: React.FC = () => {
                     setName(e.target.value);
                   }}
                   placeholder="John Doe"
-                  className="rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none"
+                  className="rounded-lg px-[22px] py-4 font-sans placeholder:text-sm placeholder:font-medium placeholder:text-[#B8B8B8] focus:outline-none"
                   style={{
-                    border: isNameValid
-                      ? "1px solid #87878D"
-                      : "1px solid #E04F64",
+                    border: isNameValid ? "1px solid #87878D" : "1px solid #E04F64",
                   }}
                 />
-                {!isNameValid && (
-                  <p className="text-[11px] italic text-red-600">
-                    This field is mandatory
-                  </p>
-                )}
+                {!isNameValid && <p className="text-[11px] italic text-red-600">This field is mandatory</p>}
               </div>
-              <div className="relative flex flex-col gap-[5px] w-full">
+              <div className="relative flex w-full flex-col gap-[5px]">
                 <label
                   className="text-[14px] font-normal"
                   style={{
-                    color: isPhoneNumberValid
-                      ? "rgba(0, 0, 0, 0.50)"
-                      : "#E04F64",
+                    color: isPhoneNumberValid ? "rgba(0, 0, 0, 0.50)" : "#E04F64",
                   }}
                 >
                   Phone<span className="text-[#E04F64]">*</span>
                 </label>
                 <div
-                  className="rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none"
+                  className="rounded-lg px-[22px] py-4 font-sans placeholder:text-sm placeholder:font-medium placeholder:text-[#B8B8B8] focus:outline-none"
                   style={{
-                    border: isPhoneNumberValid
-                      ? "1px solid #87878D"
-                      : "1px solid #E04F64",
+                    border: isPhoneNumberValid ? "1px solid #87878D" : "1px solid #E04F64",
                   }}
                 >
                   <PhoneInput
@@ -217,13 +195,9 @@ const IndividualSignup: React.FC = () => {
                     placeholder="Enter your phone number"
                   />
                 </div>
-                {!isPhoneNumberValid && (
-                  <p className="text-[11px] italic text-red-600">
-                    {errorMessage}
-                  </p>
-                )}
+                {!isPhoneNumberValid && <p className="text-[11px] italic text-red-600">{errorMessage}</p>}
               </div>
-              <div className="relative flex flex-col gap-[5px] w-full">
+              <div className="relative flex w-full flex-col gap-[5px]">
                 <label
                   className="text-[14px] font-normal"
                   style={{
@@ -234,15 +208,13 @@ const IndividualSignup: React.FC = () => {
                 </label>
                 <div className="flex flex-col gap-[11px]">
                   <label
-                    className="rounded-lg py-4 px-[22px] flex gap-[14.5px] items-center text-[14px]"
+                    className="flex items-center gap-[14.5px] rounded-lg px-[22px] py-4 text-[14px]"
                     style={{
-                      border: isStatusValid
-                        ? "1px solid #87878D"
-                        : "1px solid #E04F64",
+                      border: isStatusValid ? "1px solid #87878D" : "1px solid #E04F64",
                     }}
                   >
                     <input
-                      className="relative w-[16.67px] h-[16.67px] p-[2.5px]"
+                      className="relative h-[16.67px] w-[16.67px] p-[2.5px]"
                       checked={status === 0}
                       value={0}
                       onChange={(e) => {
@@ -251,12 +223,8 @@ const IndividualSignup: React.FC = () => {
                       }}
                       style={{
                         appearance: "none",
-                        border:
-                          status !== 0
-                            ? "2px solid #222222"
-                            : "2px solid #0653EA",
-                        backgroundColor:
-                          status === 0 ? "#0653EA" : "transparent",
+                        border: status !== 0 ? "2px solid #222222" : "2px solid #0653EA",
+                        backgroundColor: status === 0 ? "#0653EA" : "transparent",
                         borderRadius: "50%",
                         backgroundClip: "content-box",
                       }}
@@ -267,11 +235,11 @@ const IndividualSignup: React.FC = () => {
                     I&apos;m an individual
                   </label>
                   <label
-                    className="rounded-lg py-4 px-[22px] flex gap-[14.5px] items-center text-[14px]"
+                    className="flex items-center gap-[14.5px] rounded-lg px-[22px] py-4 text-[14px]"
                     style={{ border: "1px solid #87878D" }}
                   >
                     <input
-                      className="relative w-[16.67px] h-[16.67px] p-[2.5px]"
+                      className="relative h-[16.67px] w-[16.67px] p-[2.5px]"
                       checked={status === 1}
                       value={1}
                       onChange={(e) => {
@@ -280,12 +248,8 @@ const IndividualSignup: React.FC = () => {
                       }}
                       style={{
                         appearance: "none",
-                        border:
-                          status !== 1
-                            ? "2px solid #222222"
-                            : "2px solid #0653EA",
-                        backgroundColor:
-                          status === 1 ? "#0653EA" : "transparent",
+                        border: status !== 1 ? "2px solid #222222" : "2px solid #0653EA",
+                        backgroundColor: status === 1 ? "#0653EA" : "transparent",
                         borderRadius: "50%",
                         backgroundClip: "content-box",
                       }}
@@ -296,13 +260,9 @@ const IndividualSignup: React.FC = () => {
                     I&apos;m a corporate entity
                   </label>
                 </div>
-                {!isStatusValid && (
-                  <p className="text-[11px] italic text-red-600">
-                    This field is mandatory
-                  </p>
-                )}
+                {!isStatusValid && <p className="text-[11px] italic text-red-600">This field is mandatory</p>}
               </div>
-              <div className="relative flex flex-col gap-[5px] w-full">
+              <div className="relative flex w-full flex-col gap-[5px]">
                 <label
                   className="text-[14px] font-normal"
                   style={{
@@ -320,26 +280,26 @@ const IndividualSignup: React.FC = () => {
                     setReferralCode(event.target.value?.toUpperCase());
                   }}
                   disabled={referralDisabled}
-                  className="rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none"
+                  className="rounded-lg px-[22px] py-4 font-sans placeholder:text-sm placeholder:font-medium placeholder:text-[#B8B8B8] focus:outline-none"
                   style={{
                     border: "1px solid #87878D",
                   }}
                 />
               </div>
               <div
-                className="w-full bg-[#0653EA] py-[16px] flex items-center justify-center text-white font-normal text-[15px] rounded-lg cursor-pointer"
+                className="flex w-full cursor-pointer items-center justify-center rounded-lg bg-[#0653EA] py-[16px] text-[15px] font-normal text-white"
                 onClick={formSubmitHandler}
               >
                 Submit
               </div>
             </Fragment>
           )}
-          <div className="flex items-center justify-center pt-5 gap-[11px]">
+          <div className="flex items-center justify-center gap-[11px] pt-5">
             {[0, 1].map((_, index) => (
               <div
                 key={index}
                 onClick={() => setPart(index)}
-                className="cursor-pointer w-[14px] h-[14px]"
+                className="h-[14px] w-[14px] cursor-pointer"
                 style={{
                   background: index !== part ? "#D9D9D9" : "#0653EA",
                   border: index === part ? "1px solid #D9D9D9" : "#0653EA",

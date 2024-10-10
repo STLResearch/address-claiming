@@ -1,12 +1,7 @@
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import LoadingButton from "../../../Components/LoadingButton/LoadingButton";
 import useAuth from "../../../hooks/useAuth";
-import {
-  ArrowLeftIcon,
-  CloseIconBlack,
-  InfoIcon,
-  LocationPointIcon,
-} from "../../../Components/Icons";
+import { ArrowLeftIcon, CloseIconBlack, InfoIcon, LocationPointIcon } from "../../../Components/Icons";
 import Link from "next/link";
 import VariableFeeRentalRangesSelect from "./RentalDetails/VariableFeeRentalRangesSelect";
 import TimeZoneSelect from "./RentalDetails/TimeZoneSelect";
@@ -46,8 +41,7 @@ export const ClaimModal = ({
     if (endOfDivRef.current && currentStep === 3) {
       const { scrollHeight, clientHeight } = endOfDivRef.current;
       const maxScrollTop = scrollHeight - clientHeight;
-      (endOfDivRef.current as any).scrollTop =
-        maxScrollTop > 0 ? maxScrollTop : 0;
+      (endOfDivRef.current as any).scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
     }
   }, [currentStep]);
 
@@ -87,26 +81,23 @@ export const ClaimModal = ({
   return (
     <div>
       <Backdrop />
-      <div className="claim-modal-step fixed left-0 top-1/2 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] rounded-t-3xl w-full md:w-[689px] max-h-[50dvh] md:max-h-[640px] h-[90%] md:h-auto z-[500] sm:z-50 flex flex-col gap-[15px] overflow-y-auto overflow-x-hidden">
+      <div className="claim-modal-step fixed left-0 top-1/2 z-[500] flex h-[90%] max-h-[50dvh] w-full flex-col gap-[15px] overflow-y-auto overflow-x-hidden rounded-t-3xl bg-white sm:z-50 md:left-1/2 md:top-1/2 md:h-auto md:max-h-[640px] md:w-[689px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[30px]">
         <div
-          className=" hidden md:block z-[100] h-[68px] sticky top-0 left-0 right-0 py-[20px] px-[29px] -mt-[1px] md:shadow-none bg-white "
+          className="sticky left-0 right-0 top-0 z-[100] -mt-[1px] hidden h-[68px] bg-white px-[29px] py-[20px] md:block md:shadow-none"
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
         >
-          <div className="relative flex items-center gap-[20px] md:p-0 ">
-            <div className="flex justify-center items-center w-[95%] gap-2 ">
-              <h2 className="text-[#222222] text-center font-medium text-xl">
-                Claim Airspace
-              </h2>
+          <div className="relative flex items-center gap-[20px] md:p-0">
+            <div className="flex w-[95%] items-center justify-center gap-2">
+              <h2 className="text-center text-xl font-medium text-[#222222]">Claim Airspace</h2>
               <div
                 onClick={() => setIsInfoVisible((prev) => !prev)}
-                className="hidden md:block w-[20px] h-[20px] relative tems-center justify-center"
+                className="tems-center relative hidden h-[20px] w-[20px] justify-center md:block"
               >
                 <InfoIcon />
                 {isInfoVisible && (
-                  <div className="absolute -top-4 left-6 w-[189px] bg-[#CCE3FC] rounded-[4px] p-[12px] font-normal text-[10px] italic">
-                    Note that we store your data securely with advanced
-                    encryption and strict authentication measures to ensure
-                    utmost privacy and protection.
+                  <div className="absolute -top-4 left-6 w-[189px] rounded-[4px] bg-[#CCE3FC] p-[12px] text-[10px] font-normal italic">
+                    Note that we store your data securely with advanced encryption and strict authentication measures to
+                    ensure utmost privacy and protection.
                   </div>
                 )}
               </div>
@@ -114,39 +105,36 @@ export const ClaimModal = ({
 
             <div
               onClick={onCloseModal}
-              className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
+              className="absolute right-0 top-0 ml-auto hidden h-[15px] w-[15px] cursor-pointer md:block"
             >
               <CloseIconBlack />
             </div>
           </div>
         </div>
-        <div className="mt-3 md:mt-0 overflow-y-scroll">
+        <div className="mt-3 overflow-y-scroll md:mt-0">
           {isMobile && (
-            <div
-              onClick={onCloseModal}
-              className="flex flex-col items-center justify-center"
-            >
+            <div onClick={onCloseModal} className="flex flex-col items-center justify-center">
               <div className="flex flex-col items-center">
-                <div className="h-2.5 w-16 bg-[#D9D9D9] rounded-full mb-2"></div>
+                <div className="mb-2 h-2.5 w-16 rounded-full bg-[#D9D9D9]"></div>
                 <h1 className="text-lg font-semibold">Claim Airspace</h1>
               </div>
             </div>
           )}
-          <div className="px-[29px] mt-4 md:mt-0">
+          <div className="mt-4 px-[29px] md:mt-0">
             <div
-              className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
+              className="flex items-center gap-[10px] rounded-lg px-[22px] py-4"
               style={{ border: "1px solid #4285F4" }}
             >
-              <div className="w-6 h-6 flex items-center justify-center">
+              <div className="flex h-6 w-6 items-center justify-center">
                 <LocationPointIcon />
               </div>
-              {dontShowAddressOnInput ? (
+              {dontShowAddressOnInput ?
                 <input
                   value={inputAddress}
                   onChange={(e) => {
                     setInputAddress(e.target.value);
                   }}
-                  className="text-[14px] outline-none text-[#222222] flex-1"
+                  className="flex-1 text-[14px] text-[#222222] outline-none"
                   style={{ border: "none" }}
                   type="text"
                   name="address"
@@ -154,10 +142,9 @@ export const ClaimModal = ({
                   autoComplete="off"
                   placeholder="Enter address"
                 />
-              ) : (
-                <input
+              : <input
                   value={data?.address}
-                  className="text-[14px] outline-none text-[#222222] flex-1"
+                  className="flex-1 text-[14px] text-[#222222] outline-none"
                   style={{ border: "none" }}
                   type="text"
                   name="address"
@@ -165,19 +152,17 @@ export const ClaimModal = ({
                   autoComplete="off"
                   placeholder="Enter address"
                 />
-              )}
+              }
             </div>
-            <div className="flex flex-col gap-[5px] mt-3 md:mt-4">
+            <div className="mt-3 flex flex-col gap-[5px] md:mt-4">
               <label htmlFor="name">
                 Name of airspace<span className="text-[#E04F64]">*</span>
               </label>
 
               <input
                 value={data?.title}
-                onChange={(e) =>
-                  setData((prev) => ({ ...prev, title: e.target.value }))
-                }
-                className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222] mt-0.5 md:mt-1"
+                onChange={(e) => setData((prev) => ({ ...prev, title: e.target.value }))}
+                className="mt-0.5 rounded-lg px-[22px] py-[16px] text-[14px] text-[#222222] outline-none md:mt-1"
                 style={{ border: "1px solid #87878D" }}
                 type="text"
                 name="name"
@@ -185,10 +170,8 @@ export const ClaimModal = ({
                 autoComplete="off"
               />
             </div>
-            <div className="flex flex-col gap-[10px] mt-2 md:mt-3">
-              <p className="text-[14px] font-normal text-[#838187] ">
-                Are you looking to Rent or Sell your airspace?
-              </p>
+            <div className="mt-2 flex flex-col gap-[10px] md:mt-3">
+              <p className="text-[14px] font-normal text-[#838187]">Are you looking to Rent or Sell your airspace?</p>
               <div className="flex items-center gap-[7px]">
                 <input
                   className="h-[18px] w-[18px] cursor-pointer"
@@ -224,42 +207,33 @@ export const ClaimModal = ({
               </div>
             </div>
             <Fragment>
-              <h2 className="text-[#222222] font-normal text-[20px] leading-[3rem] ">
-                Rental Details
-              </h2>
+              <h2 className="text-[20px] font-normal leading-[3rem] text-[#222222]">Rental Details</h2>
               <Link
                 target="_blank"
                 href={"https://skytrade.tawk.help"}
-                className="text-[#0653EA] text-[14px] font-normal cursor-pointer leading-[1.5rem]"
+                className="cursor-pointer text-[14px] font-normal leading-[1.5rem] text-[#0653EA]"
               >
                 Learn more about rentals in our FAQ.
               </Link>
-              <div className="md:flex items-center justify-between gap-[15px] mt-4">
-                <div className="flex-1 ">
+              <div className="mt-4 items-center justify-between gap-[15px] md:flex">
+                <div className="flex-1">
                   <VariableFeeRentalRangesSelect
                     fee={data?.transitFee}
-                    setFee={(fee) =>
-                      setData((prev) => ({ ...prev, transitFee: "" + fee }))
-                    }
+                    setFee={(fee) => setData((prev) => ({ ...prev, transitFee: "" + fee }))}
                   />
                 </div>
-                <div className="flex-1 mt-4 md:mt-0 ">
-                  <TimeZoneSelect
-                    setTimeZone={(timezone) =>
-                      setData((prev) => ({ ...prev, timezone }))
-                    }
-                    data={data}
-                  />
+                <div className="mt-4 flex-1 md:mt-0">
+                  <TimeZoneSelect setTimeZone={(timezone) => setData((prev) => ({ ...prev, timezone }))} data={data} />
                 </div>
               </div>
               <div className="flex flex-col gap-[10px]">
-                <p className="text-[14px] font-normal text-[#838187] mt-4">
+                <p className="mt-4 text-[14px] font-normal text-[#838187]">
                   Select extra features your facility provides
                 </p>
-                <div className=" flex-col  flex md:flex-row  md:items-center gap-[10px] leading-[2rem]">
+                <div className="flex flex-col gap-[10px] leading-[2rem] md:flex-row md:items-center">
                   <div className="flex items-center gap-[5px]">
                     <input
-                      className="w-[18px] h-[18px] cursor-pointer"
+                      className="h-[18px] w-[18px] cursor-pointer"
                       type="checkbox"
                       id="hasLandingDeck"
                       name="hasLandingDeck"
@@ -271,16 +245,13 @@ export const ClaimModal = ({
                         }))
                       }
                     />
-                    <label
-                      htmlFor="hasLandingDeck"
-                      className="text-[#87878D] text-[14px] font-normal"
-                    >
+                    <label htmlFor="hasLandingDeck" className="text-[14px] font-normal text-[#87878D]">
                       Landing Deck
                     </label>
                   </div>
-                  <div className="flex items-center gap-[5px] mt-1">
+                  <div className="mt-1 flex items-center gap-[5px]">
                     <input
-                      className="w-[18px] h-[18px] cursor-pointer"
+                      className="h-[18px] w-[18px] cursor-pointer"
                       type="checkbox"
                       id="hasChargingStation"
                       name="hasChargingStation"
@@ -292,16 +263,13 @@ export const ClaimModal = ({
                         }))
                       }
                     />
-                    <label
-                      htmlFor="hasChargingStation"
-                      className="text-[#87878D] text-[14px] font-normal"
-                    >
+                    <label htmlFor="hasChargingStation" className="text-[14px] font-normal text-[#87878D]">
                       Charging Station
                     </label>
                   </div>
-                  <div className="flex items-center gap-[5px] mt-1">
+                  <div className="mt-1 flex items-center gap-[5px]">
                     <input
-                      className="w-[18px] h-[18px] cursor-pointer"
+                      className="h-[18px] w-[18px] cursor-pointer"
                       type="checkbox"
                       id="hasStorageHub"
                       name="hasStorageHub"
@@ -313,16 +281,13 @@ export const ClaimModal = ({
                         }))
                       }
                     />
-                    <label
-                      htmlFor="hasStorageHub"
-                      className="text-[#87878D] text-[14px] font-normal"
-                    >
+                    <label htmlFor="hasStorageHub" className="text-[14px] font-normal text-[#87878D]">
                       Storage Hub
                     </label>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-[15px] mt-2">
+              <div className="mt-2 flex flex-col gap-[15px]">
                 <p>
                   Availability<span className="text-[#E04F64]">*</span>
                 </p>
@@ -339,41 +304,35 @@ export const ClaimModal = ({
             {data?.sell && (
               <Fragment>
                 <div className="flex items-center gap-[7.5px]">
-                  <h2 className="text-[#222222] font-normal text-[20px]">
-                    Selling Details
-                  </h2>
+                  <h2 className="text-[20px] font-normal text-[#222222]">Selling Details</h2>
                   <div
                     onClick={() => setIsInfoVisible((prev) => !prev)}
-                    className="relative w-[20px] h-[20px] flex justify-center items-center"
+                    className="relative flex h-[20px] w-[20px] items-center justify-center"
                   >
                     <InfoIcon />
                     {isInfoVisible && (
-                      <div className="absolute -top-4 left-6 w-[189px] bg-[#CCE3FC] rounded-[4px] p-[12px] font-normal text-[10px] italic">
-                        Note that rental availability are not applicable to your
-                        selling
+                      <div className="absolute -top-4 left-6 w-[189px] rounded-[4px] bg-[#CCE3FC] p-[12px] text-[10px] font-normal italic">
+                        Note that rental availability are not applicable to your selling
                       </div>
                     )}
                   </div>
                 </div>
                 <Link
                   href={"https://skytrade.tawk.help"}
-                  className="text-[#0653EA] text-[14px] font-normal cursor-pointer"
+                  className="cursor-pointer text-[14px] font-normal text-[#0653EA]"
                 >
                   Learn more about selling in our FAQ.
                 </Link>
                 <div className="flex flex-col gap-[5px]">
-                  <label
-                    className="font-normal text-[#838187] text-[14px]"
-                    htmlFor="sellingPrice"
-                  >
+                  <label className="text-[14px] font-normal text-[#838187]" htmlFor="sellingPrice">
                     Selling Price
                   </label>
                   <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center text-[14px] pl-[22px] text-[#222222] ">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-[22px] text-[14px] text-[#222222]">
                       $
                     </span>
                     <input
-                      className="rounded-lg pl-[31px] w-full py-[16px] text-[14px] text-[#222222] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="w-full rounded-lg py-[16px] pl-[31px] text-[14px] text-[#222222] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       style={{ border: "1px solid #87878D" }}
                       autoComplete="off"
                       type="number"
@@ -389,16 +348,15 @@ export const ClaimModal = ({
             )}
 
             <div className="mt-4">
-              <p className="text-[16px]  md:text-[14px] font-normal text-[#838187]">
-                Do you currently have zoning or planning permission to develop
-                above your land or property?{" "}
-                <span className="italic  text-[12px] md:text-[10px]">
+              <p className="text-[16px] font-normal text-[#838187] md:text-[14px]">
+                Do you currently have zoning or planning permission to develop above your land or property?{" "}
+                <span className="text-[12px] italic md:text-[10px]">
                   (Your answer won&apos;t affect your claim)
                   <span className="text-[#E04F64]">*</span>
                 </span>{" "}
               </p>
             </div>
-            <div className="flex items-center gap-[7px] text-[#87878D] text-[14px] mt-4">
+            <div className="mt-4 flex items-center gap-[7px] text-[14px] text-[#87878D]">
               <input
                 className="relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]"
                 checked={data?.hasPlanningPermission === "true"}
@@ -410,14 +368,8 @@ export const ClaimModal = ({
                 }
                 style={{
                   appearance: "none",
-                  border:
-                    data?.hasPlanningPermission !== "true"
-                      ? "2px solid #222222"
-                      : "2px solid #0653EA",
-                  backgroundColor:
-                    data?.hasPlanningPermission === "true"
-                      ? "#0653EA"
-                      : "transparent",
+                  border: data?.hasPlanningPermission !== "true" ? "2px solid #222222" : "2px solid #0653EA",
+                  backgroundColor: data?.hasPlanningPermission === "true" ? "#0653EA" : "transparent",
                   borderRadius: "50%",
                   backgroundClip: "content-box",
                 }}
@@ -437,14 +389,8 @@ export const ClaimModal = ({
                 }
                 style={{
                   appearance: "none",
-                  border:
-                    data?.hasPlanningPermission !== "false"
-                      ? "2px solid #222222"
-                      : "2px solid #0653EA",
-                  backgroundColor:
-                    data?.hasPlanningPermission === "false"
-                      ? "#0653EA"
-                      : "transparent",
+                  border: data?.hasPlanningPermission !== "false" ? "2px solid #222222" : "2px solid #0653EA",
+                  backgroundColor: data?.hasPlanningPermission === "false" ? "#0653EA" : "transparent",
                   borderRadius: "50%",
                   backgroundClip: "content-box",
                 }}
@@ -456,17 +402,11 @@ export const ClaimModal = ({
               <input
                 className="relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]"
                 checked={!data?.hasPlanningPermission}
-                onChange={() =>
-                  setData((prev) => ({ ...prev, hasPlanningPermission: null }))
-                }
+                onChange={() => setData((prev) => ({ ...prev, hasPlanningPermission: null }))}
                 style={{
                   appearance: "none",
-                  border: data?.hasPlanningPermission
-                    ? "2px solid #222222"
-                    : "2px solid #0653EA",
-                  backgroundColor: !data?.hasPlanningPermission
-                    ? "#0653EA"
-                    : "transparent",
+                  border: data?.hasPlanningPermission ? "2px solid #222222" : "2px solid #0653EA",
+                  backgroundColor: !data?.hasPlanningPermission ? "#0653EA" : "transparent",
                   borderRadius: "50%",
                   backgroundClip: "content-box",
                 }}
@@ -477,22 +417,18 @@ export const ClaimModal = ({
               <label htmlFor="zone-dont-know">I don&apos;t Know</label>
             </div>
 
-            <div className="  flex items-center md:justify-center gap-[20px] text-[14px]  my-8">
+            <div className="my-8 flex items-center gap-[20px] text-[14px] md:justify-center">
               <div
                 onClick={onCloseModal}
-                className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer"
+                className="cursor-pointer rounded-[5px] px-[22px] py-[10px] text-[#0653EA]"
                 style={{ border: "1px solid #0653EA" }}
               >
                 Cancel
               </div>
 
-              <div className="Claim-airspacebtn2-step w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">
-                <div className="flex justify-center items-center w-full ">
-                  <LoadingButton
-                    onClick={() => onClaim(inputAddress)}
-                    isLoading={claimButtonLoading}
-                    color={"white"}
-                  >
+              <div className="Claim-airspacebtn2-step w-[75%] cursor-pointer rounded-[5px] bg-[#0653EA] px-[22px] py-[10px] text-white md:w-[25%]">
+                <div className="flex w-full items-center justify-center">
+                  <LoadingButton onClick={() => onClaim(inputAddress)} isLoading={claimButtonLoading} color={"white"}>
                     Claim Airspace
                   </LoadingButton>
                 </div>

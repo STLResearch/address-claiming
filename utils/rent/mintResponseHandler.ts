@@ -13,7 +13,7 @@ export const handleMintResponse = async (
       message: string | undefined;
       tokenId?: string;
     }>
-  >,
+  >
 ) => {
   if (response && response?.statusCode === 500) {
     toast.error(response.message);

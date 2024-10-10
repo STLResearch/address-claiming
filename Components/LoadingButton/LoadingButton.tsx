@@ -9,13 +9,7 @@ interface PropsI {
   className?: string;
 }
 
-const LoadingButton = ({
-  children,
-  onClick,
-  isLoading,
-  color,
-  className,
-}: PropsI) => {
+const LoadingButton = ({ children, onClick, isLoading, color, className }: PropsI) => {
   const [loading, setLoading] = useState(isLoading);
   const handleClick = async () => {
     setLoading(true);
@@ -28,7 +22,9 @@ const LoadingButton = ({
 
   return (
     <button onClick={handleClick} disabled={loading} className={className}>
-      {loading ? <LoadingSpinner color={color} /> : <>{children}</>}
+      {loading ?
+        <LoadingSpinner color={color} />
+      : <>{children}</>}
     </button>
   );
 };

@@ -1,9 +1,6 @@
 import { Bounds, PropertyData } from "@/types";
 
-export const filterPropertiesByBounds = (
-  properties: PropertyData[],
-  bounds: Bounds,
-): PropertyData[] => {
+export const filterPropertiesByBounds = (properties: PropertyData[], bounds: Bounds): PropertyData[] => {
   if (!properties) return [];
   return properties.filter((property) => {
     if (property?.longitude && property?.latitude) {

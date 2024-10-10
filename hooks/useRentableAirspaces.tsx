@@ -59,9 +59,7 @@ export const useRentableAirspaces = ({
       }
     };
 
-    const handleMove = async (
-      e: mapboxgl.MapMouseEvent & mapboxgl.EventData,
-    ) => {
+    const handleMove = async (e: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
       setLoadingRegAddresses(true);
       clearTimeout(timeoutId);
 

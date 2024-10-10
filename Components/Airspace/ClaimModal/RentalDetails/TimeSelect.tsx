@@ -18,7 +18,7 @@ const TimeSelect: React.FC<TimeSelectProps> = ({
   const options = Array.from({ length: 25 });
 
   return (
-    <div className="flex items-center gap-[66px] mt-2">
+    <div className="mt-2 flex items-center gap-[66px]">
       <select
         disabled={!isDayAvailable}
         value={fromTime}

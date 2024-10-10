@@ -13,44 +13,33 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle }) => {
   const { isMobile } = useMobile();
 
   return (
-    <div className=" w-full z-30 flex flex-col">
+    <div className="z-30 flex w-full flex-col">
       <div
-        className="flex items-center justify-between py-[25.5px] md:pb-[23px] md:pt-[32px] md:pl-[39.71px] md:pr-[41px] text-[#222222] bg-white"
+        className="flex items-center justify-between bg-white py-[25.5px] text-[#222222] md:pb-[23px] md:pl-[39.71px] md:pr-[41px] md:pt-[32px]"
         style={
-          isMobile
-            ? { boxShadow: "0px 2px 12px 0px rgba(58, 77, 233, 0.2)" }
-            : { boxShadow: "0px 2px 12px 0px #00000014" }
+          isMobile ?
+            { boxShadow: "0px 2px 12px 0px rgba(58, 77, 233, 0.2)" }
+          : { boxShadow: "0px 2px 12px 0px #00000014" }
         }
       >
-        <h1 className="md:text-2xl  md:m-0 md:mx-0 text-xl font-normal mx-auto">
-          {pageTitle}
-        </h1>
+        <h1 className="mx-auto text-xl font-normal md:m-0 md:mx-0 md:text-2xl">{pageTitle}</h1>
 
-        <div className="md:block hidden">
-          <div className="flex justify-center items-center">
-            {user?.blockchainAddress ? (
-              <Link
-                href={"/my-account"}
-                className="gap-[14px] items-center absolute md:flex md:relative left-[19px]"
-              >
-                <div className="w-6 h-6">
+        <div className="hidden md:block">
+          <div className="flex items-center justify-center">
+            {user?.blockchainAddress ?
+              <Link href={"/my-account"} className="absolute left-[19px] items-center gap-[14px] md:relative md:flex">
+                <div className="h-6 w-6">
                   <UserIcon />
                 </div>
-                <p className="truncate max-w-[300px] overflow-hidden text-ellipsis whitespace-nowrap">
-                  {user?.name}
-                </p>
+                <p className="max-w-[300px] overflow-hidden truncate text-ellipsis whitespace-nowrap">{user?.name}</p>
               </Link>
-            ) : (
-              <Link
-                href={"/auth"}
-                className="gap-[14px] items-center absolute md:flex md:relative left-[19px]"
-              >
-                <div className="w-6 h-6">
+            : <Link href={"/auth"} className="absolute left-[19px] items-center gap-[14px] md:relative md:flex">
+                <div className="h-6 w-6">
                   <UserIcon />
                 </div>
                 <p>Login or Register</p>
               </Link>
-            )}
+            }
           </div>
         </div>
       </div>

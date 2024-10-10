@@ -33,34 +33,22 @@ const RentableAirspace: React.FC<RentableAirspaceProps> = ({
       <div
         key={item.id}
         data-value={item.address}
-        onClick={() =>
-          changeRentMarkerColor(
-            map,
-            setSelectedAddress,
-            marker,
-            setMarker,
-            item,
-          )
-        }
+        onClick={() => changeRentMarkerColor(map, setSelectedAddress, marker, setMarker, item)}
         className={
-          item.id !== selectedAddress
-            ? ` p-5 text-left text-[#913636] w-full flex justify-between items-center text-[12px]`
-            : `bg-[#0653EA] p-5 text-left text-white w-full flex items-center justify-between text-[10px]`
+          item.id !== selectedAddress ?
+            `flex w-full items-center justify-between p-5 text-left text-[12px] text-[#913636]`
+          : `flex w-full items-center justify-between bg-[#0653EA] p-5 text-left text-[10px] text-white`
         }
         style={{
           borderTop: "5px solid #FFFFFFCC",
         }}
       >
-        <h3
-          className={`w-[65%] ${item.id !== selectedAddress ? `text-black ` : ` text-white `}`}
-        >
-          {item.address}
-        </h3>
+        <h3 className={`w-[65%] ${item.id !== selectedAddress ? `text-black` : `text-white`}`}>{item.address}</h3>
         <h1
           className={
-            item.id !== selectedAddress
-              ? " text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2"
-              : " text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"
+            item.id !== selectedAddress ?
+              "cursor-pointer px-2 py-2 text-center text-[15px] font-black text-black"
+            : "cursor-pointer px-2 py-2 text-center text-[15px] font-black text-white"
           }
         >
           ${item.price}
@@ -68,9 +56,9 @@ const RentableAirspace: React.FC<RentableAirspaceProps> = ({
         <span
           onClick={onClickRent}
           className={
-            item.id !== selectedAddress
-              ? "bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2 flex flex-col item-center justify-center"
-              : "bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2 flex flex-col item-center justify-center"
+            item.id !== selectedAddress ?
+              "item-center flex cursor-pointer flex-col justify-center rounded-lg bg-[#0653EA] px-2 py-2 text-center text-[15px] font-normal text-white"
+            : "item-center flex cursor-pointer flex-col justify-center rounded-lg bg-[#e8e9eb] px-2 py-2 text-center text-[15px] font-normal text-[#0653EA]"
           }
         >
           RENT

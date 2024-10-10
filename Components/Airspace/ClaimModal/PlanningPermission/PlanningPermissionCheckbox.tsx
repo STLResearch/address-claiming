@@ -6,11 +6,7 @@ interface PlanningPermissionCheckboxProps {
   onChange: () => void;
 }
 
-const PlanningPermissionCheckbox: React.FC<PlanningPermissionCheckboxProps> = ({
-  label,
-  checked,
-  onChange,
-}) => {
+const PlanningPermissionCheckbox: React.FC<PlanningPermissionCheckboxProps> = ({ label, checked, onChange }) => {
   return (
     <>
       <input

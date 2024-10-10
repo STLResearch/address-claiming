@@ -6,16 +6,12 @@ interface SocialShareButtonProps {
   children: ReactNode;
 }
 
-const SocialShareButton: React.FC<SocialShareButtonProps> = ({
-  platform,
-  onClick,
-  children,
-}) => (
+const SocialShareButton: React.FC<SocialShareButtonProps> = ({ platform, onClick, children }) => (
   <div
     onClick={onClick}
-    className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer"
+    className="flex cursor-pointer items-center justify-center rounded-lg bg-[#DFF1FF] px-[13.9px] py-[14px]"
   >
-    <div className="w-5 h-5 flex items-center justify-center">{children}</div>
+    <div className="flex h-5 w-5 items-center justify-center">{children}</div>
   </div>
 );
 

@@ -1,9 +1,8 @@
 const AirSpaceEmptyList = () => {
   return (
     <div>
-      <p className="text-base mb-4 w-72 text-center  mt-[4rem]  p-4">
-        Ready to claim your airspace? No registered airspace yet, but exciting
-        times ahead! 🚀✨
+      <p className="mb-4 mt-[4rem] w-72 p-4 text-center text-base">
+        Ready to claim your airspace? No registered airspace yet, but exciting times ahead! 🚀✨
       </p>
     </div>
   );

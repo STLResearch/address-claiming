@@ -8,14 +8,12 @@ interface ItemProps {
 const Item: React.FC<ItemProps> = ({ icon, title, text }) => {
   return (
     <div
-      className="py-5 px-[15px] rounded-[30px] bg-white flex flex-col gap-[15px] items-center md:min-w-[225px] md:h-[223px] w-full"
+      className="flex w-full flex-col items-center gap-[15px] rounded-[30px] bg-white px-[15px] py-5 md:h-[223px] md:min-w-[225px]"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
-      <div className="w-12 h-12 flex items-center justify-center">{icon}</div>
-      <p className="text-[#4285F4] font-semibold text-[18px]">{title}</p>
-      <p className="text-[#222222] font-normal text-[14px] text-center">
-        {text}
-      </p>
+      <div className="flex h-12 w-12 items-center justify-center">{icon}</div>
+      <p className="text-[18px] font-semibold text-[#4285F4]">{title}</p>
+      <p className="text-center text-[14px] font-normal text-[#222222]">{text}</p>
     </div>
   );
 };

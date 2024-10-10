@@ -25,7 +25,7 @@ const Signup: React.FC = () => {
         <title>SkyTrade - Login</title>
       </Head>
       {!isWaitingScreenVisible && !isRedirecting && (
-        <div className="relative flex h-screen w-screen items-center justify-center overflow-y-scroll overflow-x-hidden rounded max-sm:bg-[white] ">
+        <div className="relative flex h-screen w-screen items-center justify-center overflow-x-hidden overflow-y-scroll rounded max-sm:bg-[white]">
           <AuthForm
             isLogin={isLogin}
             setIsLogin={setIsLogin}

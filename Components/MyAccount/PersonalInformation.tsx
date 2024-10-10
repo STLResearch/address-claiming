@@ -24,18 +24,13 @@ const PersonalInformation = ({
 
   return (
     <div
-      className="flex flex-col py-[17px] px-[25px] rounded-[30px] gap-[15px] bg-white"
+      className="flex flex-col gap-[15px] rounded-[30px] bg-white px-[25px] py-[17px]"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
-      <h2 className="text-xl font-medium text-[#222222]">
-        Personal Information
-      </h2>
+      <h2 className="text-xl font-medium text-[#222222]">Personal Information</h2>
       <div className="flex flex-wrap gap-[10px]">
-        <div className="flex flex-col gap-[5px] basis-full">
-          <label
-            className="font-normal text-[14px] text-[#838187]"
-            htmlFor="name"
-          >
+        <div className="flex basis-full flex-col gap-[5px]">
+          <label className="text-[14px] font-normal text-[#838187]" htmlFor="name">
             Name
           </label>
           <input
@@ -47,18 +42,15 @@ const PersonalInformation = ({
                 name: e.target.value,
               }));
             }}
-            className="md:py-[16px] py-3 px-2 md:px-[22px] w-full rounded-lg text-[14px] font-normal text-[#222222] outline-none"
+            className="w-full rounded-lg px-2 py-3 text-[14px] font-normal text-[#222222] outline-none md:px-[22px] md:py-[16px]"
             style={{ border: "1px solid #87878D" }}
             type="text"
             name="name"
             id="name"
           />
         </div>
-        <div className="flex flex-col gap-[5px] basis-full md:basis-1/3 flex-1">
-          <label
-            className="font-normal text-[14px] text-[#838187]"
-            htmlFor="name"
-          >
+        <div className="flex flex-1 basis-full flex-col gap-[5px] md:basis-1/3">
+          <label className="text-[14px] font-normal text-[#838187]" htmlFor="name">
             Email
           </label>
           <input
@@ -70,18 +62,15 @@ const PersonalInformation = ({
                 email: e.target.value,
               }))
             }
-            className="md:py-[16px] py-3 px-2 md:px-[22px] w-full rounded-lg text-[14px] font-normal text-[#222222] outline-none"
+            className="w-full rounded-lg px-2 py-3 text-[14px] font-normal text-[#222222] outline-none md:px-[22px] md:py-[16px]"
             style={{ border: "1px solid #87878D" }}
             type="text"
             name="email"
             id="email"
           />
         </div>
-        <div className="flex flex-col gap-[5px] basis-full md:basis-1/3 flex-1">
-          <label
-            className="font-normal text-[14px] text-[#838187]"
-            htmlFor="phone"
-          >
+        <div className="flex flex-1 basis-full flex-col gap-[5px] md:basis-1/3">
+          <label className="text-[14px] font-normal text-[#838187]" htmlFor="phone">
             Phone
           </label>
           <input
@@ -94,25 +83,18 @@ const PersonalInformation = ({
                 phoneNumber: e.target.value,
               }));
             }}
-            className="md:py-[16px] py-3 px-2 md:px-[22px] w-full rounded-lg text-[14px] font-normal text-[#222222] outline-none"
+            className="w-full rounded-lg px-2 py-3 text-[14px] font-normal text-[#222222] outline-none md:px-[22px] md:py-[16px]"
             style={{
-              border: isPhoneNumberValid
-                ? "1px solid #87878D"
-                : "1px solid #E04F64",
+              border: isPhoneNumberValid ? "1px solid #87878D" : "1px solid #E04F64",
             }}
             type="text"
             name="phone"
             id="phone"
           />
-          {!isPhoneNumberValid && (
-            <p className="text-[11px] italic text-red-600">{errorMessage}</p>
-          )}
+          {!isPhoneNumberValid && <p className="text-[11px] italic text-red-600">{errorMessage}</p>}
         </div>
-        <div className="flex flex-col gap-[10px] basis-full">
-          <label
-            className="font-normal text-[14px] text-[#838187]"
-            htmlFor="phone"
-          >
+        <div className="flex basis-full flex-col gap-[10px]">
+          <label className="text-[14px] font-normal text-[#838187]" htmlFor="phone">
             Newsletter
           </label>
           <div className="flex items-center gap-[11px]">
@@ -124,21 +106,19 @@ const PersonalInformation = ({
                   newsletter: !prev.newsletter,
                 }))
               }
-              className="w-[18px] h-[18px] rounded-sm"
+              className="h-[18px] w-[18px] rounded-sm"
               style={{ border: "2px solid #49454F " }}
               type="checkbox"
               name="phone"
               id="phone"
             />
-            <p className="text-[#87878D] text-[14px] font-normal">
-              Send me newsletter to keep me updated
-            </p>
+            <p className="text-[14px] font-normal text-[#87878D]">Send me newsletter to keep me updated</p>
           </div>
         </div>
-        <div className="flex items-center justify-end flex-1">
+        <div className="flex flex-1 items-center justify-end">
           <button
             disabled={isLoading || !isChanged}
-            className={`font-medium text-base ${!isChanged ? "text-gray-400 cursor-not-allowed" : "text-[#0653EA] cursor-pointer"}`}
+            className={`text-base font-medium ${!isChanged ? "cursor-not-allowed text-gray-400" : "cursor-pointer text-[#0653EA]"}`}
             onClick={updateDataHandler}
           >
             {" "}

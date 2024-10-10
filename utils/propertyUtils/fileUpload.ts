@@ -39,10 +39,7 @@ export const isValidFileType = (fileName: string) => {
   return allowedExtensions.includes(fileExtension);
 };
 
-export const uploadImage = async (
-  response: { uploadUrl: { uploadUrl: string } },
-  file: File,
-) => {
+export const uploadImage = async (response: { uploadUrl: { uploadUrl: string } }, file: File) => {
   const url = response?.uploadUrl?.uploadUrl;
 
   const formData = new FormData();

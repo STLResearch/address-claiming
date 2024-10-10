@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  ArrowLeftIcon,
-  LocationPointIcon,
-  MagnifyingGlassIcon,
-} from "../../Icons";
+import { ArrowLeftIcon, LocationPointIcon, MagnifyingGlassIcon } from "../../Icons";
 import { useTour } from "@reactour/tour";
 import { useSearchParams } from "next/navigation";
 interface Address {
@@ -20,21 +16,14 @@ interface PropsI {
   onGoBack: () => void;
 }
 
-const ExplorerMobile = ({
-  address,
-  setAddress,
-  addresses,
-  showOptions,
-  handleSelectAddress,
-  onGoBack,
-}: PropsI) => {
+const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSelectAddress, onGoBack }: PropsI) => {
   const searchParams = useSearchParams();
   const { isOpen } = useTour();
   return (
     <div className="enter-address-step z-[20] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
       <h1 className="text-xl font-medium">Airspaces</h1>
       <div
-        className="relative w-[230px] h-[49px] rounded-lg bg-white px-[22px] py-[10px]"
+        className="relative h-[49px] w-[230px] rounded-lg bg-white px-[22px] py-[10px]"
         style={{ border: "1px solid #87878D" }}
       >
         <input
@@ -45,7 +34,7 @@ const ExplorerMobile = ({
           name="searchAirspaces"
           id="searchAirspaces"
           placeholder="Search Airspaces"
-          className="w-full pr-[20px] outline-none text-sm"
+          className="w-full pr-[20px] text-sm outline-none"
         />
         <div className="absolute right-[20px] top-1/2 h-[15px] w-[15px] -translate-y-1/2">
           <MagnifyingGlassIcon />

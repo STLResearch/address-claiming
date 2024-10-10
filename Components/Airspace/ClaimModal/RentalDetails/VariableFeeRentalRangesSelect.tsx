@@ -13,10 +13,7 @@ const VariableFeeRentalRangesSelect = ({ fee, setFee }: PropsI) => {
 
   return (
     <Fragment>
-      <label
-        htmlFor="variableFeeRentalRange"
-        className="text-[14px] font-normal text-[#838187] leading-[2rem] "
-      >
+      <label htmlFor="variableFeeRentalRange" className="text-[14px] font-normal leading-[2rem] text-[#838187]">
         Variable Fee Rental Range (per transit)
         <span className="text-[#E04F64]">*</span>
       </label>
@@ -25,7 +22,7 @@ const VariableFeeRentalRangesSelect = ({ fee, setFee }: PropsI) => {
         onChange={handleVariableFeeRentalRangeChange}
         name="variableFeeRentalRange"
         id="variableFeeRentalRange"
-        className="w-full appearance-none rounded-lg px-[22px] py-[16px] text-[14px] font-normal text-[#222222] focus:outline-none "
+        className="w-full appearance-none rounded-lg px-[22px] py-[16px] text-[14px] font-normal text-[#222222] focus:outline-none"
         style={{ border: "1px solid #87878D" }}
       >
         <option value="1-99">$1-$99</option>

@@ -71,15 +71,13 @@ const Sidebar = () => {
 
     useEffect(() => {
       const currentTab = localStorage.getItem("currentTab");
-      const isActiveVal = href
-        ? href.includes(currentTab || window.location.pathname)
-        : false;
+      const isActiveVal = href ? href.includes(currentTab || window.location.pathname) : false;
       setIsActive(isActiveVal);
     }, [href]);
 
     const content = (
       <>
-        <div className="w-6 h-6 flex items-center justify-center">
+        <div className="flex h-6 w-6 items-center justify-center">
           {React.cloneElement(children as React.ReactElement, { isActive })}
         </div>
         {!isCollapsed && (
@@ -89,13 +87,11 @@ const Sidebar = () => {
             {text}
           </p>
         )}
-        {!isCollapsed &&
-          numberOfUnseenNotifications !== undefined &&
-          numberOfUnseenNotifications >= 1 && (
-            <div className="bg-[#E04F64] p-[7px] text-white w-[18px] h-[19px] text-[11.89px] font-normal flex items-center justify-center rounded-[3px] ml-auto leading-[0px]">
-              {numberOfUnseenNotifications}
-            </div>
-          )}
+        {!isCollapsed && numberOfUnseenNotifications !== undefined && numberOfUnseenNotifications >= 1 && (
+          <div className="ml-auto flex h-[19px] w-[18px] items-center justify-center rounded-[3px] bg-[#E04F64] p-[7px] text-[11.89px] font-normal leading-[0px] text-white">
+            {numberOfUnseenNotifications}
+          </div>
+        )}
       </>
     );
 
@@ -104,7 +100,7 @@ const Sidebar = () => {
         <div
           title={text}
           onClick={onClick}
-          className={`${style || ""} cursor-default py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && "bg-[#E9F5FE] text-[#4285F4]"} rounded-[3.66px]`}
+          className={`${style || ""} flex w-full cursor-default items-center gap-[14.64px] px-[14.64px] py-[7.32px] hover:bg-[#E9F5FE] hover:font-semibold hover:text-[#4285F4] ${isActive && "bg-[#E9F5FE] text-[#4285F4]"} rounded-[3.66px]`}
         >
           {content}
         </div>
@@ -116,7 +112,7 @@ const Sidebar = () => {
         title={text}
         target={target}
         href={href || ""}
-        className={`${style || ""} ${href ? "cursor-pointer" : "cursor-not-allowed"} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && "bg-[#E9F5FE] text-[#4285F4]"} rounded-[3.66px]`}
+        className={`${style || ""} ${href ? "cursor-pointer" : "cursor-not-allowed"} relative flex w-full items-center gap-[14.64px] px-[14.64px] py-[7.32px] hover:bg-[#E9F5FE] hover:font-semibold hover:text-[#4285F4] ${isActive && "bg-[#E9F5FE] text-[#4285F4]"} rounded-[3.66px]`}
       >
         {content}
       </Link>
@@ -136,9 +132,9 @@ const Sidebar = () => {
       return (
         <div
           onClick={onClick}
-          className={`py-[16.87px] flex flex-col items-center gap-1 px-[11.77px] w-full ${isActive && "text-[#4285F4]"} rounded-[3.66px] `}
+          className={`flex w-full flex-col items-center gap-1 px-[11.77px] py-[16.87px] ${isActive && "text-[#4285F4]"} rounded-[3.66px]`}
         >
-          <div className="relative w-6 h-6 flex items-center justify-center">
+          <div className="relative flex h-6 w-6 items-center justify-center">
             {React.cloneElement(children as React.ReactElement, { isActive })}
           </div>
           <p
@@ -153,12 +149,12 @@ const Sidebar = () => {
     return (
       <Link
         href={href || ""}
-        className={`${href ? "cursor-pointer" : "cursor-not-allowed"} py-[16.87px] flex flex-col items-center gap-2 px-[11.77px] w-full ${isActive && "text-[#4285F4]"} rounded-[3.66px]`}
+        className={`${href ? "cursor-pointer" : "cursor-not-allowed"} flex w-full flex-col items-center gap-2 px-[11.77px] py-[16.87px] ${isActive && "text-[#4285F4]"} rounded-[3.66px]`}
       >
-        <div className="relative w-5 h-5 flex items-center justify-center">
+        <div className="relative flex h-5 w-5 items-center justify-center">
           {React.cloneElement(children as React.ReactElement, { isActive })}
           {numberOfUnseenNotifications !== 0 && (
-            <div className="bg-[#E04F64] rounded-[50%] absolute -bottom-1 -right-1 w-3 h-3"></div>
+            <div className="absolute -bottom-1 -right-1 h-3 w-3 rounded-[50%] bg-[#E04F64]"></div>
           )}
         </div>
         <p
@@ -181,7 +177,7 @@ const Sidebar = () => {
   return (
     <div className={"relative z-20"}>
       <aside
-        className="md:flex overflow-y-scroll no-scrollbar hidden relative border-e-2 bg-white px-[21.95px] py-[29.27px] items-center flex-col gap-[14.64px]"
+        className="no-scrollbar relative hidden flex-col items-center gap-[14.64px] overflow-y-scroll border-e-2 bg-white px-[21.95px] py-[29.27px] md:flex"
         style={{
           width: !isCollapsed ? "297.29px" : "98.2833px",
           height: "100vh",
@@ -194,7 +190,7 @@ const Sidebar = () => {
             alt="Company's logo"
             width={isCollapsed ? 44.62 : 0}
             height={isCollapsed ? 51 : 0}
-            className={`${isCollapsed ? "opacity-100 mb-[29.27px] w-[44.62px] h-[51px]" : "opacity-0 mb-0 w-0 h-0"}`}
+            className={`${isCollapsed ? "mb-[29.27px] h-[51px] w-[44.62px] opacity-100" : "mb-0 h-0 w-0 opacity-0"}`}
             style={{ transition: "all 0.3s ease" }}
           />
         </Link>
@@ -204,7 +200,7 @@ const Sidebar = () => {
             alt="Company's logo"
             width={isCollapsed ? 0 : 147}
             height={isCollapsed ? 0 : 58}
-            className={`${isCollapsed ? "opacity-0 mb-0 w-0 h-0" : "opacity-100 mt-[-14.64px] mb-[29.27px] w-52 h-16 flex justify-center items-center"}`}
+            className={`${isCollapsed ? "mb-0 h-0 w-0 opacity-0" : "mb-[29.27px] mt-[-14.64px] flex h-16 w-52 items-center justify-center opacity-100"}`}
             style={{ transition: "all 0.3s ease" }}
           />
         </Link>
@@ -218,38 +214,24 @@ const Sidebar = () => {
         <SidebarItem href={"/points"} text={"Points Program"}>
           <GiftIconsidebar isActive={false} />
         </SidebarItem>
-        <div className="bg-[#00000012] w-full h-[1px]" />
+        <div className="h-[1px] w-full bg-[#00000012]" />
         {!isCollapsed && (
-          <p className="font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]">
-            MARKETPLACE
-          </p>
+          <p className="self-start px-[14.64px] font-normal tracking-[1%] text-[#5D7285]">MARKETPLACE</p>
         )}
-        <SidebarItem
-          href={"https://sky.trade/waitlist"}
-          target={"_blank"}
-          text={"Buy Airspace"}
-        >
+        <SidebarItem href={"https://sky.trade/waitlist"} target={"_blank"} text={"Buy Airspace"}>
           <MapIcon isActive={false} />
         </SidebarItem>
         <SidebarItem href={"/rent"} text={"Rent Airspace"}>
           <DroneIconsidebar isActive={false} />
         </SidebarItem>
-        <SidebarItem
-          href={"/portfolio"}
-          text={"Portfolio"}
-          numberOfUnseenNotifications={0}
-        >
+        <SidebarItem href={"/portfolio"} text={"Portfolio"} numberOfUnseenNotifications={0}>
           <ShoppingBagsIcon isActive={false} />
         </SidebarItem>
         <SidebarItem href={"/funds"} text={"Funds"}>
           <WalletIconsidebar isActive={false} />
         </SidebarItem>
-        <div className="bg-[#00000012] w-full h-[1px]" />
-        <SidebarItem
-          href={"https://skytrade.tawk.help"}
-          target={"_blank"}
-          text={"Help Center"}
-        >
+        <div className="h-[1px] w-full bg-[#00000012]" />
+        <SidebarItem href={"https://skytrade.tawk.help"} target={"_blank"} text={"Help Center"}>
           <HelpQuestionIcon isActive={false} color={undefined} />
         </SidebarItem>
         {user?.blockchainAddress && (
@@ -257,59 +239,32 @@ const Sidebar = () => {
             <LogoutIcon isActive={false} />
           </SidebarItem>
         )}
-        <SidebarItem
-          onClick={() => setIsCollapsed((prev) => !prev)}
-          text={"Collapse"}
-        >
-          {isCollapsed ? (
+        <SidebarItem onClick={() => setIsCollapsed((prev) => !prev)} text={"Collapse"}>
+          {isCollapsed ?
             <ArrowExpandIcon isActive={false} />
-          ) : (
-            <ArrowCompressIcon isActive={false} />
-          )}
+          : <ArrowCompressIcon isActive={false} />}
         </SidebarItem>
       </aside>
       {isMobile && !showMobileNavbar && (
-        <nav className="flex fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar border-t-2 ">
-          <SidebarItemMobile
-            href={"/dashboard"}
-            text={"Dashboard"}
-            numberOfUnseenNotifications={0}
-          >
+        <nav className="no-scrollbar fixed bottom-0 left-0 z-50 flex w-full overflow-y-scroll border-t-2 bg-white">
+          <SidebarItemMobile href={"/dashboard"} text={"Dashboard"} numberOfUnseenNotifications={0}>
             <DashboardIcon isActive={false} />
           </SidebarItemMobile>
-          <SidebarItemMobile
-            href={"/airspaces"}
-            text={"Airspaces"}
-            numberOfUnseenNotifications={0}
-          >
+          <SidebarItemMobile href={"/airspaces"} text={"Airspaces"} numberOfUnseenNotifications={0}>
             <GiftIconsidebar isActive={false} />
           </SidebarItemMobile>
-          <SidebarItemMobile
-            href={"/marketplace"}
-            text={"Marketplace"}
-            numberOfUnseenNotifications={0}
-          >
+          <SidebarItemMobile href={"/marketplace"} text={"Marketplace"} numberOfUnseenNotifications={0}>
             <MapIcon isActive={false} />
           </SidebarItemMobile>
-          <SidebarItemMobile
-            href={"/portfolio"}
-            text={"Portfolio"}
-            numberOfUnseenNotifications={0}
-          >
+          <SidebarItemMobile href={"/portfolio"} text={"Portfolio"} numberOfUnseenNotifications={0}>
             <ShoppingBagsIcon isActive={false} />
           </SidebarItemMobile>
-          <SidebarItemMobile
-            onClick={handleMenuClick}
-            text={"Menu"}
-            numberOfUnseenNotifications={0}
-          >
+          <SidebarItemMobile onClick={handleMenuClick} text={"Menu"} numberOfUnseenNotifications={0}>
             <MenuIcon isActive={false} />
           </SidebarItemMobile>
         </nav>
       )}
-      {showMobileNavbar && isMobile && (
-        <MobileNavbar setShowMobileNavbar={setShowMobileNavbar} />
-      )}
+      {showMobileNavbar && isMobile && <MobileNavbar setShowMobileNavbar={setShowMobileNavbar} />}
     </div>
   );
 };

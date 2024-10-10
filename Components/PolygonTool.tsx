@@ -10,12 +10,7 @@ interface PolygonToolProps {
   map: Map | null;
 }
 
-const PolygonTool = ({
-  drawTool,
-  isDrawMode,
-  setDrawMode,
-  map,
-}: PolygonToolProps) => {
+const PolygonTool = ({ drawTool, isDrawMode, setDrawMode, map }: PolygonToolProps) => {
   const ref = useRef(false);
 
   const deletePolygon = () => {
@@ -29,13 +24,13 @@ const PolygonTool = ({
   return (
     <div className="hidden md:block">
       <div
-        className="absolute top-0 right-0 bg-light-grey-100 rounded-lg z-20 m-4"
+        className="absolute right-0 top-0 z-20 m-4 rounded-lg bg-light-grey-100"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
       >
-        <div className="flex p-4 gap-[2rem] items-center">
+        <div className="flex items-center gap-[2rem] p-4">
           <p className="text-sm font-normal">Location is not exact?</p>
           <button
-            className={`px-2 py-2 rounded-lg ${isDrawMode && "bg-pure-blue"} hover:bg-pure-blue group `}
+            className={`rounded-lg px-2 py-2 ${isDrawMode && "bg-pure-blue"} group hover:bg-pure-blue`}
             onClick={() => {
               if (drawTool) {
                 if (!ref.current) {
@@ -48,9 +43,7 @@ const PolygonTool = ({
             }}
           >
             <div className="flex gap-2">
-              <p
-                className={`text-sm font-normal text-black group-hover:text-white ${isDrawMode && "text-white"} `}
-              >
+              <p className={`text-sm font-normal text-black group-hover:text-white ${isDrawMode && "text-white"} `}>
                 Draw
               </p>
               <Image
@@ -58,37 +51,34 @@ const PolygonTool = ({
                 alt="draw"
                 width={18}
                 height={18}
-                className={`group-hover:filter group-hover:invert ${isDrawMode && "filter invert"} `}
+                className={`group-hover:invert group-hover:filter ${isDrawMode && "invert filter"} `}
               />
             </div>
           </button>
 
           <button
-            className="px-2 py-2 rounded-lg hover:bg-pure-blue group"
+            className="group rounded-lg px-2 py-2 hover:bg-pure-blue"
             onClick={() => {
               deletePolygon();
             }}
           >
             <div className="flex gap-2">
-              <p className="text-sm font-normal text-black group-hover:text-white">
-                Delete
-              </p>
+              <p className="text-sm font-normal text-black group-hover:text-white">Delete</p>
               <Image
                 src="/images/delete.svg"
                 alt="drag-pan"
                 width={18}
                 height={18}
-                className="group-hover:filter group-hover:invert"
+                className="group-hover:invert group-hover:filter"
               />
             </div>
           </button>
         </div>
       </div>
       {isDrawMode && (
-        <div className="bg-white rounded-lg p-4 w-[410px] z-20 absolute top-28 right-2 ">
+        <div className="absolute right-2 top-28 z-20 w-[410px] rounded-lg bg-white p-4">
           <p className="text-[13px]">
-            Please ensure the address entered matches the registered property
-            address to accurately claim this area.
+            Please ensure the address entered matches the registered property address to accurately claim this area.
           </p>
         </div>
       )}

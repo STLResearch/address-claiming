@@ -10,20 +10,13 @@ interface ItemProps {
   style?: string;
 }
 
-const Item: FC<ItemProps> = ({
-  children,
-  title,
-  icon,
-  linkText,
-  href,
-  style,
-}) => {
+const Item: FC<ItemProps> = ({ children, title, icon, linkText, href, style }) => {
   return (
     <div
-      className={`${style || ""} relative flex flex-col pt-[17px] pb-[21px] pr-[18px] pl-[25px] rounded-[30px] bg-white gap-[15px] md:w-[343px] w-full`}
+      className={`${style || ""} relative flex w-full flex-col gap-[15px] rounded-[30px] bg-white pb-[21px] pl-[25px] pr-[18px] pt-[17px] md:w-[343px]`}
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <p className="text-xl font-medium text-[#222222]">{title} </p>
         <Link href={href}>
           <div className="h-10 w-10">{icon}</div>
@@ -31,9 +24,7 @@ const Item: FC<ItemProps> = ({
       </div>
       {children}
       <Link href={href}>
-        <p className="font-medium text-base text-[#0653ea] cursor-pointer text-right">
-          {linkText}
-        </p>
+        <p className="cursor-pointer text-right text-base font-medium text-[#0653ea]">{linkText}</p>
       </Link>
     </div>
   );

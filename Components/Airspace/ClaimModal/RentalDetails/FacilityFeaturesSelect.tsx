@@ -18,7 +18,7 @@ const FacilityFeaturesSelect: React.FC<FacilityFeaturesSelectProps> = ({
   };
 
   return (
-    <div className="flex-col flex md:flex-row md:items-center gap-[10px] leading-[2rem]">
+    <div className="flex flex-col gap-[10px] leading-[2rem] md:flex-row md:items-center">
       <FeatureCheckbox
         label="Landing Deck"
         id="hasLandingDeck"

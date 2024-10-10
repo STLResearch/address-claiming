@@ -29,14 +29,14 @@ const Funds = () => {
       <Head>
         <title>SkyTrade - Wallet</title>
       </Head>
-      <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden ">
+      <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-white sm:bg-[#F6FAFF]">
         <Sidebar />
-        <div className="w-full h-full flex flex-col">
+        <div className="flex h-full w-full flex-col">
           <PageHeader pageTitle={"Funds"} />
-          <section className="relative  w-full h-full py-6 md:py-[37px]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll sm:pl-[68.82px] sm:pr-[55px]">
-            <div className="flex sm:gap-[50px] flex-wrap justify-center">
+          <section className="relative mb-[78.22px] flex h-full w-full flex-col gap-8 overflow-y-scroll py-6 sm:pl-[68.82px] sm:pr-[55px] md:mb-0 md:py-[37px]">
+            <div className="flex flex-wrap justify-center sm:gap-[50px]">
               <div
-                className={`${isMobile ? "w-full flex flex-col gap-5 items-center sm:items-start" : "flex flex-col gap-5 items-center sm:items-start"}`}
+                className={`${isMobile ? "flex w-full flex-col items-center gap-5 sm:items-start" : "flex flex-col items-center gap-5 sm:items-start"}`}
               >
                 <AvailableBalance />
                 <DepositAndWithdraw

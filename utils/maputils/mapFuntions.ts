@@ -17,24 +17,13 @@ export const handleZoomOut = (map) => {
 
 export const createRentMarkerWithPopup = (map, property, markerElement) => {
   const lngLat = new mapboxgl.LngLat(property.longitude, property.latitude);
-  const popup = new mapboxgl.Popup().setHTML(
-    `<strong>${property.address}</strong>`,
-  );
+  const popup = new mapboxgl.Popup().setHTML(`<strong>${property.address}</strong>`);
 
-  const marker = new mapboxgl.Marker(markerElement)
-    .setLngLat(lngLat)
-    .setPopup(popup)
-    .addTo(map);
+  const marker = new mapboxgl.Marker(markerElement).setLngLat(lngLat).setPopup(popup).addTo(map);
   return marker;
 };
 
-export const changeRentMarkerColor = (
-  map,
-  setSelectedAddress,
-  marker,
-  setMarker,
-  item,
-) => {
+export const changeRentMarkerColor = (map, setSelectedAddress, marker, setMarker, item) => {
   setSelectedAddress(item.id);
 
   const lat1 = item.latitude;
@@ -43,8 +32,6 @@ export const changeRentMarkerColor = (
   if (marker) {
     marker.remove();
   }
-  const marker1 = new mapboxgl.Marker({ color: "#0653EA" })
-    .setLngLat(ans2)
-    .addTo(map);
+  const marker1 = new mapboxgl.Marker({ color: "#0653EA" }).setLngLat(ans2).addTo(map);
   setMarker(marker1);
 };

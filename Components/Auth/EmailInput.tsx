@@ -6,17 +6,10 @@ interface EmailInputProps {
   setEmailValid: (isValid: boolean) => void;
 }
 
-const EmailInput: FC<EmailInputProps> = ({
-  emailRef,
-  emailValid,
-  setEmailValid,
-}) => {
+const EmailInput: FC<EmailInputProps> = ({ emailRef, emailValid, setEmailValid }) => {
   return (
     <div className="relative flex w-full flex-col gap-[5px]">
-      <label
-        className="text-[14px] font-normal"
-        style={{ color: emailValid ? "rgba(0, 0, 0, 0.50)" : "#E04F64" }}
-      >
+      <label className="text-[14px] font-normal" style={{ color: emailValid ? "rgba(0, 0, 0, 0.50)" : "#E04F64" }}>
         Email<span className="text-[#E04F64]">*</span>
       </label>
       <input
@@ -31,9 +24,7 @@ const EmailInput: FC<EmailInputProps> = ({
           border: emailValid ? "1px solid #87878D" : "1px solid #E04F64",
         }}
       />
-      {!emailValid && (
-        <p className="text-[11px] italic text-red-600">Invalid email</p>
-      )}
+      {!emailValid && <p className="text-[11px] italic text-red-600">Invalid email</p>}
     </div>
   );
 };

@@ -15,23 +15,18 @@ const AirspacesList: FC<MyAirspacesProps> = ({ airspaces = [] }) => {
   return (
     <div className="max-h-[300px] overflow-y-auto">
       {airspaces.slice(0, visibleItems).map((airspace, index) => (
-        <div
-          key={index}
-          className="w-full flex items-center justify-center  bg-white  border-b-2 "
-        >
-          <div className="flex items-center justify-between  gap-8 w-[375px] h-[54px] px-4 bg-white ">
+        <div key={index} className="flex w-full items-center justify-center border-b-2 bg-white">
+          <div className="flex h-[54px] w-[375px] items-center justify-between gap-8 bg-white px-4">
             <div className="flex gap-4">
-              <div className="w-6 h-6">
+              <div className="h-6 w-6">
                 <LocationPointIcon />
               </div>
-              <p className="font-normal text-[#222222] text-[14px]">
+              <p className="text-[14px] font-normal text-[#222222]">
                 {airspace.title ||
-                  (airspace.address.length > 30
-                    ? `${airspace.address.substring(0, 30)}...`
-                    : airspace.address)}
+                  (airspace.address.length > 30 ? `${airspace.address.substring(0, 30)}...` : airspace.address)}
               </p>
             </div>
-            <div className="w-4 h-5">
+            <div className="h-5 w-4">
               <ChevronRightIcon />
             </div>
           </div>
@@ -39,7 +34,7 @@ const AirspacesList: FC<MyAirspacesProps> = ({ airspaces = [] }) => {
       ))}
 
       {visibleItems < airspaces.length && (
-        <button onClick={handleSeeMore} className="px-4 mt-4 text-blue-500">
+        <button onClick={handleSeeMore} className="mt-4 px-4 text-blue-500">
           See More
         </button>
       )}

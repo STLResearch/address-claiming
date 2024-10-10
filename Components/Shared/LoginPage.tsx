@@ -4,8 +4,8 @@ import React from "react";
 
 export default function LoginPage() {
   return (
-    <div className="fixed  w-screen h-full  flex items-center justify-center">
-      <div className="w-[100%] md:h-[100%] h-screen flex justify-center items-center md:rounded-xl overflow-clip">
+    <div className="fixed flex h-full w-screen items-center justify-center">
+      <div className="flex h-screen w-[100%] items-center justify-center overflow-clip md:h-[100%] md:rounded-xl">
         <Signup />
       </div>
     </div>

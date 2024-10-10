@@ -6,16 +6,12 @@ import { Coordinates } from "@/types/index";
 export const flyToUserIpAddress = async (map: Map | null): Promise<void> => {
   if (!map) return;
   try {
-    const ipResponse = await axios.get<{ ip: string }>(
-      "https://api.ipify.org/?format=json",
-    );
+    const ipResponse = await axios.get<{ ip: string }>("https://api.ipify.org/?format=json");
     const ipAddress: string = ipResponse.data.ip;
     const ipGeolocationApiUrl = await axios.get<{
       latitude: string;
       longitude: string;
-    }>(
-      `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`,
-    );
+    }>(`https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`);
     const latitude: number = parseFloat(ipGeolocationApiUrl.data.latitude);
     const longitude: number = parseFloat(ipGeolocationApiUrl.data.longitude);
 
@@ -39,15 +35,11 @@ interface AddressData {
 export const goToAddress = async (
   flyToAddress: string,
   setCoordinates: React.Dispatch<Coordinates | null>,
-  setAddressData: React.Dispatch<
-    React.SetStateAction<AddressData | null | undefined>
-  >,
+  setAddressData: React.Dispatch<React.SetStateAction<AddressData | null | undefined>>,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  setMarker: React.Dispatch<
-    React.SetStateAction<mapboxgl.Marker | null | undefined>
-  >,
+  setMarker: React.Dispatch<React.SetStateAction<mapboxgl.Marker | null | undefined>>,
   map: Map | mapboxgl.Map | null,
-  marker: Marker | mapboxgl.Marker | null | undefined,
+  marker: Marker | mapboxgl.Marker | null | undefined
 ): Promise<void> => {
   try {
     setIsLoading(true);
@@ -87,9 +79,7 @@ export const goToAddress = async (
     const el = document.createElement("div");
     el.id = "markerWithExternalCss";
 
-    const newMarker = new mapboxgl.Marker(el)
-      .setLngLat(endPoint)
-      .addTo(map as Map);
+    const newMarker = new mapboxgl.Marker(el).setLngLat(endPoint).addTo(map as Map);
     newMarker.addTo(map as Map);
     setMarker(newMarker);
   } catch (error) {
@@ -137,10 +127,7 @@ export const getTokenBalance = (user, setTokenBalance) => {
           return;
         }
 
-        setTokenBalance(
-          result.result.value[0].account.data.parsed.info.tokenAmount
-            .uiAmountString,
-        );
+        setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString);
       });
   }
 };

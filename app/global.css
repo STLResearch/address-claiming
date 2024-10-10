@@ -9,9 +9,7 @@
 }
 
 .mapboxgl-canvas-container {
-
   height: 100vh;
-
 }
 
 body {
@@ -52,7 +50,7 @@ button {
 
 .mapboxgl-popup {
   max-width: 200px;
-  
+
   left: 0;
   top: 0;
 }
@@ -168,35 +166,39 @@ button {
 .fund-table-scrollbar::-webkit-scrollbar-track {
   margin-top: 56px;
   background-color: white;
-  background : transparent;
+  background: transparent;
 }
 .fund-table-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #B8CCE3;
+  background-color: #b8cce3;
 }
 
 .fund-table tbody tr:nth-child(odd) {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 .react-international-phone-input-container .react-international-phone-input {
   border: none !important;
   margin-left: 10px !important;
   width: 75% !important;
-  padding:0px !important;
+  padding: 0px !important;
   height: auto !important;
   font-size: 14px !important;
-  color:#222222 !important;
+  color: #222222 !important;
   line-height: 21px !important;
   font-weight: 400 !important;
 }
 .react-international-phone-input-container .react-international-phone-country-selector-button {
-  border:none !important;
-  padding:0px !important;
+  border: none !important;
+  padding: 0px !important;
   height: auto !important;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .spin {
@@ -210,15 +212,15 @@ button {
     justify-content: center;
     width: 100% !important;
   }
-  
+
   .Toastify__toast {
     width: 100% !important;
     font-family: "Inter", sans-serif;
   }
 }
-#transakCloseIcon{
-  top:4px !important;
-  right:4px !important;
+#transakCloseIcon {
+  top: 4px !important;
+  right: 4px !important;
   width: 22px !important;
   height: 22px !important;
 }

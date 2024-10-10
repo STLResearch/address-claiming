@@ -25,14 +25,14 @@ const useFetchBalance = () => {
         setUserUSDWalletBalance({
           amount: userBalance,
           isLoading: false,
-        }),
+        })
       );
     } catch (error) {
       dispatch(
         setUserUSDWalletBalance({
           amount: userUSDWalletBalance.amount,
           isLoading: false,
-        }),
+        })
       );
     }
   };

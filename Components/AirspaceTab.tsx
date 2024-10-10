@@ -21,18 +21,9 @@ const AirspaceTab: React.FC<AirspaceTabProps> = (props) => {
         border: "1px solid blue",
       }}
     >
-      <div
-        className="flex flex-row items-center justify-between pb-5"
-        style={{ borderBottom: "1px solid blue" }}
-      >
+      <div className="flex flex-row items-center justify-between pb-5" style={{ borderBottom: "1px solid blue" }}>
         <div className="ms-2 mt-5 flex flex-row items-center gap-2 font-sans text-sm font-medium">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 18 18"
-            fill="none"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
             <path
               fillRule="evenodd"
               clipRule="evenodd"
@@ -61,19 +52,8 @@ const AirspaceTab: React.FC<AirspaceTabProps> = (props) => {
             background: `${props.status === "Active" ? "#BED9C7" : "#FFC7C2"}`,
           }}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="6"
-            height="6"
-            viewBox="0 0 6 6"
-            fill="none"
-          >
-            <circle
-              cx="3"
-              cy="3"
-              r="3"
-              fill={`${props.status === "Active" ? "#1A572E" : "#C80000"}`}
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
+            <circle cx="3" cy="3" r="3" fill={`${props.status === "Active" ? "#1A572E" : "#C80000"}`} />
           </svg>
           <p
             style={{
@@ -88,36 +68,11 @@ const AirspaceTab: React.FC<AirspaceTabProps> = (props) => {
       <div className="ms-2 mt-2 flex flex-row items-center px-1 py-1 text-sm">
         <p>4.5</p>
         <div className="flex flex-row items-center">
-          <Image
-            src="/images/Star.png"
-            alt="star icon"
-            width={12}
-            height={12}
-          />
-          <Image
-            src="/images/Star.png"
-            alt="star icon"
-            width={12}
-            height={12}
-          />
-          <Image
-            src="/images/Star.png"
-            alt="star icon"
-            width={12}
-            height={12}
-          />
-          <Image
-            src="/images/Star.png"
-            alt="star icon"
-            width={12}
-            height={12}
-          />
-          <Image
-            src="/images/Star-half.png"
-            alt="star icon"
-            width={12}
-            height={12}
-          />
+          <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+          <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+          <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+          <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+          <Image src="/images/Star-half.png" alt="star icon" width={12} height={12} />
         </div>
         <p>(6)</p>
       </div>

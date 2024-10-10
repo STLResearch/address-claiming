@@ -27,11 +27,7 @@ const PropertiesService = () => {
     }
   };
 
-  const findPropertiesByCoordinates = async ({
-    postData,
-  }: {
-    postData: any;
-  }) => {
+  const findPropertiesByCoordinates = async ({ postData }: { postData: any }) => {
     try {
       const response = await postRequest({
         uri: `/public/properties/`,
@@ -91,10 +87,7 @@ const PropertiesService = () => {
     }
   };
 
-  const editAirSpaceAddress = async (postData: {
-    address: string;
-    propertyId: number;
-  }) => {
+  const editAirSpaceAddress = async (postData: { address: string; propertyId: number }) => {
     try {
       const response = await patchRequest({
         uri: `/private/properties/update`,

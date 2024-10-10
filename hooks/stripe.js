@@ -19,11 +19,7 @@ export const CryptoElements = ({ stripeOnramp, children }) => {
     };
   }, [stripeOnramp]);
 
-  return (
-    <CryptoElementsContext.Provider value={ctx}>
-      {children}
-    </CryptoElementsContext.Provider>
-  );
+  return <CryptoElementsContext.Provider value={ctx}>{children}</CryptoElementsContext.Provider>;
 };
 
 // React hook to get StripeOnramp from context
