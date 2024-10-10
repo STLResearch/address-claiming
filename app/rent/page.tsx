@@ -49,116 +49,108 @@ const Rent = () => {
     if (map) return;
     const createMap = () => {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
-
       const newMap = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
         center: [-104.718243, 40.413869],
         zoom: 5,
-        // AttributionControl: false
       });
       newMap.on("render", function () {
         newMap.resize();
       });
-
-      newMap.on("load", function () {
-        newMap.addLayer({
-          id: "maine",
-          type: "fill",
-          source: {
-            type: "geojson",
-            data: {
-              type: "Feature",
-              properties: [],
-              geometry: {
-                type: "Polygon",
-                coordinates: [],
-              },
+      newMap.on("load", async function () {
+        let restrictedAreas = [];
+        try {
+          const response = await fetch("https://dev-api.sky.trade/restrictions?geoHash=gcp");
+          restrictedAreas = await response.json();
+        } catch (error) {
+          console.error("Error fetching restricted areas:", error);
+        }
+        const geoJsonData = {
+          type: "FeatureCollection",
+          features: restrictedAreas.map((area, index) => ({
+            type: "Feature",
+            properties: {
+              type: area.type,
+              message: area.message,
             },
-          },
+            geometry: {
+              type: area.region.type,
+              coordinates: area.region.coordinates,
+            },
+          })),
+        };
+        newMap.addSource("restricted-areas", {
+          type: "geojson",
+          data: geoJsonData,
+        });
+        newMap.addLayer({
+          id: "restricted-areas-layer",
+          type: "fill",
+          source: "restricted-areas",
           layout: {},
           paint: {
             "fill-color": "#D20C0C",
+            "fill-opacity": 0.5,
           },
         });
         newMap.zoomOut({ duration: 4 });
-      });
-
-      let timeoutId;
-
-      newMap.on("move", async (e) => {
-        setLoadingRegAddresses(true);
-
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(async () => {
-          const crds = e.target.getBounds();
-
-          const responseData = await findPropertiesByCoordinates({
-            postData: {
-              minLongitude: crds._sw.lng,
-              minLatitude: crds._sw.lat,
-              maxLongitude: crds._ne.lng,
-              maxLatitude: crds._ne.lat,
-            },
-          });
-
-          let formattedProperties = [];
-          if (responseData) {
-            formattedProperties = responseData.filter((property) => {
-              if (
-                property.longitude >= crds._sw.lng &&
-                property.longitude <= crds._ne.lng &&
-                property.latitude >= crds._sw.lat &&
-                property.latitude <= crds._ne.lat
-              ) {
-                return property;
-              }
+        let timeoutId;
+        newMap.on("move", async (e) => {
+          setLoadingRegAddresses(true);
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(async () => {
+            const crds = e.target.getBounds();
+            const responseData = await findPropertiesByCoordinates({
+              postData: {
+                minLongitude: crds._sw.lng,
+                minLatitude: crds._sw.lat,
+                maxLongitude: crds._ne.lng,
+                maxLatitude: crds._ne.lat,
+              },
             });
-          }
 
-          setRegisteredAddress(formattedProperties);
-          setLoadingRegAddresses(false);
-
-          if (responseData.length > 0) {
-            for (let i = 0; i < responseData.length; i++) {
-              const lngLat = new mapboxgl.LngLat(
-                responseData[i].longitude,
-                responseData[i].latitude,
-              );
-
-              const popup = new mapboxgl.Popup({ offset: 25 })
-                .trackPointer()
-                .setHTML(`<strong>${responseData[i].address}</strong>`);
-
-              popup.on("open", () => {
-                const popupElement = popup.getElement();
-                if (popupElement) {
-                  popupElement.style.zIndex = "10";
-                  popupElement.addEventListener("click", function () {
-                    setRentData(responseData[i]);
-                    setShowClaimModal(true);
-                  });
-                }
-              });
-
-              const marker = new mapboxgl.Marker({
-                color: "#3FB1CE",
-              })
-                .setLngLat(lngLat)
-                .setPopup(popup)
-                .addTo(newMap);
-
-              marker.getElement().addEventListener("click", function () {
-                setRentData(responseData[i]);
-                setShowClaimModal(true);
+            let formattedProperties = [];
+            if (responseData) {
+              formattedProperties = responseData.filter((property) => {
+                return (
+                  property.longitude >= crds._sw.lng &&
+                  property.longitude <= crds._ne.lng &&
+                  property.latitude >= crds._sw.lat &&
+                  property.latitude <= crds._ne.lat
+                );
               });
             }
-          }
-        }, 3000);
+            setRegisteredAddress(formattedProperties);
+            setLoadingRegAddresses(false);
+            if (responseData.length > 0) {
+              for (let i = 0; i < responseData.length; i++) {
+                const lngLat = new mapboxgl.LngLat(
+                  responseData[i].longitude,
+                  responseData[i].latitude,
+                );
+                const popup = new mapboxgl.Popup({ offset: 25 })
+                  .trackPointer()
+                  .setHTML(`<strong>${responseData[i].address}</strong>`);
+                const marker = new mapboxgl.Marker({
+                  color: "#3FB1CE",
+                })
+                  .setLngLat(lngLat)
+                  .setPopup(popup)
+                  .addTo(newMap);
+                // Optional: Add event listeners to marker for interactivity
+                marker.getElement().addEventListener("click", function () {
+                  setRentData(responseData[i]);
+                  setShowClaimModal(true);
+                });
+              }
+            }
+          }, 1000);
+        });
       });
-
       setMap(newMap);
     };
+
     createMap();
   }, []);
 
@@ -222,16 +214,25 @@ const Rent = () => {
   }, [flyToAddress, address]);
 
   useEffect(() => {
-    const inintialRentDataString = localStorage.getItem("rentData");
-    const parsedInitialRentData = inintialRentDataString
-      ? JSON.parse(inintialRentDataString)
-      : null;
-    if (parsedInitialRentData && parsedInitialRentData?.address?.length > 2) {
-      setRentData(parsedInitialRentData);
-      setFlyToAddress(parsedInitialRentData.address);
-      setShowClaimModal(true);
-    } else {
-      console.info("no initial datta");
+    if (typeof window !== "undefined") {
+      const inintialRentDataString = localStorage.getItem("rentData");
+
+      let parsedInitialRentData = null;
+      try {
+        if (inintialRentDataString && inintialRentDataString !== "undefined") {
+          parsedInitialRentData = JSON.parse(inintialRentDataString);
+        }
+      } catch (error) {
+        console.error("Failed to parse rent data from localStorage:", error);
+      }
+
+      if (parsedInitialRentData && parsedInitialRentData?.address?.length > 2) {
+        setRentData(parsedInitialRentData);
+        setFlyToAddress(parsedInitialRentData.address);
+        setShowClaimModal(true);
+      } else {
+        console.info("No valid initial rent data found.");
+      }
     }
   }, []);
 
