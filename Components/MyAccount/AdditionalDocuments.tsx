@@ -38,7 +38,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
   const { getUser } = UserService();
 
   const { updateDocument } = DocumentUploadServices();
-  const { generatePublicFileUploadUrl } = S3UploadServices();
+  const { generatePrivateFileUploadUrls } = S3UploadServices();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -81,7 +81,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
     setLoading(true);
 
     try {
-      const generatedRes = await generatePublicFileUploadUrl({
+      const generatedRes = await generatePrivateFileUploadUrls({
         fileType: selectedFiles[0]?.type,
         requestId: requestDocument.id,
       });

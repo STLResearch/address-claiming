@@ -39,17 +39,12 @@ export const isValidFileType = (fileName: string) => {
   return allowedExtensions.includes(fileExtension);
 };
 
-export const uploadImage = async (
-  response: { uploadUrl: { uploadUrl: string } },
-  file: File,
-) => {
-  const url = response?.uploadUrl?.uploadUrl;
-
+export const uploadImage = async (uploadUrl: string, file: File) => {
   const formData = new FormData();
   formData.append("file", file);
 
   try {
-    const result = await axios.put(url, formData, {
+    const result = await axios.put(uploadUrl, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return {
