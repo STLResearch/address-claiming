@@ -351,9 +351,16 @@ const Airspaces: React.FC = () => {
       }
       const newMarker = new mapboxgl.Marker({
         color: "#3FB1CE",
+        draggable: true,
       })
         .setLngLat(temp)
         .addTo(map as mapboxgl.Map);
+      newMarker.on('dragend', function () {
+        const lngLat = newMarker.getLngLat();
+        const newLongitude = lngLat.lng;
+        const newLatitude = lngLat.lat;
+        setCoordinates({longitude: newLongitude.toString(), latitude: newLatitude.toString()});
+      });
       setMarker(newMarker);
     }
   }, [map, coordinates.latitude, coordinates.longitude]);
@@ -617,6 +624,8 @@ const Airspaces: React.FC = () => {
         }
         const newMarker = new mapboxgl.Marker({
           color: "#3FB1CE",
+          draggable: true
+
         })
           .setLngLat({ lng: longitude, lat: latitude })
           .addTo(map as mapboxgl.Map);
