@@ -94,7 +94,7 @@ const Certificate = ({
         <View style={styles.section}>
           <Text>
             This certifies that {user.name}, with the blockchain address{" "}
-            {user.blockchainAddress} has successfully rented an airspace on
+            {user.blockchainAddress} has successfully rented an air rights on
             SkyTrade with the following details:
           </Text>
           <Text style={[styles.bold, styles.mb]}></Text>

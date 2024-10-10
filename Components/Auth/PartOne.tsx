@@ -28,7 +28,7 @@ const PartOne: React.FC<PartOneProps> = ({ setPart }) => {
         </p>
         <p>
           🔐 <span className="font-bold">Secure Access with SkyTrade:</span>{" "}
-          Register to control land and airspace, ensuring permissions and
+          Register to control land and air rights, ensuring permissions and
           receive direct fees into your account.
         </p>
       </div>

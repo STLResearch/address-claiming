@@ -156,7 +156,7 @@ const Popup: React.FC<PopupProps> = ({
         </div>
 
         <p className="font-normal text-base text-[#87878D]">
-          To verify your ownership of the claimed airspace and facilitate your
+          To verify your ownership of the claimed air rights and facilitate your
           passive income, we require additional documentation for legal
           compliance. Please be assured that all your information will be
           securely stored and handled with utmost confidentiality.
