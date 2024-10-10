@@ -2,6 +2,15 @@
 import { Fragment, useState, useEffect, SetStateAction } from "react";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
 import maplibregl from "maplibre-gl";
+import {
+  Feature,
+  FeatureCollection,
+  GeoJsonProperties,
+  MultiPolygon,
+  Polygon,
+  Position,
+  Geometry,
+} from "geojson";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
@@ -16,7 +25,6 @@ import { goToAddress } from "@/utils/apiUtils/apiFunctions";
 import { Coordinates, PropertyData } from "@/types";
 import Sidebar from "@/Components/Shared/Sidebar";
 import PropertiesService from "../../services/PropertiesService";
-import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -49,11 +57,11 @@ const Rent = () => {
   const { findPropertiesByCoordinates } = PropertiesService();
   // Define the shape of the data you're receiving
   interface Area {
-    type: string;
+    type: string; // Type of the area, consider making this more specific if needed
     message: string;
     region: {
-      type: string;
-      coordinates: number[][] | number[][][];
+      type: "Polygon" | "MultiPolygon"; // Ensure valid GeoJSON geometry types
+      coordinates: number[][] | number[][][]; // Keep this flexible for now
     };
   }
 
@@ -85,19 +93,27 @@ const Rent = () => {
           console.error("Error fetching restricted areas:", error);
         }
 
-        const geoJsonData = {
-          type: "FeatureCollection", // Make sure this is a literal "FeatureCollection"
-          features: restrictedAreas.map((area) => ({
-            type: "Feature",
-            properties: {
-              type: area.type,
-              message: area.message,
-            },
-            geometry: {
-              type: area.region.type,
-              coordinates: area.region.coordinates,
-            },
-          })),
+        const geoJsonData: FeatureCollection<
+          Polygon | MultiPolygon,
+          GeoJsonProperties
+        > = {
+          type: "FeatureCollection",
+          features: restrictedAreas.map(
+            (area): Feature<Polygon | MultiPolygon, GeoJsonProperties> => ({
+              type: "Feature",
+              properties: {
+                type: area.type,
+                message: area.message,
+              },
+              geometry: {
+                // Explicitly cast the geometry to the correct type
+                type: area.region.type as "Polygon" | "MultiPolygon", // Assert the type
+                coordinates: area.region.coordinates.map((coords) => {
+                  return coords.map((coord) => coord as Position); // Cast to Position
+                }) as Position[][] | Position[][][], // Cast to expected type
+              } as Polygon | MultiPolygon, // Explicitly assert the geometry type
+            }),
+          ),
         };
 
         newMap.addSource("restricted-areas", {
@@ -240,25 +256,18 @@ const Rent = () => {
   }, [flyToAddress, address]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const inintialRentDataString = localStorage.getItem("rentData");
-
-      let parsedInitialRentData = null;
-      try {
-        if (inintialRentDataString && inintialRentDataString !== "undefined") {
-          parsedInitialRentData = JSON.parse(inintialRentDataString);
-        }
-      } catch (error) {
-        console.error("Failed to parse rent data from localStorage:", error);
-      }
-
-      if (parsedInitialRentData && parsedInitialRentData?.address?.length > 2) {
-        setRentData(parsedInitialRentData);
-        setFlyToAddress(parsedInitialRentData.address);
-        setShowClaimModal(true);
-      } else {
-        console.info("No valid initial rent data found.");
-      }
+    const inintialRentDataString = localStorage.getItem("rentData");
+    // Check if the retrieved string is neither null nor the string "undefined"
+    const parsedInitialRentData =
+      inintialRentDataString && inintialRentDataString !== "undefined"
+        ? JSON.parse(inintialRentDataString)
+        : null;
+    if (parsedInitialRentData && parsedInitialRentData?.address?.length > 2) {
+      setRentData(parsedInitialRentData);
+      setFlyToAddress(parsedInitialRentData.address);
+      setShowClaimModal(true);
+    } else {
+      console.info("No initial data");
     }
   }, []);
 
