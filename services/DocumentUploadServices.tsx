@@ -1,17 +1,19 @@
 import Service from "./Service";
 interface UpdateDocumentParams {
-  path: string;
+  paths: string[];
   requestId: string | number;
 }
 
 const DocumentUploadServices = () => {
   const { postRequest } = Service();
 
-  const updateDocument = async ({ path, requestId }: UpdateDocumentParams) => {
+  const updateDocument = async ({ paths, requestId }: UpdateDocumentParams) => {
     try {
-      if (!path || !requestId) return;
+      const postData = {filePath:paths,requestId:requestId}
+      if (!paths || !requestId) return;
       const response = await postRequest({
-        uri: `/private/request-document/update-document-metadata?filePath=${path}&requestId=${requestId}`,
+        uri: `/private/request-document/update-document-metadata`,
+        postData
       });
       return response?.data;
     } catch (error) {

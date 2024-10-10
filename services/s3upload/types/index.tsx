@@ -5,7 +5,7 @@ export interface GeneratePublicFileUploadUrlParams {
 
 export interface GeneratePrivateFileUploadUrlParams {
   contentTypes: string[];
-  requestId: string;
+  requestId: number;
 }
 
 export interface GeneratePublicFileUploadUrlResponse {

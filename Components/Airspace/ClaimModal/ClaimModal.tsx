@@ -94,10 +94,10 @@ export const ClaimModal = ({
   const handleClaim = async () => {
     if (selectedFile.length > 0) {
       const imageList: string[] = [];
-      const uploadParams = selectedFile.map((file) => file.type);
+      const contentTypes = selectedFile.map((file) => file.type);
 
       const params = await generatePublicFileUploadUrls({
-        contentTypes: uploadParams,
+        contentTypes,
         referenceId: data.address,
       });
 

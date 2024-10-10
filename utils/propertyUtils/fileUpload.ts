@@ -15,7 +15,7 @@ export function formatTextToReadable(text: string) {
   );
 }
 
-export const isValidFileType = (fileName: string) => {
+export const isValidFileType = (file: File) => {
   const allowedExtensions = [
     ".jpg",
     ".jpeg",
@@ -35,7 +35,7 @@ export const isValidFileType = (fileName: string) => {
     ".ppt",
     ".pptx",
   ];
-  const fileExtension = fileName.toLowerCase().slice(fileName.lastIndexOf("."));
+  const fileExtension = file.type;
   return allowedExtensions.includes(fileExtension);
 };
 

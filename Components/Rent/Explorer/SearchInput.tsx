@@ -30,7 +30,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
       {isMobile ? (
         <div>
           <div
-            className="relative w-[230px] h-[49px] rounded-lg bg-white px-[22px] py-[10px]"
+            className="relative w-full h-[49px] rounded-lg bg-white px-[22px] py-[10px]"
             style={{ border: "1px solid #87878D" }}
           >
             <input
