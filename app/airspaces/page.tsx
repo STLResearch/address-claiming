@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 "use client";
 
 import useAuth from "../../hooks/useAuth";
@@ -348,6 +349,7 @@ const Airspaces: React.FC = () => {
       }
       const newMarker = new mapboxgl.Marker({
         color: "#3FB1CE",
+        draggable:true,
       })
         .setLngLat(temp)
         .addTo(map as mapboxgl.Map);
@@ -611,6 +613,8 @@ const Airspaces: React.FC = () => {
         }
         const newMarker = new mapboxgl.Marker({
           color: "#3FB1CE",
+          draggable: true
+
         })
           .setLngLat({ lng: longitude, lat: latitude })
           .addTo(map as mapboxgl.Map);
