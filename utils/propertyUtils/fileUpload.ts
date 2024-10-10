@@ -15,7 +15,7 @@ export function formatTextToReadable(text: string) {
   );
 }
 
-export const isValidFileType = (file: any) => {
+export const isValidFileType = (file: File) => {
   const allowedExtensions = [
     ".jpg",
     ".jpeg",
