@@ -198,8 +198,8 @@ const Popup: React.FC<PopupProps> = ({
         <div className="w-[300px] sm:w-auto ">  
         {selectedFiles?.length > 0 && 
           selectedFiles.map((selectedFile,index)=>(
-            <div className="flex justify-between items-center">
-              <div className="w-[40%] sm:w-auto truncate" key={index}>{selectedFile.name}</div>
+            <div className="flex justify-between items-center" key={index}>
+              <div className="w-[40%] sm:w-auto truncate">{selectedFile.name}</div>
               <div className="w-[40%] sm:w-auto flex justify-end">
                 <button onClick={() => removeFile(selectedFile)} className="text-red-400 sm:mr-3 m-0">Remove</button>
               </div>
