@@ -106,7 +106,7 @@ const PortfolioListMobile = ({
                   className="flex w-full rounded-[30px] gap-[15px] bg-white"
                   style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
                 >
-                  <div className="md:w-[50%]  p-6  flex flex-col justify-center items-center md:gap-6 gap-4">
+                  <div className="w-full p-6 flex flex-col justify-center items-center md:gap-6 gap-4">
                     <h1 className="text-xl font-medium text-[#222222]  text-center">
                       🚀 Attention Airspace Owner!
                     </h1>
@@ -134,13 +134,6 @@ const PortfolioListMobile = ({
                     >
                       Verify my identity Now
                     </button>
-                  </div>
-                  <div className="w-[50%]">
-                    <img
-                      src="/images/portfolio.png"
-                      alt="Verification Image"
-                      className="h-full w-full object-cover rounded-r-[30px]"
-                    />
                   </div>
                 </div>
               )}
