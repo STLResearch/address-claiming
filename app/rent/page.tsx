@@ -74,7 +74,7 @@ const Rent = () => {
       const newMap = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
-        center: [-104.718243, 40.413869],
+        center: [-104.718243, 40.413869], // Default center (US)
         zoom: 5,
       });
 
@@ -82,13 +82,13 @@ const Rent = () => {
         newMap.resize();
       });
 
-      newMap.on("load", async function () {
+      const fetchRestrictedAreas = async (geoHash: string) => {
         let restrictedAreas: Area[] = [];
         try {
           const response = await fetch(
-            "https://dev-api.sky.trade/restrictions?geoHash=gcp",
+            `https://dev-api.sky.trade/restrictions?geoHash=${geoHash}`,
           );
-          restrictedAreas = (await response.json()) as Area[]; // Type assertion for restricted areas
+          restrictedAreas = (await response.json()) as Area[];
         } catch (error) {
           console.error("Error fetching restricted areas:", error);
         }
@@ -106,40 +106,75 @@ const Rent = () => {
                 message: area.message,
               },
               geometry: {
-                // Explicitly cast the geometry to the correct type
-                type: area.region.type as "Polygon" | "MultiPolygon", // Assert the type
+                type: area.region.type as "Polygon" | "MultiPolygon",
                 coordinates: area.region.coordinates.map((coords) => {
-                  return coords.map((coord) => coord as Position); // Cast to Position
-                }) as Position[][] | Position[][][], // Cast to expected type
-              } as Polygon | MultiPolygon, // Explicitly assert the geometry type
+                  return coords.map((coord) => coord as Position);
+                }) as Position[][] | Position[][][],
+              } as Polygon | MultiPolygon,
             }),
           ),
         };
 
-        newMap.addSource("restricted-areas", {
-          type: "geojson",
-          data: geoJsonData,
-        });
+        if (newMap.getSource("restricted-areas")) {
+          (
+            newMap.getSource("restricted-areas") as mapboxgl.GeoJSONSource
+          ).setData(geoJsonData);
+        } else {
+          newMap.addSource("restricted-areas", {
+            type: "geojson",
+            data: geoJsonData,
+          });
 
-        newMap.addLayer({
-          id: "restricted-areas-layer",
-          type: "fill",
-          source: "restricted-areas",
-          layout: {},
-          paint: {
-            "fill-color": "#D20C0C",
-            "fill-opacity": 0.5,
-          },
-        });
+          newMap.addLayer({
+            id: "restricted-areas-layer",
+            type: "fill",
+            source: "restricted-areas",
+            layout: {},
+            paint: {
+              "fill-color": "#D20C0C",
+              "fill-opacity": 0.5,
+            },
+          });
+        }
+      };
+
+      const determineGeoHash = (lng: number, lat: number): string => {
+        // UK coordinates
+        if (lng >= -10 && lng <= 2 && lat >= 50 && lat <= 60) {
+          return "gcp";
+        }
+        // US coordinates
+        if (lng >= -125 && lng <= -65 && lat >= 24 && lat <= 49) {
+          return "9yw";
+        }
+        return "";
+      };
+
+      newMap.on("load", async function () {
+        const mapCenter = newMap.getCenter();
+        const geoHash = determineGeoHash(mapCenter.lng, mapCenter.lat);
+
+        if (geoHash) {
+          await fetchRestrictedAreas(geoHash);
+        }
 
         newMap.zoomOut({ duration: 4 });
+        newMap.dragRotate.disable();
 
         let timeoutId: ReturnType<typeof setTimeout>;
         newMap.on("move", async (e) => {
           setLoadingRegAddresses(true);
           clearTimeout(timeoutId);
+
           timeoutId = setTimeout(async () => {
             const crds = e.target.getBounds();
+            const mapCenter = e.target.getCenter();
+            const geoHash = determineGeoHash(mapCenter.lng, mapCenter.lat);
+
+            if (geoHash) {
+              await fetchRestrictedAreas(geoHash);
+            }
+
             const responseData = await findPropertiesByCoordinates({
               postData: {
                 minLongitude: crds._sw.lng,
