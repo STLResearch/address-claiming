@@ -104,7 +104,7 @@ export const ClaimModal = ({
       if (params) {
         const uploadPromises = params.map(async (param, index) => {
           const imageRes = await uploadImage(
-            param.uploadUrl,
+            param?.uploadUrl,
             selectedFile[index],
           );
 
