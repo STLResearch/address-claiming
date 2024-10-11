@@ -60,7 +60,12 @@ const PropertiesService = () => {
     try {
       const response = await postRequest({
         uri: "/private/properties/claim",
-        postData,
+        postData: {
+          ...postData,
+          orderPhotoforGeneratedMap: false,
+          hasZoningPermission: false,
+          images: [],
+        },
       });
       return response?.data;
     } catch (error) {
