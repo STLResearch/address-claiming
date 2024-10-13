@@ -1,4 +1,3 @@
-
 name: Development Build/Deploy
 
 on:
@@ -6,7 +5,7 @@ on:
     branches: [ "dev-deploy" ]
   workflow_dispatch:
 env:
-  SRV_IP: "16.170.155.29"
+  SRV_IP: "167.235.66.199"
   
 jobs:
   # Build job
@@ -65,23 +64,7 @@ jobs:
       - name: Create deployment artifact 
         env:
           GITHUB_SHA: ${{ github.sha }}
-        run: ls -all && tar -czf "ac-${GITHUB_SHA}".tar.gz `ls -A -1`
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1
-      - name: get runner ip address
-        run: echo "GITHUB_PUB_IP=`curl -s checkip.amazonaws.com`" >> $GITHUB_ENV
-      - name: whitelist runner ip address
-        run: |
-          aws ec2 authorize-security-group-ingress \
-            --group-id $AWS_INSTANCE_SG_ID \
-            --protocol tcp \
-            --port 4578 \
-            --cidr $GITHUB_PUB_IP/32    
-      
+        run: ls -all && cd out && tar -czf ../"ac-${GITHUB_SHA}".tar.gz `ls -A -1`
       - name: Print Artifact location
         shell: bash
         run: pwd && ls ./
@@ -93,38 +76,20 @@ jobs:
             echo "$SSH_KEY" > ~/.ssh/github-action && chmod 400 ~/.ssh/github-action
             echo -e "User ec2-user\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" > ~/.ssh/config
                 
-      - name: Verify if the Server has all Dependencies
-        run: | 
-            ssh ec2-user@$SRV_IP -p 4578 -i ~/.ssh/github-action '[[ "$(command -v pm2)" ]] || { echo "pm2 is not installed" 1>&2 ; exit 1; }'
-            
       - name: Send Artifact to Server 
         run: | 
-            ssh -T ec2-user@$SRV_IP -p 4578 -i ~/.ssh/github-action 'mkdir -p address-claiming'
-            scp -P 4578 -i ~/.ssh/github-action ac-${GITHUB_SHA}.tar.gz ec2-user@$SRV_IP:~/address-claiming/
+            ssh -T sky-dev@$SRV_IP -p 4578 -i ~/.ssh/github-action 'mkdir -p address-claiming'
+            scp -P 4578 -i ~/.ssh/github-action ac-${GITHUB_SHA}.tar.gz sky-dev@$SRV_IP:~/address-claiming/
 
-      - name: Change Symlink/Deploy/Restart PM2 SSH Commands
+      - name: Change Symlink/Deploy/Restart
         run: |
-            ssh -T ec2-user@$SRV_IP -p 4578 -i ~/.ssh/github-action <<'EOL'
+            ssh -T sky-dev@$SRV_IP -p 4578 -i ~/.ssh/github-action <<'EOL'
               TIMESTAMP=$(date +%F_%H-%M-%S)
               NEW_DEPLOY_SOURCE="ac_${TIMESTAMP}"
               cd address-claiming && \
               mkdir $NEW_DEPLOY_SOURCE && \
               tar -xzf ac-${{ github.sha }}.tar.gz -C $NEW_DEPLOY_SOURCE && \
               rm -f ac-${{ github.sha }}.tar.gz && \
-              cd $NEW_DEPLOY_SOURCE && bash "./dev_env.sh" || exit 1
-              cd .. && ln -sfn `pwd`/$NEW_DEPLOY_SOURCE current && cd current && \
-              pm2 flush && \
-              pm2 startOrRestart ecosystem.config.js --env dev --cwd `pwd` && \
+              ln -sfn `pwd`/$NEW_DEPLOY_SOURCE current && cd current && \
               cd .. && ./clean_builds.sh
-              tail -n 100 ~/.pm2/logs/sky.trade.frontend-* 
-
             EOL
-            
-      - name: revoke runner ip address
-        run: |
-          aws ec2 revoke-security-group-ingress \
-            --group-id $AWS_INSTANCE_SG_ID \
-            --protocol tcp \
-            --port 4578 \
-            --cidr $GITHUB_PUB_IP/32
-        if: always()
