@@ -1,5 +1,6 @@
 module.exports = {
   output: 'export',
+  trailingSlash: true,
   images: {
     remotePatterns: [
       {
