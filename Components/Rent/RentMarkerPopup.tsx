@@ -13,9 +13,17 @@ const RentPopup: React.FC<RentPopupProps> = ({ rent, setShowBidDetail, setAuctio
     setShowBidDetail(true);
     setAuctionDetailData(item);
   };
-  const images = rent?.images || [];
+  const images = rent?.images || []
   const imageUrl = getMapboxStaticImage(rent.latitude, rent.longitude);
-  images.unshift(imageUrl);
+  let displayImages;  
+ 
+  if(rent?.orderPhotoforGeneratedMap){
+    displayImages = [...(images || []), imageUrl];
+  }
+  else{
+    displayImages = [imageUrl, ...(images || [])];
+  }
+
   return (
     <div
       className={
@@ -23,7 +31,7 @@ const RentPopup: React.FC<RentPopupProps> = ({ rent, setShowBidDetail, setAuctio
       }
     >
       <div className={"relative h-[100px] w-[150px] sm:w-[266px]"}>
-        <Carousel images={images} />
+        <Carousel images={displayImages} />
       </div>
       <div className={"flex h-[100px] py-[5px] w-[200px] flex-col justify-between sm:w-[266px]"}>
         <div className="flex w-[95%] sm:w-full">

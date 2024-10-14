@@ -50,7 +50,6 @@ interface Address {
 const Airspaces: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   //
-  const [claimButtonLoading, setClaimButtonLoading] = useState<boolean>(false);
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
   const { isMobile } = useMobile();
   const { setIsOpen, currentStep, isOpen } = useTour();
@@ -499,7 +498,6 @@ const Airspaces: React.FC = () => {
         return;
       }
       if (!user) return;
-      setClaimButtonLoading(true);
       const {
         address,
         title,
@@ -583,7 +581,6 @@ const Airspaces: React.FC = () => {
       toast.error("Error when creating property.");
     } finally {
       setIsLoading(false);
-      setClaimButtonLoading(false);
     }
     removePubLicUserDetailsFromLocalStorage(
       "airSpaceData",
@@ -800,7 +797,6 @@ const Airspaces: React.FC = () => {
                     data={{ ...data, address }}
                     setData={setData}
                     onClaim={onClaim}
-                    claimButtonLoading={claimButtonLoading}
                     dontShowAddressOnInput={dontShowAddressOnInput}
                     setDontShowAddressOnInput={setDontShowAddressOnInput}
                   />
@@ -872,7 +868,6 @@ const Airspaces: React.FC = () => {
                     data={{ ...data, address }}
                     setData={setData}
                     onClaim={onClaim}
-                    claimButtonLoading={claimButtonLoading}
                     dontShowAddressOnInput={dontShowAddressOnInput}
                     setDontShowAddressOnInput={setDontShowAddressOnInput}
                   />

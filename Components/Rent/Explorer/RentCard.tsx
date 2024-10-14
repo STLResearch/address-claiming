@@ -5,12 +5,18 @@ import { getMapboxStaticImage } from "@/utils/getMapboxStaticImage";
 const RentCard = ({ onClickRent, price, title, item }: any) => {
   const images = item?.images || []
   const imageUrl = getMapboxStaticImage(item.latitude, item.longitude);
-  images.unshift(imageUrl);
+  let displayImages;
+  if(item?.orderPhotoforGeneratedMap){
+    displayImages = [...(images || []), imageUrl];
+  }
+  else{
+    displayImages = [imageUrl, ...(images || [])];
+  }
   return (
     <div>
       <div className="w-full overflow-hidden rounded-lg shadow-md" style={{ boxShadow: "0px 4px 10px 0px #0000001a" }}>
         <div className="relative h-[130px] w-full">
-          <Carousel images={images} />
+          <Carousel images={displayImages} />
         </div>
         <div className="flex w-full justify-between px-4 py-2">
           <div className="w-[60%] truncate text-left text-[14px] font-semibold leading-[20px] text-black">{title}</div>

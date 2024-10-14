@@ -102,10 +102,16 @@ const RentDetail: React.FC<RentDetailProps> = ({
     setShowRentPreview(true);
   };
   const images = rentData?.images || [];
-
+  let displayImages;
   if(rentData){
     const imageUrl = getMapboxStaticImage(rentData.latitude, rentData.longitude);
-    images.unshift( imageUrl );
+    if(rentData?.orderPhotoforGeneratedMap){
+      displayImages = [...(images || []), imageUrl];
+    }
+    else{
+      displayImages = [imageUrl, ...(images || [])];
+    }
+    
   }
 
   return (
@@ -119,7 +125,7 @@ const RentDetail: React.FC<RentDetailProps> = ({
       )}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation fixed bottom-[74px] left-0 px-[29px] sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] sm:py-[30px] gap-[15px] rounded-t-[30px] md:rounded-[30px]  w-full h-[400px] sm:h-[480px] md:w-[689px] z-[100] md:z-40 flex flex-col  overflow-auto sm:overflow-hidden"
+        className="touch-manipulation border fixed bottom-[74px] left-0 px-[29px] sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] sm:py-[30px] gap-[15px] rounded-t-[30px] md:rounded-[30px]  w-full h-[400px] sm:h-[480px] md:w-[689px] z-[100] md:z-40 flex flex-col  overflow-auto sm:overflow-hidden"
       >
         <div className="flex flex-col gap-[15px]">
           <div 
@@ -156,8 +162,11 @@ const RentDetail: React.FC<RentDetailProps> = ({
             {rentData ? rentData.address : ""}
           </p>
         </div>
-        <div className="relative w-full h-[130px]">
-        <Carousel images={images} />
+        <div>
+
+        <div className="relative w-full !h-[130px]">
+        <Carousel images={displayImages} />
+      </div>
       </div>
         <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
           <div className="flex touch-manipulation flex-col gap-[5px] w-full">

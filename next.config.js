@@ -13,6 +13,12 @@ module.exports = {
         port: "",
         pathname: "/v3/**",
       },
+      {
+        protocol: "https",
+        hostname: "images-dev.sky.trade",
+        port: "",
+        pathname: "/images/**",
+      },
     ],
   },
 };

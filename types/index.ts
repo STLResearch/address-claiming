@@ -102,6 +102,7 @@ export type PropertyData = {
   requestDocument?: RequestDocument[];
   metadata?: metadata;
   images?:string[];
+  orderPhotoforGeneratedMap?:boolean;
 };
 
 export type User = {

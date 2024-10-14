@@ -33,7 +33,6 @@ interface PropsI {
   data: any;
   setData: React.Dispatch<React.SetStateAction<any>>;
   onClaim: (images: string[], address?: string) => void;
-  claimButtonLoading: boolean;
   dontShowAddressOnInput: boolean;
   setDontShowAddressOnInput: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -50,14 +49,13 @@ export const ClaimModal = ({
   data,
   setData,
   onClaim,
-  claimButtonLoading,
   dontShowAddressOnInput,
   setDontShowAddressOnInput,
 }: PropsI) => {
   const endOfDivRef = useRef(null);
   const { currentStep } = useTour();
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
-
+  const [isClaimLoading, setIsClaimLoading] = useState<boolean>(false);
   useEffect(() => {
     if (endOfDivRef.current && currentStep === 3) {
       const { scrollHeight, clientHeight } = endOfDivRef.current;
@@ -115,7 +113,7 @@ export const ClaimModal = ({
         });
         await Promise.all(uploadPromises);
       }
-      onClaim(imageList, inputAddress);
+      await onClaim(imageList, inputAddress);
     } else {
       onClaim([], inputAddress);
     }
@@ -146,7 +144,7 @@ export const ClaimModal = ({
     }
   };
 
-  const handleNextButton = () => {
+  const handleNextButton = async () => {
     if (steps === ClaimAirspaceSteps.UNSELECTED) {
       setStepCounter(stepsCounter + 1);
       setSteps(ClaimAirspaceSteps.ZONING_PERMISSION);
@@ -158,7 +156,14 @@ export const ClaimModal = ({
         setSteps(ClaimAirspaceSteps.UPLOAD_IMAGE);
       }
     } else if (steps === ClaimAirspaceSteps.UPLOAD_IMAGE) {
-      handleClaim();
+      try{
+        setIsClaimLoading(true)
+        await handleClaim();
+        setIsClaimLoading(false)
+      }finally{
+        setIsClaimLoading(false)
+
+      }
     } else if (steps === ClaimAirspaceSteps.RENT) {
       setStepCounter(stepsCounter + 1);
       setSteps(ClaimAirspaceSteps.UPLOAD_IMAGE);
@@ -311,17 +316,17 @@ export const ClaimModal = ({
                 {steps === ClaimAirspaceSteps.UNSELECTED ? "Cancel" : "Back"}
               </div>
 
-              <div className="Claim-airspacebtn2-step w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">
-                <div className="flex justify-center items-center w-full">
-                  <LoadingButton
+              <LoadingButton
                     onClick={handleNextButton}
-                    isLoading={claimButtonLoading}
+                    isLoading={isClaimLoading}
                     color="white"
+                    className="Claim-airspacebtn2-step w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer flex justify-center"
                   >
-                    {isClaimAirspace ? "Claim Airspace" : "Next"}
-                  </LoadingButton>
-                </div>
-              </div>
+                  <div className="flex justify-center items-center w-full">
+                      {isClaimAirspace ? "Claim Airspace" : "Next"}
+                  </div>
+              </LoadingButton>
+              
             </div>
           </div>
         </div>

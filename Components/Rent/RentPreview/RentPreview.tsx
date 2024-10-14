@@ -165,10 +165,17 @@ const RentPreview: React.FC<RentPreviewProps> = ({
   const formattedTime = `${formattedTimeStart} - ${formattedTimeEnd}`;
 
   const images = rentData?.images || []
+  let displayImages;
   if(rentData){
     const imageUrl = getMapboxStaticImage(rentData.latitude, rentData.longitude);
-    images.unshift(imageUrl);
+    if(rentData?.orderPhotoforGeneratedMap){
+      displayImages = [...(images || []), imageUrl];
+    }
+    else{
+      displayImages = [imageUrl, ...(images || [])];
+    }
   }
+
   return (
     <div>
       {!isMobile && <Backdrop />}
@@ -230,7 +237,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
           </div>
           <div>
             <div className="relative h-[130px] w-full">
-              <Carousel images={images} />
+              <Carousel images={displayImages} />
             </div>
           </div>
           <div className="flex justify-between">

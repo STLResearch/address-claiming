@@ -54,7 +54,7 @@ const Rent = () => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [responseData, setResponseData] = useState<PropertyData[]>([]);
   const { findPropertiesByCoordinates } = PropertiesService();
-  const markersRef = useRef({});
+  const [markers, setMarkers] = useState<mapboxgl.Marker[]>([]);
   useEffect(() => {
     if (map) return;
     const createMap = () => {
@@ -93,88 +93,92 @@ const Rent = () => {
         });
         newMap.zoomOut({ duration: 4 });
       });
-  
+
       let timeoutId;
-  
-      newMap.on("move", async (e) => {
-        setLoadingRegAddresses(true);
-  
-        clearTimeout(timeoutId);
+
+      newMap.on("move", () => {
+        if (timeoutId) clearTimeout(timeoutId);
+
         timeoutId = setTimeout(async () => {
-          const crds = e.target.getBounds();
-  
+          const bounds = newMap.getBounds();
+
+          setLoadingRegAddresses(true);
+
           const responseData = await findPropertiesByCoordinates({
             postData: {
-              minLongitude: crds._sw.lng,
-              minLatitude: crds._sw.lat,
-              maxLongitude: crds._ne.lng,
-              maxLatitude: crds._ne.lat,
+              minLongitude: bounds._sw.lng,
+              minLatitude: bounds._sw.lat,
+              maxLongitude: bounds._ne.lng,
+              maxLatitude: bounds._ne.lat,
             },
           });
-  
-          let formattedProperties = [];
-          if (responseData) {
-            formattedProperties = responseData.filter((property) => {
-              if (
-                property.longitude >= crds._sw.lng &&
-                property.longitude <= crds._ne.lng &&
-                property.latitude >= crds._sw.lat &&
-                property.latitude <= crds._ne.lat
-              ) {
-                return property;
-              }
-            });
-          }
-  
+
+          const formattedProperties = responseData?.filter((property) => {
+            return (
+              property.longitude >= bounds._sw.lng &&
+              property.longitude <= bounds._ne.lng &&
+              property.latitude >= bounds._sw.lat &&
+              property.latitude <= bounds._ne.lat
+            );
+          }) || [];
+
+          markers.forEach((marker) => marker.remove());
+          setMarkers([]); 
           setRegisteredAddress(formattedProperties);
           setLoadingRegAddresses(false);
-          setResponseData(formattedProperties); 
-        }, 3000);
+          setResponseData(formattedProperties);
+        }, 3000); 
       });
-  
+
       setMap(newMap);
     };
+
     createMap();
+
+    return () => {
+      if (map){
+        (map as Map).remove(); 
+      } 
+        
+    };
   }, []);
-  
+
   useEffect(() => {
-    if (responseData?.length === 0 || !map) return;
-  
-    for (let i = 0; i < responseData.length; i++) {
-      const { longitude, latitude } = responseData[i];
-      if (longitude === undefined || latitude === undefined) continue;
-      const lngLat = new mapboxgl.LngLat(
-        longitude ,
-        latitude 
-      );
-  
-      if (!markersRef.current[i]) {
-        const marker = new mapboxgl.Marker({
-          color: "#3FB1CE",
-        })
-          .setLngLat(lngLat)
-          .addTo(map);
-  
-        markersRef.current[i] = marker;
-        const markerElement = marker.getElement();
-  
-        if (markerElement && marker && map) {
-          handleMouseEvent(
-            isMobile,
-            markerElement,
-            marker,
-            map,
-            responseData[i],
-            setShowRentDetail,
-            setRentData
-          );
-        }
-      } else {
-        markersRef.current[i].setLngLat(lngLat);
+    if (!responseData.length || !map) return;
+
+    const newMarkers: mapboxgl.Marker[] = [];
+
+    responseData.forEach((data) => {
+      const { longitude, latitude } = data;
+      if (longitude === undefined || latitude === undefined) return;
+
+      const lngLat = new mapboxgl.LngLat(longitude, latitude);
+
+      const marker = new mapboxgl.Marker({
+        color: "#3FB1CE",
+      })
+        .setLngLat(lngLat)
+        .addTo(map);
+
+      newMarkers.push(marker);
+
+      const markerElement = marker.getElement();
+      if (markerElement) {
+        handleMouseEvent(
+          isMobile,
+          markerElement,
+          marker,
+          map,
+          data,
+          setShowRentDetail,
+          setRentData
+        );
       }
-    }
+    });
+
+    setMarkers(newMarkers);
+
   }, [responseData, isMobile, map, setShowRentDetail, setRentData]);
-  
 
   useEffect(() => {
     if (registeredAddress.length > 0) {
@@ -220,15 +224,7 @@ const Rent = () => {
 
   useEffect(() => {
     if (!flyToAddress) return;
-    goToAddress(
-      flyToAddress,
-      setCoordinates,
-      setAddressData,
-      setIsLoading,
-      setMarker,
-      map,
-      marker,
-    );
+    goToAddress(flyToAddress, setCoordinates, setAddressData, setIsLoading, setMarker, map, marker);
   }, [flyToAddress, map]);
 
   useEffect(() => {
@@ -237,9 +233,7 @@ const Rent = () => {
 
   useEffect(() => {
     const inintialRentDataString = localStorage.getItem("rentData");
-    const parsedInitialRentData = inintialRentDataString
-      ? JSON.parse(inintialRentDataString)
-      : null;
+    const parsedInitialRentData = inintialRentDataString ? JSON.parse(inintialRentDataString) : null;
     if (parsedInitialRentData && parsedInitialRentData?.address?.length > 2) {
       setRentData(parsedInitialRentData);
       setFlyToAddress(parsedInitialRentData.address);
@@ -254,7 +248,7 @@ const Rent = () => {
       {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
       {
-        <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded  md:bg-[#F6FAFF] ">
+        <div className="relative flex h-screen w-screen items-center justify-center overflow-clip rounded  md:bg-[#F6FAFF] ">
           <Sidebar />
 
           <div className="flex h-full w-full flex-col ">
@@ -272,11 +266,11 @@ const Rent = () => {
             )}
             <section
               className={
-                "relative mb-[79px] flex h-full w-full items-start justify-start md:mb-0 "
+                "relative flex w-full h-full justify-start items-start md:mb-0 mb-[79px] "
               }
             >
               <div
-                className={"!absolute !left-0 !top-0 !m-0 !h-screen !w-screen"}
+                className={"!absolute !top-0 !left-0 !m-0 !w-screen !h-screen"}
                 id="map"
               />
               <RentSearchMobile
