@@ -34,7 +34,7 @@ const PreviousUploadedDocuments = () => {
             <div className="md:w-[60%] w-full flex flex-col md:flex-row md:flex-wrap justify-end items-center gap-8 mt-3 sm:mt-0">
             {document.previewUrl && document.previewUrl?.length > 0 && document.previewUrl?.map((url, urlIndex) => (
               <Link
-              key={urlIndex}
+              key={urlIndex} 
                 target="_blank"
                 href={document?.previewUrl[urlIndex]}
                 className="cursor-pointer"
