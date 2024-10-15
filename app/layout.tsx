@@ -37,9 +37,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
-        <link rel="icon" href="/favicon-1.ico" sizes="any" type="image/x-icon" />
-        <link href="https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css" rel="stylesheet" />
+        <link
+          href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
+          rel="stylesheet"
+        />
+        <link
+          rel="icon"
+          href="/favicon-1.ico"
+          sizes="any"
+          type="image/x-icon"
+        />
+        <link
+          href="https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css"
+          rel="stylesheet"
+        />
       </head>
       <body>
         <div id="backdrop-root"></div>
@@ -60,7 +71,7 @@ export default function RootLayout({
           </Script>
           <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
           {/* <Provider store={store}> */}
-            <Web3authProvider>
+          <Web3authProvider>
             <SidebarProvider>
               <ToastContainer style={{ width: "500px" }} />
               <div id="backdrop-root"></div>
@@ -80,8 +91,8 @@ export default function RootLayout({
               <NotificationBanner />
               <OnboardingTour>{children}</OnboardingTour>
             </SidebarProvider>
-            <CookieConsent />          
-          <TawkMessengerComponent />
+            <CookieConsent />
+            <TawkMessengerComponent />
           </Web3authProvider>
           {/* </Provider> */}
         </>

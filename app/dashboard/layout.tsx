@@ -7,6 +7,10 @@ export const metadata: Metadata = {
     "Get a comprehensive overview of your activities, manage your air rights, funds, and referrals, all from the SkyTrade Dashboard.",
 };
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <>{children}</>;
 }

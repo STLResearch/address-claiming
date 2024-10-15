@@ -7,6 +7,10 @@ export const metadata: Metadata = {
     "Refer friends to SkyTrade and earn rewards. Track your referrals, view bonus details, and maximize your benefits.",
 };
 
-export default function ReferralLayout({ children }: { children: React.ReactNode }) {
+export default function ReferralLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <>{children}</>;
 }
