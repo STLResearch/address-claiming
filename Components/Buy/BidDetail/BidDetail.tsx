@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BidAirspaceHeader from "./BidHeader";
-import { LocationPointIcon } from "@/Components//Shared/Icons";
+import { LocationPointIcon } from "@/Components/Icons";
 import Image from "next/image";
 import { useMobile } from "@/hooks/useMobile";
 import { IoExpand } from "react-icons/io5";

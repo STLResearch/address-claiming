@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { LocationPointIcon, CloseIcon } from "@/Components/Icons";
 import Image from "next/image";
-import Image1 from "@/public/images/AHImage.png";
 import { useMobile } from "@/hooks/useMobile";
 import useAuth from "@/hooks/useAuth";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
