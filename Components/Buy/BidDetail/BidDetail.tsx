@@ -1,13 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import BidAirspaceHeader from "./BidHeader";
-import { LocationPointIcon, RectangleIcon } from "@/Components/Icons";
+import { LocationPointIcon } from "@/Components//Shared/Icons";
 import Image from "next/image";
 import { useMobile } from "@/hooks/useMobile";
+import { IoExpand } from "react-icons/io5";
 import { AuctionDataI } from "@/types";
 import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketPlaceUtils";
 import { shortenAddress } from "@/utils";
+
 import Accordion from "./Accordion";
+import AirspaceHistory from "./AirspaceHistory";
 import CustomTable from "./CustomTable";
+import Carousel from "@/Components/Shared/Carousel";
 
 interface BidDetailsProps {
   auctionDetailData: AuctionDataI | undefined;
@@ -57,6 +61,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
       </div>
     );
   };
+
   const endDate = auctionDetailData ? new Date(auctionDetailData.endDate) : undefined;
   const timeLeft = endDate ? getTimeLeft(endDate) : undefined;
   const { latitude, longitude, title } = auctionDetailData?.layer?.property || {};
@@ -95,13 +100,13 @@ const BidDetails: React.FC<BidDetailsProps> = ({
   return (
     <div className="fixed inset-0 bottom-[74px] z-50 flex items-start justify-center bg-[#294B63] bg-opacity-50 pt-32 backdrop-blur-[2px] sm:bottom-0">
       <div className="thin-scrollbar short-scrollbar fixed bottom-0 z-[500] flex h-[560px] w-full flex-col gap-[15px] overflow-x-auto overflow-y-auto rounded-t-[30px] bg-white sm:left-1/2 sm:top-1/2 sm:z-50 sm:-translate-x-1/2 sm:-translate-y-1/2 md:h-[640px] md:w-[689px] md:rounded-[30px] md:shadow-md">
-        {isMobile && (
+        {/* {isMobile && (
           <div onClick={onCloseModal} className="mt-4 flex flex-col items-center justify-end md:mt-0">
             <div className="flex w-[90%] items-center justify-center">
               <RectangleIcon />
             </div>
           </div>
-        )}
+        )} */}
         <div className="shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)] sticky left-0 right-0 top-0 z-[100] -mt-[1px] flex flex-col gap-[15px] bg-white px-[29px] py-[20px]">
           <BidAirspaceHeader onCloseModal={onCloseModal} />
           <div className="flex h-[46px] w-full items-center justify-between rounded-lg border border-[#4285F4] px-[22px] py-4">
@@ -173,10 +178,22 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                   className={`h-[42px] w-full ${currentUserBid ? "cursor-pointer" : "cursor-not-allowed"}`}
                   onClick={onPlaceBid}
                 >
-                  Place a Bid
+                  Place Bid
                 </button>
               </div>
               <hr />
+
+              {auctionDetailData && auctionDetailData.layer.property.propertyStatusId !== 1 && (
+                <p className="pt-1 text-sm text-gray-500">
+                  Note: By placing a bid,{" "}
+                  <span className="font-bold text-black">
+                    10% of your bid ($
+                    {0.1 * (currentUserBid || 0)})
+                  </span>{" "}
+                  will be held, and if you win, you must pay the remaining amount within 7 days or forfeit the deposit.
+                </p>
+              )}
+
               <div className="opacity-60">
                 <Accordion
                   title={(auctionDetailData && `Previous Bids (${auctionDetailData.AuctionBid.length})`) || ""}
