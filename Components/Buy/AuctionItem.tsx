@@ -126,6 +126,12 @@ const AuctionItem: React.FC<AuctionItemProps> = ({ data, onSelectItem, onUpdateI
           </div>
         </div>
       )}
+      {isOpen && data.propertyStatusId !== 1 && (
+        <p className="pt-1 text-sm text-gray-500">
+          Note: After the auction ends, you have 7 days to provide proof of ownership or the auction will be canceled,
+          and the winning bid will be refunded to the respective bidder.
+        </p>
+      )}
     </div>
   );
 };

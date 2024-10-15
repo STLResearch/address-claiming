@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ChevronRightIcon,
   DocumentApprovedIcon,
@@ -7,13 +7,13 @@ import {
   ReviewVerificationIcon,
 } from "../Icons";
 import { calculateTimeLeft, shortenAddress } from "@/utils";
-import { getTimeLeft } from "@/utils/marketPlaceUtils";
-import Button from "../Shared/Button";
+
 import { useRouter } from "next/navigation";
 import UploadedDocuments from "./UploadedDocuments";
 import AdditionalDocuments from "./AdditionalDocuments";
 import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import { RequestDocumentStatus } from "@/types";
+import { RxLapTimer } from "react-icons/rx";
 
 const PortfolioItem = ({ airspace, selectAirspace, setUploadedDoc, requestDocument }) => {
   const router = useRouter();
@@ -21,6 +21,7 @@ const PortfolioItem = ({ airspace, selectAirspace, setUploadedDoc, requestDocume
   const [showPopup, setShowPopup] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [badgeCountdown, setBadgeCountdown] = useState("");
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -37,11 +38,43 @@ const PortfolioItem = ({ airspace, selectAirspace, setUploadedDoc, requestDocume
   };
 
   const handleOutBidCheck = () => {
-    if (airspace.placedBid.price < airspace.auction.currentPrice) {
-      return true;
-    }
-    return false;
+    return airspace.placedBid.price < airspace.auction.currentPrice;
   };
+
+  function formatCountdown(endTime) {
+    const now = new Date();
+    //@ts-ignore
+    const timeDifference = endTime - now;
+
+    if (timeDifference <= 0) return "Expired";
+
+    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+
+    return `${days}D : ${hours}H : ${minutes}m left`;
+  }
+
+  useEffect(() => {
+    if (type === "placedBid" && airspace?.auction?.hasEnded) {
+      const endTime = new Date(airspace.auction.endDate);
+      const countdownEndTime = new Date(endTime.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+      // Set the initial countdown immediately
+      setBadgeCountdown(formatCountdown(countdownEndTime));
+
+      const intervalId = setInterval(() => {
+        const formattedCountdown = formatCountdown(countdownEndTime);
+        setBadgeCountdown(formattedCountdown);
+
+        if (formattedCountdown === "Expired") {
+          clearInterval(intervalId);
+        }
+      }, 60000); // Update every minute
+
+      return () => clearInterval(intervalId);
+    }
+  }, [type, airspace?.auction?.hasEnded, airspace?.auction?.endDate]);
 
   return (
     <>
@@ -74,11 +107,18 @@ const PortfolioItem = ({ airspace, selectAirspace, setUploadedDoc, requestDocume
               Time Left: <span className="font-bold">{calculateTimeLeft(airspace?.auction?.endDate)}</span>
             </div>
 
-            {type === "placedBid" && handleOutBidCheck() ?
+            {/* Show red badge with countdown for 7 days after auction ends */}
+            {/* {type === "placedBid" && airspace?.auction?.hasEnded && (
+              <div className="flex items-center gap-2 rounded bg-red-500 px-2 py-1 text-white">
+                <RxLapTimer className="h-4 w-4" /> {badgeCountdown}
+              </div>
+            )} */}
+
+            {type === "placedBid" && airspace?.auction?.hasEnded && handleOutBidCheck() ?
               <button
                 className="rounded bg-blue-500 p-1 px-2 text-white"
                 onClick={(event) => {
-                  event.stopPropagation(); // Prevent triggering selectAirspace
+                  event.stopPropagation();
                   router.push(`/buy?auctionId=${airspace?.auction?.id}&bid=true`);
                 }}
               >

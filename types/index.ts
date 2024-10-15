@@ -417,6 +417,7 @@ export interface AuctionPropertyI {
   time_left?: string;
   price?: number;
   currentUserBid?: number;
+  propertyStatusId?: number;
 }
 
 export type AuctionListingI = {
@@ -442,6 +443,7 @@ export type AuctionDataI = {
   seller: string;
   pdaAddress: string;
   initialPrice: number;
+  propertyStatusId?: number;
   endDate: string;
   currentPrice: number;
   currentBidder: string;
