@@ -8,14 +8,14 @@ interface SuccessModalProps {
   setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>;
   finalAns: { status: string; message?: string | undefined } | null | undefined;
   rentData: PropertyData | undefined | null;
-  setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowRentDetail: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SuccessModal: React.FC<SuccessModalProps> = ({
   setShowSuccess,
   finalAns,
   rentData,
-  setShowClaimModal,
+  setShowRentDetail,
 }) => {
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -23,7 +23,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setShowSuccess(false);
-        setShowClaimModal(false);
+        setShowRentDetail(false);
       }
     };
 
@@ -31,11 +31,11 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [setShowSuccess, setShowClaimModal]);
+  }, [setShowSuccess, setShowRentDetail]);
 
   const handalClosePop = () => {
     setShowSuccess(false);
-    setShowClaimModal(false);
+    setShowRentDetail(false);
   };
 
   return (
@@ -51,7 +51,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           <div
             onClick={() => {
               setShowSuccess(false);
-              setShowClaimModal(false);
+              setShowRentDetail(false);
             }}
             className="w-[26px] h-[26px] absolute top-[10px] right-[10px] "
           >
@@ -135,7 +135,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           {finalAns?.status === "Rent Successful" ? (
             <>
               <button
-                onClick={() => setShowClaimModal(false)}
+                onClick={() => setShowRentDetail(false)}
                 className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-lg"
               >
                 Portfolio

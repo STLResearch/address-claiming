@@ -69,6 +69,7 @@
     "react-select": "^5.8.0",
     "react-timezone-select": "^3.2.3",
     "react-toastify": "^10.0.4",
+    "react-window": "^1.8.10",
     "redux-persist": "^6.0.0",
     "sharp": "^0.33.4",
     "stripe": "^16.9.0",

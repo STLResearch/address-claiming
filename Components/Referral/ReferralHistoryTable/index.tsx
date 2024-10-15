@@ -52,7 +52,9 @@ const ReferralHistoryTable: React.FC = () => {
   };
   const { isMobile } = useMobile();
   return (
-    <div className={`${isMobile ? "history-table-scrollbar" : "overflow-x-scroll"}  w-[100%] h-full bg-white `}>
+    <div
+      className={`${isMobile ? "history-table-scrollbar" : "overflow-x-scroll"}  w-[100%] h-full bg-white `}
+    >
       <table className=" w-[582.33px]">
         <thead className="">
           <tr>

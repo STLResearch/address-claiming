@@ -34,7 +34,7 @@ const Popup: React.FC<PopupProps> = ({
 }) => {
   const { isMobile } = useMobile();
   const { updateDocument } = DocumentUploadServices();
-  const { generatePublicFileUploadUrl } = S3UploadServices();
+  const { generatePrivateFileUploadUrls } = S3UploadServices();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -44,22 +44,21 @@ const Popup: React.FC<PopupProps> = ({
   const onDrop = (acceptedFiles: File[]) => {
     const isValid = acceptedFiles.every((file) => isFileSizeValid(file));
     if (isValid) {
-      setSelectedFiles(prevFiles => [...prevFiles, ...acceptedFiles]);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
     } else {
       toast.error("File size must be less than 20MB!");
     }
   };
 
   const removeFile = (file: File) => {
-    setSelectedFiles(prevFiles => prevFiles.filter(f => f !== file));
+    setSelectedFiles((prevFiles) => prevFiles.filter((f) => f !== file));
   };
 
-  const { getRootProps , getInputProps , isDragActive } = useDropzone(
-    { 
-    onDrop, 
-    multiple: true ,
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: true,
     accept: ACCEPTED_FILE_TYPES,
-   });
+  });
 
   if (!showPopup) return null;
 
@@ -69,51 +68,52 @@ const Popup: React.FC<PopupProps> = ({
       return;
     }
     if (selectedFiles.length > 5) {
-      toast.error("You can only upload up to 5 files. Please adjust your selection and try again!");
+      toast.error(
+        "You can only upload up to 5 files. Please adjust your selection and try again!",
+      );
       return;
     }
 
     setLoading(true);
 
-    function getContentTypes(files: File[]): string[] {
-      return files.map(file => file.type);
-    }
-    function getFilePaths(response: any[]): string[] {
-      return response.map(file => file.key);
-    }
     try {
-      const generatedRes = await generatePublicFileUploadUrl({
-        fileType: getContentTypes(selectedFiles),
+      const imageList: string[] = [];
+      const contentTypes = selectedFiles.map((file) => file.type);
+
+      const params = await generatePrivateFileUploadUrls({
+        contentTypes,
         requestId: requestDocument.id,
       });
 
-      if (generatedRes?.length === 0 ) {
-        throw new Error("Failed to upload file ");
+      if (!params) {
+        toast.error("Failed to upload file ");
+        return;
       }
 
-      const uploadPromises = selectedFiles.map((file, index) => {
-        const uploadUrl = generatedRes[index]?.uploadUrl?.uploadUrl; 
-        return uploadImage(uploadUrl, file);
+      const uploadPromises = params.map(async (param, index) => {
+        const imageRes = await uploadImage(
+          param.uploadUrl,
+          selectedFiles[index],
+        );
+
+        if (!imageRes || imageRes?.data?.status !== "SUCCESS") {
+          throw new Error("Failed to upload file");
+        }
+        imageList.push(param.key);
       });
+      await Promise.all(uploadPromises);
 
-      const imageResponses = await Promise.all(uploadPromises);
-      const failedUploads = imageResponses.filter(
-        (res) => !res || res.data?.status !== "SUCCESS"
-      );
-      if (failedUploads.length > 0) {
-        throw new Error("One or more files failed to upload");
-      }
-
-      const paths = getFilePaths(generatedRes);
       const updateResponse = await updateDocument({
-        paths,
+        paths: imageList,
         requestId: Number(requestDocument.id),
       });
+
       if (!updateResponse) {
         throw new Error("Failed to upload file ");
       }
+
       setUnderReview(true);
-      setUploadedDoc(prevFiles => [...prevFiles, ...selectedFiles]);
+      setUploadedDoc((prevFiles) => [...prevFiles, ...selectedFiles]);
       setShowSuccessToast(true);
       setTimeout(() => setShowSuccessToast(false), 4000);
       closePopup();
@@ -178,11 +178,11 @@ const Popup: React.FC<PopupProps> = ({
         <div className="file-upload">
           <div
             {...getRootProps({
-              className: `dropzone ${isDragActive ? 'active' : ''}`,
+              className: `dropzone ${isDragActive ? "active" : ""}`,
             })}
             className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500"
           >
-            <input {...getInputProps()}/>
+            <input {...getInputProps()} />
             {isMobile ? (
               <p className="text-base font-medium text-[#87878D]">
                 Click to upload Document
@@ -191,8 +191,7 @@ const Popup: React.FC<PopupProps> = ({
               <p className="text-base font-medium text-[#87878D]">
                 Drag here or click to upload
               </p>
-            )} 
-
+            )}
           </div>
         </div>
         <div className="w-[300px] sm:w-auto ">  

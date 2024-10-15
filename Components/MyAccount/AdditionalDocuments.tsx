@@ -39,7 +39,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
   const { getUser } = UserService();
 
   const { updateDocument } = DocumentUploadServices();
-  const { generatePublicFileUploadUrl } = S3UploadServices();
+  const { generatePrivateFileUploadUrls } = S3UploadServices();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -52,29 +52,24 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
   const onDrop = (acceptedFiles: File[]) => {
     const isValid = acceptedFiles.every((file) => isFileSizeValid(file));
     if (isValid) {
-      setSelectedFiles(prevFiles => [...prevFiles, ...acceptedFiles]);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
     } else {
       toast.error("File size must be less than 20MB!");
     }
   };
   const removeFile = (file: File) => {
-    setSelectedFiles(prevFiles => prevFiles.filter(f => f !== file));
+    setSelectedFiles((prevFiles) => prevFiles.filter((f) => f !== file));
   };
 
-  const { getRootProps, getInputProps , isDragActive } = useDropzone(
-    { onDrop, 
-      multiple: true ,
-      accept: ACCEPTED_FILE_TYPES,
-      maxFiles: 5,
-    });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: true,
+    accept: ACCEPTED_FILE_TYPES,
+    maxFiles: 5,
+  });
 
   if (!showPopup) return null;
-  function getContentTypes(files: File[]): string[] {
-    return files.map(file => file.type);
-  }
-  function getFilePaths(response: any[]): string[] {
-    return response.map(file => file.key);
-  }
+
   const handleClick = async () => {
     if (!requestDocument) {
       toast.error("No document request at the moment");
@@ -86,43 +81,53 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
       return;
     }
     if (selectedFiles.length > 5) {
-      toast.error("You can only upload up to 5 files. Please adjust your selection and try again!");
+      toast.error(
+        "You can only upload up to 5 files. Please adjust your selection and try again!",
+      );
       return;
     }
 
     setLoading(true);
 
     try {
-      const generatedRes = await generatePublicFileUploadUrl({
-        fileType: getContentTypes(selectedFiles),
+      const contentTypes = selectedFiles.map((file) => file.type);
+      const imageList: string[] = [];
+
+      const params = await generatePrivateFileUploadUrls({
+        contentTypes,
         requestId: requestDocument.id,
       });
 
-      if (generatedRes?.length === 0 ) {
-        throw new Error("Failed to upload file ");
+      if (!params) {
+        toast.error("Failed to upload file ");
       }
-      const uploadPromises = selectedFiles.map((file, index) => {
-        const uploadUrl = generatedRes[index]?.uploadUrl?.uploadUrl; 
-        return uploadImage(uploadUrl, file);
-      });
-      const imageResponses = await Promise.all(uploadPromises);
-      const failedUploads = imageResponses.filter(
-        (res) => !res || res.data?.status !== "SUCCESS"
-      );
-      if (failedUploads.length > 0) {
-        throw new Error("One or more files failed to upload");
+
+      if (params) {
+        const uploadPromises = params.map(async (param, index) => {
+          const imageRes = await uploadImage(
+            param.uploadUrl,
+            selectedFiles[index],
+          );
+
+          if (!imageRes || imageRes?.data?.status !== "SUCCESS") {
+            throw new Error("Failed to upload file to S3");
+          }
+          imageList.push(param.key);
+        });
+        await Promise.all(uploadPromises);
       }
-      
-      const paths = getFilePaths(generatedRes);
+
       const updateResponse = await updateDocument({
-        paths,
+        paths: imageList,
         requestId: Number(requestDocument.id),
       });
+
       if (!updateResponse) {
         throw new Error("Failed to upload file ");
       }
+
       setShowSuccessToast(true);
-      setUploadedDoc(prevFiles => [...prevFiles, ...selectedFiles]);
+      setUploadedDoc((prevFiles) => [...prevFiles, ...selectedFiles]);
       setTimeout(() => setShowSuccessToast(false), 5000);
       setShowAdditionalDoc(true);
       closePopup();
@@ -179,34 +184,41 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
           </>
         )}
         <div
-            {...getRootProps({
-              className: `dropzone ${isDragActive ? 'active' : ''}`,
-            })}
-            className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500"
-          >
-            <input {...getInputProps()}/>
+          {...getRootProps({
+            className: `dropzone ${isDragActive ? "active" : ""}`,
+          })}
+          className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500"
+        >
+          <input {...getInputProps()} />
 
           {isMobile ? (
             <p className="text-base font-medium text-[#87878D]">
-             click to upload Document
+              &quot;click to upload Document&quot;
             </p>
           ) : (
             <p className="text-base font-medium text-[#87878D]">
-            Drag here or click to upload
+              &quot;Drag here or click to upload&quot;
             </p>
           )}
         </div>
 
-        <div className="w-[300px] sm:w-auto ">  
-        {selectedFiles?.length > 0 && 
-          selectedFiles.map((selectedFile,index)=>(
-            <div className="flex justify-between items-center"key={index}>
-              <div className="w-[40%] sm:w-auto truncate">{selectedFile.name}</div>
-              <div className="w-[40%] sm:w-auto flex justify-end">
-                <button onClick={() => removeFile(selectedFile)} className="text-red-400 sm:mr-3 m-0">Remove</button>
+        <div className="w-[300px] sm:w-auto ">
+          {selectedFiles?.length > 0 &&
+            selectedFiles.map((selectedFile, index) => (
+              <div key={index} className="flex justify-between items-center">
+                <div className="w-[40%] sm:w-auto truncate" key={index}>
+                  {selectedFile.name}
+                </div>
+                <div className="w-[40%] sm:w-auto flex justify-end">
+                  <button
+                    onClick={() => removeFile(selectedFile)}
+                    className="text-red-400 sm:mr-3 m-0"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
-              </div>
-        ))}
+            ))}
         </div>
         <LoadingButton
           onClick={handleClick}
