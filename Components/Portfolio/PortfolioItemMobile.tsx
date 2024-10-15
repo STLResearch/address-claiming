@@ -153,6 +153,9 @@ const PortfolioItemMobile = ({
                       </div>
                       <p className="text-sm font-normal text-[#E04F64]">Documents rejected</p>
                     </div>
+                    <div className="h-[14px] w-[7px]">
+                      <ChevronRightIcon />
+                    </div>
                   </div>
                 )}
               </div>

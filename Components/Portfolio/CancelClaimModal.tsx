@@ -55,7 +55,7 @@ const CancelClaimModal = ({ airspace, setShowCancelModal, setSelectedAirspace, s
             <CloseIconBlack />
           </div>
         </div>
-        <div>Are you sure you want to cancel the claim of the following airspace?</div>
+        <div>Are you sure you want to cancel the claim of the following air rights?</div>
 
         <div className="flex items-center gap-[10px] rounded-lg border border-deep-blue px-[22px] py-4">
           <div className="h-6 w-6">

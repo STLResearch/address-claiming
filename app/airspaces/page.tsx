@@ -50,7 +50,6 @@ interface Address {
 const Airspaces: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   //
-  const [claimButtonLoading, setClaimButtonLoading] = useState<boolean>(false);
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
   const { isMobile } = useMobile();
   const { setIsOpen, currentStep, isOpen } = useTour();
@@ -68,9 +67,9 @@ const Airspaces: React.FC = () => {
   const defaultData: defaultData = {
     address: address,
     title: "",
-    rent: true,
+    rent: null,
     sell: false,
-    hasPlanningPermission: null,
+    hasZoningPermission: null,
     hasChargingStation: false,
     hasLandingDeck: false,
     hasStorageHub: false,
@@ -88,6 +87,9 @@ const Airspaces: React.FC = () => {
       { fromTime: 0, toTime: 24, isAvailable: true, weekDayId: 5 },
       { fromTime: 0, toTime: 24, isAvailable: true, weekDayId: 6 },
     ],
+    orderPhotoforGeneratedMap: false,
+    assessorParcelNumber: "",
+    images: [],
   };
   // Showing
   const [showOptions, setShowOptions] = useState<boolean>(false);
@@ -348,9 +350,16 @@ const Airspaces: React.FC = () => {
       }
       const newMarker = new mapboxgl.Marker({
         color: "#3FB1CE",
+        draggable: true,
       })
         .setLngLat(temp)
         .addTo(map as mapboxgl.Map);
+      newMarker.on('dragend', function () {
+        const lngLat = newMarker.getLngLat();
+        const newLongitude = lngLat.lng;
+        const newLatitude = lngLat.lat;
+        setCoordinates({longitude: newLongitude.toString(), latitude: newLatitude.toString()});
+      });
       setMarker(newMarker);
     }
   }, [map, coordinates.latitude, coordinates.longitude]);
@@ -479,7 +488,7 @@ const Airspaces: React.FC = () => {
     }
   }, [isOpen]);
 
-  const onClaim = async (_address?: string) => {
+  const onClaim = async (images: [], _address?: string) => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
 
@@ -489,14 +498,12 @@ const Airspaces: React.FC = () => {
         return;
       }
       if (!user) return;
-
-      setClaimButtonLoading(true);
       const {
         address,
         title,
         hasChargingStation,
         hasLandingDeck,
-        hasPlanningPermission,
+        hasZoningPermission,
         hasStorageHub,
         rent,
         timezone,
@@ -504,6 +511,8 @@ const Airspaces: React.FC = () => {
         noFlyZone,
         isFixedTransitFee,
         weekDayRanges,
+        orderPhotoforGeneratedMap,
+        assessorParcelNumber,
       } = data;
       const latitude = Number(coordinates.latitude);
       const longitude = Number(coordinates.longitude);
@@ -528,7 +537,7 @@ const Airspaces: React.FC = () => {
         latitude,
         longitude,
         timezone,
-        isActive: hasPlanningPermission,
+        hasZoningPermission,
         vertexes: [
           { latitude: latitude + 0.0001, longitude: longitude + 0.0001 },
           { latitude: latitude + 0.0001, longitude: longitude - 0.0001 },
@@ -536,10 +545,13 @@ const Airspaces: React.FC = () => {
           { latitude: latitude - 0.0001, longitude: longitude - 0.0001 },
         ],
         weekDayRanges,
+        orderPhotoforGeneratedMap,
+        assessorParcelNumber,
+        images,
       };
       if (!rent) {
         errors.push(
-          "Please ensure to check the rental checkbox before claiming airspace.",
+          "Please ensure to check the rental checkbox before claiming air rights.",
         );
       }
       if (!weekDayRanges.some((item) => item.isAvailable)) {
@@ -553,7 +565,6 @@ const Airspaces: React.FC = () => {
       }
 
       const responseData = await claimProperty({ postData });
-
       if (!responseData) {
         setShowFailurePopUp(true);
       } else {
@@ -570,7 +581,6 @@ const Airspaces: React.FC = () => {
       toast.error("Error when creating property.");
     } finally {
       setIsLoading(false);
-      setClaimButtonLoading(false);
     }
     removePubLicUserDetailsFromLocalStorage(
       "airSpaceData",
@@ -611,6 +621,8 @@ const Airspaces: React.FC = () => {
         }
         const newMarker = new mapboxgl.Marker({
           color: "#3FB1CE",
+          draggable: true
+
         })
           .setLngLat({ lng: longitude, lat: latitude })
           .addTo(map as mapboxgl.Map);
@@ -709,7 +721,7 @@ const Airspaces: React.FC = () => {
                         className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
                         style={{ maxWidth: "400px" }}
                       >
-                        Claim Airspace
+                       Claim Airspace 
                       </div>
                     )}
                   </div>
@@ -785,7 +797,6 @@ const Airspaces: React.FC = () => {
                     data={{ ...data, address }}
                     setData={setData}
                     onClaim={onClaim}
-                    claimButtonLoading={claimButtonLoading}
                     dontShowAddressOnInput={dontShowAddressOnInput}
                     setDontShowAddressOnInput={setDontShowAddressOnInput}
                   />
@@ -857,7 +868,6 @@ const Airspaces: React.FC = () => {
                     data={{ ...data, address }}
                     setData={setData}
                     onClaim={onClaim}
-                    claimButtonLoading={claimButtonLoading}
                     dontShowAddressOnInput={dontShowAddressOnInput}
                     setDontShowAddressOnInput={setDontShowAddressOnInput}
                   />
@@ -874,10 +884,10 @@ const Airspaces: React.FC = () => {
                   <div className="w-full rounded-[20px] bg-[#222222] p-[12px] text-center text-base font-normal text-white">
                     Exciting times ahead!
                     <br />
-                    Claim your airspace 🚀✨
+                    Claim your air rights 🚀✨
                   </div>
                   <div className="claim-step w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
-                    Claim your airspace
+                    Claim your air rights
                   </div>
                 </div>
                 <div className="flex flex-1 flex-col gap-[23px] px-[13px] py-[29px]">

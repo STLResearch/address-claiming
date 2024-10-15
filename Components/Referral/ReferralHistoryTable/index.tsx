@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { HistoryArrowIcon } from "../../Icons";
 import { Web3authContext } from "@/providers/web3authProvider";
 import ReferralCodeService from "@/services/ReferralCodeService";
+import { useMobile } from "@/hooks/useMobile";
 
 interface ReferralListI {
   description: string;
@@ -49,9 +50,11 @@ const ReferralHistoryTable: React.FC = () => {
   const handlePrevPage = (page: number) => {
     setPageNumber(page);
   };
-
+  const { isMobile } = useMobile();
   return (
-    <div className=" w-[100%] overflow-x-scroll h-full bg-white">
+    <div
+      className={`${isMobile ? "history-table-scrollbar" : "overflow-x-scroll"}  w-[100%] h-full bg-white `}
+    >
       <table className=" w-[582.33px]">
         <thead className="">
           <tr>

@@ -43,8 +43,8 @@ const useAuth = () => {
   };
 
   const signOut = async () => {
+    await web3auth?.logout();
     setProvider(null);
-
     sessionStorage.clear();
     localStorage.clear();
     router.push("/auth");

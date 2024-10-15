@@ -1,5 +1,8 @@
 module.exports = {
+  output: 'export',
+  trailingSlash: true,
   images: {
+    unoptimized: true,    
     remotePatterns: [
       {
         protocol: "https",
@@ -12,6 +15,12 @@ module.exports = {
         hostname: "maps.locationiq.com",
         port: "",
         pathname: "/v3/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images-dev.sky.trade",
+        port: "",
+        pathname: "/images/**",
       },
     ],
   },

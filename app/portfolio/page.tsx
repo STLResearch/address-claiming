@@ -57,7 +57,6 @@ const Portfolio = () => {
         <title>SkyTrade - Portfolio</title>
       </Head>
 
-
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
         <div className="w-full h-full flex flex-col">

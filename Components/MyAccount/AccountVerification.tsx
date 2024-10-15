@@ -69,7 +69,7 @@ const AccountVerification = ({
                 earn 10 SKY points{" "}
               </span>{" "}
               as a token of our appreciation! Don&apos;t delay - verify now and
-              unlock the full potential of your airspace!
+              unlock the full potential of your air rights!
             </p>
             <button
               onClick={onVerifyMyAccount}

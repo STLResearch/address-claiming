@@ -1,3 +1,4 @@
+import React from "react";
 import "./global.css";
 import { Provider } from "react-redux";
 import store from "../store/store";
@@ -16,13 +17,16 @@ import "react-toastify/dist/ReactToastify.css";
 
 import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
-import React from "react";
 import { OnboardingTour } from "../Components/Tours";
 import NotificationBanner from "@/Components/NotificationBanner";
+import TawkMessengerComponent from "@/Components/TawkMessenger";
 
 export const metadata: Metadata = {
-  title: "Sky Trade",
-  description: "Airspace Hub",
+  title: {
+    template: "%s - SkyTrade",
+    default: "SkyTrade",
+  },
+  description: "The Ultimate Airspace Hub",
 };
 
 export default function RootLayout({
@@ -66,35 +70,6 @@ export default function RootLayout({
             `}
           </Script>
           <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-                (function(){
-                var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-                s1.async=true;
-                s1.src='https://embed.tawk.to/655381bacec6a912820fc8a3/1hf735gcu';
-                s1.charset='UTF-8';
-                s1.setAttribute('crossorigin','*');
-                s0.parentNode.insertBefore(s1,s0);
-                })();
-              Tawk_API.customStyle = {
-              visibility : {
-                mobile : {
-                  position : 'br',
-                  xOffset : 10,
-                  yOffset : 80
-                },
-                bubble : {
-                  rotate : '0deg',
-                  xOffset : -20,
-                  yOffset : 0
-                }
-              }
-            };
-              `,
-            }}
-          />
           {/* <Provider store={store}> */}
           <Web3authProvider>
             <SidebarProvider>
@@ -117,6 +92,7 @@ export default function RootLayout({
               <OnboardingTour>{children}</OnboardingTour>
             </SidebarProvider>
             <CookieConsent />
+            <TawkMessengerComponent />
           </Web3authProvider>
           {/* </Provider> */}
         </>

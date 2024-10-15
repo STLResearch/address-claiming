@@ -47,7 +47,7 @@ const Slider = () => {
             <p className="font-bold">Claim Airspace</p>
             <p>
               Click the &lsquo;Claim Airspace&rsquo; button to confirm your
-              airspace airspace airspace address. Your Airspace is saved. Modify
+              air rights address. Your Airspace is saved. Modify
               your anytime.
             </p>
           </div>
