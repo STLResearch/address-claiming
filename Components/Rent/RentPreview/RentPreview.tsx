@@ -1,4 +1,4 @@
-import { CloseIcon, CloseIconBlack, LocationPointIcon } from "@/Components/Icons";
+import { CloseIcon, CloseIconBlack, LocationPointIcon, ArrowLeftIcon } from "@/Components/Icons";
 import useAuth from "@/hooks/useAuth";
 import { Web3authContext } from "@/providers/web3authProvider";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
@@ -16,7 +16,6 @@ import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/locals
 import { useMobile } from "@/hooks/useMobile";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 import { getMapboxStaticImage } from "@/utils/getMapboxStaticImage";
-import { ArrowLeftIcon } from "@/Components/Icons";
 import Carousel from "@/Components/Shared/Carousel";
 import { createNonceIx } from "../../../helpers/solanaHelper";
 interface RentPreviewProps {
