@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { RectangleIcon, LocationPointIcon, CloseIcon } from "@/Components/Icons";
+import { LocationPointIcon, CloseIcon } from "@/Components/Icons";
 import Image from "next/image";
 import Image1 from "@/public/images/AHImage.png";
 import { useMobile } from "@/hooks/useMobile";
@@ -148,13 +148,13 @@ const BidPreview: React.FC<BidPreviewProps> = ({
       <div className="fixed bottom-0 z-[500] flex h-[540px] w-full flex-col gap-[15px] overflow-x-auto overflow-y-auto rounded-t-[30px] bg-white sm:left-1/2 sm:top-1/2 sm:z-50 sm:-translate-x-1/2 sm:-translate-y-1/2 md:h-[510px] md:w-[689px] md:rounded-[30px]">
         <div className="px-[25px]">
           <div className="mt-4 flex flex-col items-center justify-end md:mt-0">
-            {isMobile && (
+            {/* {isMobile && (
               <div onClick={onClose} className="mt-4 flex flex-col items-center justify-end md:mt-0">
                 <div className="flex w-[90%] items-center justify-center">
                   <RectangleIcon />
                 </div>
               </div>
-            )}
+            )} */}
             <div className="mt-[21px] flex w-full items-center">
               <div className="flex w-full justify-center">
                 <h2 className="text-center text-xl font-medium text-[#222222]">Bid Preview</h2>
