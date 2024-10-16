@@ -26,11 +26,13 @@ const steps = [
   },
   {
     selector: ".claim-modal-step",
-    content: "Fill in the details and select your preference (rent/sell details section or both).",
+    content:
+      "Fill in the details and select your preference (rent/sell details section or both).",
   },
   {
     selector: ".Claim-airspacebtn2-step",
-    content: "Click the ‘Claim Airspace’ button to confirm your airspace address.",
+    content:
+      "Click the ‘Claim Airspace’ button to confirm your airspace address.",
   },
 ];
 
@@ -49,14 +51,22 @@ const mobileSteps = [
   },
   {
     selector: ".claim-modal-step",
-    content: "Fill in the details and select your preference (rent/sell details section or both).",
+    content:
+      "Fill in the details and select your preference (rent/sell details section or both).",
   },
   {
     selector: ".Claim-airspacebtn2-step",
-    content: "Click the ‘Claim Airspace’ button to confirm your airspace address.",
+    content:
+      "Click the ‘Claim Airspace’ button to confirm your airspace address.",
   },
 ];
-export const handleNextSteps = ({ currentStep, stepsLength, setIsOpen, setCurrentStep, steps }: any) => {
+export const handleNextSteps = ({
+  currentStep,
+  stepsLength,
+  setIsOpen,
+  setCurrentStep,
+  steps,
+}: any) => {
   const last = currentStep === stepsLength - 1;
   return (
     <button
@@ -102,7 +112,12 @@ export const MobileTourPeovider = ({ children }) => {
 };
 export const DeskstopTourPeovider = ({ children }) => {
   return (
-    <TourProvider steps={steps} disableInteraction={true} prevButton={handlePrevStep} nextButton={handleNextSteps}>
+    <TourProvider
+      steps={steps}
+      disableInteraction={true}
+      prevButton={handlePrevStep}
+      nextButton={handleNextSteps}
+    >
       {children}
     </TourProvider>
   );
@@ -111,7 +126,9 @@ export const DeskstopTourPeovider = ({ children }) => {
 export const OnboardingTour = ({ children }) => {
   const { isMobile } = useMobile();
 
-  return isMobile ?
-      <MobileTourPeovider>{children}</MobileTourPeovider>
-    : <DeskstopTourPeovider>{children}</DeskstopTourPeovider>;
+  return isMobile ? (
+    <MobileTourPeovider>{children}</MobileTourPeovider>
+  ) : (
+    <DeskstopTourPeovider>{children}</DeskstopTourPeovider>
+  );
 };

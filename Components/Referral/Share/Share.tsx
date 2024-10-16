@@ -17,7 +17,8 @@ interface ShareProps {
 const Share: React.FC<ShareProps> = ({ referralCode, isLoading }) => {
   const { user } = useAuth();
   const [isCopied, setIsCopied] = useState({ code: false, link: false });
-  const [temporalReferralCode, setTemporalReferralCode] = useState(referralCode);
+  const [temporalReferralCode, setTemporalReferralCode] =
+    useState(referralCode);
   const { updateReferral } = ReferralCodeService();
   const origin = useOrigin();
   const router = useRouter();
@@ -92,7 +93,7 @@ const Share: React.FC<ShareProps> = ({ referralCode, isLoading }) => {
               code: temporalReferralCode,
               codeChanged: true,
             },
-          })
+          }),
         );
         router.refresh();
       } else if (resp && resp.errorMessage) {
@@ -111,13 +112,16 @@ const Share: React.FC<ShareProps> = ({ referralCode, isLoading }) => {
   return (
     <div className="flex flex-wrap gap-8">
       <div className="flex flex-col gap-[15px] px-[51px]">
-        <p className="text-xl font-normal text-[#222222]">Share the referral link or code</p>
-        <p className="text-[15px] font-normal text-[#87878D]">
-          You can also share your referral link or code by copying and sending it or sharing it on your social media.
-          You can define your code once by entering your preferred value and pressing enter.
+        <p className="text-[#222222] text-xl font-normal">
+          Share the referral link or code
+        </p>
+        <p className="text-[#87878D] text-[15px] font-normal">
+          You can also share your referral link or code by copying and sending
+          it or sharing it on your social media. You can define your code once
+          by entering your preferred value and pressing enter.
         </p>
         <div className="flex flex-wrap gap-[21px]">
-          <div className="flex flex-wrap justify-evenly gap-[9px]">
+          <div className="flex gap-[9px] flex-wrap justify-evenly">
             <CopyableInput
               isLoading={isLoading}
               value={temporalReferralCode}
@@ -130,20 +134,25 @@ const Share: React.FC<ShareProps> = ({ referralCode, isLoading }) => {
               handleUpdateReferralCode={handleUpdateReferralCode}
             />
           </div>
-          <div className="flex flex-wrap justify-between gap-[9px]">
+          <div className="flex gap-[9px] flex-wrap justify-between">
             <CopyableInput
               isLoading={isLoading}
               isReferralLink={false}
               value={`${origin}?ref=${referralCode}`}
               canCopy={canCopy}
               isCopied={isCopied.link}
-              handleCopy={(e) => handleCopy(e, `${origin}?ref=${referralCode}`, false)}
+              handleCopy={(e) =>
+                handleCopy(e, `${origin}?ref=${referralCode}`, false)
+              }
               disabled={true}
             />
             <SocialShareButton
               platform="facebook"
               onClick={() =>
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${origin}?ref=${referralCode}`, "_blank")
+                window.open(
+                  `https://www.facebook.com/sharer/sharer.php?u=${origin}?ref=${referralCode}`,
+                  "_blank",
+                )
               }
             >
               <FacebookIcon />
@@ -153,7 +162,7 @@ const Share: React.FC<ShareProps> = ({ referralCode, isLoading }) => {
               onClick={() =>
                 window.open(
                   `https://www.linkedin.com/sharing/share-offsite/?url=${origin}?ref=${referralCode}`,
-                  "_blank"
+                  "_blank",
                 )
               }
             >
@@ -162,7 +171,10 @@ const Share: React.FC<ShareProps> = ({ referralCode, isLoading }) => {
             <SocialShareButton
               platform="twitter"
               onClick={() =>
-                window.open(`https://twitter.com/intent/tweet?text=${origin}?ref=${referralCode}`, "_blank")
+                window.open(
+                  `https://twitter.com/intent/tweet?text=${origin}?ref=${referralCode}`,
+                  "_blank",
+                )
               }
             >
               <XIcon />

@@ -42,7 +42,10 @@ const Points = () => {
       try {
         setFetchingCode(true);
 
-        const [referralData, rewardsInfo] = await Promise.all([retrieveUserReferralData(), getUserRewardsInfo()]);
+        const [referralData, rewardsInfo] = await Promise.all([
+          retrieveUserReferralData(),
+          getUserRewardsInfo(),
+        ]);
 
         if (referralData) setData(referralData);
         if (rewardsInfo) setUserRewards(rewardsInfo);
@@ -63,7 +66,8 @@ const Points = () => {
   };
   const { isMobile } = useMobile();
 
-  const skyPoint: string | null = userRewards?.stats._sum.point?.toString() ?? "0";
+  const skyPoint: string | null =
+    userRewards?.stats._sum.point?.toString() ?? "0";
 
   return (
     <Fragment>
@@ -71,55 +75,70 @@ const Points = () => {
         <title>SkyTrade - Points Program</title>
       </Head>
 
-      <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F6FAFF]">
+      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
-        <div className="flex h-full w-full flex-col">
+        <div className="w-full h-full flex flex-col">
           <PageHeader pageTitle={"Points Program"} />
-          <div className="relative mb-[78.22px] flex h-full w-full flex-col gap-8 overflow-y-scroll py-6 md:mb-0 md:py-[37px]">
-            <Switcher sections={sections} activeSection={activeIndex} setActiveSection={setActiveIndex} />
+          <div className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll">
+            <Switcher
+              sections={sections}
+              activeSection={activeIndex}
+              setActiveSection={setActiveIndex}
+            />
 
             <AlertMessage />
 
-            <div className="w-full items-center justify-between md:flex">
+            <div className="md:flex justify-between items-center w-full">
               <PointBalance point={skyPoint} isLoading={fetchingCode} />
               <ReferralActivities />
             </div>
             <div>
               <div className="flex flex-col items-center">
                 {!isMobile && (
-                  <div className="flex w-[95%] gap-10 border-b-4 border-[#D3D3D3]">
-                    {["The Program", "Share Referral Link", "Your Referral History", "Leaderboard"].map(
-                      (item, index) => (
-                        <div
-                          key={index}
-                          onClick={() => handleClick(index)}
-                          className="relative cursor-pointer px-8 py-1.5 text-[16px] text-[#222222] transition delay-75 ease-linear"
-                        >
-                          <span>{item}</span>
-                          {activeIndex === index && (
-                            <div className="absolute bottom-[-4px] left-0 right-0 h-1 bg-[#0653EA]"></div>
-                          )}
-                        </div>
-                      )
-                    )}
+                  <div className="flex  gap-10 border-b-4 border-[#D3D3D3] w-[95%]">
+                    {[
+                      "The Program",
+                      "Share Referral Link",
+                      "Your Referral History",
+                      "Leaderboard",
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleClick(index)}
+                        className=" text-[#222222] text-[16px] relative px-8 py-1.5 cursor-pointer transition ease-linear delay-75"
+                      >
+                        <span>{item}</span>
+                        {activeIndex === index && (
+                          <div className="absolute bottom-[-4px] left-0 right-0 h-1 bg-[#0653EA]"></div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 )}
 
-                <div className="mx-auto mt-8 w-full">
-                  {activeIndex === 0 && <ReferralProgramOverview activeSection={activeSection} section={0} />}
+                <div className="mt-8 w-full mx-auto">
+                  {activeIndex === 0 && (
+                    <ReferralProgramOverview
+                      activeSection={activeSection}
+                      section={0}
+                    />
+                  )}
                   {activeIndex === 1 && (
                     <div>
-                      <Share isLoading={fetchingCode} referralCode={data?.referralCode} />
+                      <Share
+                        isLoading={fetchingCode}
+                        referralCode={data?.referralCode}
+                      />
                       <InviteYourFriends referralCode={data?.referralCode} />
                     </div>
                   )}
                   {activeIndex === 2 && (
                     <div className="container mx-auto p-4">
-                      <div className="flex h-full w-full flex-wrap-reverse justify-center gap-10">
-                        <div className="w-full rounded-2xl md:w-[55%] md:bg-white md:p-8">
+                      <div className="flex flex-wrap-reverse w-full h-full gap-10 justify-center">
+                        <div className="md:p-8 w-full md:w-[55%] md:bg-white rounded-2xl">
                           <ReferralHistoryTable />
                         </div>
-                        <div className="md:w-[40%]">
+                        <div className=" md:w-[40%]">
                           <YourReferrals
                             registeredFriends={data.registeredFriends}
                             registeredAirspaces={data.registeredAirspaces}
@@ -131,7 +150,10 @@ const Points = () => {
                   )}
                   {activeIndex === 3 && (
                     <div className="container mx-auto p-4">
-                      <LeaderboardTable point={skyPoint} isLoadingSkyBalance={fetchingCode} />
+                      <LeaderboardTable
+                        point={skyPoint}
+                        isLoadingSkyBalance={fetchingCode}
+                      />
                     </div>
                   )}
                 </div>

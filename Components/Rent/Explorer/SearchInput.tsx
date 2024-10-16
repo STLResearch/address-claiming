@@ -27,10 +27,10 @@ const SearchInput: React.FC<SearchInputProps> = ({
   const { isMobile } = useMobile();
   return (
     <div>
-      {isMobile ?
+      {isMobile ? (
         <div>
           <div
-            className="relative h-[49px] w-[230px] rounded-lg bg-white px-[22px] py-[10px]"
+            className="relative w-[230px] h-[49px] rounded-lg bg-white px-[22px] py-[10px]"
             style={{ border: "1px solid #87878D" }}
           >
             <input
@@ -41,15 +41,19 @@ const SearchInput: React.FC<SearchInputProps> = ({
               name="searchAirspaces"
               id="searchAirspaces"
               placeholder="Search Airspaces"
-              className="w-full pr-[20px] text-sm outline-none"
+              className="w-full pr-[20px] outline-none text-sm"
             />
-            <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
+            <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
               <MagnifyingGlassIcon />
             </div>
           </div>
         </div>
-      : <div>
-          <div className="relative w-full rounded-lg px-[22px] py-[16px]" style={{ border: "1px solid #87878D" }}>
+      ) : (
+        <div>
+          <div
+            className="relative px-[22px] py-[16px] rounded-lg w-full"
+            style={{ border: "1px solid #87878D" }}
+          >
             <input
               autoComplete="off"
               value={address}
@@ -58,24 +62,32 @@ const SearchInput: React.FC<SearchInputProps> = ({
               name="searchAirspaces"
               id="searchAirspaces"
               placeholder="Search Airspaces"
-              className="w-full pr-[20px] outline-none"
+              className="outline-none w-full pr-[20px]"
             />
-            <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
+            <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
               <MagnifyingGlassIcon />
             </div>
           </div>
-          <div className="z-20 max-h-60 w-full flex-col overflow-y-scroll bg-white">
-            {loading ?
-              <div className="flex items-center justify-center pt-8">
+          <div className="overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white">
+            {loading ? (
+              <div className="pt-8 flex justify-center items-center">
                 <BalanceLoader />
               </div>
-            : addresses.map((item) => {
+            ) : (
+              addresses.map((item) => {
                 return (
                   <div
                     key={item.id}
                     data-value={item.place_name}
-                    onClick={() => handleSelectAddress(item.place_name, setAddress, setFlyToAddress, setShowOptions)}
-                    className="w-full p-5 text-left text-[#222222]"
+                    onClick={() =>
+                      handleSelectAddress(
+                        item.place_name,
+                        setAddress,
+                        setFlyToAddress,
+                        setShowOptions,
+                      )
+                    }
+                    className="w-full p-5 text-left text-[#222222]  "
                     style={{
                       borderTop: "0.2px solid #222222",
                     }}
@@ -84,10 +96,10 @@ const SearchInput: React.FC<SearchInputProps> = ({
                   </div>
                 );
               })
-            }
+            )}
           </div>
         </div>
-      }
+      )}
     </div>
   );
 };

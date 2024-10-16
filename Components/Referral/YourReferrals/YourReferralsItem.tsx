@@ -4,12 +4,18 @@ interface YourReferralsItemProps {
   number: number;
   text: string;
 }
-const YourReferralsItem: React.FC<YourReferralsItemProps> = ({ icon, number, text }) => {
+const YourReferralsItem: React.FC<YourReferralsItemProps> = ({
+  icon,
+  number,
+  text,
+}) => {
   return (
     <div className="flex items-center gap-[17px]">
-      <div className="h-[34px] w-[34px]">{icon}</div>
-      <p className="min-w-[25.84px] text-center text-[40px] font-semibold text-[#4285F4]">{number}</p>
-      <p className="text-[15px] font-normal text-[#868686]">{text}</p>
+      <div className="w-[34px] h-[34px]">{icon}</div>
+      <p className="text-[40px] text-[#4285F4] font-semibold min-w-[25.84px] text-center">
+        {number}
+      </p>
+      <p className="text-[15px] text-[#868686] font-normal">{text}</p>
     </div>
   );
 };

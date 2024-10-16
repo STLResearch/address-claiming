@@ -9,29 +9,40 @@ const PreviousUploadedDocuments = () => {
   const { user } = useAuth();
 
   const previousRequest = useMemo(() => {
-    return user?.requestDocument?.filter((doc) => doc.status !== RequestDocumentStatus.NOT_SUBMITTED);
+    return user?.requestDocument?.filter(
+      (doc) => doc.status !== RequestDocumentStatus.NOT_SUBMITTED,
+    );
   }, [user]);
 
   if (previousRequest && previousRequest.length > 0) {
     return (
       <div
-        className="mt-8 rounded-[30px] bg-white px-4 py-4 shadow-lg"
+        className="py-4 px-4 mt-8 rounded-[30px] bg-white shadow-lg"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
       >
         <h2 className="text-xl font-semibold">My Additional Documents</h2>
         {previousRequest.map((document, index) => (
-          <div key={index} className="mt-2 flex flex-col items-start justify-between md:flex-row md:items-center">
-            <div className="w-full md:w-[40%]">
-              <p className="mt-4 text-[12px] text-[#87878D]">
+          <div
+            key={index}
+            className="flex flex-col md:flex-row justify-between items-start md:items-center mt-2"
+          >
+            <div className="md:w-[40%] w-full">
+              <p className="mt-4 text-[#87878D] text-[12px]">
                 We requested your {formatTextToReadable(document.description)}
               </p>
             </div>
-            <div className="flex w-full flex-col items-center justify-end gap-8 md:w-[60%] md:flex-row">
-              <Link target="_blank" href={document.previewUrl} className="cursor-pointer">
-                <div className="flex w-52 items-center justify-start gap-4 rounded-md border px-4 py-4">
+            <div className="md:w-[60%] w-full flex flex-col md:flex-row justify-end items-center gap-8">
+              <Link
+                target="_blank"
+                href={document.previewUrl}
+                className="cursor-pointer"
+              >
+                <div className="w-52 px-4 py-4 flex justify-start items-center border rounded-md gap-4">
                   <FileIcon />
                   <div>
-                    <p className="text-xs text-[#1F7DFD]">{formatTextToReadable(document.description)}</p>
+                    <p className="text-[#1F7DFD] text-xs">
+                      {formatTextToReadable(document.description)}
+                    </p>
                   </div>
                 </div>
               </Link>

@@ -7,8 +7,10 @@ export const validateRental = (
   startDate: Date,
   endDate: Date,
   tokenBalance: string,
-  setFinalAns: React.Dispatch<React.SetStateAction<{ status: string; message: string; tokenId?: string }>>,
-  setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>
+  setFinalAns: React.Dispatch<
+    React.SetStateAction<{ status: string; message: string; tokenId?: string }>
+  >,
+  setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>,
 ): boolean => {
   if (currentDate > endDate) {
     toast.error("Rental Tokens can't be booked in the past");

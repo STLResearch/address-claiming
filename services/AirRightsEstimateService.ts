@@ -14,7 +14,9 @@ const AirRightsEstimateService = () => {
         return undefined;
       }
 
-      const result = response.data.status ? (response.data.result as any[]) : [];
+      const result = response.data.status
+        ? (response.data.result as any[])
+        : [];
 
       if (result.length > 0) {
         const main = result.find((r) => r.isMain);

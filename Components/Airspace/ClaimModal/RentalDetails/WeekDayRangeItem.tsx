@@ -22,7 +22,7 @@ const WeekDayRangeItem: React.FC<WeekDayRangeItemProps> = ({
   handleFromTimeChange,
   handleToTimeChange,
 }) => (
-  <div className="flex-none items-center justify-between md:flex">
+  <div className="flex-none md:flex items-center justify-between">
     <div className="flex items-center gap-[15px] pr-[32px]">
       <Toggle checked={isDayAvailable} setChecked={handleToggle} />
       <p>{day}</p>

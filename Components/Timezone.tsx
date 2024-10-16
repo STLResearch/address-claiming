@@ -7,7 +7,9 @@ interface TimezoneSelectComponentProps {
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const TimezoneSelectComponent: React.FC<TimezoneSelectComponentProps> = (props) => {
+const TimezoneSelectComponent: React.FC<TimezoneSelectComponentProps> = (
+  props,
+) => {
   const [timezone, setTimezone] = useState<string>("UTC");
 
   const timezones = moment.tz.names().map((tz) => {

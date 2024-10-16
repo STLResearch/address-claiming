@@ -28,7 +28,11 @@ const supportedMethods = [
   },
 ];
 
-const Accordion = ({ selectedMethod, setSelectedMethod, activeSection }: AccordionProps) => {
+const Accordion = ({
+  selectedMethod,
+  setSelectedMethod,
+  activeSection,
+}: AccordionProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSelection = (method: PaymentMethod) => {
@@ -41,21 +45,32 @@ const Accordion = ({ selectedMethod, setSelectedMethod, activeSection }: Accordi
   };
 
   return (
-    <div className="rounded-lg border">
-      <div className="flex cursor-pointer items-center justify-between p-2" onClick={toggleAccordion}>
-        {selectedMethod.name !== "" ?
-          <div className="flex cursor-pointer items-center p-2 hover:bg-gray-100">
-            <Image src={selectedMethod.icon} alt="Placeholder" className="mr-2 h-8 w-8" width={12} height={12} />
+    <div className="border rounded-lg ">
+      <div
+        className="flex justify-between items-center p-2 cursor-pointer"
+        onClick={toggleAccordion}
+      >
+        {selectedMethod.name !== "" ? (
+          <div className="flex items-center cursor-pointer hover:bg-gray-100 p-2">
+            <Image
+              src={selectedMethod.icon}
+              alt="Placeholder"
+              className="w-8 h-8 mr-2"
+              width={12}
+              height={12}
+            />
             <p>{selectedMethod.name}</p>
           </div>
-        : <div className="text-[12px] font-medium text-[#838187]">Select</div>}
+        ) : (
+          <div className="font-medium  text-[#838187] text-[12px]">Select</div>
+        )}
 
         <div className="transform transition-transform duration-300">
           {isOpen ? chevronDownIcon() : chevronUpIcon()}
         </div>
       </div>
       {isOpen && (
-        <div className="p-4">
+        <div className=" p-4">
           <ul>
             {supportedMethods.map((method, index) => {
               if (
@@ -69,9 +84,15 @@ const Accordion = ({ selectedMethod, setSelectedMethod, activeSection }: Accordi
                 <li
                   key={index}
                   onClick={() => handleSelection(method)}
-                  className="flex cursor-pointer items-center p-2 hover:bg-gray-100"
+                  className="flex items-center cursor-pointer hover:bg-gray-100 p-2"
                 >
-                  <Image src={method.icon} alt="Placeholder" className="mr-2 h-8 w-8" width={12} height={12} />
+                  <Image
+                    src={method.icon}
+                    alt="Placeholder"
+                    className="w-8 h-8 mr-2"
+                    width={12}
+                    height={12}
+                  />
                   <p>{method.name}</p>
                 </li>
               );

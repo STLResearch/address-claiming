@@ -18,9 +18,9 @@ export const initializeTransak = ({
   const transakConfig: TransakConfig = {
     apiKey: String(process.env.NEXT_PUBLIC_TRANSAK_PUBLISHABLE_KEY),
     environment:
-      String(process.env.NEXT_PUBLIC_ENVIRONMENT) === "PRODUCTION" ?
-        Transak.ENVIRONMENTS.PRODUCTION
-      : Transak.ENVIRONMENTS.STAGING,
+      String(process.env.NEXT_PUBLIC_ENVIRONMENT) === "PRODUCTION"
+        ? Transak.ENVIRONMENTS.PRODUCTION
+        : Transak.ENVIRONMENTS.STAGING,
     walletAddress,
     email,
     defaultNetwork: "solana",

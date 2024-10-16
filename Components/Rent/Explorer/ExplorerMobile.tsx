@@ -62,8 +62,8 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
   }, [divRef]);
 
   return (
-    <div className="z-[40] w-full items-center gap-[15px]">
-      <div className="z-[40] flex w-full items-center gap-[15px] bg-white px-[21px] py-6">
+    <div className="w-full z-[40]  items-center gap-[15px] ">
+      <div className="flex items-center gap-[15px] z-[40] bg-white w-full px-[21px] py-6">
         <h1 className="text-xl font-medium">Rent</h1>
         <SearchInput
           address={address}
@@ -80,31 +80,42 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
         <div className="px-[30px] py-[19px]">
           <div
             ref={divRef}
-            className="z-40 mt-6 max-h-60 w-full flex-col overflow-y-scroll rounded-lg border-t-4 border-blue-500"
+            className="overflow-y-scroll max-h-60 w-full flex-col z-40  border-t-4 rounded-lg border-blue-500 mt-6 "
           >
-            {loading ?
-              <div className="flex items-center justify-center pt-8">
+            {loading ? (
+              <div className="pt-8 flex justify-center items-center">
                 <BalanceLoader />
               </div>
-            : addresses.map((item, index) => {
+            ) : (
+              addresses.map((item, index) => {
                 return (
-                  <div key={index} className="flex w-full items-center justify-center">
-                    <div className="flex w-full flex-col items-center justify-center rounded-sm border-b-2 p-4">
+                  <div
+                    key={index}
+                    className="w-full flex items-center justify-center"
+                  >
+                    <div className="p-4 w-full flex flex-col items-center justify-center  border-b-2 rounded-sm">
                       <div
                         className="w-full text-left text-[#222222]"
                         key={item.id}
                         data-value={item.place_name}
                         onClick={() =>
-                          handleSelectAddress(item.place_name, setAddress, setFlyToAddress, setShowOptions)
+                          handleSelectAddress(
+                            item.place_name,
+                            setAddress,
+                            setFlyToAddress,
+                            setShowOptions,
+                          )
                         }
                       >
-                        <div className="w-[90%] text-[14px]">{item.place_name}</div>
+                        <div className="w-[90%] text-[14px]">
+                          {item.place_name}
+                        </div>
                       </div>
                     </div>
                   </div>
                 );
               })
-            }
+            )}
           </div>
         </div>
       )}

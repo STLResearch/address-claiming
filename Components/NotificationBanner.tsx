@@ -20,15 +20,18 @@ const NotificationBanner: React.FC = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="z-50 flex w-full cursor-pointer items-center justify-between gap-3 bg-[#2279FF] px-8 py-2 text-white">
-      <div onClick={() => router.push("/points")} className="flex items-center gap-5">
+    <div className="w-full bg-[#2279FF] text-white py-2 px-8 flex justify-between items-center z-50 gap-3 cursor-pointer">
+      <div
+        onClick={() => router.push("/points")}
+        className="flex gap-5 items-center"
+      >
         <p>🚀</p>
         <p className="font-normal">
-          Don&apos;t Miss Out! Our Seasonal SKY Points Referral Program is Live. Share Your Link and Earn Automatically
-          — No Air rights Claim Needed!
+          Don&apos;t Miss Out! Our Seasonal SKY Points Referral Program is Live.
+          Share Your Link and Earn Automatically — No Air rights Claim Needed!
         </p>
       </div>
-      <button onClick={handleClose} className="text-3xl text-white">
+      <button onClick={handleClose} className="text-white text-3xl">
         &times;
       </button>
     </div>

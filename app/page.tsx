@@ -95,42 +95,62 @@ export default function Home() {
       {isLoading && <Spinner />}
       {!isWaitingScreenVisible && !isRedirecting && (
         <div className="h-screen w-screen md:flex">
-          <div className="flex flex-1 items-center justify-center bg-white">
-            <div className="flex max-w-[577px] flex-col items-center justify-center gap-[15px] px-[30px] py-[40px]">
-              <Image src={"/images/logo-1.svg"} alt="Company's logo" width={199} height={77} />
-              <p className="text-center text-xl font-normal text-[#222222]">Welcome to SkyTrade</p>
-              <p className="px-[68px] text-center text-base font-bold text-[#4285F4]">
-                You have an awesome friend who referred you to earn 5 extra SKY points!
+          <div className="flex-1 bg-white flex items-center justify-center">
+            <div className="flex flex-col gap-[15px] px-[30px] py-[40px] items-center justify-center max-w-[577px]">
+              <Image
+                src={"/images/logo-1.svg"}
+                alt="Company's logo"
+                width={199}
+                height={77}
+              />
+              <p className="font-normal text-xl text-[#222222] text-center">
+                Welcome to SkyTrade
               </p>
-              <p className="text-center text-[16px] font-normal text-[#222222]">
+              <p className="font-bold text-base text-[#4285F4] text-center px-[68px]">
+                You have an awesome friend who referred you to earn 5 extra SKY
+                points!
+              </p>
+              <p className="font-normal text-[16px] text-[#222222] text-center">
                 Claim Your Airspace and Start Earning Passive Income! 🚀
               </p>
-              <div className="my-[30px] text-[15px] font-normal text-light-grey">
+              <div className="text-[15px] text-light-grey font-normal my-[30px]">
                 <p>
-                  💰 <span className="font-bold">Monetize Your Air Rights Easily:</span> Elevate earnings without
-                  changing property ownership.
+                  💰{" "}
+                  <span className="font-bold">
+                    Monetize Your Air Rights Easily:
+                  </span>{" "}
+                  Elevate earnings without changing property ownership.
                 </p>
                 <p>
-                  🌐 <span className="font-bold">User-Friendly Air Rights Management:</span> Define and control with
-                  ease on our secure platform.
+                  🌐{" "}
+                  <span className="font-bold">
+                    User-Friendly Air Rights Management:
+                  </span>{" "}
+                  Define and control with ease on our secure platform.
                 </p>
                 <p>
-                  🚀 <span className="font-bold">Hassle-Free Passive Income:</span> Gain full control and minimal effort
-                  for a steady income.
+                  🚀{" "}
+                  <span className="font-bold">Hassle-Free Passive Income:</span>{" "}
+                  Gain full control and minimal effort for a steady income.
                 </p>
                 <p>
-                  🔐 <span className="font-bold">Secure Access with SkyTrade:</span> Register to control land and
-                  airspace, ensuring permissions and receive direct fees into your account.
+                  🔐{" "}
+                  <span className="font-bold">
+                    Secure Access with SkyTrade:
+                  </span>{" "}
+                  Register to control land and airspace, ensuring permissions
+                  and receive direct fees into your account.
                 </p>
               </div>
-              <p className="px-[44px] text-center text-base font-normal text-[#222222]">
-                Join SkyTrade today and turn your air rights into a lucrative opportunity! 🚀✨
+              <p className="font-normal text-base text-[#222222] text-center px-[44px]">
+                Join SkyTrade today and turn your air rights into a lucrative
+                opportunity! 🚀✨
               </p>
             </div>
           </div>
-          <div className="relative items-center justify-center overflow-hidden bg-[#E9F5FE] max-sm:bg-[white] md:flex md:h-screen md:w-screen md:flex-1">
+          <div className="relative bg-[#E9F5FE] max-sm:bg-[white] md:h-screen md:w-screen md:flex md:flex-1 items-center justify-center overflow-hidden">
             <form
-              className="relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded-[30px] bg-white px-[30px] py-[40px]"
+              className="mx-auto flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] relative justify-center rounded-[30px]"
               style={{
                 maxWidth: "449px",
               }}
@@ -138,11 +158,17 @@ export default function Home() {
               name="login"
             >
               <p className="text-base font-normal text-[#222222]">Register</p>
-              <p className="text-center text-sm text-light-grey">Sign up to get rewarded with 5 credit</p>
-              <EmailInput emailRef={emailRef} emailValid={emailValid} setEmailValid={setEmailValid} />
-              <label className="flex w-full gap-[11px] text-[14px] text-[#87878D]">
+              <p className="text-sm text-light-grey text-center">
+                Sign up to get rewarded with 5 credit
+              </p>
+              <EmailInput
+                emailRef={emailRef}
+                emailValid={emailValid}
+                setEmailValid={setEmailValid}
+              />
+              <label className="flex w-full text-[14px] text-[#87878D] gap-[11px]">
                 <input
-                  className="h-[18px] w-[18px] cursor-pointer"
+                  className="w-[18px] h-[18px] cursor-pointer"
                   type="checkbox"
                   id="newsletterCheckbox"
                   name="newsletterCheckbox"
@@ -154,11 +180,11 @@ export default function Home() {
               <button
                 onClick={() => loginUser(true)}
                 type="button"
-                className="w-full rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600"
+                className="rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600 py-4 px-24 text-[15px] w-full"
               >
                 Get started
               </button>
-              <div className="relative flex w-full items-center gap-[15px] text-center align-middle text-[#00000033]">
+              <div className="relative text-center text-[#00000033] flex gap-[15px] w-full items-center align-middle">
                 <div
                   style={{
                     width: "100%",
@@ -178,17 +204,27 @@ export default function Home() {
               <button
                 onClick={() => loginUser(false)}
                 type="button"
-                className="flex w-full items-center justify-between rounded-lg py-4 pl-[18px] pr-[42px] transition-all duration-500 ease-in-out hover:bg-bleach-blue"
+                className="flex items-center rounded-lg transition-all duration-500 ease-in-out hover:bg-bleach-blue py-4 w-full justify-between pl-[18px] pr-[42px]"
                 style={{
                   border: "1px solid #595959",
                 }}
               >
-                <Image src="/images/google-logo.png" alt="Google's logo" width={24} height={24} className="" />
-                <p className="mx-auto text-[#595959]">Connect with Google</p>
+                <Image
+                  src="/images/google-logo.png"
+                  alt="Google's logo"
+                  width={24}
+                  height={24}
+                  className=""
+                />
+                <p className="text-[#595959] mx-auto">Connect with Google</p>
               </button>
               <p className="text-center text-sm text-[#87878D]">
                 By creating an account I agree with{" "}
-                <Link target="_blank" href="https://docs.sky.trade/terms.pdf" className="cursor-pointer text-[#0653EA]">
+                <Link
+                  target="_blank"
+                  href="https://docs.sky.trade/terms.pdf"
+                  className="cursor-pointer text-[#0653EA]"
+                >
                   Terms and Conditions
                 </Link>{" "}
                 and{" "}

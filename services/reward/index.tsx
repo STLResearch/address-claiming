@@ -1,5 +1,9 @@
 import Service from "../Service";
-import { CurrentLeaderboardSummaryI, LeaderboardPositionI, LeaderboardOverallSummaryI } from "./types";
+import {
+  CurrentLeaderboardSummaryI,
+  LeaderboardPositionI,
+  LeaderboardOverallSummaryI,
+} from "./types";
 
 const RewardService = () => {
   const { getRequest } = Service();

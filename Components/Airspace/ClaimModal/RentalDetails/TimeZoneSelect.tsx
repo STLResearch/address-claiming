@@ -26,7 +26,10 @@ const TimeZoneSelect = ({ data, setTimeZone }: PropsI) => {
   };
   return (
     <Fragment>
-      <label htmlFor="timeZone" className="text-[14px] font-normal leading-[2rem] text-[#838187] md:leading-none">
+      <label
+        htmlFor="timeZone"
+        className="text-[14px] font-normal text-[#838187] leading-[2rem] md:leading-none "
+      >
         Time Zone<span className="text-[#E04F64]">*</span>
       </label>
       <select
@@ -38,7 +41,10 @@ const TimeZoneSelect = ({ data, setTimeZone }: PropsI) => {
         style={{ border: "1px solid #87878D" }}
       >
         {options.map((geographicTimeZone) => (
-          <option key={geographicTimeZone.value} value={geographicTimeZone.value}>
+          <option
+            key={geographicTimeZone.value}
+            value={geographicTimeZone.value}
+          >
             {`${geographicTimeZone.label} ${geographicTimeZone.value}`}
           </option>
         ))}

@@ -31,7 +31,7 @@ const stepsData = [
 ];
 
 const Step = ({ number, title, description }) => (
-  <p className="w-full text-left text-[15px]">
+  <p className="text-[15px] w-full text-left">
     <span className="font-bold">
       {number}. {title}
     </span>
@@ -44,7 +44,10 @@ const HowToModal = ({ goBack, handleOpenAirspaceMap }: PropsI) => {
   const [section, setSection] = useState(0);
   return (
     <div className="absolute z-50 flex h-screen w-screen flex-col items-center justify-center bg-white">
-      <div onClick={goBack} className="absolute right-[18px] top-[26px] h-[14px] w-[14px]">
+      <div
+        onClick={goBack}
+        className="absolute right-[18px] top-[26px] h-[14px] w-[14px]"
+      >
         <CloseIcon />
       </div>
       {section === 0 && (
@@ -53,7 +56,8 @@ const HowToModal = ({ goBack, handleOpenAirspaceMap }: PropsI) => {
             <EarthIcon isActive={true} />
           </div>
           <p className="px-[30px] text-center text-[15px] text-[#222222]">
-            Ready to claim your airspace? No registered airspace yet, but exciting times ahead! 🚀✨
+            Ready to claim your airspace? No registered airspace yet, but
+            exciting times ahead! 🚀✨
           </p>
           <div
             onClick={() => setSection(1)}
@@ -66,13 +70,19 @@ const HowToModal = ({ goBack, handleOpenAirspaceMap }: PropsI) => {
       {section === 1 && (
         <div className="flex flex-col items-center justify-center gap-[15px] px-[60px] text-center text-[#222222]">
           <p className="text-[20px] font-medium">How to Claim My Airspace?</p>
-          <div className="flex-start flex flex-col items-center py-[30px] text-left">
+          <div className="flex flex-col items-center flex-start py-[30px] text-left">
             {stepsData.map((step, index) => (
-              <Step key={index} number={index + 1} title={step.title} description={step.description} />
+              <Step
+                key={index}
+                number={index + 1}
+                title={step.title}
+                description={step.description}
+              />
             ))}
           </div>
           <p className="text-[15px]">
-            Let&apos;s get started on creating the future and receiving passive income from your skies. 🚀✨
+            Let&apos;s get started on creating the future and receiving passive
+            income from your skies. 🚀✨
           </p>
 
           <div
@@ -88,7 +98,7 @@ const HowToModal = ({ goBack, handleOpenAirspaceMap }: PropsI) => {
           <div
             key={index}
             onClick={() => setSection(index)}
-            className={`h-[14px] w-[14px] cursor-pointer rounded-full ${index !== section ? "none bottom-3 border border-[#D9D9D9] bg-transparent" : "bg-[#D9D9D9]"}`}
+            className={`h-[14px] w-[14px] cursor-pointer rounded-full ${index !== section ? " bg-transparent none border bottom-3 border-[#D9D9D9]" : "bg-[#D9D9D9]"}`}
           />
         ))}
       </div>

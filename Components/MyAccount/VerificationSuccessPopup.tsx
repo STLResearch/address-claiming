@@ -14,51 +14,60 @@ const VerificationSuccessPopup: React.FC = () => {
     <>
       {showPopup && (
         <div
-          className={`fixed ${isMobile ? "inset-0 bg-green-500" : "right-0 top-24"} z-50 flex flex-col items-center justify-center gap-12 p-4`}
+          className={`fixed ${isMobile ? "inset-0 bg-green-500" : "top-24 right-0 "}  flex flex-col items-center justify-center p-4 z-50 gap-12`}
         >
-          <div className="absolute right-4 top-4">
-            <button onClick={handleClose} className="h-6 w-6 text-white">
+          <div className="absolute top-4 right-4">
+            <button onClick={handleClose} className="text-white h-6 w-6">
               <CancelIconWhite />
             </button>
           </div>
-          {isMobile ?
+          {isMobile ? (
             <>
-              <div className="flex h-24 w-24 items-center justify-center">
+              <div className="flex justify-center items-center w-24 h-24">
                 <SuccessIconwhite />
               </div>
-              <div className="flex w-60 flex-col gap-6 text-center text-white">
+              <div className="flex flex-col gap-6 text-center text-white w-60">
                 <p className="text-xl font-medium">
-                  Thanks, your additional documents have been successfully submitted.
+                  Thanks, your additional documents have been successfully
+                  submitted.
                 </p>
-                <p className="text-sm font-normal">
-                  Wait for our team to review your documents. Once your KYC verification is successfully completed,
-                  you&apos;ll instantly earn 10 SKY points.
+                <p className="text-sm font-normal ">
+                  Wait for our team to review your documents. Once your KYC
+                  verification is successfully completed, you&apos;ll instantly
+                  earn 10 SKY points.
                 </p>
-                <div className="flex items-center justify-center">
-                  <button onClick={handleClose} className="w-[174px] rounded border py-3 text-sm text-white">
+                <div className="flex justify-center items-center">
+                  <button
+                    onClick={handleClose}
+                    className="w-[174px] text-white text-sm py-3 border rounded"
+                  >
                     Close
                   </button>
                 </div>
               </div>
             </>
-          : <div className="w-auto rounded bg-white">
+          ) : (
+            <div className="w-auto bg-white  rounded">
               <div className="flex items-center justify-between p-4">
-                <div className="h-4 w-4">
+                <div className="w-4 h-4">
                   <SuccessIcon />
                 </div>
-                <div className="p-2 text-[14px] text-green-500">
-                  <p>Thanks, your additional documents have been successfully submitted.</p>
+                <div className="p-2 text-green-500 text-[14px]">
+                  <p>
+                    Thanks, your additional documents have been successfully
+                    submitted.
+                  </p>
                 </div>
 
                 <button
-                  className="flex h-4 w-4 cursor-pointer items-center justify-center rounded-full text-sm text-black"
+                  className="text-black rounded-full w-4 h-4 flex items-center justify-center text-sm cursor-pointer"
                   onClick={handleClose}
                 >
                   ✖
                 </button>
               </div>
             </div>
-          }
+          )}
         </div>
       )}
     </>

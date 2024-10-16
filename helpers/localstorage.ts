@@ -1,4 +1,7 @@
-export const removePubLicUserDetailsFromLocalStorage = (key: string, blockchainAddress: string | undefined) => {
+export const removePubLicUserDetailsFromLocalStorage = (
+  key: string,
+  blockchainAddress: string | undefined,
+) => {
   const initialData = localStorage.getItem(key);
 
   if (initialData && initialData.length > 2 && blockchainAddress) {

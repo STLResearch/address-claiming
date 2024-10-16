@@ -3,7 +3,11 @@ import Service from "./Service";
 const AirspaceRentalService = () => {
   const { getRequest, postRequest } = Service();
 
-  const getPropertiesByUserAddress = async (type: string, limit: string | number, afterAssetId?: string) => {
+  const getPropertiesByUserAddress = async (
+    type: string,
+    limit: string | number,
+    afterAssetId?: string,
+  ) => {
     try {
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-tokens?type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`,
@@ -30,7 +34,10 @@ const AirspaceRentalService = () => {
     }
   };
 
-  const getRetrievePendingRentalAirspace = async (page: string | number, limit: string | number) => {
+  const getRetrievePendingRentalAirspace = async (
+    page: string | number,
+    limit: string | number,
+  ) => {
     try {
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-pending-rental-airspace?limit=${limit}&page=${page || "1"}`,
@@ -45,7 +52,10 @@ const AirspaceRentalService = () => {
     }
   };
 
-  const getUnverifiedAirspaces = async (page: string | number, limit: string | number) => {
+  const getUnverifiedAirspaces = async (
+    page: string | number,
+    limit: string | number,
+  ) => {
     try {
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-unverified-airspace?limit=${limit}&page=${page || "1"}`,
@@ -60,7 +70,10 @@ const AirspaceRentalService = () => {
     }
   };
 
-  const getRejectedAirspaces = async (page: string | number, limit: string | number) => {
+  const getRejectedAirspaces = async (
+    page: string | number,
+    limit: string | number,
+  ) => {
     try {
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-rejected-airspace?limit=${limit}&page=${page || "1"}`,

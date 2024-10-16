@@ -7,17 +7,21 @@ interface PlanningPermissionProps {
   setData: React.Dispatch<React.SetStateAction<PropertyData>>;
 }
 
-const PlanningPermission: React.FC<PlanningPermissionProps> = ({ isActive, setData }) => {
+const PlanningPermission: React.FC<PlanningPermissionProps> = ({
+  isActive,
+  setData,
+}) => {
   return (
     <div className="mt-4">
-      <p className="text-[16px] font-normal text-[#838187] md:text-[14px]">
-        Do you currently have zoning or planning permission to develop above your land or property?{" "}
-        <span className="text-[12px] italic md:text-[10px]">
+      <p className="text-[16px] md:text-[14px] font-normal text-[#838187]">
+        Do you currently have zoning or planning permission to develop above
+        your land or property?{" "}
+        <span className="italic text-[12px] md:text-[10px]">
           (Your answer won&apos;t affect your claim)
           <span className="text-[#E04F64]">*</span>
         </span>{" "}
       </p>
-      <div className="mt-4 flex items-center gap-[7px] text-[14px] text-[#87878D]">
+      <div className="flex items-center gap-[7px] text-[#87878D] text-[14px] mt-4">
         <PlanningPermissionCheckbox
           label="Yes"
           checked={isActive === true}

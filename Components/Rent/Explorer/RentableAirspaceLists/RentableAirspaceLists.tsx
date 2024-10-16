@@ -30,7 +30,9 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
   setShowClaimModal,
   setRegAdressShow,
 }) => {
-  const [selectedAddress, setSelectedAddress] = useState<number | null | undefined>();
+  const [selectedAddress, setSelectedAddress] = useState<
+    number | null | undefined
+  >();
 
   const divRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -49,7 +51,7 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
   return (
     <div className="w-full">
       {loadingReg && (
-        <div className="mt-2 flex w-full justify-center">
+        <div className=" mt-2 w-full flex justify-center">
           <BalanceLoader />
         </div>
       )}
@@ -58,7 +60,7 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
         <div
           ref={divRef}
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-          className="mt-2 h-auto max-h-60 w-full flex-col overflow-y-scroll bg-white"
+          className=" mt-2 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll"
         >
           {registeredAddress.map((item) => (
             <RentableAirspace

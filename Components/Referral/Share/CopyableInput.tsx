@@ -29,39 +29,36 @@ const CopyableInput: React.FC<CopyableInputProps> = ({
   isReferralLink = true,
 }) => (
   <div className="relative w-full md:w-[300px]">
-    {isLoading ?
+    {isLoading ? (
       <div className="flex items-center py-[18px]">
         <BalanceLoader />
       </div>
-    : <input
+    ) : (
+      <input
         value={value}
         readOnly={readOnly}
         disabled={disabled}
         onChange={handleOnChange}
         maxLength={6}
-        className="w-[97%] rounded-lg bg-[#DFF1FF] px-[22px] py-[14px] pr-[95px] text-[14px] text-[#222222] focus:outline-none"
+        className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-[97%] py-[14px] px-[22px] focus:outline-none pr-[95px]"
         type="text"
         name="myReferralCode"
         id="myReferralCode"
       />
-    }
+    )}
 
     {canCopy && (
       <p
         onClick={handleCopy}
-        className="absolute right-[22px] top-1/2 -translate-y-1/2 cursor-pointer text-[14px] text-[#0653EA]"
+        className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer"
       >
-        {isCopied ?
-          "Copied ✓"
-        : isReferralLink ?
-          "Copy code "
-        : "Copy link"}
+        {isCopied ? "Copied ✓" : isReferralLink ? "Copy code " : "Copy link"}
       </p>
     )}
     {canChangeCode && (
       <p
         onClick={handleUpdateReferralCode}
-        className="absolute right-[22px] top-1/2 -translate-y-1/2 cursor-pointer text-[14px] text-[#0653EA]"
+        className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer"
       >
         {"Update code"}
       </p>

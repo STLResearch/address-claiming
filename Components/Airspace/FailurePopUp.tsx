@@ -6,19 +6,25 @@ interface PropsI {
 const FailurePopUp = ({ isVisible, errorMessages }: PropsI) => {
   return (
     <div
-      className={`absolute top-[14px] z-[700] w-[500px] ${isVisible ? "right-0" : "-right-[100%]"} flex items-center gap-5 bg-white p-5 duration-500`}
+      className={` z-[700] absolute top-[14px] w-[500px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
     >
       🛑
       <div>
-        {errorMessages?.length > 0 ?
+        {errorMessages?.length > 0 ? (
           <div>
             {errorMessages?.map((error, index) => (
-              <h1 key={index} className="text-base text-black">
+              <h1 key={index} className="text-black text-base">
                 {error}
               </h1>
             ))}
           </div>
-        : <div> Claim Failed! Please review your submission and ensure all information is correct.</div>}
+        ) : (
+          <div>
+            {" "}
+            Claim Failed! Please review your submission and ensure all
+            information is correct.
+          </div>
+        )}
       </div>
     </div>
   );

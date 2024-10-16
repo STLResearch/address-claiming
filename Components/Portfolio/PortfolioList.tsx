@@ -32,6 +32,7 @@ const PortfolioList = ({
   const router = useRouter();
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  
 
   const {
     handleTabSwitch,
@@ -53,6 +54,8 @@ const PortfolioList = ({
 
   return (
     <>
+     
+
       {showCancelModal && (
         <CancelClaimModal
           airspace={selectedAirspace}
@@ -63,71 +66,84 @@ const PortfolioList = ({
       )}
 
       <div
-        className="flex min-w-[516px] flex-1 flex-col gap-[43px] rounded-[30px] bg-white px-[29px] py-[43px]"
+        className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
       >
-        <h2 className="text-center text-xl font-medium text-[#222222]">{title}</h2>
+        <h2 className="font-medium text-xl text-[#222222] text-center">
+          {title}
+        </h2>
         <div className="flex items-center gap-16">
           <div
-            className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear delay-75 text-base font-bold`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.VERIFIED)}
           >
             Verified Airspaces
           </div>
           <div
-            className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
           >
             Rented Airspaces
           </div>
           <div className="flex gap-10">
             <div
-              className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+              className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
               onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
             >
               Pending Rented Airspaces
             </div>
             <div
-              className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+              className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
               onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
             >
               Pending Verification
             </div>
           </div>
           <div
-            className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
           >
             Rejected Airspaces
           </div>
         </div>
-        {loading ?
+        {loading ? (
           <div>
             {" "}
             <Spinner />
           </div>
-        : <>
-            <div className="flex min-h-[20rem] flex-col gap-[15px]">
+        ) : (
+          <>
+            <div className="flex flex-col gap-[15px] min-h-[20rem]">
               {activeTab === PortfolioTabEnum.UNVERIFIED && showPopup && (
                 <div
-                  className="flex w-full gap-[15px] rounded-[30px] bg-white"
+                  className="flex w-full rounded-[30px] gap-[15px] bg-white"
                   style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
                 >
-                  <div className="flex flex-col items-center justify-center gap-4 p-6 md:w-[50%] md:gap-6">
-                    <h1 className="text-center text-xl font-medium text-[#222222]">🚀 Attention Airspace Owner!</h1>
-                    <h1 className="block text-xl font-medium text-[#222222] md:hidden">Account verification</h1>
-                    <p className="text-center text-sm font-normal leading-6 text-[#838187]">
-                      Your airspace awaits verification by our operation team. Your account is not verified. We verify
-                      the identity of our customers to assess potential risks, prevent fraud, and comply with legal and
-                      regulatory requirements. Complete your KYC to expedite the process and ensure swift approval.
-                      Plus,
-                      <span className="text-sm font-bold text-[#87878D]"> earn 10 SKY points </span> as a token of our
-                      appreciation! Don&apos;t delay - verify now and unlock the full potential of your airspace!
+                  <div className="md:w-[50%]  p-6  flex flex-col justify-center items-center md:gap-6 gap-4">
+                    <h1 className="text-xl font-medium text-[#222222]  text-center">
+                      🚀 Attention Airspace Owner!
+                    </h1>
+                    <h1 className="text-xl font-medium text-[#222222] block md:hidden">
+                      Account verification
+                    </h1>
+                    <p className="text-sm font-normal text-[#838187] text-center leading-6">
+                      Your airspace awaits verification by our operation team.
+                      Your account is not verified. We verify the identity of
+                      our customers to assess potential risks, prevent fraud,
+                      and comply with legal and regulatory requirements.
+                      Complete your KYC to expedite the process and ensure swift
+                      approval. Plus,
+                      <span className="text-[#87878D] text-sm font-bold">
+                        {" "}
+                        earn 10 SKY points{" "}
+                      </span>{" "}
+                      as a token of our appreciation! Don&apos;t delay - verify
+                      now and unlock the full potential of your airspace!
                     </p>
 
                     <button
                       onClick={() => router.push("/my-account")}
-                      className="w-full rounded bg-blue-500 px-6 py-2 text-sm font-medium text-white hover:bg-blue-600"
+                      className="text-sm font-medium w-full px-6 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
                     >
                       Verify my identity Now
                     </button>
@@ -136,12 +152,12 @@ const PortfolioList = ({
                     <img
                       src="/images/portfolio.png"
                       alt="Verification Image"
-                      className="h-full w-full rounded-r-[30px] object-cover"
+                      className="h-full w-full object-cover rounded-r-[30px]"
                     />
                   </div>
                 </div>
               )}
-              {airspaceList && airspaceList[0] && airspaceList[0].address ?
+              {airspaceList && airspaceList[0] && airspaceList[0].address ? (
                 airspaceList?.map((airspace, index) => (
                   <PortfolioItem
                     airspaceName={airspace?.address}
@@ -156,17 +172,19 @@ const PortfolioList = ({
                     setShowCancelModal={setShowCancelModal}
                     onCloseModal={onCloseModal}
                     setAirspaceList={setAirspaceList}
-                    selectedAirspace={selectedAirspace}
-                  />
+                    selectedAirspace={selectedAirspace} 
+                    />  
                 ))
-              : <AirspacesEmptyMessage />}
+              ) : (
+                <AirspacesEmptyMessage />
+              )}
             </div>
-            <div className="flex w-full flex-col text-gray-600">
-              <div className="flex w-[5rem] items-center gap-2 self-end">
+            <div className="flex flex-col w-full text-gray-600">
+              <div className="flex self-end items-center gap-2 w-[5rem]">
                 <button
                   onClick={handlePrevPage}
                   disabled={pageNumber === 1}
-                  className={`${pageNumber === 1 ? "cursor-not-allowed" : "cursor-pointer"} rounded-lg border border-gray-200 p-1`}
+                  className={`${pageNumber === 1 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
                 >
                   <RxCaretLeft />
                 </button>
@@ -174,14 +192,14 @@ const PortfolioList = ({
                 <button
                   onClick={handleNextPage}
                   disabled={airspaceList?.length < 9}
-                  className={`${airspaceList?.length < 9 ? "cursor-not-allowed" : "cursor-pointer"} rounded-lg border border-gray-200 p-1`}
+                  className={`${airspaceList?.length < 9 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
                 >
                   <RxCaretRight />
                 </button>
               </div>
             </div>
           </>
-        }
+        )}
       </div>
     </>
   );

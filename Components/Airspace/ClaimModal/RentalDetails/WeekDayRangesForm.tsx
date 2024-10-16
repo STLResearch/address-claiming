@@ -14,7 +14,15 @@ interface PropsI {
 }
 
 const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }: PropsI) => {
-  const weekDays = ["SUNDAYS", "MONDAYS", "TUESDAYS", "WEDNESDAYS", "THURSDAYS", "FRIDAYS", "SATURDAYS"];
+  const weekDays = [
+    "SUNDAYS",
+    "MONDAYS",
+    "TUESDAYS",
+    "WEDNESDAYS",
+    "THURSDAYS",
+    "FRIDAYS",
+    "SATURDAYS",
+  ];
 
   const options = Array.from({ length: 25 });
 
@@ -40,12 +48,18 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }: PropsI) => {
     const isDayAvailable = weekDayRanges[index].isAvailable;
 
     return (
-      <div className="flex-none items-center justify-between md:flex" key={index}>
+      <div
+        className="flex-none md:flex items-center justify-between"
+        key={index}
+      >
         <div className="flex items-center gap-[15px] pr-[32px]">
-          <Toggle checked={isDayAvailable} setChecked={() => handleToggle(index)} />
+          <Toggle
+            checked={isDayAvailable}
+            setChecked={() => handleToggle(index)}
+          />
           <p>{day}</p>
         </div>
-        <div className="mt-2 flex items-center gap-[66px]">
+        <div className="flex items-center gap-[66px] mt-2">
           <select
             disabled={!isDayAvailable}
             value={weekDayRanges[index].fromTime}

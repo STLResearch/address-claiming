@@ -11,7 +11,7 @@ export const handleExecuteResponse = (
       tokenId?: string;
     }>
   >,
-  setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>
+  setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   if (response && response.errorMessage) {
     toast.error(response.errorMessage);

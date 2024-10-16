@@ -1,6 +1,12 @@
 "use client";
 
-import { Fragment, SetStateAction, useContext, useEffect, useState } from "react";
+import {
+  Fragment,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 import PageHeader from "@/Components/PageHeader";
 import Head from "next/head";
@@ -51,11 +57,12 @@ const Portfolio = () => {
         <title>SkyTrade - Portfolio</title>
       </Head>
 
-      <div className="relative flex h-screen w-screen items-center justify-center rounded bg-[#F6FAFF]">
+
+      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
-        <div className="flex h-full w-full flex-col">
+        <div className="w-full h-full flex flex-col">
           <PageHeader pageTitle={"Portfolio"} />
-          <section className="relative hidden h-full w-full flex-wrap gap-6 overflow-y-auto px-[45px] py-[43px] md:flex">
+          <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
             <PortfolioList
               title={"My Airspaces"}
               selectAirspace={selectAirspace}
@@ -66,7 +73,7 @@ const Portfolio = () => {
               setSelectedAirspace={setSelectedAirspace}
             />
           </section>
-          <section className="relative flex h-full w-full flex-wrap gap-6 overflow-y-auto py-[10px] md:hidden">
+          <section className="relative w-full h-full flex flex-wrap gap-6 py-[10px] md:hidden overflow-y-auto ">
             <PortfolioListMobile
               onCloseModal={onCloseModal}
               selectAirspace={selectAirspace}

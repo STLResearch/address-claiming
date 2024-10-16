@@ -2,12 +2,21 @@ import { CloseIcon, LocationPointIcon } from "@/Components/Icons";
 import useAuth from "@/hooks/useAuth";
 import { Web3authContext } from "@/providers/web3authProvider";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
-import { ArrowLeftIcon, DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import {
+  ArrowLeftIcon,
+  DateTimePicker,
+  LocalizationProvider,
+} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import SuccessModal from "../SuccessModal";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Connection, VersionedTransaction, NonceAccount, PublicKey } from "@solana/web3.js";
+import {
+  Connection,
+  VersionedTransaction,
+  NonceAccount,
+  PublicKey,
+} from "@solana/web3.js";
 import { getTokenBalance } from "@/utils/apiUtils/apiFunctions";
 import { validateRental } from "@/utils/rent/rentalValidation";
 import { handleMintResponse } from "@/utils/rent/mintResponseHandler";
@@ -29,17 +38,36 @@ interface RentModalProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
 }
-const RentModal: React.FC<RentModalProps> = ({ setShowClaimModal, rentData, setIsLoading, isLoading }) => {
-  const defaultValueDate = dayjs().add(1, "h").set("minute", 30).startOf("minute");
+const RentModal: React.FC<RentModalProps> = ({
+  setShowClaimModal,
+  rentData,
+  setIsLoading,
+  isLoading,
+}) => {
+  const defaultValueDate = dayjs()
+    .add(1, "h")
+    .set("minute", 30)
+    .startOf("minute");
   const maxDate = dayjs().add(29, "day");
   const [tokenBalance, setTokenBalance] = useState<string>("0");
   const [date, setDate] = useState(defaultValueDate);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const { isMobile } = useMobile();
-  const [finalAns, setFinalAns] = useState<{ status: string; message?: string | undefined } | null | undefined>();
-  const { user, web3authStatus, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } = useAuth();
+  const [finalAns, setFinalAns] = useState<
+    { status: string; message?: string | undefined } | null | undefined
+  >();
+  const {
+    user,
+    web3authStatus,
+    redirectIfUnauthenticated,
+    setAndClearOtherPublicRouteData,
+  } = useAuth();
 
-  const { getNonceAccountEntry, createMintRentalToken, executeMintRentalToken } = AirspaceRentalService();
+  const {
+    getNonceAccountEntry,
+    createMintRentalToken,
+    executeMintRentalToken,
+  } = AirspaceRentalService();
 
   const { provider } = useContext(Web3authContext);
   const { getRentedTimes } = PropertiesService();
@@ -67,7 +95,9 @@ const RentModal: React.FC<RentModalProps> = ({ setShowClaimModal, rentData, setI
   const handleRentAirspace = async () => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
-      const connection = new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string);
+      const connection = new Connection(
+        process.env.NEXT_PUBLIC_RPC_TARGET as string,
+      );
       if (isRedirecting) {
         setAndClearOtherPublicRouteData("rentData", rentData);
         return;
@@ -82,7 +112,15 @@ const RentModal: React.FC<RentModalProps> = ({ setShowClaimModal, rentData, setI
       }
 
       if (
-        !validateRental(rentData?.price, currentDate, startDate, endDate, tokenBalance, setFinalAns, setShowSuccess)
+        !validateRental(
+          rentData?.price,
+          currentDate,
+          startDate,
+          endDate,
+          tokenBalance,
+          setFinalAns,
+          setShowSuccess,
+        )
       ) {
         return;
       }
@@ -91,7 +129,10 @@ const RentModal: React.FC<RentModalProps> = ({ setShowClaimModal, rentData, setI
       if (rentData?.layers) {
         const nonceAccountEntry = await getNonceAccountEntry();
 
-        const nonceAccount = await createNonceIx(connection, new PublicKey(nonceAccountEntry.publicKey));
+        const nonceAccount = await createNonceIx(
+          connection,
+          new PublicKey(nonceAccountEntry.publicKey),
+        );
 
         const postData = {
           callerAddress: user?.blockchainAddress,
@@ -103,9 +144,16 @@ const RentModal: React.FC<RentModalProps> = ({ setShowClaimModal, rentData, setI
         };
 
         const createMintResponse = await createMintRentalToken({ postData });
-        const mintResponse = await handleMintResponse(createMintResponse, setIsLoading, setShowSuccess, setFinalAns);
+        const mintResponse = await handleMintResponse(
+          createMintResponse,
+          setIsLoading,
+          setShowSuccess,
+          setFinalAns,
+        );
         if (!mintResponse) return;
-        const transaction = VersionedTransaction.deserialize(new Uint8Array(Buffer.from(createMintResponse, "base64")));
+        const transaction = VersionedTransaction.deserialize(
+          new Uint8Array(Buffer.from(createMintResponse, "base64")),
+        );
         const txString = await executeTransaction(transaction, provider);
 
         if (!txString) return;
@@ -125,7 +173,10 @@ const RentModal: React.FC<RentModalProps> = ({ setShowClaimModal, rentData, setI
           return;
         }
         if (executionResponse) {
-          if (executionResponse.data && executionResponse.data.status === "success") {
+          if (
+            executionResponse.data &&
+            executionResponse.data.status === "success"
+          ) {
             setFinalAns({
               status: "Rent Successful",
               message: executionResponse.data.message,
@@ -165,7 +216,11 @@ const RentModal: React.FC<RentModalProps> = ({ setShowClaimModal, rentData, setI
   const shouldDisableTime = (value, view) => {
     if (view === "minutes" && value.minute() >= 1 && value.minute() <= 29) {
       return true;
-    } else if (view === "minutes" && value.minute() >= 31 && value.minute() <= 59) {
+    } else if (
+      view === "minutes" &&
+      value.minute() >= 31 &&
+      value.minute() <= 59
+    ) {
       return true;
     }
 
@@ -189,14 +244,14 @@ const RentModal: React.FC<RentModalProps> = ({ setShowClaimModal, rentData, setI
       )}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="fixed left-0 top-0 z-[100] flex h-screen max-h-screen w-full touch-manipulation flex-col gap-[15px] bg-white px-[29px] py-[30px] sm:left-2/3 md:top-1/2 md:z-40 md:h-auto md:max-h-[700px] md:w-[689px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[30px]"
+        className="touch-manipulation fixed top-0 md:top-1/2  left-0 sm:left-2/3 md:-translate-x-1/2 md:-translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
       >
         <div
-          className="relative -mx-[29px] -mt-[30px] flex touch-manipulation items-center gap-[20px] px-[29px] py-[20px] md:mx-0 md:my-0 md:p-0 md:shadow-none"
+          className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
         >
           <div
-            className="h-[12px] w-[16px] md:hidden"
+            className="w-[16px] h-[12px] md:hidden"
             onClick={() => {
               removePubLicUserDetailsFromLocalStorageOnClose("rentData");
               setShowClaimModal(false);
@@ -204,33 +259,37 @@ const RentModal: React.FC<RentModalProps> = ({ setShowClaimModal, rentData, setI
           >
             <ArrowLeftIcon />
           </div>
-          <div className="flex w-full items-center justify-center">
-            <h2 className="text-center text-xl font-medium text-[#222222]">Airspace Details</h2>
+          <div className="flex items-center w-full justify-center">
+            <h2 className="text-[#222222] font-medium text-xl text-center">
+              Airspace Details
+            </h2>
           </div>
           <div
             onClick={() => {
               setShowClaimModal(false);
               removePubLicUserDetailsFromLocalStorageOnClose("rentData");
             }}
-            className="absolute right-0 top-0 ml-auto hidden h-[15px] w-[15px] cursor-pointer md:block"
+            className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
           >
             <CloseIcon />
           </div>
         </div>
         <div
-          className="flex touch-manipulation items-center gap-[10px] rounded-lg px-[22px] py-4"
+          className="touch-manipulation flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
           style={{ border: "1px solid #4285F4" }}
         >
-          <div className="h-6 w-6">
+          <div className="w-6 h-6">
             <LocationPointIcon />
           </div>
-          <p className="flex-1 text-[14px] font-normal text-[#222222]">{rentData ? rentData.address : ""}</p>
+          <p className="font-normal text-[#222222] text-[14px] flex-1">
+            {rentData ? rentData.address : ""}
+          </p>
         </div>
         <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
-          <div className="flex w-full touch-manipulation flex-col gap-[5px]">
+          <div className="flex touch-manipulation flex-col gap-[5px] w-full">
             <label htmlFor="rentalDate">
               Rental Date and Time
-              <span className="touch-manipulation text-[#E04F64]">*</span>
+              <span className="text-[#E04F64] touch-manipulation">*</span>
             </label>
             <DateTimePicker
               value={date}
@@ -262,13 +321,13 @@ const RentModal: React.FC<RentModalProps> = ({ setShowClaimModal, rentData, setI
           </div>
         </div>
 
-        <div className="flex touch-manipulation items-center justify-center gap-[20px] text-[14px]">
+        <div className="touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
           <div
             onClick={() => {
               setShowClaimModal(false);
               removePubLicUserDetailsFromLocalStorageOnClose("rentData");
             }}
-            className="w-1/2 cursor-pointer touch-manipulation rounded-[5px] px-[22px] py-[10px] text-center text-[#0653EA]"
+            className="text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2"
             style={{ border: "1px solid #0653EA" }}
           >
             Cancel
@@ -276,7 +335,7 @@ const RentModal: React.FC<RentModalProps> = ({ setShowClaimModal, rentData, setI
           <LoadingButton
             onClick={handleRentAirspace}
             isLoading={isLoading}
-            className="flex w-1/2 cursor-pointer touch-manipulation items-center justify-center rounded-[5px] bg-[#0653EA] px-[22px] py-[10px] text-center text-white"
+            className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
             Rent Airspace
           </LoadingButton>

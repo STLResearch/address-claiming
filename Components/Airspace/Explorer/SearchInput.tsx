@@ -21,7 +21,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   setShowOptions,
 }) => {
   return (
-    <div className="relative flex w-full items-center rounded-lg border border-light-grey/30 bg-white px-2.5 py-2.5">
+    <div className="relative w-full flex items-center rounded-lg bg-white px-2.5 py-2.5 border border-light-grey/30">
       <input
         autoComplete="off"
         value={address}
@@ -41,8 +41,15 @@ const SearchInput: React.FC<SearchInputProps> = ({
             <div
               key={item?.id}
               data-value={item?.place_name}
-              onClick={() => handleSelectAddress(item.place_name, setAddress, setFlyToAddress, setShowOptions)}
-              className="w-full border-t-[0.2px] border-light-black p-5 text-left text-light-black"
+              onClick={() =>
+                handleSelectAddress(
+                  item.place_name,
+                  setAddress,
+                  setFlyToAddress,
+                  setShowOptions,
+                )
+              }
+              className="w-full p-5 text-left text-light-black border-t-[0.2px] border-light-black"
             >
               {item.place_name}
             </div>

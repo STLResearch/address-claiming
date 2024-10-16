@@ -38,7 +38,8 @@ const Service = () => {
       return;
     }
     if (!suppressErrorReporting && error.response) {
-      const backendError = error.response.data.errorMesagge || error.response.data.data.message;
+      const backendError =
+        error.response.data.errorMesagge || error.response.data.data.message;
 
       if (backendError && backendError !== "UNAUTHORIZED") {
         toast.error(backendError);
@@ -49,7 +50,13 @@ const Service = () => {
     Sentry.captureException(error);
   };
 
-  const createHeader = async ({ isPublic, uri }: { uri: string; isPublic?: boolean }) => {
+  const createHeader = async ({
+    isPublic,
+    uri,
+  }: {
+    uri: string;
+    isPublic?: boolean;
+  }) => {
     try {
       let newHeader = {};
 
@@ -100,7 +107,11 @@ const Service = () => {
     }
   };
 
-  const getRequest = async ({ uri, isPublic, suppressErrorReporting }: RequestI) => {
+  const getRequest = async ({
+    uri,
+    isPublic,
+    suppressErrorReporting,
+  }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 
@@ -116,7 +127,12 @@ const Service = () => {
     }
   };
 
-  const postRequest = async ({ uri, postData, isPublic, suppressErrorReporting }: RequestI) => {
+  const postRequest = async ({
+    uri,
+    postData,
+    isPublic,
+    suppressErrorReporting,
+  }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 
@@ -134,7 +150,12 @@ const Service = () => {
     }
   };
 
-  const patchRequest = async ({ uri, postData, isPublic, suppressErrorReporting }: RequestI) => {
+  const patchRequest = async ({
+    uri,
+    postData,
+    isPublic,
+    suppressErrorReporting,
+  }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 
@@ -152,7 +173,12 @@ const Service = () => {
     }
   };
 
-  const deleteRequest = async ({ uri, postData, isPublic, suppressErrorReporting }: RequestI) => {
+  const deleteRequest = async ({
+    uri,
+    postData,
+    isPublic,
+    suppressErrorReporting,
+  }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 

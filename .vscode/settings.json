@@ -1,14 +1,14 @@
 {
-  "editor.formatOnSave": true,
-  "editor.fontWeight": "normal",
-  "cSpell.words": ["camelcase", "cond", "formik", "gainsboro"],
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
-  },
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit"
-  }
+	"editor.formatOnSave": true,
+	"editor.fontWeight": "normal",
+	"cSpell.words": ["camelcase", "cond", "formik", "gainsboro"],
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+	},
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "explicit"
+	}
 }

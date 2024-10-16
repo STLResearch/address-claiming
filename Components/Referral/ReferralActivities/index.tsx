@@ -7,48 +7,74 @@ const ReferralActivities: React.FC = () => {
   const { isMobile } = useMobile();
   const [showActivities, setShowActivities] = useState(false);
   return (
-    <div className="md:w-w-1/2 mt-4 w-full px-4 md:mt-0 md:px-8">
+    <div className="mt-4 md:mt-0 w-full md:w-w-1/2 px-4 md:px-8">
       <div
-        className="w-full rounded-[30px] bg-white px-4 py-5 shadow-xl md:px-6"
+        className=" py-5 px-4 md:px-6 rounded-[30px] bg-white  w-full shadow-xl"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
       >
         <div className="">
-          <h3 className="mt-4 text-xl font-semibold">How can I earn SKY Points?</h3>
-          {isMobile ?
-            <div className="mt-4 flex w-full flex-col space-y-1">
+          <h3 className="text-xl font-semibold mt-4">
+            How can I earn SKY Points?
+          </h3>
+          {isMobile ? (
+            <div className="flex flex-col w-full mt-4 space-y-1">
               <div className="flex justify-between">
                 <p className="text-sm font-semibold">Account Registration</p>
-                <span className="text-sm font-medium text-[#4285F4]">5 SKY points</span>
+                <span className="text-[#4285F4] text-sm font-medium">
+                  5 SKY points
+                </span>
               </div>
               <div className="flex justify-between">
                 <p className="text-sm font-semibold">Claim your airspace</p>
-                <span className="text-sm font-medium text-[#4285F4]">100 SKY points</span>
+                <span className="text-[#4285F4] text-sm font-medium">
+                  100 SKY points
+                </span>
               </div>
               <div className="flex justify-between">
                 <p className="text-sm font-semibold">Refer a friend</p>
-                <span className="text-sm font-medium text-[#4285F4]">100 SKY points</span>
+                <span className="text-[#4285F4] text-sm font-medium">
+                  100 SKY points
+                </span>
               </div>
             </div>
-          : <div className="mt-4 w-full flex-col">
+          ) : (
+            <div className="flex-col w-full mt-4">
               <p className="text-sm font-semibold">
-                Account Registration <span className="text-sm font-light text-[#D3D3D3]"> ---------</span>{" "}
-                <span className="text-sm font-medium text-[#4285F4]">5 SKY points</span>{" "}
+                Account Registration{" "}
+                <span className="text-[#D3D3D3] text-sm font-light">
+                  {" "}
+                  ---------
+                </span>{" "}
+                <span className="text-[#4285F4] text-sm font-medium">
+                  5 SKY points
+                </span>{" "}
               </p>
               <p className="text-sm font-semibold">
                 Claim your airspace
-                <span className="text-sm font-light text-[#D3D3D3]"> ----------</span>{" "}
-                <span className="text-sm font-medium text-[#4285F4]">100 SKY points</span>{" "}
+                <span className="text-[#D3D3D3] text-sm font-light">
+                  {" "}
+                  ----------
+                </span>{" "}
+                <span className="text-[#4285F4] text-sm font-medium">
+                  100 SKY points
+                </span>{" "}
               </p>
               <p className="text-sm font-semibold">
-                Refer a friend <span className="text-sm font-light text-[#D3D3D3]"> ----------------</span>{" "}
-                <span className="text-sm font-medium text-[#4285F4]">100 SKY points to you and your friend</span>{" "}
+                Refer a friend{" "}
+                <span className="text-[#D3D3D3] text-sm font-light">
+                  {" "}
+                  ----------------
+                </span>{" "}
+                <span className="text-[#4285F4] text-sm font-medium">
+                  100 SKY points to you and your friend
+                </span>{" "}
               </p>
             </div>
-          }
+          )}
           <div className="">
-            <div className="mt-2 flex justify-end">
+            <div className="flex justify-end mt-2">
               <button
-                className="text-sm font-semibold text-[#0653EA] hover:underline"
+                className="text-[#0653EA] font-semibold hover:underline text-sm"
                 onClick={() => {
                   setShowActivities(true);
                 }}
@@ -57,7 +83,9 @@ const ReferralActivities: React.FC = () => {
               </button>
             </div>
           </div>
-          {showActivities && <ActivitiesList onBack={() => setShowActivities(false)} />}
+          {showActivities && (
+            <ActivitiesList onBack={() => setShowActivities(false)} />
+          )}
         </div>
       </div>
     </div>

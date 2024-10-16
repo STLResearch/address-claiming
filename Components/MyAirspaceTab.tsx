@@ -17,9 +17,18 @@ const MyAirspaceTab: React.FC<MyAirspaceTabProps> = (props) => {
       className="mt-5 bg-white pb-2 transition-all duration-500 ease-in-out hover:bg-blue-100"
       style={{ width: "299px", borderRadius: "3px", border: "1px solid blue" }}
     >
-      <div className="flex flex-row items-center justify-between pb-5" style={{ borderBottom: "1px solid blue" }}>
+      <div
+        className="flex flex-row items-center justify-between pb-5"
+        style={{ borderBottom: "1px solid blue" }}
+      >
         <div className="ms-2 mt-5 flex flex-row items-center gap-2 font-sans text-sm font-medium">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 18 18"
+            fill="none"
+          >
             <path
               fillRule="evenodd"
               clipRule="evenodd"
@@ -48,10 +57,24 @@ const MyAirspaceTab: React.FC<MyAirspaceTabProps> = (props) => {
               background: `${!props.status ? "#BED9C7" : "#FFC7C2"}`,
             }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
-              <circle cx="3" cy="3" r="3" fill={`${!props.status ? "#1A572E" : "#C80000"} `} />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="6"
+              height="6"
+              viewBox="0 0 6 6"
+              fill="none"
+            >
+              <circle
+                cx="3"
+                cy="3"
+                r="3"
+                fill={`${!props.status ? "#1A572E" : "#C80000"} `}
+              />
             </svg>
-            <p style={{ color: `${!props.status ? "#1A572E" : "#C80000"}` }} className="text-sm">
+            <p
+              style={{ color: `${!props.status ? "#1A572E" : "#C80000"}` }}
+              className="text-sm"
+            >
               {props.status ? "No-Fly Zone " : "Available"}
             </p>
           </div>
@@ -61,7 +84,13 @@ const MyAirspaceTab: React.FC<MyAirspaceTabProps> = (props) => {
             className="me-1.5 mt-5 flex flex-row items-center justify-center gap-1 p-1 font-semibold"
             style={{ borderRadius: "3px", background: "#FFD037" }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="6"
+              height="6"
+              viewBox="0 0 6 6"
+              fill="none"
+            >
               <circle cx="3" cy="3" r="3" fill=" #7a6626" />
             </svg>
             <p style={{ color: "#7a6626" }} className="text-xs">

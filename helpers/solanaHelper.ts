@@ -1,7 +1,16 @@
-import { Connection, NonceAccount, PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
+import {
+  Connection,
+  NonceAccount,
+  PublicKey,
+  SystemProgram,
+  TransactionInstruction,
+} from "@solana/web3.js";
 import { resolve } from "path";
 
-export const createNonceIx = async (connection: Connection, nonceAccountPubkey: PublicKey): Promise<NonceAccount> => {
+export const createNonceIx = async (
+  connection: Connection,
+  nonceAccountPubkey: PublicKey,
+): Promise<NonceAccount> => {
   let nonceAccountInfo;
   let c = 0;
 

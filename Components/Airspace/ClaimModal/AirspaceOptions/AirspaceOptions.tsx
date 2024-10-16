@@ -8,7 +8,11 @@ interface AirspaceOptionsProps {
   setData: React.Dispatch<React.SetStateAction<PropertyData>>;
 }
 
-const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({ isRentableAirspace, sell, setData }) => {
+const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({
+  isRentableAirspace,
+  sell,
+  setData,
+}) => {
   const handleRentChange = () => {
     setData((prev) => ({
       ...prev,
@@ -26,11 +30,22 @@ const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({ isRentableAirspace, s
   };
 
   return (
-    <div className="mt-2 flex flex-col gap-[10px] md:mt-3">
-      <p className="text-[14px] font-normal text-[#838187]">Are you looking to Rent or Sell your airspace?</p>
+    <div className="flex flex-col gap-[10px] mt-2 md:mt-3">
+      <p className="text-[14px] font-normal text-[#838187]">
+        Are you looking to Rent or Sell your airspace?
+      </p>
       <div className="flex items-center gap-[7px]">
-        <Checkbox label="Rent" checked={isRentableAirspace} onChange={handleRentChange} />
-        <Checkbox label="Sell" checked={sell ? sell : false} disabled onChange={handleSellChange} />
+        <Checkbox
+          label="Rent"
+          checked={isRentableAirspace}
+          onChange={handleRentChange}
+        />
+        <Checkbox
+          label="Sell"
+          checked={sell ? sell : false}
+          disabled
+          onChange={handleSellChange}
+        />
       </div>
     </div>
   );

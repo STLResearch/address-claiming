@@ -1,10 +1,14 @@
 import Service from "../Service";
 import { GeneratePublicFileUploadUrlParams } from "./types";
 
+
 const S3UploadServices = () => {
   const { postRequest } = Service();
 
-  const generatePublicFileUploadUrl = async ({ fileType, requestId }: GeneratePublicFileUploadUrlParams) => {
+  const generatePublicFileUploadUrl = async ({
+    fileType,
+    requestId,
+  }: GeneratePublicFileUploadUrlParams) => {
     try {
       if (!fileType || !requestId) return;
       const response = await postRequest({

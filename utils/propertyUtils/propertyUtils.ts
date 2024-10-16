@@ -12,7 +12,7 @@ export const claimAirspaceProperty = async (
   setIsLoading: (value: boolean) => void,
   setData: (data: PropertyData) => void,
   setClaimButtonLoading: (value: boolean) => void,
-  defaultData: PropertyData
+  defaultData: PropertyData,
 ) => {
   try {
     const {

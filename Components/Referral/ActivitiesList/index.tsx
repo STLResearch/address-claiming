@@ -21,7 +21,8 @@ const ActivitiesList: React.FC<ActivitiesListProps> = ({ onBack }) => {
       points: "100 SKY points",
     },
     {
-      description: "For claimed airspace which is fully validated done by the referred account.",
+      description:
+        "For claimed airspace which is fully validated done by the referred account.",
       points:
         "100 SKY points to you and 100 SKY points to your friend (this is part of the points allocation 2) + 10% bonus on the referred income stream from air-right rental",
     },
@@ -51,39 +52,51 @@ const ActivitiesList: React.FC<ActivitiesListProps> = ({ onBack }) => {
   ];
   return (
     <div>
-      {isMobile ?
-        <div className="fixed left-0 top-0 z-50 h-full w-full overflow-x-auto bg-white">
-          <div className="mb-4 flex items-center">
+      {isMobile ? (
+        <div className="fixed top-0 left-0 w-full h-full bg-white z-50 overflow-x-auto ">
+          <div className="flex items-center mb-4">
             <div
-              className="flex w-full items-center justify-between bg-white px-4 py-5 text-[#222222]"
+              className="flex px-4  items-center justify-between py-5  w-full text-[#222222] bg-white"
               style={{ boxShadow: "0px 2px 12px 0px #00000014" }}
             >
               <button onClick={onBack} className="mr-2 h-6 w-6">
                 <ArrowLeftIcon />
               </button>
-              <h2 className="flex-1 text-center text-lg font-bold">How can I earn SKY Points?</h2>
+              <h2 className="text-lg font-bold flex-1 text-center">
+                How can I earn SKY Points?
+              </h2>
             </div>
           </div>
-          <div className="mx-auto bg-white p-4">
+          <div className="p-4 mx-auto bg-white">
             <div className="max-w-full px-4">
               <div className="min-w-full">
                 {rows.map((row, index) => (
-                  <div key={index} className={`${index % 2 === 0 ? "bg-[#E9F5FE]" : "bg-white"} flex`}>
-                    <div className="w-1/2 border px-4 py-2 text-xs font-semibold">{row.description}</div>
-                    <div className="w-1/2 border px-4 py-2 text-xs font-semibold text-[#4285F4]">{row.points}</div>
+                  <div
+                    key={index}
+                    className={`${index % 2 === 0 ? "bg-[#E9F5FE]" : "bg-white"} flex`}
+                  >
+                    <div className="py-2 font-semibold px-4 border w-1/2 text-xs">
+                      {row.description}
+                    </div>
+                    <div className="py-2 font-semibold px-4 border w-1/2  text-[#4285F4] text-xs">
+                      {row.points}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
         </div>
-      : <div>
+      ) : (
+        <div>
           <Backdrop onClick={onBack} />
-          <div className="no-scrollbar fixed left-1/2 top-1/2 z-50 max-h-[640px] -translate-x-1/2 -translate-y-1/2 transform overflow-x-auto py-10">
-            <div className="mx-auto max-w-xl rounded-3xl border bg-white p-4 shadow-lg">
-              <div className="mb-6 flex items-center justify-between">
-                <h2 className="flex-1 text-center text-lg font-bold">How can I earn SKY Points?</h2>
-                <button onClick={onBack} className="ml-4 h-4 w-4">
+          <div className="max-h-[640px] overflow-x-auto z-50 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 py-10 no-scrollbar">
+            <div className="border rounded-3xl shadow-lg p-4 max-w-xl mx-auto bg-white">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-lg font-bold flex-1 text-center">
+                  How can I earn SKY Points?
+                </h2>
+                <button onClick={onBack} className="h-4 w-4 ml-4">
                   <CloseIcon />
                 </button>
               </div>
@@ -92,9 +105,16 @@ const ActivitiesList: React.FC<ActivitiesListProps> = ({ onBack }) => {
                   {" "}
                   {/* Container for scrollable content */}
                   {rows.map((row, index) => (
-                    <div key={index} className={`${index % 2 === 0 ? "bg-[#E9F5FE]" : "bg-white"} flex`}>
-                      <div className="w-1/2 border px-4 py-2 text-xs font-semibold">{row.description}</div>
-                      <div className="w-1/2 border px-4 py-2 text-xs font-semibold text-[#4285F4]">{row.points}</div>
+                    <div
+                      key={index}
+                      className={`${index % 2 === 0 ? "bg-[#E9F5FE]" : "bg-white"} flex`}
+                    >
+                      <div className="py-2 font-semibold px-4 border w-1/2 text-xs">
+                        {row.description}
+                      </div>
+                      <div className="py-2 font-semibold px-4 border w-1/2  text-[#4285F4] text-xs">
+                        {row.points}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -102,7 +122,7 @@ const ActivitiesList: React.FC<ActivitiesListProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 };
