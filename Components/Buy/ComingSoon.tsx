@@ -18,7 +18,7 @@ const ComingSoon = () => {
     setIsJoiningWaitlist(true);
     try {
       const response = await joinWaitlist();
-      if (response.data) {
+      if (response && response.id) {
         toast.success(
           "You have successfully joined the waitlist, you will receive email notifications on the Auction House updates"
         );
@@ -36,7 +36,7 @@ const ComingSoon = () => {
     try {
       const response = await subscribeNewsLetters();
 
-      if (response.data) {
+      if (response && response.id) {
         toast.success(
           "You have successfully subcribed to our newsletters, you will receive email notifications on updates and new features"
         );
@@ -45,7 +45,7 @@ const ComingSoon = () => {
       console.error("Error subscribing to newsletter:", error);
       toast.error("Error subscribing to newsletter");
     } finally {
-      setIsJoiningWaitlist(false);
+      setIsSubscribing(false);
     }
   };
 

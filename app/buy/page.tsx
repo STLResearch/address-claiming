@@ -200,7 +200,7 @@ const Buy = () => {
                   )}
                 </>
               : <div className="flex items-start justify-start">
-                  {!user?.betaUser?.isBetaUser ?
+                  {user?.betaUser?.isBetaUser ?
                     <AuctionExplorer
                       setSearchTerm={setSearchTerm}
                       auctions={auctions}

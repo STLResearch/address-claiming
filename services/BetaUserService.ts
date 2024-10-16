@@ -8,7 +8,7 @@ const BetaUserService = () => {
   const joinWaitlist = async () => {
     try {
       const response = await postRequest({
-        uri: `private/beta-user/register`,
+        uri: `/private/beta-user/register`,
         postData: {
             userId: null
         },
