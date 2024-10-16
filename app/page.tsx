@@ -14,6 +14,7 @@ import Image from "next/image";
 import EmailInput from "@/Components/Auth/EmailInput";
 import Link from "next/link";
 import LoadingMessage from "@/Components/Auth/LoadingMessage";
+import Backdrop from "@/Components/Backdrop";
 
 export default function Home() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function Home() {
   const { isRedirecting } = useAuthRedirect();
 
   const [emailValid, setEmailValid] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
 
   const emailRef = useRef<HTMLInputElement>(null);
@@ -30,19 +31,22 @@ export default function Home() {
   const { web3auth, setProvider } = useContext(Web3authContext);
   const { init } = useInitAuth();
 
-  const { isWaitingScreenVisible } = useAppSelector((state) => {
-    const { isWaitingScreenVisible } = state.userReducer;
-    return { isWaitingScreenVisible };
+  const isWaitingScreenVisible = useAppSelector((state) => {
+    return state.userReducer.isWaitingScreenVisible;
   }, shallowEqual);
 
   useEffect(() => {
     setIsLoading(true);
     const referralCode = queryParams.get("ref");
-    if (referralCode) {
+    const userLocalstorage = localStorage.getItem("user");
+
+    if (referralCode && !userLocalstorage) {
       localStorage.setItem("referralCode", String(referralCode));
+    } else {
+      router.push("/airspaces");
     }
     setIsLoading(false);
-  }, []);
+  }, [web3auth?.status]);
 
   const loginUser = async (isEmail: boolean) => {
     try {
@@ -90,9 +94,17 @@ export default function Home() {
     return regex.test(email);
   };
 
+  if (isLoading) {
+    return (
+      <>
+        <Spinner />
+        <Backdrop />
+      </>
+    );
+  }
+
   return (
     <Fragment>
-      {isLoading && <Spinner />}
       {!isWaitingScreenVisible && !isRedirecting && (
         <div className="h-screen w-screen md:flex">
           <div className="flex-1 bg-white flex items-center justify-center">
