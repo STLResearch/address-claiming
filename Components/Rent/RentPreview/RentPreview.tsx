@@ -245,7 +245,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
           <div className="flex justify-between">
             <div className="flex flex-col gap-y-[15px] text-[14px] leading-[21px] text-light-black">
               <div className="flex">
-                <div>ID::</div>
+                <div>ID:</div>
                 <div className="pl-[15px] text-light-grey">{rentData?.id}</div>
               </div>
             </div>
