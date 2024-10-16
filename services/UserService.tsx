@@ -62,12 +62,24 @@ const UserService = () => {
     }
   };
 
+  const subscribeNewsLetters = async () => {
+    try {
+      const response = await patchRequest({
+        uri: `private/users/subscribe-newsletters`,
+      });
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return {
     createUser,
     retrieveUserReferralData,
     getUser,
     updateUser,
     deleteUser,
+    subscribeNewsLetters,
   };
 };
 

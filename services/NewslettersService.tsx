@@ -1,7 +1,7 @@
 import Service from "./Service";
 
 const NewslettersService = () => {
-  const { getRequest } = Service();
+  const { getRequest, postRequest, patchRequest } = Service();
 
   const getNewsLetters = async () => {
     try {

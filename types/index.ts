@@ -68,6 +68,15 @@ type metadata = {
   endTime: Date;
 };
 
+type BetaUserI = {
+  id: String;
+  userId: number;
+  user: any;
+  isBetaUser: boolean;
+  createdAt: string;
+  updateAt: string;
+};
+
 export type AirspaceItem = {
   type: string;
   receivedBid: {
@@ -187,6 +196,7 @@ export type User = {
   blockchainAddress: string;
   categoryId: number;
   createdAt: string;
+  betaUser?: BetaUserI;
   email: string;
   id: number;
   isActive: boolean;

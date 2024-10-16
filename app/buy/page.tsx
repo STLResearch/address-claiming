@@ -10,7 +10,7 @@ import ZoomControllers from "@/Components/ZoomControllers";
 import { goToAddress } from "@/utils/apiUtils/apiFunctions";
 import { AuctionDataI, Coordinates } from "@/types";
 import Sidebar from "@/Components/Shared/Sidebar";
-import { AuctionExplorer, AuctionExplorerMobile, AuctionSearchMobile, BuyFilter } from "@/Components/Buy";
+import { AuctionExplorer, AuctionExplorerMobile, AuctionSearchMobile, BuyFilter, ComingSoon } from "@/Components/Buy";
 import BidDetails from "@/Components/Buy/BidDetail/BidDetail";
 import CreateAuctionModal from "@/Components/Buy/CreateAuctionModal";
 import { setIsCreateAuctionModalOpen } from "@/redux/slices/userSlice";
@@ -24,21 +24,23 @@ import useFetchAuctions from "@/hooks/useFetchAuctions";
 import { useSearchParams } from "next/navigation";
 
 const Buy = () => {
-  const { isCreateAuctionModalOpen } = useAppSelector((state) => {
-    const { isCreateAuctionModalOpen } = state.userReducer;
-    return { isCreateAuctionModalOpen };
+  const { isCreateAuctionModalOpen, user } = useAppSelector((state) => {
+    const { isCreateAuctionModalOpen, user } = state.userReducer;
+    return { isCreateAuctionModalOpen, user };
   }, shallowEqual);
 
   const dispatch = useAppDispatch();
-  const { getAuctionWithBid } = MarketplaceService();
+  const { getAuctions, getAuctionWithBid } = MarketplaceService();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [map, setMap] = useState<Map | null>(null);
   const { isMobile } = useMobile();
-  const [setAddressData] = useState<{ mapbox_id: string; short_code: string; wikidata: string } | null | undefined>();
-  const [flyToAddress] = useState<string>("");
-  const [setCoordinates] = useState<Coordinates | null>(null);
+  const [addressData, setAddressData] = useState<
+    { mapbox_id: string; short_code: string; wikidata: string } | null | undefined
+  >();
+  const [flyToAddress, setFlyToAddress] = useState<string>("");
+  const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [marker, setMarker] = useState<Marker | null | undefined>();
   const [showBidDetail, setShowBidDetail] = useState<boolean>(false);
   const [showBidPreview, setShowBidPreview] = useState<boolean>(false);
@@ -46,7 +48,7 @@ const Buy = () => {
   const [currentUserBid, setCurrentUserBid] = useState<number | null>(null);
   const [bidResponseStatus, setBidResponseStatus] = useState<"SUCCESS" | "FAIL">("FAIL");
   const [auctionDetailData, setAuctionDetailData] = useState<AuctionDataI>();
-  const [showAuctionList] = useState<boolean>(true);
+  const [showAuctionList, setShowAuctionList] = useState<boolean>(true);
   const [txHash, setTxHash] = useState("");
   const { auctions, hasMore, loading, setPage } = useFetchAuctions(1, 10, searchTerm);
 
@@ -101,7 +103,6 @@ const Buy = () => {
     if (!flyToAddress) return;
     goToAddress(
       flyToAddress,
-      //@ts-ignore
       setCoordinates,
       setAddressData,
       setIsLoading,
@@ -161,40 +162,51 @@ const Buy = () => {
             </div>
 
             <div className="fixed right-10 top-[15%] z-50 hidden md:block">
-              <BuyFilter />
+              {user?.betaUser?.isBetaUser && <BuyFilter />}
             </div>
 
             {isCreateAuctionModalOpen && (
               <CreateAuctionModal data={[]} onClose={() => dispatch(setIsCreateAuctionModalOpen(false))} />
             )}
 
-            <AuctionSearchMobile searchTerm={searchTerm} setSearchTerm={(value: string) => setSearchTerm(value)} />
+            {user?.betaUser?.isBetaUser && (
+              <AuctionSearchMobile searchTerm={searchTerm} setSearchTerm={(value: string) => setSearchTerm(value)} />
+            )}
             <section className={"relative mb-[79px] flex h-full w-full items-start justify-start md:mb-0"}>
               <div className={"!absolute !left-0 !top-0 !m-0 !h-screen !w-screen"} id="map" style={{ zIndex: "10" }} />
 
-              {!isMobile && (
-                <div className="flex items-start justify-start">
-                  <AuctionExplorer
-                    setSearchTerm={setSearchTerm}
-                    auctions={auctions}
-                    setPage={setPage}
-                    loading={loading}
-                    hasMorePage={hasMore}
-                    setShowBidDetail={setShowBidDetail}
-                    setAuctionDetailData={setAuctionDetailData}
-                  />
+              {isMobile ?
+                <>
+                  {showAuctionList && auctions && (
+                    <>
+                      {user?.betaUser?.isBetaUser ?
+                        <AuctionExplorerMobile
+                          loading={loading}
+                          auctions={auctions}
+                          setPage={setPage}
+                          hasMorePage={hasMore}
+                          setShowBidDetail={setShowBidDetail}
+                          setAuctionDetailData={setAuctionDetailData}
+                        />
+                      : <ComingSoon />}
+                    </>
+                  )}
+                </>
+              : <div className="flex items-start justify-start">
+                  {user?.betaUser?.isBetaUser ?
+                    <AuctionExplorer
+                      setSearchTerm={setSearchTerm}
+                      auctions={auctions}
+                      setPage={setPage}
+                      loading={loading}
+                      hasMorePage={hasMore}
+                      setShowBidDetail={setShowBidDetail}
+                      setAuctionDetailData={setAuctionDetailData}
+                    />
+                  : <ComingSoon />}
                 </div>
-              )}
-              {showAuctionList && auctions && (
-                <AuctionExplorerMobile
-                  loading={loading}
-                  auctions={auctions}
-                  setPage={setPage}
-                  hasMorePage={hasMore}
-                  setShowBidDetail={setShowBidDetail}
-                  setAuctionDetailData={setAuctionDetailData}
-                />
-              )}
+              }
+
               {showSuccessAndErrorPopup && (
                 <SuccessFailPopup
                   setShowSuccessAndErrorPopup={setShowSuccessAndErrorPopup}

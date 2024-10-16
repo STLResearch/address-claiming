@@ -20,7 +20,6 @@ const CUSTOM_ERROR_MESSAGE = "An Error occured! Please try again later.";
 const Service = () => {
   const { provider, web3auth } = useContext(Web3authContext);
 
-
   const getRequestUrl = (uri: string): string => {
     const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
 
@@ -30,14 +29,11 @@ const Service = () => {
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
     console.error(error);
     if (!navigator.onLine) {
-      toast.error(
-        "Network unavailable. Please check your connection and try again.",
-      );
+      toast.error("Network unavailable. Please check your connection and try again.");
       return;
     }
     if (!suppressErrorReporting && error.response) {
-      const backendError =
-        error.response.data.errorMesagge || error.response.data.data.message;
+      const backendError = error.response.data.errorMesagge || error.response.data.data.message;
 
       if (backendError && backendError !== "UNAUTHORIZED") {
         toast.error(backendError);
@@ -48,13 +44,7 @@ const Service = () => {
     Sentry.captureException(error);
   };
 
-  const createHeader = async ({
-    isPublic,
-    uri,
-  }: {
-    uri: string;
-    isPublic?: boolean;
-  }) => {
+  const createHeader = async ({ isPublic, uri }: { uri: string; isPublic?: boolean }) => {
     try {
       let newHeader = {};
 
@@ -107,11 +97,7 @@ const Service = () => {
     }
   };
 
-  const getRequest = async ({
-    uri,
-    isPublic,
-    suppressErrorReporting,
-  }: RequestI) => {
+  const getRequest = async ({ uri, isPublic, suppressErrorReporting }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 
@@ -127,12 +113,7 @@ const Service = () => {
     }
   };
 
-  const postRequest = async ({
-    uri,
-    postData,
-    isPublic,
-    suppressErrorReporting,
-  }: RequestI) => {
+  const postRequest = async ({ uri, postData, isPublic, suppressErrorReporting }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 
@@ -150,12 +131,7 @@ const Service = () => {
     }
   };
 
-  const patchRequest = async ({
-    uri,
-    postData,
-    isPublic,
-    suppressErrorReporting,
-  }: RequestI) => {
+  const patchRequest = async ({ uri, postData, isPublic, suppressErrorReporting }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 
@@ -173,12 +149,7 @@ const Service = () => {
     }
   };
 
-  const deleteRequest = async ({
-    uri,
-    postData,
-    isPublic,
-    suppressErrorReporting,
-  }: RequestI) => {
+  const deleteRequest = async ({ uri, postData, isPublic, suppressErrorReporting }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 
