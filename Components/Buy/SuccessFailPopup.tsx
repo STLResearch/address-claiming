@@ -22,7 +22,6 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
   txHash,
   setShowDetail,
 }) => {
-  const router = useRouter();
   const modalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -45,7 +44,7 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
       className={`fixed inset-0 z-50 flex items-start justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px] sm:pt-32`}
     >
       <div
-        className={`relative z-40 flex h-[100vh] w-[100vw] flex-col items-center justify-center sm:h-[525px] sm:w-[422px] sm:rounded-3xl ${responseStatus === "SUCCESS" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+        className={`relative z-40 flex h-[100vh] w-[100vw] flex-col items-center justify-center sm:h-[585px] sm:w-[422px] sm:rounded-3xl ${responseStatus === "SUCCESS" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
       >
         {
           <div
@@ -79,12 +78,12 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
         </div>
 
         {responseStatus === "SUCCESS" && (
-          <div className="flex w-[80%] flex-col gap-4 text-center text-white">
+          <div className="flex w-[80%] flex-col gap-2 text-center text-white">
             <p className="text-center text-2xl font-medium leading-[48px]">
-              {popupType === "BID" ? "You made a bid" : "You created an auction"}
+              {popupType === "BID" ? "Bid Submitted" : "Auction Created"}
             </p>
             {popupType === "BID" ?
-              <p className="text-center text-base leading-[27px] text-[#FFFFFF]">
+              <p className="mt-4 text-center text-base leading-[27px] text-[#FFFFFF]">
                 You bid <span className="text-[18px] font-bold"> &#36;{data?.currentUserBid} </span> <br /> for{" "}
                 <b>{data?.address} </b>
               </p>
@@ -93,10 +92,12 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
               </p>
             }
             {popupType === "BID" ?
-              <div className="mt-[36px] text-center text-sm font-normal leading-[21px] text-[#FFFFFF]">
-                <p>Wait for your bid to be reviewed by the owner.</p>
-                <p>You will get notified once it’s done.</p>
-                <p className="text-sm">
+              <div className="mt-4 text-center text-sm font-normal leading-[21px] text-[#FFFFFF]">
+                <p>It may take up to a minute for your bid</p>
+                <p>to reflect in the auction house.</p>
+                <p className="mt-1">You will get notified if you win,</p>
+                <p>or are outbid by another</p>
+                <p className="mt-2 text-sm">
                   View transaction on{" "}
                   <a className="underline" href={`https://solana.fm/tx/${txHash}?cluster=devnet-alpha`} target="blank">
                     solana.fm
@@ -120,7 +121,10 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
           {responseStatus === "SUCCESS" && (
             <>
               <button
-                onClick={() => router.push("/marketplace")}
+                onClick={() => {
+                  setShowSuccessAndErrorPopup(false);
+                  setShowDetail(false);
+                }}
                 className="h-[41px] w-[50%] gap-10 rounded-md border bg-[#FFFFFF] py-2 text-center text-[14px] text-[#34A853]"
               >
                 Marketplace

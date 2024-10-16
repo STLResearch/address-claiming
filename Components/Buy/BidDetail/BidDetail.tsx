@@ -3,11 +3,10 @@ import BidAirspaceHeader from "./BidHeader";
 import { LocationPointIcon } from "@/Components/Icons";
 import Image from "next/image";
 import { useMobile } from "@/hooks/useMobile";
-import { IoExpand } from "react-icons/io5";
+import { IoClose } from "react-icons/io5";
 import { AuctionDataI } from "@/types";
 import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketPlaceUtils";
 import { shortenAddress } from "@/utils";
-
 import Accordion from "./Accordion";
 import AirspaceHistory from "./AirspaceHistory";
 import CustomTable from "./CustomTable";
@@ -108,7 +107,9 @@ const BidDetails: React.FC<BidDetailsProps> = ({
           </div>
         )} */}
         <div className="shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)] sticky left-0 right-0 top-0 z-[100] -mt-[1px] flex flex-col gap-[15px] bg-white px-[29px] py-[20px]">
-          <BidAirspaceHeader onCloseModal={onCloseModal} />
+          <button className="text-right" onClick={onCloseModal}>
+            <IoClose className="h-4 w-4" />
+          </button>
           <div className="flex h-[46px] w-full items-center justify-between rounded-lg border border-[#4285F4] px-[22px] py-4">
             <div className="flex items-center gap-[10px]">
               <div className="h-6 w-6">
@@ -151,9 +152,15 @@ const BidDetails: React.FC<BidDetailsProps> = ({
             </div>
           : <>
               <div>
-                <div className="flex pb-[5px]">
-                  <p className="text-[14px] leading-[21px] text-[#838187]">Your Bid</p>
-                  <span className="text-[#E04F64]">*</span>
+                <div className="flex w-full justify-between pb-[5px]">
+                  <div className="flex">
+                    <p className="text-[14px] leading-[21px] text-[#838187]">Your Bid</p>
+                    <span className="text-[#E04F64]">*</span>
+                  </div>
+                  <small className="text-gray-500">
+                    Your bid must be at least 1% more than the highest bid{" "}
+                    {`(>= $${auctionDetailData && 0.01 * auctionDetailData?.currentPrice})`}
+                  </small>
                 </div>
                 <div
                   className="flex h-[46px] w-full items-center rounded-lg px-[22px] py-[14px] text-[#232F4A]"

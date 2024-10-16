@@ -8,7 +8,7 @@ import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";
 import { executeTransaction } from "@/utils/rent/transactionExecutor";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { AuctionDataI } from "@/types";
-import MarketplaceService from "@/services/MarketplaceSercive";
+import MarketplaceService from "@/services/MarketplaceService";
 import { getMapboxStaticImage } from "@/utils/marketPlaceUtils";
 import { setIsTriggerRefresh } from "@/redux/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import useAuction from "@/hooks/useAuction";
 import Carousel from "@/Components/Shared/Carousel";
 import { formatDate } from "@/utils";
+import { fetchsolbalance } from "@/utils/fetchBalance";
 
 interface BidPreviewProps {
   setTxHash: React.Dispatch<React.SetStateAction<string>>;
@@ -56,8 +57,9 @@ const BidPreview: React.FC<BidPreviewProps> = ({
       return toast.error("You cannot bid on your own property!");
     }
 
-    const balance = parseFloat((userSolBalance / LAMPORTS_PER_SOL).toString());
-    if (balance === 0) {
+    const userSolBalance = await fetchsolbalance(provider);
+
+    if (userSolBalance === 0) {
       return toast.info(
         "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
       );

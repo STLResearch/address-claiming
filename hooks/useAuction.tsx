@@ -7,10 +7,11 @@ import { setAirspaceList, setAssetId, setIsTriggerRefresh, setUserUSDWalletBalan
 import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";
 
 import { executeTransaction } from "@/utils/rent/transactionExecutor";
-import MarketplaceService from "@/services/MarketplaceSercive";
+import MarketplaceService from "@/services/MarketplaceService";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { convertDate } from "@/utils";
+import { fetchsolbalance } from "@/utils/fetchBalance";
 
 interface SelectedPropertyI {
   assetId: string;
@@ -185,9 +186,11 @@ const useAuction = () => {
   };
 
   const handleAddProperties = async () => {
-    const balance = parseFloat((userSolBalance / LAMPORTS_PER_SOL).toString());
+    const userSolBalance = await fetchsolbalance(provider);
+    console.log({ userSolBalance });
+    console.log({ userUSDWalletBalance });
 
-    if (balance === 0) {
+    if (userSolBalance === 0) {
       return toast.info(
         "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
       );

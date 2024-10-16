@@ -1,7 +1,7 @@
 import { Web3authContext } from "@/providers/web3authProvider";
 import { setIsTriggerRefresh } from "@/redux/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import MarketplaceService from "@/services/MarketplaceSercive";
+import MarketplaceService from "@/services/MarketplaceService";
 import { AuctionDataI } from "@/types";
 import { useState, useEffect, useContext } from "react";
 
@@ -11,7 +11,7 @@ const useFetchAuctions = (initialPage: number = 1, limit: number = 10, searchPar
     return { isTriggerRefresh, priceRange, activeFilters };
   });
   const dispatch = useAppDispatch();
-  const { getAuctions, searchAuctions, filterAuctions } = MarketplaceService();
+  const { getAuctions, searchAuctions } = MarketplaceService();
   const [auctions, setAuctions] = useState<AuctionDataI[] | null>(null);
   const [page, setPage] = useState<number>(initialPage);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -28,11 +28,6 @@ const useFetchAuctions = (initialPage: number = 1, limit: number = 10, searchPar
         priceRange[1] === 0
       ) {
         response = await getAuctions(page, limit);
-      } else if (activeFilters && (priceRange[0] > 0 || priceRange[1] > 0)) {
-        const minPrice = priceRange[0];
-        const maxPrice = priceRange[1];
-
-        response = await filterAuctions(minPrice, maxPrice);
       } else {
         response = await searchAuctions(searchParam, page, limit);
       }
@@ -51,6 +46,14 @@ const useFetchAuctions = (initialPage: number = 1, limit: number = 10, searchPar
 
   useEffect(() => {
     fetchData();
+
+    const interval = setInterval(() => {
+      fetchData();
+    }, 60000);
+
+    return () => {
+      clearInterval(interval);
+    };
   }, [web3auth?.status, page, isTriggerRefresh, searchParam, activeFilters]);
 
   return { loading, page, auctions, hasMore, setPage };

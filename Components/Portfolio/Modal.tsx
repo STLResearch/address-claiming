@@ -13,7 +13,7 @@ import { useAppSelector } from "@/redux/store";
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import UploadVerifiedDocuments from "./UploadedVerifiedDocuments";
 import Backdrop from "../Backdrop";
-import MarketplaceService from "@/services/MarketplaceSercive";
+import MarketplaceService from "@/services/MarketplaceService";
 import { getMapboxStaticImage } from "@/utils/marketPlaceUtils";
 import Accordion from "../Buy/BidDetail/Accordion";
 import CustomTable from "../Buy/BidDetail/CustomTable";
@@ -322,7 +322,9 @@ const Modal = ({ airspace, onCloseModal, isOffer, pageNumber = 0 }: ModalProps) 
             >
               {calculateTimeLeft(airspace?.auction?.endDate).toLowerCase() === "ended" ?
                 "View Transaction"
-              : "Place Higher Bid"}{" "}
+              : airspace.type === "placedBid" ?
+                "Place Higher Bid"
+              : "View Auction"}{" "}
             </button>
           </div>
         </div>

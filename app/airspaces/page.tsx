@@ -815,7 +815,7 @@ const Airspaces: React.FC = () => {
               </Fragment>
             )}
             {!isMobile && (
-              <div className="flex items-start justify-start">
+              <div className="flex items-start justify-start h-full overflow-scroll">
                 <Explorer
                   flyToAddress={flyToAddress}
                   address={address}

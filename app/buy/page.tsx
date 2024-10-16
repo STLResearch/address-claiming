@@ -19,9 +19,10 @@ import { shallowEqual } from "react-redux";
 import BidPreview from "@/Components/Buy/BidPreview/BidPreview";
 import SuccessFailPopup from "@/Components/Buy/SuccessFailPopup";
 import { useDrawBidPolygons } from "@/hooks/useDrawBidPolygons";
-import MarketplaceService from "@/services/MarketplaceSercive";
+import MarketplaceService from "@/services/MarketplaceService";
 import useFetchAuctions from "@/hooks/useFetchAuctions";
 import { useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
 
 const Buy = () => {
   const { isCreateAuctionModalOpen, user } = useAppSelector((state) => {
@@ -114,9 +115,15 @@ const Buy = () => {
   }, [flyToAddress, map]);
 
   const handleOpenBidPreview = () => {
-    setShowBidPreview(true);
-    setShowBidDetail(false);
+    if (currentUserBid && auctionDetailData) {
+      if (currentUserBid < 0.01 * auctionDetailData?.currentPrice) {
+        return toast.info("Your bid must be at least 1% more than the highest bid");
+      }
+      setShowBidPreview(true);
+      setShowBidDetail(false);
+    }
   };
+
   const handleClosePreview = () => {
     setShowBidPreview(false);
     setShowBidDetail(false);
@@ -193,7 +200,7 @@ const Buy = () => {
                   )}
                 </>
               : <div className="flex items-start justify-start">
-                  {user?.betaUser?.isBetaUser ?
+                  {!user?.betaUser?.isBetaUser ?
                     <AuctionExplorer
                       setSearchTerm={setSearchTerm}
                       auctions={auctions}
