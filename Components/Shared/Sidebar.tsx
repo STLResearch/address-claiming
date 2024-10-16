@@ -70,10 +70,9 @@ const Sidebar = () => {
     const [isActive, setIsActive] = useState(false);
 
     useEffect(() => {
-      const currentTab = localStorage.getItem("currentTab");
-      const isActiveVal = href ? href.includes(currentTab || window.location.pathname) : false;
+      const isActiveVal = href ? pathname.includes(href) : false;
       setIsActive(isActiveVal);
-    }, [href]);
+    }, [href, pathname]);
 
     const content = (
       <>
