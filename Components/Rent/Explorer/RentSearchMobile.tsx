@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { LocationPointIcon, MagnifyingGlassIcon } from "@/Components/Shared/Icons";
 import { GiSettingsKnobs } from "react-icons/gi";
 import { handleSelectAddress } from "@/utils/addressUtils/addressFunction";
