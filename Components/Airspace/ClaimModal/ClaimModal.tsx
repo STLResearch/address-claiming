@@ -90,32 +90,37 @@ export const ClaimModal = ({
   const isDisabled = data.hasZoningPermission === null;
 
   const handleClaim = async () => {
-    if (selectedFile.length > 0) {
-      const imageList: string[] = [];
-      const contentTypes = selectedFile.map((file) => file.type);
+    try{
 
-      const params = await generatePublicFileUploadUrls({
-        contentTypes,
-        referenceId: data.address,
-      });
-
-      if (params) {
-        const uploadPromises = params.map(async (param, index) => {
-          const imageRes = await uploadImage(
-            param?.uploadUrl,
-            selectedFile[index],
-          );
-
-          if (!imageRes || imageRes?.data?.status !== "SUCCESS") {
-            throw new Error("Failed to upload file");
-          }
-          imageList.push(param.key);
+      let imageList: string[] = [];
+      if (selectedFile.length > 0) {
+        const contentTypes = selectedFile.map((file) => file.type);
+  
+        const params = await generatePublicFileUploadUrls({
+          contentTypes,
+          referenceId: data.address,
         });
-        await Promise.all(uploadPromises);
+  
+        if (params) {
+          const uploadPromises = params.map(async (param, index) => {
+            const imageRes = await uploadImage(
+              param?.uploadUrl,
+              selectedFile[index],
+            );
+  
+            if (!imageRes || imageRes?.data?.status !== "SUCCESS") {
+              throw new Error("Failed to upload file");
+            }
+            imageList.push(param.key);
+          });
+          await Promise.all(uploadPromises);
+          await onClaim(imageList, inputAddress);
+        }
+      } else {
+        onClaim([], inputAddress);
       }
-      await onClaim(imageList, inputAddress);
-    } else {
-      onClaim([], inputAddress);
+    }catch(error){
+      console.error(error);
     }
   };
 

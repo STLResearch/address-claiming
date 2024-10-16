@@ -125,7 +125,7 @@ const RentDetail: React.FC<RentDetailProps> = ({
       )}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation border fixed bottom-[74px] left-0 px-[29px] sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] sm:py-[30px] gap-[15px] rounded-t-[30px] md:rounded-[30px]  w-full h-[400px] sm:h-[480px] md:w-[689px] z-[100] md:z-40 flex flex-col  overflow-auto sm:overflow-hidden"
+        className="touch-manipulation border fixed bottom-[74px] left-0 px-[29px] sm:top-1/2  sm:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white pt-[30px] pb-[10px] sm:py-[30px] gap-[15px] rounded-t-[30px] md:rounded-[30px]  w-full h-[400px] sm:h-[480px] md:w-[689px] z-[100] md:z-40 flex flex-col  overflow-auto sm:overflow-hidden"
       >
         <div className="flex flex-col gap-[15px]">
           <div 

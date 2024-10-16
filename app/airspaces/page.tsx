@@ -547,7 +547,7 @@ const Airspaces: React.FC = () => {
         weekDayRanges,
         orderPhotoforGeneratedMap,
         assessorParcelNumber,
-        images,
+        images : images ,
       };
       if (!rent) {
         errors.push(
