@@ -6,6 +6,7 @@ import {
   LogoutIcon,
   MapIcon,
   ShoppingBagsIcon,
+  UserIcon,
   WalletIcon,
 } from "./Icons";
 import useAuth from "@/hooks/useAuth";
@@ -163,6 +164,9 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
               <WalletIcon isActive={false} />
             </SidebarItem>
             <div className="bg-[#00000012] w-full h-[1px]" />
+            <SidebarItem  href={"/my-account"} text={"Account"}>
+              <UserIcon />
+            </SidebarItem>
             <SidebarItem
               href={"https://skytrade.tawk.help"}
               target="_blank"
