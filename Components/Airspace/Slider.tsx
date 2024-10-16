@@ -7,7 +7,7 @@ const Slider = () => {
   return (
     <div
       onClick={() => setIsFullyVisible((prev) => !prev)}
-      className={`fixed z-[20000000000] cursor-pointer rounded-t-[30px]  ${isFullyVisible ? "bottom-0" : "-bottom-[555px]"} right-6 flex flex-col items-center gap-[25px] p-[20px] bg-white max-w-[280px] max-h-[652px] duration-5000 `}
+      className={`fixed z-50 cursor-pointer rounded-t-[30px]  ${isFullyVisible ? "bottom-0" : "-bottom-[555px]"} right-24 flex flex-col items-center gap-[25px] p-[20px] bg-white max-w-[280px] max-h-[652px] duration-5000 `}
     >
       <div className="flex items-center gap-[4px]">
         <div className="flex items-center justify-center w-[24px] h-[24px]">
