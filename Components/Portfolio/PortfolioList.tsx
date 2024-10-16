@@ -197,6 +197,7 @@ const PortfolioList = ({
                     onCloseModal={onCloseModal}
                     setAirspaceList={setAirspaceList}
                     selectedAirspace={selectedAirspace}
+                    createdAt={airspace.createdAt as Date}
                   />
                 ))
               ) : (

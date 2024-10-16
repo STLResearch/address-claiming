@@ -28,6 +28,16 @@ interface PropsI {
   onCloseModal: () => void;
   setAirspaceList: React.Dispatch<React.SetStateAction<PropertyData[]>>;
   selectedAirspace: any;
+  createdAt: Date
+}
+
+function formatDate(isoDateStr) {
+  const date = new Date(isoDateStr);
+  const day = String(date.getUTCDate()).padStart(2, '0');   // Day (with leading zero if needed)
+  const month = String(date.getUTCMonth() + 1);             // Month (0-indexed, so +1)
+  const year = date.getUTCFullYear();                       // Year
+
+  return `${day}/${month}/${year}`;
 }
 
 const PortfolioItem = ({
@@ -43,6 +53,7 @@ const PortfolioItem = ({
   onCloseModal,
   setAirspaceList,
   selectedAirspace,
+  createdAt
 }: PropsI) => {
   const [showPopup, setShowPopup] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
@@ -99,7 +110,7 @@ const PortfolioItem = ({
                 className="bg-[#DBDBDB] text-[#222222] text-[11.89px] font-normal px-[7px] cursor-pointer rounded-[3px] h-[27px]"
                 disable={false}
               >
-                {type === "land" ? "Claim Date: 4/4/2024" : "On Rent"}
+                {type === "land" ? `Claim Date: ${formatDate(createdAt)}` : "On Rent"}
               </LoadingButton>
             )}
             {!!tags[1] && (
