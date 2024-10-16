@@ -20,8 +20,8 @@ const CookieConsent: React.FC = () => {
   }
 
   return (
-    <div className="fixed z-[20000000000] inset-0 bg-slate-700 bg-opacity-70">
-      <div className="fixed bottom-0 left-0 right-0 flex items-center justify-between gap-4 px-4 py-4 bg-gray-100 text-[10px] md:flex-row flex-col md:text-[14px] text-[#222222]">
+    <div className="fixed z-[20000000000]">
+      <div className="fixed bottom-0 left-0 right-0 flex items-center justify-between gap-4 px-4 py-4 bg-white text-[10px] md:flex-row flex-col md:text-[14px] text-[#222222]">
         <p className="text-justify">
           Welcome to SkyTrade! Like many websites, we use cookies to enhance
           your browsing experience, analyze site traffic, and personalize
@@ -34,6 +34,14 @@ const CookieConsent: React.FC = () => {
           onClick={acceptCookie}
         >
           Accept
+        </button>
+        <button
+          className="bg-red-400 py-2 px-8 rounded text-white"
+          onClick={() => {
+            setShowConsent(false);
+          }}
+        >
+          Decline
         </button>
       </div>
     </div>
