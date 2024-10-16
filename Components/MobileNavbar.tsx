@@ -119,7 +119,7 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
   }, [divRef]);
 
   return (
-    <div className=" w-full h-[70%] z-50">
+    <div className=" w-full h-[70%] !z-[200]">
       <div ref={divRef} className=" w-full h-[70%] fixed bottom-0">
         <div className=" w-full h-full bg-white rounded-t-3xl overflow-y-scroll">
           <div

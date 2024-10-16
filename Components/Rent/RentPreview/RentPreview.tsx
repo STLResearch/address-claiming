@@ -77,12 +77,12 @@ const RentPreview: React.FC<RentPreviewProps> = ({
       setIsLoading(true);
       if (rentData?.layers) {
         const nonceAccountEntry = await getNonceAccountEntry();
-        if (!nonceAccountEntry) {
+        if (!nonceAccountEntry.publicKey) {
           toast.error("something went wrong!");
           return;
         }
         const nonceAccount = await createNonceIx(connection, new PublicKey(nonceAccountEntry.publicKey));
-
+        
         const postData = {
           callerAddress: user?.blockchainAddress,
           startTime: startDate.toISOString(),
@@ -91,31 +91,34 @@ const RentPreview: React.FC<RentPreviewProps> = ({
           nonceAccount,
           nonceAccountEntry,
         };
-
-        const createMintResponse = await createMintRentalToken({ postData });
+        let createMintResponse;
+        try{
+           createMintResponse = await createMintRentalToken({ postData });
+        }catch(error){
+          console.error(error)
+          toast.error("some thing went wrong!");
+          return;
+        }
         let mintResponse;
-        if (createMintResponse) {
+        if (createMintResponse && createMintResponse?.statusCode !== 500) {
           mintResponse = await handleMintResponse(createMintResponse, setIsLoading, setShowSuccess, setFinalAns);
         } else {
-          toast.error("some thing went wrong!");
           return;
         }
         if (!mintResponse) return;
         const transaction = VersionedTransaction.deserialize(new Uint8Array(Buffer.from(createMintResponse, "base64")));
         const txString = await executeTransaction(transaction, provider);
-
         if (!txString) return;
         const postExecuteMintData = {
           transaction: txString,
           landAssetIds: [rentData?.layers[0].tokenId],
           startTime: startDate.toISOString(),
           endTime: endDate.toISOString(),
-        };
+        };  
 
         const executionResponse = await executeMintRentalToken({
           postData: { ...postExecuteMintData },
         });
-
         if (executionResponse && executionResponse.errorMessage) {
           toast.error(executionResponse.errorMessage);
           return;
@@ -180,7 +183,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
       {!isMobile && <Backdrop />}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="fixed bottom-[74px] left-0 z-[100] flex h-[426px] w-full touch-manipulation flex-col gap-[15px] overflow-auto rounded-t-[30px] bg-white pt-[30px] sm:left-1/2 sm:top-1/2 sm:h-[406px] sm:overflow-hidden sm:pb-[30px] md:z-40 md:w-[689px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[30px]"
+        className="fixed bottom-[70px] left-0 z-[100] flex h-[426px] w-full touch-manipulation flex-col gap-[15px] overflow-auto rounded-t-[30px] bg-white pt-[30px] sm:left-1/2 sm:top-1/2 sm:h-[406px] sm:overflow-hidden sm:pb-[30px] md:z-40 md:w-[689px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[30px]"
       >
         <div className="flex flex-col gap-[15px] px-[30px]">
           <div className="relative -mx-[29px] -mt-[30px] flex touch-manipulation items-center gap-[20px] px-[29px] pt-[20px] md:mx-0 md:my-0 md:p-0 md:shadow-none">
@@ -242,7 +245,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
           <div className="flex justify-between">
             <div className="flex flex-col gap-y-[15px] text-[14px] leading-[21px] text-light-black">
               <div className="flex">
-                <div>ID::</div>
+                <div>ID:</div>
                 <div className="pl-[15px] text-light-grey">{rentData?.id}</div>
               </div>
             </div>
