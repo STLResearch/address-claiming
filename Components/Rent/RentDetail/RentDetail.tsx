@@ -218,9 +218,9 @@ const RentDetail: React.FC<RentDetailProps> = ({
           <LoadingButton
             onClick={handleShowRentPreview}
             isLoading={isLoading}
-            className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
+            className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
-            Rent Airspace
+            Rent Now
           </LoadingButton>
         </div>
       </div>
