@@ -63,7 +63,7 @@ const AirspacePhotoUpload = ({
           Upload Air Rights Photo (Optional)
         </h1>
         <p className="text-[#87878D] text-xs italic my-3">
-          Note that we generate a map view of your Air Rights location.
+          Note that we generate a map view of your air rights location.
         </p>
         <div className="flex flex-col gap-[10px]">
           <div className="flex items-center gap-[5px] mt-1">

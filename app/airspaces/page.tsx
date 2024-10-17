@@ -488,7 +488,7 @@ const Airspaces: React.FC = () => {
     }
   }, [isOpen]);
 
-  const onClaim = async (images: [], _address?: string) => {
+  const onClaim = async (images: []) => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
 
@@ -523,7 +523,7 @@ const Airspaces: React.FC = () => {
       }
 
       const postData = {
-        address: _address || address,
+        address: address,
         ownerId: user.id,
         propertyStatusId: 0,
         hasChargingStation,
@@ -788,18 +788,19 @@ const Airspaces: React.FC = () => {
                     onCloseModal={() => {
                       setDontShowAddressOnInput(false);
                       removePubLicUserDetailsFromLocalStorageOnClose(
-                        "airSpaceData",
+                        "airSpaceData"
                       );
                       setShowClaimModal(false);
                       setIsLoading(false);
                       setData({ ...defaultData });
-                    }}
+                    } }
                     data={{ ...data, address }}
                     setData={setData}
                     onClaim={onClaim}
                     dontShowAddressOnInput={dontShowAddressOnInput}
-                    setDontShowAddressOnInput={setDontShowAddressOnInput}
-                  />
+                    setDontShowAddressOnInput={setDontShowAddressOnInput} 
+                    setAddress={setAddress} 
+                     />
                 )}
                 {(showSuccessPopUp || showFailurePopUp) && (
                   <SuccessModal
@@ -870,6 +871,7 @@ const Airspaces: React.FC = () => {
                     onClaim={onClaim}
                     dontShowAddressOnInput={dontShowAddressOnInput}
                     setDontShowAddressOnInput={setDontShowAddressOnInput}
+                    setAddress={setAddress}
                   />
                 )}
               </div>

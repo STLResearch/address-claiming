@@ -35,6 +35,7 @@ interface PropsI {
   onClaim: (images: string[], address?: string) => void;
   dontShowAddressOnInput: boolean;
   setDontShowAddressOnInput: React.Dispatch<React.SetStateAction<boolean>>;
+  setAddress: React.Dispatch<React.SetStateAction<string>>
 }
 
 export enum ClaimAirspaceSteps {
@@ -51,6 +52,7 @@ export const ClaimModal = ({
   onClaim,
   dontShowAddressOnInput,
   setDontShowAddressOnInput,
+  setAddress,
 }: PropsI) => {
   const endOfDivRef = useRef(null);
   const { currentStep } = useTour();
@@ -78,7 +80,6 @@ export const ClaimModal = ({
     }
   }, [data.address]);
 
-  const [inputAddress, setInputAddress] = useState("");
   const { isMobile } = useMobile();
   const [currentMode, setCurrentMode] = useState("Claim Air Rights");
   const { generatePublicFileUploadUrls } = S3UploadServices();
@@ -114,10 +115,10 @@ export const ClaimModal = ({
             imageList.push(param.key);
           });
           await Promise.all(uploadPromises);
-          await onClaim(imageList, inputAddress);
+          await onClaim(imageList,);
         }
       } else {
-        onClaim([], inputAddress);
+        onClaim([]);
       }
     }catch(error){
       console.error(error);
@@ -223,7 +224,6 @@ const handleNextButton = async () => {
             </div>
           )}
           <div className="px-[29px] mt-4 md:mt-0">
-            {/* The 1st page */}
             {steps === ClaimAirspaceSteps.UNSELECTED && (
               <div>
                 <div
@@ -235,9 +235,9 @@ const handleNextButton = async () => {
                   </div>
                   {dontShowAddressOnInput ? (
                     <input
-                      value={inputAddress}
+                      value={data?.address}
                       onChange={(e) => {
-                        setInputAddress(e.target.value);
+                        setAddress(e.target.value);
                       }}
                       className="text-[14px] outline-none text-[#222222] flex-1"
                       style={{ border: "none" }}
@@ -302,17 +302,14 @@ const handleNextButton = async () => {
               </div>
             )}
 
-            {/* The rent page */}
             {steps === ClaimAirspaceSteps.RENT && (
               <RentalDetails data={data} setData={setData} />
             )}
 
-            {/* Available for rent page */}
             {steps === ClaimAirspaceSteps.ZONING_PERMISSION && (
               <ZoningPermission setData={setData} data={data} />
             )}
-
-            {/* The last card  */}
+            
             {steps === ClaimAirspaceSteps.UPLOAD_IMAGE && (
               <AirspacePhotoUpload
                 selectedFiles={selectedFile}

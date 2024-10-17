@@ -42,7 +42,7 @@ const Dashboard: FC = () => {
             setAirspaces(retrievedAirspaces);
             setTotalAirspace(airspaces.total);
           } else {
-            console.info("No Air Rights found.");
+            console.info("No air rights found.");
           }
         }
       } catch (error) {
