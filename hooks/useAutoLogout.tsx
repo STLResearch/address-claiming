@@ -47,9 +47,7 @@ const useAutoLogout = () => {
   }, [web3auth?.status]);
 
   useEffect(() => {
-    console.info("user", user);
     console.info("web3auth status", web3auth?.status);
-    console.info("web3auth connected", web3auth?.connected);
 
     if (!web3auth) return;
 

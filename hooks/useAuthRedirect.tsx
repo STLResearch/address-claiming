@@ -29,41 +29,46 @@ const useAuthRedirect = () => {
   }, []);
 
   useEffect(() => {
-    (async () => {
+    const handleUserAuthentication = async () => {
       try {
-        if (web3auth?.status === "connected" && provider) {
-          localStorage.setItem("isWaitingScreenVisible", JSON.stringify(true));
+        if (web3auth?.status !== "connected" || !provider) return;
 
-          const userInformation = await web3auth.getUserInfo();
-          const solanaWallet = new SolanaWallet(provider);
-          const accounts = await solanaWallet.requestAccounts();
+        localStorage.setItem("isWaitingScreenVisible", JSON.stringify(true));
 
-          const responseData = await getUser();
+        const userInfo = await web3auth.getUserInfo();
+        const solanaWallet = new SolanaWallet(provider);
+        const accounts = await solanaWallet.requestAccounts();
 
-          if (responseData?.id) {
-            localStorage.setItem("user", JSON.stringify(responseData));
-            signIn({ user: responseData });
-            customRedirect();
-          } else {
-            const categoryData = {
-              email: userInformation.email,
-              blockchainAddress: accounts[0],
-            };
+        const { error, data } = await getUser();
 
-            dispatch(setCategory(categoryData));
-
-            localStorage.setItem("category", JSON.stringify(categoryData));
-
-            router.replace(`/auth/join`);
-          }
+        if (!error) {
+          localStorage.setItem("user", JSON.stringify(data));
+          signIn({ user: data });
+          customRedirect();
           setIsRedirecting(true);
-          localStorage.setItem("isWaitingScreenVisible", JSON.stringify(false));
+        } else if (error && data.message === "USER_NOT_FOUND") {
+          const categoryData = {
+            email: userInfo.email,
+            blockchainAddress: accounts[0],
+          };
+
+          dispatch(setCategory(categoryData));
+          localStorage.setItem("category", JSON.stringify(categoryData));
+          router.replace("/auth/join");
+          setIsRedirecting(true);
+        } else {
+          await web3auth?.logout();
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        localStorage.setItem("isWaitingScreenVisible", JSON.stringify(false));
       }
-    })();
-  }, [web3auth?.status]);
+    };
+
+    handleUserAuthentication();
+  }, [web3auth?.status, provider]);
+
 
   return { isRedirecting };
 };

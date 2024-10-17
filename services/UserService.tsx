@@ -40,15 +40,19 @@ const UserService = () => {
   };
 
   const getUser = async () => {
-    try {
-      const response = await getRequest({
-        uri: `/private/users/session`,
-        suppressErrorReporting: true,
-      });
-      return response?.data;
-    } catch (error) {
-      console.error(error);
+    const resData = await getRequest({
+      uri: `/private/users/session`,
+    });
+    if (resData.status === 200) {
+      return {
+        error: false,
+        data: resData?.data,
+      };
     }
+    return {
+      error: true,
+      data: resData?.response?.data?.data,
+    };
   };
 
   const deleteUser = async () => {

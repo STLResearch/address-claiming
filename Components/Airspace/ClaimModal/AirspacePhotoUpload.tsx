@@ -27,7 +27,34 @@ const AirspacePhotoUpload = ({
     }
   };
 
-  const { getRootProps } = useDropzone({ onDrop });
+  const handleDelete = (index: number) => {
+    const updatedFiles = selectedFiles.filter((_, i) => i !== index);
+    setSelectedFiles(updatedFiles);
+  };
+
+  const handleDragStart = (index: number, event: React.DragEvent) => {
+    event.dataTransfer.setData("text/plain", index.toString());
+  };
+
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    const draggedIndex = parseInt(event.dataTransfer.getData("text/plain"), 10);
+
+    const targetElement = event.currentTarget as HTMLDivElement;
+    const targetIndex = parseInt(targetElement.dataset.index || "", 10);
+
+    if (draggedIndex !== targetIndex) {
+      const updatedFiles = [...selectedFiles];
+      const [draggedFile] = updatedFiles.splice(draggedIndex, 1);
+      updatedFiles.splice(targetIndex, 0, draggedFile);
+      setSelectedFiles(updatedFiles);
+    }
+  };
+  const { getRootProps , getInputProps , open} = useDropzone({ onDrop , noClick: true});
 
   return (
     <div className="">
@@ -65,7 +92,9 @@ const AirspacePhotoUpload = ({
       <div
         {...(getRootProps() as DropzoneRootProps)}
         className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500"
+        onClick={open}
       >
+        <input {...getInputProps()} />
         {!selectedFiles ? (
           <p className="text-base font-medium text-[#87878D]">
             Drag here or click to upload
@@ -80,6 +109,11 @@ const AirspacePhotoUpload = ({
             <div
               key={index}
               className="w-[280px] h-[69px] flex items-center justify-between p-2 border border-gray-300 rounded shadow-sm mt-4"
+              draggable
+              onDragStart={(e) => handleDragStart(index, e)}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              data-index={index}
             >
               <div className="flex items-center">
                 <img
@@ -90,13 +124,16 @@ const AirspacePhotoUpload = ({
                 <span className="ml-2 text-sm">{selectedFile.name}</span>
               </div>
               <div className="flex space-x-2">
-                <div className="w-[24px] h-[24px]">
+                <div 
+                className="w-[24px] h-[24px] cursor-pointer"
+                onDragStart={(e) => handleDragStart(index, e)}
+                >
                   <ArrowMoveIcon />
                 </div>
-                <div className="w-[24px] h-[24px]">
-                  <FileIcon />
-                </div>
-                <div className="w-[24px] h-[24px]">
+                <div 
+                className="w-[24px] h-[24px] cursor-pointer"
+                onClick={() => handleDelete(index)}
+                >
                   <DeleteIcon />
                 </div>
               </div>

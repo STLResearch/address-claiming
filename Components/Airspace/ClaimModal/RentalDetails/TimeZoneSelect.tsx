@@ -40,7 +40,7 @@ const TimeZoneSelect = ({ data, setTimeZone }: PropsI) => {
           onChange={handleTimeZoneChange}
           name="timeZone"
           id="timeZone"
-          className="w-full appearance-none rounded-lg px-[22px] py-[16px] text-[14px] font-normal text-[#222222] focus:outline-none"
+          className="w-full appearance-none rounded-lg !pl-[22px] !pr-[42px] py-[16px] text-[14px] font-normal text-[#222222] focus:outline-none"
           style={{ border: "1px solid #87878D" }}
         >
           <option value="UTC-1">UTC-1</option>

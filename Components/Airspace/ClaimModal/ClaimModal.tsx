@@ -90,32 +90,37 @@ export const ClaimModal = ({
   const isDisabled = data.hasZoningPermission === null;
 
   const handleClaim = async () => {
-    if (selectedFile.length > 0) {
-      const imageList: string[] = [];
-      const contentTypes = selectedFile.map((file) => file.type);
+    try{
 
-      const params = await generatePublicFileUploadUrls({
-        contentTypes,
-        referenceId: data.address,
-      });
-
-      if (params) {
-        const uploadPromises = params.map(async (param, index) => {
-          const imageRes = await uploadImage(
-            param?.uploadUrl,
-            selectedFile[index],
-          );
-
-          if (!imageRes || imageRes?.data?.status !== "SUCCESS") {
-            throw new Error("Failed to upload file");
-          }
-          imageList.push(param.key);
+      let imageList: string[] = [];
+      if (selectedFile.length > 0) {
+        const contentTypes = selectedFile.map((file) => file.type);
+  
+        const params = await generatePublicFileUploadUrls({
+          contentTypes,
+          referenceId: data.address,
         });
-        await Promise.all(uploadPromises);
+  
+        if (params) {
+          const uploadPromises = params.map(async (param, index) => {
+            const imageRes = await uploadImage(
+              param?.uploadUrl,
+              selectedFile[index],
+            );
+  
+            if (!imageRes || imageRes?.data?.status !== "SUCCESS") {
+              throw new Error("Failed to upload file");
+            }
+            imageList.push(param.key);
+          });
+          await Promise.all(uploadPromises);
+          await onClaim(imageList, inputAddress);
+        }
+      } else {
+        onClaim([], inputAddress);
       }
-      await onClaim(imageList, inputAddress);
-    } else {
-      onClaim([], inputAddress);
+    }catch(error){
+      console.error(error);
     }
   };
 
@@ -174,7 +179,7 @@ export const ClaimModal = ({
   return (
     <div>
       <Backdrop />
-      <div className="claim-modal-step fixed left-0 top-1/2 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] rounded-t-3xl w-full md:w-[689px] max-h-[50dvh] md:max-h-[640px] h-[90%] md:h-auto z-[500] sm:z-50 flex flex-col gap-[15px] overflow-y-auto overflow-x-hidden">
+      <div className="claim-modal-step fixed left-0 top-1/2 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] rounded-t-3xl w-full md:w-[689px] max-h-[50dvh] md:max-h-[640px] h-[90%] md:h-auto z-[500] sm:z-[20000000000] flex flex-col gap-[15px] overflow-y-auto overflow-x-hidden">
         <div className=" hidden md:block z-[100] h-[68px] sticky top-0 left-0 right-0 py-[20px] px-[29px] -mt-[1px] md:shadow-none bg-white ">
           <div className="relative flex items-center gap-[20px] md:p-0 ">
             <div className="text-[14px] text-[#0653EA]">

@@ -6,6 +6,7 @@ import axios from "axios";
 import base58 from "bs58";
 import { toast } from "react-toastify";
 import * as Sentry from "@sentry/nextjs";
+import RESPONSE_ERRORS from "@/utils/errors";
 
 interface RequestI {
   uri: string;
@@ -35,13 +36,19 @@ const Service = () => {
     if (!suppressErrorReporting && error.response) {
       const backendError = error.response.data.errorMesagge || error.response.data.data.message;
 
-      if (backendError && backendError !== "UNAUTHORIZED") {
-        toast.error(backendError);
-      } else {
-        toast.error(CUSTOM_ERROR_MESSAGE);
+      if (backendError !== "USER_NOT_FOUND") {
+        const customBackendError =
+          RESPONSE_ERRORS[backendError] || backendError;
+
+        if (customBackendError) {
+          toast.error(customBackendError);
+        } else {
+          toast.error(CUSTOM_ERROR_MESSAGE);
+        }
       }
     }
     Sentry.captureException(error);
+    return error;
   };
 
   const createHeader = async ({ isPublic, uri }: { uri: string; isPublic?: boolean }) => {
@@ -109,7 +116,7 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
 
@@ -127,7 +134,7 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
 
@@ -145,7 +152,7 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
 
@@ -163,7 +170,7 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
   return { getRequest, postRequest, patchRequest, deleteRequest };

@@ -174,7 +174,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className={"relative z-20"}>
+    <div className={"relative !z-[200] sm:z-20"}>
       <aside
         className="no-scrollbar relative hidden flex-col items-center gap-[14.64px] overflow-y-scroll border-e-2 bg-white px-[21.95px] py-[29.27px] md:flex"
         style={{
