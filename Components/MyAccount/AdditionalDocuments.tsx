@@ -133,8 +133,8 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
       closePopup();
       setShowUnderReviewDoc(true);
       const responseData = await getUser();
-      if (responseData?.id) {
-        signIn({ user: responseData });
+      if (!responseData.error) {
+        signIn({ user: responseData.data });
       }
     } catch (error) {
       console.error("Error during upload:", error);
