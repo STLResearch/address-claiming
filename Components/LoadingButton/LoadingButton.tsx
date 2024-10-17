@@ -6,6 +6,7 @@ interface PropsI {
   onClick: any;
   isLoading: boolean;
   color?: string;
+  type?: "button" | "reset" | "submit";
   className?: string;
   disable?: boolean;
 }
@@ -15,6 +16,7 @@ const LoadingButton = ({
   onClick,
   isLoading,
   color,
+  type,
   className,
   disable,
 }: PropsI) => {
@@ -29,7 +31,12 @@ const LoadingButton = ({
   };
 
   return (
-    <button onClick={handleClick} disabled={disable} className={className}>
+    <button
+      onClick={handleClick}
+      disabled={disable}
+      className={className}
+      type={type}
+    >
       {loading ? <LoadingSpinner color={color} /> : <>{children}</>}
     </button>
   );
