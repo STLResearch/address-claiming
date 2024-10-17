@@ -64,7 +64,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
       const endDate = new Date(startDate.getTime() + 30 * 60000);
 
       if (!rentData?.price) {
-        toast.error("Price for airspace not found");
+        toast.error("Price for air rights not found");
         return;
       }
 

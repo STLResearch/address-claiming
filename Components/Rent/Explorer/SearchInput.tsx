@@ -38,9 +38,9 @@ const SearchInput: React.FC<SearchInputProps> = ({
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               type="text"
-              name="searchAirspaces"
-              id="searchAirspaces"
-              placeholder="Search Airspaces"
+              name="searchAirRights"
+              id="searchAirRights"
+              placeholder="Search Air Rights"
               className="w-full pr-[20px] outline-none text-sm"
             />
             <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
@@ -59,9 +59,9 @@ const SearchInput: React.FC<SearchInputProps> = ({
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               type="text"
-              name="searchAirspaces"
-              id="searchAirspaces"
-              placeholder="Search Airspaces"
+              name="searchAirRights"
+              id="searchAirRights"
+              placeholder="Search Air Rights"
               className="outline-none w-full pr-[20px]"
             />
             <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">

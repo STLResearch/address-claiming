@@ -665,7 +665,7 @@ const Airspaces: React.FC = () => {
   return (
     <Fragment>
       <Head>
-        <title>SkyTrade - Airspaces</title>
+        <title>SkyTrade - Air Rights</title>
       </Head>
       {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
@@ -673,7 +673,7 @@ const Airspaces: React.FC = () => {
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
         <div className="w-full h-full flex flex-col overflow-scroll md:overflow-hidden">
-          {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
+          {!showMobileMap && <PageHeader pageTitle={"Air Rights"} />}
           {((showMobileMap && isMobile) ||
             (isOpen && currentStep === 1 && isMobile)) && (
             <ExplorerMobile
@@ -721,7 +721,7 @@ const Airspaces: React.FC = () => {
                         className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
                         style={{ maxWidth: "400px" }}
                       >
-                       Claim Airspace 
+                       Claim Air Right 
                       </div>
                     )}
                   </div>
@@ -754,7 +754,7 @@ const Airspaces: React.FC = () => {
               <div className="bg-white w-full p-4 shadow-md flex items-center">
                 <div className="flex items-center justify-between  gap-8 w-[375px] h-[50px] px-4">
                   <p className="text-xl font-[500px] flex gap-4 items-center">
-                    My Airspaces{" "}
+                    My Air Rights{" "}
                     {!isLoading && (
                       <span className="text-[15px] font-normal rounded-full border-2 border-black flex items-center justify-center h-8 w-8">
                         {" "}

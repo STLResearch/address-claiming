@@ -44,7 +44,7 @@ const AllAirspaceOverview = (props) => {
         </button>
       </div>
       <div className="mb-2 flex flex-row items-center justify-between px-5">
-        <p className="mt-5 font-bold">AirSpace Title</p>
+        <p className="mt-5 font-bold">Air Rights Title</p>
         <button
           className="mt-3 flex items-center justify-center"
           style={{

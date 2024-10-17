@@ -82,7 +82,7 @@ const Marketplace = () => {
             </p>
             <div className="flex gap-[11px] w-full h-full flex-wrap">
               <Item
-                title={"Buy Airspace"}
+                title={"Buy Air Rights"}
                 imageUrl={"/images/buy.jpg"}
                 link={"https://sky.trade/waitlist"}
                 style={"bg-right"}
@@ -90,7 +90,7 @@ const Marketplace = () => {
                 target="_blank"
               />
               <Item
-                title={"Rent Airspace"}
+                title={"Rent Air Rights"}
                 imageUrl={"/images/rent-airspace.jpg"}
                 link={"/rent"}
                 text={undefined}

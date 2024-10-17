@@ -80,7 +80,7 @@ export const ClaimModal = ({
 
   const [inputAddress, setInputAddress] = useState("");
   const { isMobile } = useMobile();
-  const [currentMode, setCurrentMode] = useState("Claim Airspace");
+  const [currentMode, setCurrentMode] = useState("Claim Air Rights");
   const { generatePublicFileUploadUrls } = S3UploadServices();
   const [stepsCounter, setStepCounter] = useState(1);
 
@@ -92,7 +92,7 @@ export const ClaimModal = ({
   const handleClaim = async () => {
     try{
 
-      let imageList: string[] = [];
+      const imageList: string[] = [];
       if (selectedFile.length > 0) {
         const contentTypes = selectedFile.map((file) => file.type);
   
@@ -134,46 +134,56 @@ export const ClaimModal = ({
     } else if (steps === ClaimAirspaceSteps.ZONING_PERMISSION) {
       setStepCounter(stepsCounter - 1);
       setSteps(ClaimAirspaceSteps.UNSELECTED);
+      setCurrentMode("Claim Air Rights"); 
     } else if (steps === ClaimAirspaceSteps.RENT) {
       setStepCounter(stepsCounter - 1);
       setSteps(ClaimAirspaceSteps.ZONING_PERMISSION);
+      setCurrentMode("Air Rights Settings");
     } else if (steps === ClaimAirspaceSteps.UPLOAD_IMAGE) {
       setStepCounter(stepsCounter - 1);
       if (data.rent) {
         setSteps(ClaimAirspaceSteps.RENT);
+        setCurrentMode("Air Rights Renting Settings");
       } else {
         setSteps(ClaimAirspaceSteps.ZONING_PERMISSION);
+        setCurrentMode("Air Rights Settings");
       }
     } else {
       onCloseModal();
     }
   };
+  
 
-  const handleNextButton = async () => {
-    if (steps === ClaimAirspaceSteps.UNSELECTED) {
-      setStepCounter(stepsCounter + 1);
-      setSteps(ClaimAirspaceSteps.ZONING_PERMISSION);
-    } else if (steps === ClaimAirspaceSteps.ZONING_PERMISSION) {
-      setStepCounter(stepsCounter + 1);
-      if (data.rent) {
-        setSteps(ClaimAirspaceSteps.RENT);
-      } else {
-        setSteps(ClaimAirspaceSteps.UPLOAD_IMAGE);
-      }
-    } else if (steps === ClaimAirspaceSteps.UPLOAD_IMAGE) {
-      try{
-        setIsClaimLoading(true)
-        await handleClaim();
-        setIsClaimLoading(false)
-      }finally{
-        setIsClaimLoading(false)
 
-      }
-    } else if (steps === ClaimAirspaceSteps.RENT) {
-      setStepCounter(stepsCounter + 1);
+const handleNextButton = async () => {
+  if (steps === ClaimAirspaceSteps.UNSELECTED) {
+    setStepCounter(stepsCounter + 1);
+    setSteps(ClaimAirspaceSteps.ZONING_PERMISSION);
+    setCurrentMode("Air Rights Settings");  
+  } else if (steps === ClaimAirspaceSteps.ZONING_PERMISSION) {
+    setStepCounter(stepsCounter + 1);
+    if (data.rent) {
+      setSteps(ClaimAirspaceSteps.RENT);
+      setCurrentMode("Air Rights Renting Settings"); 
+    } else {
       setSteps(ClaimAirspaceSteps.UPLOAD_IMAGE);
+      setCurrentMode("Air Rights Photos");
     }
-  };
+  } else if (steps === ClaimAirspaceSteps.UPLOAD_IMAGE) {
+    try {
+      setIsClaimLoading(true);
+      await handleClaim();
+      setIsClaimLoading(false);
+    } finally {
+      setIsClaimLoading(false);
+    }
+  } else if (steps === ClaimAirspaceSteps.RENT) {
+    setStepCounter(stepsCounter + 1);
+    setSteps(ClaimAirspaceSteps.UPLOAD_IMAGE);
+    setCurrentMode("Air Rights Photos");
+  }
+};
+
 
   const isClaimAirspace = steps === ClaimAirspaceSteps.UPLOAD_IMAGE;
   return (
@@ -328,7 +338,7 @@ export const ClaimModal = ({
                     className="Claim-airspacebtn2-step w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer flex justify-center"
                   >
                   <div className="flex justify-center items-center w-full">
-                      {isClaimAirspace ? "Claim Airspace" : "Next"}
+                      {isClaimAirspace ? "Claim Air right" : "Next"}
                   </div>
               </LoadingButton>
               

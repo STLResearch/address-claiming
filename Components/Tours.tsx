@@ -22,7 +22,7 @@ const steps = [
   },
   {
     selector: ".Claim-airspacebtn-step",
-    content: " Click on Claim Airspace button to set your air rights.",
+    content: " Click on Claim Air Rights button to set your air rights.",
   },
   {
     selector: ".claim-modal-step",
@@ -32,14 +32,14 @@ const steps = [
   {
     selector: ".Claim-airspacebtn2-step",
     content:
-      "Click the ‘Claim Airspace’ button to confirm your air rights address.",
+      "Click the Claim Air Rights button to confirm your air rights address.",
   },
 ];
 
 const mobileSteps = [
   {
     selector: ".claim-step",
-    content: "Click on Claim your Airspace.",
+    content: "Click on Claim your Air Rights",
   },
   {
     selector: ".enter-address-step",
@@ -47,7 +47,7 @@ const mobileSteps = [
   },
   {
     selector: ".Claim-airspacebtn-step",
-    content: "Click on Claim Airspace button to set your air rights.",
+    content: "Click on Claim Air Rights button to set your air rights.",
   },
   {
     selector: ".claim-modal-step",
@@ -57,7 +57,7 @@ const mobileSteps = [
   {
     selector: ".Claim-airspacebtn2-step",
     content:
-      "Click the ‘Claim Airspace’ button to confirm your air rights address.",
+      "Click the Claim Air Rights button to confirm your air rights address.",
   },
 ];
 export const handleNextSteps = ({

@@ -108,7 +108,7 @@ const Dashboard: FC = () => {
                     >
                       <div className="flex gap-[5px] items-center">
                         <p className="text-xl font-medium text-[#222222]">
-                          Claim Airspace
+                          Claim Air Rights
                         </p>
                         <div className="w-5 h-5 items-center justify-center">
                           <InfoIcon />
@@ -126,7 +126,7 @@ const Dashboard: FC = () => {
                           type="text"
                           name="searchAirspaces"
                           id="searchAirspaces"
-                          placeholder="Search Airspaces"
+                          placeholder="Search Air Rights"
                           className="outline-none w-full pr-[20px]"
                         />
                         <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
@@ -135,7 +135,7 @@ const Dashboard: FC = () => {
                       </div>
                     </div>
                     <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px] mt-10">
-                      Claim Airspace
+                      Claim Air Rights
                     </div>
                   </Link>
                 </div>

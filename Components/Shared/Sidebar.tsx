@@ -212,7 +212,7 @@ const Sidebar = () => {
         <SidebarItem href={"/dashboard"} text={"Dashboard"}>
           <DashboardIcon isActive={false} />
         </SidebarItem>
-        <SidebarItem href={"/airspaces"} text={"Airspaces"}>
+        <SidebarItem href={"/airspaces"} text={"Air Rights"}>
           <EarthIconsidebar isActive={false} />
         </SidebarItem>
         <SidebarItem href={"/points"} text={"Points Program"}>
@@ -227,11 +227,11 @@ const Sidebar = () => {
         <SidebarItem
           href={"https://sky.trade/waitlist"}
           target={"_blank"}
-          text={"Buy Airspace"}
+          text={"Buy Air Rights"}
         >
           <MapIcon isActive={false} />
         </SidebarItem>
-        <SidebarItem href={"/rent"} text={"Rent Airspace"}>
+        <SidebarItem href={"/rent"} text={"Rent Air Rights"}>
           <DroneIconsidebar isActive={false} />
         </SidebarItem>
         <SidebarItem
@@ -279,7 +279,7 @@ const Sidebar = () => {
           </SidebarItemMobile>
           <SidebarItemMobile
             href={"/airspaces"}
-            text={"Airspaces"}
+            text={"Air Rights"}
             numberOfUnseenNotifications={0}
           >
             <GiftIconsidebar isActive={false} />

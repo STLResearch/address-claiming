@@ -14,7 +14,7 @@ const Slider = () => {
           <HelpQuestionIcon isActive={false} color={undefined} />
         </div>
         <p className="font-medium text-[14px] text-[#222222] text-center">
-          How to Claim My Airspsace?
+          How to Claim My Air Rights?
         </p>
       </div>
       <div className="flex flex-col leading-[22px]">
@@ -57,10 +57,10 @@ const Slider = () => {
         >
           <p className="font-bold">4.</p>
           <div className="flex flex-col">
-            <p className="font-bold">Claim Airspace</p>
+            <p className="font-bold">Claim Air Rights</p>
             <p>
-              Click the &lsquo;Claim Airspace&rsquo; button to confirm your air
-              rights address. Your Airspace is saved. Modify your anytime.
+              Click the &lsquo;Claim Air Rights&rsquo; button to confirm your air
+              rights address. Your Air Rights is saved. Modify your anytime.
             </p>
           </div>
         </div>

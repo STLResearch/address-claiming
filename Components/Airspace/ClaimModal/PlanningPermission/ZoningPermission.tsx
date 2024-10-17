@@ -6,7 +6,7 @@ const ZoningPermission = ({ data, setData }) => {
   return (
     <>
       <p className="text-[#838187] text-[14px]">
-        I want my airspace to be available for rent
+        I want my Air Rights to be available for rent
       </p>
       <div className="flex items-center gap-[7px] text-[#87878D] text-[14px] my-6">
         <PlanningPermissionCheckbox

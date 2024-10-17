@@ -138,7 +138,7 @@ const RentDetail: React.FC<RentDetailProps> = ({
           </div>
           <div className="flex items-center w-full justify-center">
             <h2 className="text-[#222222] font-medium text-xl text-center">
-              Airspace Details
+            Air Rights Details
             </h2>
           </div>
           <div
@@ -220,7 +220,7 @@ const RentDetail: React.FC<RentDetailProps> = ({
             isLoading={isLoading}
             className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
-            Rent Airspace
+            Rent Air Rights
           </LoadingButton>
         </div>
       </div>

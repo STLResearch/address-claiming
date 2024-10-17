@@ -37,7 +37,7 @@ const MyMobileAirspacesPage = ({
             onClick={() => setShowAirspacePage(false)}
             className="bg-[#0653EA] text-white p-3 rounded-lg w-[90%] mt-[6rem]"
           >
-            Claim Airspace
+            Claim Air Rights
           </button>
         </div>
       </div>

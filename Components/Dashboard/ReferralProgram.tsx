@@ -27,7 +27,7 @@ const ReferralProgram: FC = () => {
           icon={<EarthIcon />}
           title={"Register & Claim"}
           text={
-            "Let them register and claim their airspaces using your referral link or code"
+            "Let them register and claim their air rights using your referral link or code"
           }
         />
         <Path />

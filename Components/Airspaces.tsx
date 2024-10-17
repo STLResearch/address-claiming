@@ -35,7 +35,7 @@ const Airspaces: React.FC<AirspacesProps> = (props) => {
               borderRadius: "5px 5px 0px 0px",
             }}
           >
-            Airspaces
+            Air Rights
           </button>
         </div>
         <div
