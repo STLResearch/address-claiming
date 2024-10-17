@@ -218,7 +218,7 @@ const handleNextButton = async () => {
             >
               <div className="flex flex-col items-center">
                 <div className="h-2.5 w-16 bg-[#D9D9D9] rounded-full mb-2"></div>
-                <h1 className="text-lg font-semibold">Claim Airspace</h1>
+                <h1 className="text-lg font-semibold">Claim Air Rights</h1>
               </div>
             </div>
           )}

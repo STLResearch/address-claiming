@@ -22,7 +22,7 @@ const MyMobileAirspacesPage = ({
             <ArrowLeftIcon />
           </div>
           <h1 className="text-2xl font-bold text-center flex-grow">
-            My Airspaces
+            My Air Rights
           </h1>
         </div>
 

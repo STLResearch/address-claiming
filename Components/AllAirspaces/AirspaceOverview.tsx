@@ -9,7 +9,7 @@ const AllAirspaceOverview = (props) => {
       <div className="relative">
         <Image
           src="/images/airspace-preview.png"
-          alt="airspace preview"
+          alt="Air Right preview"
           className="rounded-t-md"
           width={339}
           height={222}

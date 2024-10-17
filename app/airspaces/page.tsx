@@ -519,7 +519,7 @@ const Airspaces: React.FC = () => {
       const errors: string[] = [];
 
       if (!title) {
-        errors.push("Please enter a name for the Airspace");
+        errors.push("Please enter a name for the Air Rights");
       }
 
       const postData = {
@@ -899,7 +899,7 @@ const Airspaces: React.FC = () => {
                         backgroundImage: "url('/images/airspace-preview.png')",
                       }}
                     >
-                      <p className="text-xl font-medium text-white">Airspace</p>
+                      <p className="text-xl font-medium text-white">Air Rights</p>
                     </Link>
                     <Link
                       href={"/portfolio"}
@@ -921,7 +921,7 @@ const Airspaces: React.FC = () => {
                     <div className="h-[24px] w-[24px]">
                       <HelpQuestionIcon color="white" isActive={false} />
                     </div>
-                    <p>How to Claim My Airspace?</p>
+                    <p>How to Claim My Air Rights?</p>
                   </div>
                 </div>
               </div>
