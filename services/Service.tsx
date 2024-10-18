@@ -6,6 +6,7 @@ import axios from "axios";
 import base58 from "bs58";
 import { toast } from "react-toastify";
 import * as Sentry from "@sentry/nextjs";
+import RESPONSE_ERRORS from "@/utils/errors";
 
 interface RequestI {
   uri: string;
@@ -19,7 +20,6 @@ const CUSTOM_ERROR_MESSAGE = "An Error occured! Please try again later.";
 
 const Service = () => {
   const { provider, web3auth } = useContext(Web3authContext);
-
 
   const getRequestUrl = (uri: string): string => {
     const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
@@ -39,13 +39,19 @@ const Service = () => {
       const backendError =
         error.response.data.errorMesagge || error.response.data.data.message;
 
-      if (backendError && backendError !== "UNAUTHORIZED") {
-        toast.error(backendError);
-      } else {
-        toast.error(CUSTOM_ERROR_MESSAGE);
+      if (backendError !== "USER_NOT_FOUND") {
+        const customBackendError =
+          RESPONSE_ERRORS[backendError] || backendError;
+
+        if (customBackendError) {
+          toast.error(customBackendError);
+        } else {
+          toast.error(CUSTOM_ERROR_MESSAGE);
+        }
       }
     }
     Sentry.captureException(error);
+    return error;
   };
 
   const createHeader = async ({
@@ -123,7 +129,7 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
 
@@ -146,7 +152,7 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
 
@@ -169,7 +175,7 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
 
@@ -192,7 +198,7 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
   return { getRequest, postRequest, patchRequest, deleteRequest };

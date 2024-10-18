@@ -339,29 +339,42 @@ const Airspaces: React.FC = () => {
     goToAddress();
   }, [flyToAddress, map]);
   useEffect(() => {
-    if (map && coordinates?.latitude !== "" && coordinates?.longitude !== "") {
-      const temp: mapboxgl.LngLatLike = {
-        lng: Number(coordinates.longitude),
-        lat: Number(coordinates?.latitude),
-      };
-      if (marker) {
-        marker.remove();
-        setMarker(null);
+    const handlePin = async () => {
+      if (map && coordinates?.latitude !== "" && coordinates?.longitude !== "") {
+        const temp: mapboxgl.LngLatLike = {
+          lng: Number(coordinates.longitude),
+          lat: Number(coordinates?.latitude),
+        };
+        if (marker) {
+          marker.remove();
+          setMarker(null);
+        }
+        const newMarker = new mapboxgl.Marker({
+          color: "#3FB1CE",
+          draggable: true,
+        })
+          .setLngLat(temp)
+          .addTo(map as mapboxgl.Map);
+        newMarker.on('dragend',  async () => {
+          const lngLat = newMarker.getLngLat();
+          const newLongitude = lngLat.lng;
+          const newLatitude = lngLat.lat;
+          setCoordinates({longitude: newLongitude.toString(), latitude: newLatitude.toString()});
+          const response = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${newLongitude.toString()},${newLatitude.toString()}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`,
+          );
+          const data = await response.json();
+          if (data.features && data.features.length > 0) {
+            setAddress(data.features[0].place_name);
+            setData((prev) => {
+              return { ...prev, address: data.features[0].place_name };
+            });
+          }
+        });
+        setMarker(newMarker);
       }
-      const newMarker = new mapboxgl.Marker({
-        color: "#3FB1CE",
-        draggable: true,
-      })
-        .setLngLat(temp)
-        .addTo(map as mapboxgl.Map);
-      newMarker.on('dragend', function () {
-        const lngLat = newMarker.getLngLat();
-        const newLongitude = lngLat.lng;
-        const newLatitude = lngLat.lat;
-        setCoordinates({longitude: newLongitude.toString(), latitude: newLatitude.toString()});
-      });
-      setMarker(newMarker);
     }
+    handlePin()
   }, [map, coordinates.latitude, coordinates.longitude]);
 
   //Adds address for the new address

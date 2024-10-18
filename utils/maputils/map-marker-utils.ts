@@ -100,8 +100,8 @@ const getEstimateValuePinIcon = (isMain: boolean) => {
   );
   path.setAttribute("fill", isMain ? "#1470FF" : "#00AEEF");
   path.setAttribute("stroke", "white");
-  path.setAttribute("stroke-width", "2");
-  path.setAttribute("stroke-linecap", "round");
+  path.setAttribute("strokeWidth", "2");
+  path.setAttribute("strokeLinecap", "round");
   path.setAttribute("stroke-join", "round");
   svg.appendChild(path);
 

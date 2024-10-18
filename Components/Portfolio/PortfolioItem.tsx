@@ -13,6 +13,7 @@ import { PropertyData, RequestDocument } from "@/types";
 import { checkDocumentStatus } from "@/utils/propertyUtils/fileUpload";
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import Modal from "./Modal";
+import LoadingButton from "../LoadingButton/LoadingButton";
 
 interface PropsI {
   airspaceName: string;
@@ -27,6 +28,16 @@ interface PropsI {
   onCloseModal: () => void;
   setAirspaceList: React.Dispatch<React.SetStateAction<PropertyData[]>>;
   selectedAirspace: any;
+  createdAt: Date
+}
+
+function formatDate(isoDateStr) {
+  const date = new Date(isoDateStr);
+  const day = String(date.getUTCDate()).padStart(2, '0');   // Day (with leading zero if needed)
+  const month = String(date.getUTCMonth() + 1);             // Month (0-indexed, so +1)
+  const year = date.getUTCFullYear();                       // Year
+
+  return `${day}/${month}/${year}`;
 }
 
 const PortfolioItem = ({
@@ -42,6 +53,7 @@ const PortfolioItem = ({
   onCloseModal,
   setAirspaceList,
   selectedAirspace,
+  createdAt
 }: PropsI) => {
   const [showPopup, setShowPopup] = useState(false);
   const [underReview, setUnderReview] = useState<boolean>(false);
@@ -77,7 +89,7 @@ const PortfolioItem = ({
         />
       )}
       <div
-        className="p-[11px] items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer"
+        className="p-[11px] items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer h-[49px]"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
       >
         <div className="flex items-center justify-between gap-[10px]  cursor-pointer">
@@ -91,36 +103,60 @@ const PortfolioItem = ({
           </div>
           <div className="flex gap-[10px] items-center">
             {!!tags[0] && (
-              <div
+              <LoadingButton
                 onClick={handleOnClaim}
-                className="bg-[#DBDBDB] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]"
+                isLoading={false}
+                color={""}
+                className="bg-[#DBDBDB] text-[#222222] text-[11.89px] font-normal px-[7px] cursor-pointer rounded-[3px] h-[27px]"
+                disable={false}
               >
-                {type === "land" ? "On Claim" : "On Rent"}
-              </div>
+                {type === "land" ? `Claim Date: ${formatDate(createdAt)}` : "On Rent"}
+              </LoadingButton>
             )}
             {!!tags[1] && (
-              <div className="bg-[#E7E6E6] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
+              <LoadingButton
+                onClick={""}
+                isLoading={false}
+                color={""}
+                disable={false}
+                className="bg-[#E7E6E6] text-[#222222] text-[11.89px] font-normal px-[7px] cursor-pointer rounded-[3px] h-[27px]"
+              >
                 On Sale
-              </div>
+              </LoadingButton>
             )}
             {!!tags[2] && (
-              <div className="bg-[#222222] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
+              <LoadingButton
+                onClick={""}
+                isLoading={false}
+                color={""}
+                disable={false}
+                className="bg-[#222222] text-white text-[11.89px] font-normal px-[7px] cursor-pointer rounded-[3px] h-[27px]"
+              >
                 No Fly Zone
-              </div>
+              </LoadingButton>
             )}
             {!!tags[3] && (
-              <div className="bg-[#E04F64] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">
+              <LoadingButton
+                onClick={""}
+                isLoading={false}
+                color={""}
+                disable={false}
+                className="bg-[#E04F64] text-white text-[11.89px] font-normal px-[7px] cursor-pointer rounded-[3px] h-[27px]"
+              >
                 Review Offer
-              </div>
+              </LoadingButton>
             )}
 
             {activeTab === PortfolioTabEnum.UNVERIFIED && (
-              <div
+              <LoadingButton
                 onClick={handleAirspace}
-                className="bg-[#4285F4] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]"
+                isLoading={false}
+                color={""}
+                disable={false}
+                className="bg-[#4285F4] text-white text-[11.89px] font-normal px-[7px] cursor-pointer rounded-[3px] h-[27px]"
               >
                 Cancel Claim
-              </div>
+              </LoadingButton>
             )}
 
             {documentStatus === "NOT_SUBMITTED" && !underReview && (

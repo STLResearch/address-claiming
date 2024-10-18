@@ -27,14 +27,14 @@ const Account = () => {
 
   useEffect(() => {
     (async () => {
-      let data = user;
-      const responseData = await getUser();
-      if (responseData) {
-        data = responseData;
-        signIn({ user: responseData });
+      let userData = user;
+      const { error, data } = await getUser();
+      if (!error) {
+        userData = data;
+        signIn({ user: data });
       }
-      if (data) {
-        setNewUserDetail({ ...data });
+      if (userData) {
+        setNewUserDetail({ ...userData });
       }
     })();
   }, [user?.KYCStatusId, user?.name, user?.phoneNumber, web3authStatus]);
@@ -100,9 +100,9 @@ const Account = () => {
       },
       onComplete: async () => {
         const responseData = await getUser();
-        if (responseData) {
-          setNewUserDetail({ ...responseData });
-          signIn({ user: responseData });
+        if (!responseData.error) {
+          setNewUserDetail({ ...responseData.data });
+          signIn({ user: responseData.data });
         }
       },
     });

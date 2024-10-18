@@ -54,7 +54,11 @@ const AirspacePhotoUpload = ({
       setSelectedFiles(updatedFiles);
     }
   };
-  const { getRootProps , getInputProps , open} = useDropzone({ onDrop , noClick: true});
+  const { getRootProps , getInputProps , open} = useDropzone({ onDrop , noClick: true , 
+    accept: {
+    'image/*': [] 
+    }
+  });
 
   return (
     <div className="">
@@ -100,8 +104,10 @@ const AirspacePhotoUpload = ({
             Drag here or click to upload
           </p>
         ) : (
-          <p className="text-base font-medium text-[#87878D]">{`${selectedFiles.map((f) => f.name).join(",")} Drag here or click to upload`}</p>
-        )}
+          <p className="text-base font-medium text-[#87878D] text-center max-w-full truncate">
+            {`${selectedFiles.map((f) => f.name).join(", ")} Drag here or click to upload`}
+          </p>
+          )}
       </div>
       <div className="flex  justify-between flex-wrap gap-6">
         {selectedFiles.length > 0 &&
@@ -115,15 +121,15 @@ const AirspacePhotoUpload = ({
               onDrop={handleDrop}
               data-index={index}
             >
-              <div className="flex items-center">
+              <div className="flex items-center w-[70%]">
                 <img
                   src={URL.createObjectURL(selectedFile)}
                   alt="Thumbnail"
                   className="w-[42px] h-[42px] rounded"
                 />
-                <span className="ml-2 text-sm">{selectedFile.name}</span>
+                <div className="ml-2 text-sm truncate max-w-full">{selectedFile.name}</div>
               </div>
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 ">
                 <div 
                 className="w-[24px] h-[24px] cursor-pointer"
                 onDragStart={(e) => handleDragStart(index, e)}

@@ -171,11 +171,17 @@ const handleNextButton = async () => {
       setCurrentMode("Air Rights Photos");
     }
   } else if (steps === ClaimAirspaceSteps.UPLOAD_IMAGE) {
-    try {
-      setIsClaimLoading(true);
+    try{
+      if (selectedFile.length > 5) {
+        toast.error(
+          "You can only upload up to 5 files. Please adjust your selection and try again!",
+        );
+        return;
+      }
+      setIsClaimLoading(true)
       await handleClaim();
-      setIsClaimLoading(false);
-    } finally {
+      setIsClaimLoading(false)
+    }finally{
       setIsClaimLoading(false);
     }
   } else if (steps === ClaimAirspaceSteps.RENT) {

@@ -8,6 +8,8 @@ import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { PropertyData, StatusTypes } from "@/types";
+import { Pagination } from "antd";
+import { HistoryArrowIcon } from "../Icons";
 
 interface PropsI {
   selectAirspace: (data: PropertyData) => void;
@@ -48,6 +50,31 @@ const PortfolioListMobile = ({
     setAirspaceList,
     refetchAirspaceRef,
   } = usePortfolioList();
+  const customItemRender = (current, type, originalElement) => {
+    if(airspaceList.length <= 10) return
+    if (type === "next") {
+      return (
+        <button className="flex items-center gap-4 text-gray-700  ">
+          next
+          <HistoryArrowIcon />
+        </button>
+      );
+    }
+    if (type === "page") {
+      return (
+        <button
+          className={`${
+            current === originalElement.props.children
+              ? "bg-[#5D7285] text-white"
+              : " text-gray-700"
+          } rounded-full px-4 py-1`}
+        >
+          {originalElement.props.children}
+        </button>
+      );
+    }
+    return originalElement;
+  };
   return (
     <div className="overflow-x-hidden mb-24">
       <div
@@ -159,23 +186,7 @@ const PortfolioListMobile = ({
               )}
             </div>
             <div className="flex flex-col w-full text-gray-600">
-              <div className="flex self-end items-center gap-2 w-[5rem]">
-                <button
-                  onClick={handlePrevPage}
-                  disabled={pageNumber === 1}
-                  className={`${pageNumber === 1 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
-                >
-                  <RxCaretLeft />
-                </button>
-                <div>{pageNumber}</div>
-                <button
-                  onClick={handleNextPage}
-                  disabled={airspaceList?.length < 9}
-                  className={`${airspaceList?.length < 9 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
-                >
-                  <RxCaretRight />
-                </button>
-              </div>
+            <Pagination align="center" defaultCurrent={1}  itemRender={customItemRender} />
             </div>
           </div>
         )}
