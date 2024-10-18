@@ -226,25 +226,26 @@ const TransactionHistory = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5 flex-1 min-w-[89%] sm:min-w-[600px]">
+    <div className="flex flex-col gap-5 flex-grow">
       <div className="md:flex sm:flex-col md:flex-row justify-start sm:justify-between items-center">
         <p className="flex font-medium text-xl pt-[14px] md:px-0 px-2 pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
           Transaction History
         </p>
         <div className="flex md:px-0 px-2 justify-end items-center md:w-full ">
-          <div className="relative bg-white p-[1px] rounded-lg border border-[#87878D]">
+          <div className="relative w-[272px]">
             <input
               type="text"
               name="searchTransactions"
               id="searchTransactions"
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Transactions"
-              className="outline-none w-full pr-[20px] h-[49px] px-[22px] md:py-[16px] py-3"
+              className="w-full h-[48px] px-[16px] pr-[40px] text-[14px] text-[#222222] border border-[#D1D5DB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0653EA] transition-shadow duration-200"
             />
-            <div className=" w-[17px] cursor-pointer h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
+            <div className="w-[17px] h-[17px] absolute right-[16px] top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer">
               <MagnifyingGlassIcon />
             </div>
           </div>
+
           <div className="ml-5">
             <div
               className="flex justify-center items-center w-12 h-12 cursor-pointer  bg-[#0653EA] text-center font-medium p-1 rounded-[8px] py-4"
