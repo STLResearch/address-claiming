@@ -11,6 +11,7 @@ import {
   Position,
   Geometry,
 } from "geojson";
+import * as Sentry from "@sentry/nextjs";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
@@ -86,11 +87,11 @@ const Rent = () => {
         let restrictedAreas: Area[] = [];
         try {
           const response = await fetch(
-            `https://dev-api.sky.trade/restrictions?geoHash=${geoHash}`,
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/restrictions?geoHash=${geoHash}`,
           );
           restrictedAreas = (await response.json()) as Area[];
         } catch (error) {
-          console.error("Error fetching restricted areas:", error);
+          Sentry.captureException(error);
         }
 
         const geoJsonData: FeatureCollection<
