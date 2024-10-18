@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 "use client";
 
 import useAuth from "../../hooks/useAuth";
@@ -41,6 +42,7 @@ import MyMobileAirspacesPage from "@/Components/Airspace/ClaimedAirspaceList";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import AirRightsEstimateService from "@/services/AirRightsEstimateService";
 import { createAirRightEstimateMarker } from "@/utils/maputils";
+import UserService from "@/services/UserService";
 
 interface Address {
   id: string;
@@ -673,8 +675,30 @@ const Airspaces: React.FC = () => {
     airRightEstimateMarkers.forEach((m) => m.remove());
     setAirRightEstimateMarkers([]);
   };
+  const { getUser } = UserService();
+  const { signIn } = useAuth();
 
-  const router = useRouter();
+  const onVerifyMyAccount = async () => {
+    setIsLoading(true);
+    // @ts-ignore
+    // eslint-disable-next-line no-undef
+    const client = await new Persona.Client({
+      templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
+      referenceId: user?.id.toString(),
+      environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
+      onReady: () => {
+        setIsLoading(false);
+        client.open();
+      },
+      onComplete: async () => {
+        const responseData = await getUser();
+        if (!responseData.error) {
+          signIn({ user: responseData.data });
+        }
+      },
+    });
+  };
+  
   return (
     <Fragment>
       <Head>
@@ -943,7 +967,7 @@ const Airspaces: React.FC = () => {
             )}
             {showPopup && (
               <VerificationPopup
-                onVerifyMyAccount={() => router.push("/my-account")}
+                onVerifyMyAccount={onVerifyMyAccount}
               />
             )}
             <div className="hidden sm:block">
