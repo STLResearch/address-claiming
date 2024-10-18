@@ -196,7 +196,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
               <CloseIconBlack />
             </div>
             <div
-              className="hidden h-[12px] w-[16px] cursor-pointer sm:block"
+              className="absolute h-[12px] w-[16px] cursor-pointer sm:relative"
               onClick={() => {
                 setShowRentPreview(false);
                 setShowRentDetail(true);

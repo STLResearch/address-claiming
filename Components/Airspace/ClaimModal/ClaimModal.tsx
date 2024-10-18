@@ -162,6 +162,12 @@ export const ClaimModal = ({
       }
     } else if (steps === ClaimAirspaceSteps.UPLOAD_IMAGE) {
       try{
+        if (selectedFile.length > 5) {
+          toast.error(
+            "You can only upload up to 5 files. Please adjust your selection and try again!",
+          );
+          return;
+        }
         setIsClaimLoading(true)
         await handleClaim();
         setIsClaimLoading(false)
