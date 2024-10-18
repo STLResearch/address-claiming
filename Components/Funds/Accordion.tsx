@@ -62,7 +62,7 @@ const Accordion = ({
             <p>{selectedMethod.name}</p>
           </div>
         ) : (
-          <div className="font-medium  text-[#838187] text-[12px]">Select</div>
+          <div className="font-normal  text-[#838187] text-[12px] h-[49px] flex items-center">Select</div>
         )}
 
         <div className="transform transition-transform duration-300">

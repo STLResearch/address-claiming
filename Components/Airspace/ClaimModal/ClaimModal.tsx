@@ -92,7 +92,7 @@ export const ClaimModal = ({
   const handleClaim = async () => {
     try{
 
-      let imageList: string[] = [];
+      const imageList: string[] = [];
       if (selectedFile.length > 0) {
         const contentTypes = selectedFile.map((file) => file.type);
   
