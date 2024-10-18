@@ -34,7 +34,7 @@ const MobileMapSection = ({
                   backgroundImage: "url('/images/airspace-preview.png')",
                 }}
               >
-                <p className="text-xl font-medium text-white">Airspace</p>
+                <p className="text-xl font-medium text-white">Air Rights</p>
               </Link>
               <Link
                 href={"/portfolio"}
@@ -54,7 +54,7 @@ const MobileMapSection = ({
               <div className="h-[24px] w-[24px]">
                 <HelpQuestionIcon color="white" isActive={undefined} />
               </div>
-              <p>How to Claim My Airspace?</p>
+              <p>How to Claim My Air Rights?</p>
             </div>
           </div>
         </div>

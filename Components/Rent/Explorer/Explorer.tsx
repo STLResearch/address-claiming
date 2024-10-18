@@ -38,7 +38,7 @@ const Explorer: React.FC<ExplorerProps> = ({
         SkyMarket Hub
       </div>
       <p className="text-[14px]">
-        Explore and Own Low-Altitude Airspaces, Your Gateway to Aerial Freedom.
+        Explore and Own Low-Altitude Air Rights, Your Gateway to Aerial Freedom.
       </p>
       </div>
       <SearchInput

@@ -32,9 +32,9 @@ const RentSearchMobile: React.FC<RentSearchMobileProps> = ({
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             type="text"
-            name="searchAirspaces"
-            id="searchAirspaces"
-            placeholder="Search Airspaces"
+            name="searchAirRights"
+            id="searchAirRights"
+            placeholder="Search Air Rights"
             className="min-w-[200px] text-[14px] focus:outline-none"
           />
 

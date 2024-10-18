@@ -35,6 +35,7 @@ interface PropsI {
   onClaim: (images: string[], address?: string) => void;
   dontShowAddressOnInput: boolean;
   setDontShowAddressOnInput: React.Dispatch<React.SetStateAction<boolean>>;
+  setAddress: React.Dispatch<React.SetStateAction<string>>
 }
 
 export enum ClaimAirspaceSteps {
@@ -51,6 +52,7 @@ export const ClaimModal = ({
   onClaim,
   dontShowAddressOnInput,
   setDontShowAddressOnInput,
+  setAddress,
 }: PropsI) => {
   const endOfDivRef = useRef(null);
   const { currentStep } = useTour();
@@ -78,9 +80,8 @@ export const ClaimModal = ({
     }
   }, [data.address]);
 
-  const [inputAddress, setInputAddress] = useState("");
   const { isMobile } = useMobile();
-  const [currentMode, setCurrentMode] = useState("Claim Airspace");
+  const [currentMode, setCurrentMode] = useState("Claim Air Rights");
   const { generatePublicFileUploadUrls } = S3UploadServices();
   const [stepsCounter, setStepCounter] = useState(1);
 
@@ -114,10 +115,10 @@ export const ClaimModal = ({
             imageList.push(param.key);
           });
           await Promise.all(uploadPromises);
-          await onClaim(imageList, inputAddress);
+          await onClaim(imageList,);
         }
       } else {
-        onClaim([], inputAddress);
+        onClaim([]);
       }
     }catch(error){
       console.error(error);
@@ -134,52 +135,62 @@ export const ClaimModal = ({
     } else if (steps === ClaimAirspaceSteps.ZONING_PERMISSION) {
       setStepCounter(stepsCounter - 1);
       setSteps(ClaimAirspaceSteps.UNSELECTED);
+      setCurrentMode("Claim Air Rights"); 
     } else if (steps === ClaimAirspaceSteps.RENT) {
       setStepCounter(stepsCounter - 1);
       setSteps(ClaimAirspaceSteps.ZONING_PERMISSION);
+      setCurrentMode("Air Rights Settings");
     } else if (steps === ClaimAirspaceSteps.UPLOAD_IMAGE) {
       setStepCounter(stepsCounter - 1);
       if (data.rent) {
         setSteps(ClaimAirspaceSteps.RENT);
+        setCurrentMode("Air Rights Renting Settings");
       } else {
         setSteps(ClaimAirspaceSteps.ZONING_PERMISSION);
+        setCurrentMode("Air Rights Settings");
       }
     } else {
       onCloseModal();
     }
   };
+  
 
-  const handleNextButton = async () => {
-    if (steps === ClaimAirspaceSteps.UNSELECTED) {
-      setStepCounter(stepsCounter + 1);
-      setSteps(ClaimAirspaceSteps.ZONING_PERMISSION);
-    } else if (steps === ClaimAirspaceSteps.ZONING_PERMISSION) {
-      setStepCounter(stepsCounter + 1);
-      if (data.rent) {
-        setSteps(ClaimAirspaceSteps.RENT);
-      } else {
-        setSteps(ClaimAirspaceSteps.UPLOAD_IMAGE);
-      }
-    } else if (steps === ClaimAirspaceSteps.UPLOAD_IMAGE) {
-      try{
-        if (selectedFile.length > 5) {
-          toast.error(
-            "You can only upload up to 5 files. Please adjust your selection and try again!",
-          );
-          return;
-        }
-        setIsClaimLoading(true)
-        await handleClaim();
-        setIsClaimLoading(false)
-      }finally{
-        setIsClaimLoading(false)
 
-      }
-    } else if (steps === ClaimAirspaceSteps.RENT) {
-      setStepCounter(stepsCounter + 1);
+const handleNextButton = async () => {
+  if (steps === ClaimAirspaceSteps.UNSELECTED) {
+    setStepCounter(stepsCounter + 1);
+    setSteps(ClaimAirspaceSteps.ZONING_PERMISSION);
+    setCurrentMode("Air Rights Settings");  
+  } else if (steps === ClaimAirspaceSteps.ZONING_PERMISSION) {
+    setStepCounter(stepsCounter + 1);
+    if (data.rent) {
+      setSteps(ClaimAirspaceSteps.RENT);
+      setCurrentMode("Air Rights Renting Settings"); 
+    } else {
       setSteps(ClaimAirspaceSteps.UPLOAD_IMAGE);
+      setCurrentMode("Air Rights Photos");
     }
-  };
+  } else if (steps === ClaimAirspaceSteps.UPLOAD_IMAGE) {
+    try{
+      if (selectedFile.length > 5) {
+        toast.error(
+          "You can only upload up to 5 files. Please adjust your selection and try again!",
+        );
+        return;
+      }
+      setIsClaimLoading(true)
+      await handleClaim();
+      setIsClaimLoading(false)
+    }finally{
+      setIsClaimLoading(false);
+    }
+  } else if (steps === ClaimAirspaceSteps.RENT) {
+    setStepCounter(stepsCounter + 1);
+    setSteps(ClaimAirspaceSteps.UPLOAD_IMAGE);
+    setCurrentMode("Air Rights Photos");
+  }
+};
+
 
   const isClaimAirspace = steps === ClaimAirspaceSteps.UPLOAD_IMAGE;
   return (
@@ -214,12 +225,11 @@ export const ClaimModal = ({
             >
               <div className="flex flex-col items-center">
                 <div className="h-2.5 w-16 bg-[#D9D9D9] rounded-full mb-2"></div>
-                <h1 className="text-lg font-semibold">Claim Airspace</h1>
+                <h1 className="text-lg font-semibold">Claim Air Rights</h1>
               </div>
             </div>
           )}
           <div className="px-[29px] mt-4 md:mt-0">
-            {/* The 1st page */}
             {steps === ClaimAirspaceSteps.UNSELECTED && (
               <div>
                 <div
@@ -231,9 +241,9 @@ export const ClaimModal = ({
                   </div>
                   {dontShowAddressOnInput ? (
                     <input
-                      value={inputAddress}
+                      value={data?.address}
                       onChange={(e) => {
-                        setInputAddress(e.target.value);
+                        setAddress(e.target.value);
                       }}
                       className="text-[14px] outline-none text-[#222222] flex-1"
                       style={{ border: "none" }}
@@ -298,17 +308,14 @@ export const ClaimModal = ({
               </div>
             )}
 
-            {/* The rent page */}
             {steps === ClaimAirspaceSteps.RENT && (
               <RentalDetails data={data} setData={setData} />
             )}
 
-            {/* Available for rent page */}
             {steps === ClaimAirspaceSteps.ZONING_PERMISSION && (
               <ZoningPermission setData={setData} data={data} />
             )}
-
-            {/* The last card  */}
+            
             {steps === ClaimAirspaceSteps.UPLOAD_IMAGE && (
               <AirspacePhotoUpload
                 selectedFiles={selectedFile}
@@ -334,7 +341,7 @@ export const ClaimModal = ({
                     className="Claim-airspacebtn2-step w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer flex justify-center"
                   >
                   <div className="flex justify-center items-center w-full">
-                      {isClaimAirspace ? "Claim Airspace" : "Next"}
+                      {isClaimAirspace ? "Claim Air right" : "Next"}
                   </div>
               </LoadingButton>
               

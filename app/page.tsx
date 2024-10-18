@@ -123,7 +123,7 @@ export default function Home() {
                 points!
               </p>
               <p className="font-normal text-[16px] text-[#222222] text-center">
-                Claim Your Airspace and Start Earning Passive Income! 🚀
+                Claim Your Air Rights and Start Earning Passive Income! 🚀
               </p>
               <div className="text-[15px] text-light-grey font-normal my-[30px]">
                 <p>

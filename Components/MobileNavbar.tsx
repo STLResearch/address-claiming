@@ -133,7 +133,7 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
             <SidebarItem href={"/dashboard"} text={"Dashboard"}>
               <DashboardIcon isActive={false} />
             </SidebarItem>
-            <SidebarItem href={"/airspaces"} text={"Airspaces"}>
+            <SidebarItem href={"/airspaces"} text={"Air Rights"}>
               <EarthIconsidebar isActive={false} />
             </SidebarItem>
             <SidebarItem href={"/points"} text={"Points Program"}>
@@ -146,11 +146,11 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
             <SidebarItem
               href={"https://sky.trade/waitlist"}
               target="_blank"
-              text={"Buy Airspace"}
+              text={"Buy AirRights"}
             >
               <MapIcon isActive={false} />
             </SidebarItem>
-            <SidebarItem href={"/rent"} text={"Rent Airspace"}>
+            <SidebarItem href={"/rent"} text={"Rent AirRights"}>
               <DroneIcon isActive={false} />
             </SidebarItem>
             <SidebarItem

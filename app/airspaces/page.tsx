@@ -501,7 +501,7 @@ const Airspaces: React.FC = () => {
     }
   }, [isOpen]);
 
-  const onClaim = async (images: [], _address?: string) => {
+  const onClaim = async (images: []) => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
 
@@ -532,11 +532,11 @@ const Airspaces: React.FC = () => {
       const errors: string[] = [];
 
       if (!title) {
-        errors.push("Please enter a name for the Airspace");
+        errors.push("Please enter a name for the Air Rights");
       }
 
       const postData = {
-        address: _address || address,
+        address: address,
         ownerId: user.id,
         propertyStatusId: 0,
         hasChargingStation,
@@ -678,7 +678,7 @@ const Airspaces: React.FC = () => {
   return (
     <Fragment>
       <Head>
-        <title>SkyTrade - Airspaces</title>
+        <title>SkyTrade - Air Rights</title>
       </Head>
       {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
@@ -686,7 +686,7 @@ const Airspaces: React.FC = () => {
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
         <div className="w-full h-full flex flex-col overflow-scroll md:overflow-hidden">
-          {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
+          {!showMobileMap && <PageHeader pageTitle={"Air Rights"} />}
           {((showMobileMap && isMobile) ||
             (isOpen && currentStep === 1 && isMobile)) && (
             <ExplorerMobile
@@ -734,7 +734,7 @@ const Airspaces: React.FC = () => {
                         className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
                         style={{ maxWidth: "400px" }}
                       >
-                       Claim Airspace 
+                       Claim Air Right 
                       </div>
                     )}
                   </div>
@@ -767,7 +767,7 @@ const Airspaces: React.FC = () => {
               <div className="bg-white w-full p-4 shadow-md flex items-center">
                 <div className="flex items-center justify-between  gap-8 w-[375px] h-[50px] px-4">
                   <p className="text-xl font-[500px] flex gap-4 items-center">
-                    My Airspaces{" "}
+                    My Air Rights{" "}
                     {!isLoading && (
                       <span className="text-[15px] font-normal rounded-full border-2 border-black flex items-center justify-center h-8 w-8">
                         {" "}
@@ -801,18 +801,19 @@ const Airspaces: React.FC = () => {
                     onCloseModal={() => {
                       setDontShowAddressOnInput(false);
                       removePubLicUserDetailsFromLocalStorageOnClose(
-                        "airSpaceData",
+                        "airSpaceData"
                       );
                       setShowClaimModal(false);
                       setIsLoading(false);
                       setData({ ...defaultData });
-                    }}
+                    } }
                     data={{ ...data, address }}
                     setData={setData}
                     onClaim={onClaim}
                     dontShowAddressOnInput={dontShowAddressOnInput}
-                    setDontShowAddressOnInput={setDontShowAddressOnInput}
-                  />
+                    setDontShowAddressOnInput={setDontShowAddressOnInput} 
+                    setAddress={setAddress} 
+                     />
                 )}
                 {(showSuccessPopUp || showFailurePopUp) && (
                   <SuccessModal
@@ -883,6 +884,7 @@ const Airspaces: React.FC = () => {
                     onClaim={onClaim}
                     dontShowAddressOnInput={dontShowAddressOnInput}
                     setDontShowAddressOnInput={setDontShowAddressOnInput}
+                    setAddress={setAddress}
                   />
                 )}
               </div>
@@ -912,7 +914,7 @@ const Airspaces: React.FC = () => {
                         backgroundImage: "url('/images/airspace-preview.png')",
                       }}
                     >
-                      <p className="text-xl font-medium text-white">Airspace</p>
+                      <p className="text-xl font-medium text-white">Air Rights</p>
                     </Link>
                     <Link
                       href={"/portfolio"}
@@ -934,7 +936,7 @@ const Airspaces: React.FC = () => {
                     <div className="h-[24px] w-[24px]">
                       <HelpQuestionIcon color="white" isActive={false} />
                     </div>
-                    <p>How to Claim My Airspace?</p>
+                    <p>How to Claim My Air Rights?</p>
                   </div>
                 </div>
               </div>

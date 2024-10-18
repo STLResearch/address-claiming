@@ -101,20 +101,20 @@ const PortfolioList = ({
             className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear delay-75 text-base font-bold`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.VERIFIED)}
           >
-            Verified Airspaces
+            Verified Air Rights
           </div>
           <div
             className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
           >
-            Rented Airspaces
+            Rented Air Rights
           </div>
           <div className="flex gap-10">
             <div
               className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
               onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
             >
-              Pending Rented Airspaces
+              Pending Rented Air Rights
             </div>
             <div
               className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
@@ -127,7 +127,7 @@ const PortfolioList = ({
             className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
           >
-            Rejected Airspaces
+            Rejected Air Rights
           </div>
         </div>
         {loading ? (
@@ -145,7 +145,7 @@ const PortfolioList = ({
                 >
                   <div className="md:w-[50%]  p-6  flex flex-col justify-center items-center md:gap-6 gap-4">
                     <h1 className="text-xl font-medium text-[#222222]  text-center">
-                      🚀 Attention Airspace Owner!
+                      🚀 Attention Air Rights Owner!
                     </h1>
                     <h1 className="text-xl font-medium text-[#222222] block md:hidden">
                       Account verification

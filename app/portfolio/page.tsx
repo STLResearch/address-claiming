@@ -63,7 +63,7 @@ const Portfolio = () => {
           <PageHeader pageTitle={"Portfolio"} />
           <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
             <PortfolioList
-              title={"My Airspaces"}
+              title={"My Air Rights"}
               selectAirspace={selectAirspace}
               selectedAirspace={selectedAirspace}
               onCloseModal={onCloseModal}
