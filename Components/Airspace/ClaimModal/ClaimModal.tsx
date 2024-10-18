@@ -58,6 +58,7 @@ export const ClaimModal = ({
   const { currentStep } = useTour();
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
   const [isClaimLoading, setIsClaimLoading] = useState<boolean>(false);
+  const [byteSizeError, setByteSizeError] = useState(false);
   useEffect(() => {
     if (endOfDivRef.current && currentStep === 3) {
       const { scrollHeight, clientHeight } = endOfDivRef.current;
@@ -158,6 +159,10 @@ export const ClaimModal = ({
 
 const handleNextButton = async () => {
   if (steps === ClaimAirspaceSteps.UNSELECTED) {
+    if(byteSizeError){
+      toast.error('Name of air right exceeds the character limit. Please use a shorter name!');
+      return;
+    }
     setStepCounter(stepsCounter + 1);
     setSteps(ClaimAirspaceSteps.ZONING_PERMISSION);
     setCurrentMode("Air Rights Settings");  
@@ -191,7 +196,18 @@ const handleNextButton = async () => {
   }
 };
 
-
+const getByteSize = (str) => new Blob([str]).size;
+const handleChangeAirRightName = (e) =>{
+  const value = e.target.value;
+  const byteSize = getByteSize(value);
+  if (byteSize >= 32) {
+    setByteSizeError(true);
+    setData((prev) => ({ ...prev, title: value }))
+  }else{
+    setByteSizeError(false);
+    setData((prev) => ({ ...prev, title: value }))
+  }
+}
   const isClaimAirspace = steps === ClaimAirspaceSteps.UPLOAD_IMAGE;
   return (
     <div>
@@ -273,8 +289,8 @@ const handleNextButton = async () => {
 
                   <input
                     value={data?.title}
-                    onChange={(e) =>
-                      setData((prev) => ({ ...prev, title: e.target.value }))
+                    onChange={
+                      handleChangeAirRightName
                     }
                     className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222] mt-0.5 md:mt-1"
                     style={{ border: "1px solid #87878D" }}
