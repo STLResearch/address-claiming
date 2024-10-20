@@ -159,7 +159,8 @@ export const ClaimModal = ({
 
 const handleNextButton = async () => {
   if (steps === ClaimAirspaceSteps.UNSELECTED) {
-    if(byteSizeError){
+    const byteSize = getByteSize(data?.title);
+    if(byteSize >= 32){
       toast.error('Name of air right exceeds the character limit. Please use a shorter name!');
       return;
     }
@@ -199,14 +200,7 @@ const handleNextButton = async () => {
 const getByteSize = (str) => new Blob([str]).size;
 const handleChangeAirRightName = (e) =>{
   const value = e.target.value;
-  const byteSize = getByteSize(value);
-  if (byteSize >= 32) {
-    setByteSizeError(true);
     setData((prev) => ({ ...prev, title: value }))
-  }else{
-    setByteSizeError(false);
-    setData((prev) => ({ ...prev, title: value }))
-  }
 }
   const isClaimAirspace = steps === ClaimAirspaceSteps.UPLOAD_IMAGE;
   return (
