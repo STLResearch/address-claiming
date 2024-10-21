@@ -29,6 +29,15 @@ interface PropsI {
   selectedAirspace: any;
   requestDocument: RequestDocument[] | undefined;
   setSelectedAirspace: any;
+  createdAt: Date;
+}
+function formatDate(isoDateStr) {
+  const date = new Date(isoDateStr);
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1); 
+  const year = date.getUTCFullYear();
+
+  return `${day}/${month}/${year}`;
 }
 
 const PortfolioItemMobile = ({
@@ -45,6 +54,7 @@ const PortfolioItemMobile = ({
   selectedAirspace,
   requestDocument,
   setSelectedAirspace,
+  createdAt
 }: PropsI) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
@@ -110,9 +120,9 @@ const PortfolioItemMobile = ({
                 {!!tags[0] && (
                   <div
                     onClick={handleOnClaim}
-                    className="w-20 h-8 bg-[#DBDBDB] text-[#222222] text-sm font-normal p-2 cursor-pointer rounded-[3px] flex items-center justify-center"
+                    className="h-[27px] bg-[#DBDBDB] text-[#222222] text-sm font-normal p-2 cursor-pointer rounded-[3px] flex items-center justify-center"
                   >
-                    {type === "land" ? "On Claim" : "On Rent"}
+                    {type === "land" ? `Claim Date: ${formatDate(createdAt)}` : "On Rent"}
                   </div>
                 )}
                 {!!tags[1] && (

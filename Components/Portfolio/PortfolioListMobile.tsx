@@ -179,7 +179,9 @@ const PortfolioListMobile = ({
                     setAirspaceList={setAirspaceList}
                     selectedAirspace={selectedAirspace}
                     requestDocument={airspace?.requestDocument}
-                    setSelectedAirspace={setSelectedAirspace}                   />
+                    setSelectedAirspace={setSelectedAirspace}  
+                    createdAt={airspace.createdAt as Date}       
+                      />
                 ))
               ) : (
                 <AirspacesEmptyMessage />
