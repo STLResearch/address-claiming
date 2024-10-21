@@ -146,11 +146,11 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
             <SidebarItem
               href={"https://sky.trade/waitlist"}
               target="_blank"
-              text={"Buy AirRights"}
+              text={"Buy Air Rights"}
             >
               <MapIcon isActive={false} />
             </SidebarItem>
-            <SidebarItem href={"/rent"} text={"Rent AirRights"}>
+            <SidebarItem href={"/rent"} text={"Rent Air Rights"}>
               <DroneIcon isActive={false} />
             </SidebarItem>
             <SidebarItem

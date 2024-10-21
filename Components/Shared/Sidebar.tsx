@@ -162,7 +162,7 @@ const Sidebar = () => {
           )}
         </div>
         <p
-          className={`${isActive ? "font-semibold text-[#4285F4]" : "font-normal text-[#5D7285]"} text-[11px] tracking-[1%]`}
+          className={`${isActive ? "font-semibold text-[#4285F4]" : "font-normal text-[#5D7285]"} text-[11px] truncate tracking-[1%]`}
         >
           {text}
         </p>
