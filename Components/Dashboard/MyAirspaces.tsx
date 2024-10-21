@@ -25,14 +25,14 @@ const MyAirspaces: FC<MyAirspacesProps> = ({
     <Item
       title={
         <>
-          My Air Right{" "}
+          My Air Rights{" "}
           {!isLoading && (
             <span className="text-[15px] font-normal">({totalAirspace})</span>
           )}
         </>
       }
       icon={<DroneIcon />}
-      linkText={`${!isLoading ? "View all air right" : ""}`}
+      linkText={`${!isLoading ? "View all air rights" : ""}`}
       href={"/portfolio"}
     >
       {isLoading ? (
