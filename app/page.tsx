@@ -228,7 +228,7 @@ export default function Home() {
                   height={24}
                   className=""
                 />
-                <p className="text-[#595959] mx-auto">Connect with Google</p>
+                <p className="text-[#595959] mx-auto text-[15px]">Connect with Google</p>
               </button>
               <p className="text-center text-sm text-[#87878D]">
                 By creating an account I agree with{" "}
