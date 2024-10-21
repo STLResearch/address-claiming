@@ -181,7 +181,7 @@ const Sidebar = () => {
   return (
     <div className={"relative !z-[200] sm:z-20"}>
       <aside
-        className="md:flex overflow-y-scroll no-scrollbar hidden relative border-e-2 bg-white px-[21.95px] py-[29.27px] items-center flex-col gap-[14.64px]"
+        className="md:flex overflow-y-scroll no-scrollbar hidden relative border-e-2 bg-white px-[21.95px] py-[29px] items-center flex-col gap-[14px]"
         style={{
           width: !isCollapsed ? "297.29px" : "98.2833px",
           height: "100vh",
@@ -194,7 +194,7 @@ const Sidebar = () => {
             alt="Company's logo"
             width={isCollapsed ? 44.62 : 0}
             height={isCollapsed ? 51 : 0}
-            className={`${isCollapsed ? "opacity-100 mb-[29.27px] w-[44.62px] h-[51px]" : "opacity-0 mb-0 w-0 h-0"}`}
+            className={`${isCollapsed ? "opacity-100 mb-[29.27px]" : "opacity-0 mb-0 w-0 h-0"}`}
             style={{ transition: "all 0.3s ease" }}
           />
         </Link>
@@ -204,7 +204,7 @@ const Sidebar = () => {
             alt="Company's logo"
             width={isCollapsed ? 0 : 147}
             height={isCollapsed ? 0 : 58}
-            className={`${isCollapsed ? "opacity-0 mb-0 w-0 h-0" : "opacity-100 mt-[-14.64px] mb-[29.27px] w-52 h-16 flex justify-center items-center"}`}
+            className={`${isCollapsed ? "opacity-0 mb-0 w-0 h-0" : "opacity-100 mt-[-14.64px] mb-[29.27px] flex justify-center items-center"}`}
             style={{ transition: "all 0.3s ease" }}
           />
         </Link>
