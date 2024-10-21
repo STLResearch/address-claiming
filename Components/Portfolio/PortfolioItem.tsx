@@ -28,15 +28,14 @@ interface PropsI {
   onCloseModal: () => void;
   setAirspaceList: React.Dispatch<React.SetStateAction<PropertyData[]>>;
   selectedAirspace: any;
-  createdAt: Date
+  createdAt: Date;
 }
 
 function formatDate(isoDateStr) {
   const date = new Date(isoDateStr);
-  const day = String(date.getUTCDate()).padStart(2, '0');   // Day (with leading zero if needed)
-  const month = String(date.getUTCMonth() + 1);             // Month (0-indexed, so +1)
-  const year = date.getUTCFullYear();                       // Year
-
+  const day = String(date.getUTCDate()).padStart(2, '0'); 
+  const month = String(date.getUTCMonth() + 1);
+  const year = date.getUTCFullYear();
   return `${day}/${month}/${year}`;
 }
 
