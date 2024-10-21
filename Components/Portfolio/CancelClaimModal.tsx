@@ -13,6 +13,7 @@ import { PropertyData, StatusTypes } from "@/types";
 import PropertiesService from "@/services/PropertiesService";
 import { fetchMapboxStaticImage } from "@/utils/getMapboxStaticImage";
 import Backdrop from "../Backdrop";
+import LoadingButton from "../LoadingButton/LoadingButton";
 
 interface ModalProps {
   airspace: PropertyData;
@@ -31,10 +32,14 @@ const CancelClaimModal = ({
 
   const [inputValue, setInputValue] = useState(airspace?.address);
   const { unclaimProperty } = PropertiesService();
+  const [loading, setLoading] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   const handleCancelBtn = () => {
     setSelectedAirspace(null);
     setShowCancelModal(false);
+    setLoading(true);
+    setIsActive(true);
   };
   const handleUnclaim = async () => {
     await unclaimProperty(airspace?.id as number);
@@ -43,6 +48,8 @@ const CancelClaimModal = ({
     });
     setSelectedAirspace(null);
     setShowCancelModal(false);
+    setLoading(true);
+    setIsActive(false);
   };
 
   useEffect(() => {
@@ -101,20 +108,24 @@ const CancelClaimModal = ({
             className="w-[631px] h-[130px] object-cover "
           />
         </div>
-        <div className="flex gap-[20px] md:mt-[15px] mt-auto -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 py-[16px] md:py-0">
-          <button
+        <div className="flex flex-col md:flex-row gap-[20px] md:mt-[15px] mt-auto -mx-[10px] md:mx-0 md:mb-0 -mb-[20px] px-[10px] md:px-0 py-[12px] md:py-0">
+          <LoadingButton
             onClick={handleCancelBtn}
-            className="text-[11.89px] flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center border border-[#0653EA] hover:bg-[#0653EA] hover:text-white"
+            isLoading={loading}
+            color=""
+            className={`text-[11.89px] w-full md:flex-1 rounded-[5px] ${isActive ? "bg-[#0653EA] text-white" : "bg-white text-[#0653EA]"} text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center border border-[#0653EA] ${isActive ? "hover:bg-white hover:text-[#0653EA]" : "hover:bg-[#0653EA] hover:text-white"}`}
           >
             No, I want to keep my claim
-          </button>
+          </LoadingButton>
 
-          <button
+          <LoadingButton
             onClick={handleUnclaim}
-            className="text-[11.89px] flex-1 text-[#0653EA] rounded-[5px] bg-white text-center px-[10px] cursor-pointer flex items-center justify-center border border-[#0653EA] hover:bg-[#0653EA] hover:text-white"
+            isLoading={loading}
+            color=""
+            className={`text-[11.89px] w-full md:flex-1 rounded-[5px] ${isActive ? "bg-white text-[#0653EA]" : "bg-[#0653EA] text-white"} text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center border border-[#0653EA] ${isActive ? "hover:bg-[#0653EA] hover:text-white" : "hover:bg-[#0653EA] hover:text-white"}`}
           >
             Yes, I confirm I want to cancel my claim
-          </button>
+          </LoadingButton>
         </div>
       </div>
     </Fragment>
