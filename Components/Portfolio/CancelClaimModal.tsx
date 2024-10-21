@@ -33,11 +33,13 @@ const CancelClaimModal = ({
   const [inputValue, setInputValue] = useState(airspace?.address);
   const { unclaimProperty } = PropertiesService();
   const [loading, setLoading] = useState(false);
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   const handleCancelBtn = () => {
     setSelectedAirspace(null);
     setShowCancelModal(false);
     setLoading(true);
+    setIsButtonClicked(true);
   };
   const handleUnclaim = async () => {
     await unclaimProperty(airspace?.id as number);
@@ -47,6 +49,7 @@ const CancelClaimModal = ({
     setSelectedAirspace(null);
     setShowCancelModal(false);
     setLoading(true);
+    setIsButtonClicked(false);
   };
 
   useEffect(() => {
@@ -110,7 +113,7 @@ const CancelClaimModal = ({
             onClick={handleCancelBtn}
             isLoading={loading}
             color=""
-            className="text-[11.89px] w-full md:flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center border border-[#0653EA] hover:bg-[#0653EA] hover:text-white"
+            className={`text-[11.89px] w-full md:flex-1 rounded-[5px] ${isButtonClicked ? "bg-[#0653EA] text-white" : "bg-white text-[#0653EA]"} text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center border border-[#0653EA] ${isButtonClicked ? "hover:bg-white hover:text-[#0653EA]" : "hover:bg-[#0653EA] hover:text-white"}`}
           >
             No, I want to keep my claim
           </LoadingButton>
@@ -119,7 +122,7 @@ const CancelClaimModal = ({
             onClick={handleUnclaim}
             isLoading={loading}
             color=""
-            className="text-[11.89px] w-full md:flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center border border-[#0653EA] hover:bg-[#0653EA] hover:text-white"
+            className={`text-[11.89px] w-full md:flex-1 rounded-[5px] ${isButtonClicked ? "bg-white text-[#0653EA]" : "bg-[#0653EA] text-white"} text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center border border-[#0653EA] ${isButtonClicked ? "hover:bg-[#0653EA] hover:text-white" : "hover:bg-[#0653EA] hover:text-white"}`}
           >
             Yes, I confirm I want to cancel my claim
           </LoadingButton>
