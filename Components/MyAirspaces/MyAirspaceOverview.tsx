@@ -126,7 +126,7 @@ const MyAirspaceOverview = (props) => {
             className="mx-auto my-6 rounded p-2.5"
           >
             <h3 className="text-brown text-sm font-bold">
-              AirSpace Owner Detail
+            Air Rights Owner Detail
             </h3>
             <p
               className="mt-2 text-xs"
@@ -148,7 +148,7 @@ const MyAirspaceOverview = (props) => {
             style={{ width: "299px", border: "1px solid blue" }}
             className="mx-auto my-6 rounded p-2.5"
           >
-            <h3 className="text-brown text-sm font-bold">AirSpace Details</h3>
+            <h3 className="text-brown text-sm font-bold">Air Rights Details</h3>
             <p className="mt-2 text-sm text-light-brown">
               <span className="font-bold">Addreess: </span>
               {props.address}

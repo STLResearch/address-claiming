@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Portfolio",
-  description: "Manage your Airspaces, Bids and Offers",
+  description: "Manage your Air Rights, Bids and Offers",
 };
 
 export default function PortfolioLayout({

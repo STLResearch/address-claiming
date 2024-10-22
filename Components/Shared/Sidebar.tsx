@@ -157,7 +157,7 @@ const Sidebar = () => {
           )}
         </div>
         <p
-          className={`${isActive ? "font-semibold text-[#4285F4]" : "font-normal text-[#5D7285]"} text-[11px] tracking-[1%]`}
+          className={`${isActive ? "font-semibold text-[#4285F4]" : "font-normal text-[#5D7285]"} truncate text-[11px] tracking-[1%]`}
         >
           {text}
         </p>
@@ -207,7 +207,7 @@ const Sidebar = () => {
         <SidebarItem href={"/dashboard"} text={"Dashboard"}>
           <DashboardIcon isActive={false} />
         </SidebarItem>
-        <SidebarItem href={"/airspaces"} text={"Airspaces"}>
+        <SidebarItem href={"/airspaces"} text={"Air Rights"}>
           <EarthIconsidebar isActive={false} />
         </SidebarItem>
         <SidebarItem href={"/points"} text={"Points Program"}>
@@ -220,7 +220,7 @@ const Sidebar = () => {
         <SidebarItem href={"/buy"} text={"Buy Airspace"}>
           <MapIcon isActive={false} />
         </SidebarItem>
-        <SidebarItem href={"/rent"} text={"Rent Airspace"}>
+        <SidebarItem href={"/rent"} text={"Rent Air Rights"}>
           <DroneIconsidebar isActive={false} />
         </SidebarItem>
         <SidebarItem href={"/portfolio"} text={"Portfolio"} numberOfUnseenNotifications={0}>

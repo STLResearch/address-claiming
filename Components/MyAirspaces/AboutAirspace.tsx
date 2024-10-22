@@ -20,7 +20,7 @@ const AboutMyAirspace = (props) => {
               />
             </svg>
           </button>
-          <h2 className="font-bold">AirSpace Title</h2>
+          <h2 className="font-bold">Air Rights Title</h2>
         </div>
         <button onClick={props.closeDetails}>
           <svg

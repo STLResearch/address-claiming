@@ -8,6 +8,8 @@ import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { PropertyData, StatusTypes } from "@/types";
+import { Pagination } from "antd";
+import { HistoryArrowIcon } from "../Icons";
 
 interface PropsI {
   selectAirspace: (data: PropertyData) => void;
@@ -48,6 +50,29 @@ const PortfolioListMobile = ({
     setAirspaceList,
     refetchAirspaceRef,
   } = usePortfolioList();
+  const customItemRender = (current, type, originalElement) => {
+    if (airspaceList.length <= 10) return;
+    if (type === "next") {
+      return (
+        <button className="flex items-center gap-4 text-gray-700">
+          next
+          <HistoryArrowIcon />
+        </button>
+      );
+    }
+    if (type === "page") {
+      return (
+        <button
+          className={`${
+            current === originalElement.props.children ? "bg-[#5D7285] text-white" : "text-gray-700"
+          } rounded-full px-4 py-1`}
+        >
+          {originalElement.props.children}
+        </button>
+      );
+    }
+    return originalElement;
+  };
   return (
     <div className="mb-24 overflow-x-hidden">
       <div
@@ -58,19 +83,19 @@ const PortfolioListMobile = ({
           className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-6 py-2.5 text-base font-bold transition delay-75 ease-linear`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.VERIFIED)}
         >
-          Verified Airspaces
+          Verified Air Rights
         </div>
         <div
           className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-6 py-2.5 text-base font-bold transition delay-75 ease-linear`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
         >
-          Rented Airspaces
+          Rented Air Rights
         </div>
         <div
           className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-6 py-2.5 text-base font-bold transition delay-75 ease-linear`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
         >
-          Pending Rented Airspaces
+          Pending Rented Air Rights
         </div>
         <div
           className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} flex cursor-pointer whitespace-nowrap px-6 py-2.5 text-base font-bold transition delay-75 ease-linear`}
@@ -89,7 +114,7 @@ const PortfolioListMobile = ({
           className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-6 py-2.5 text-base font-bold transition delay-75 ease-linear`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
         >
-          Rejected Airspaces
+          Rejected Air Rights
         </div>
       </div>
       {loading ?
@@ -104,15 +129,15 @@ const PortfolioListMobile = ({
                 className="flex w-full gap-[15px] rounded-[30px] bg-white"
                 style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
               >
-                <div className="flex flex-col items-center justify-center gap-4 p-6 md:w-[50%] md:gap-6">
-                  <h1 className="text-center text-xl font-medium text-[#222222]">🚀 Attention Airspace Owner!</h1>
+                <div className="flex w-full flex-col items-center justify-center gap-4 p-6 md:gap-6">
+                  <h1 className="text-center text-xl font-medium text-[#222222]">🚀 Attention Air Right Owner!</h1>
                   <h1 className="block text-xl font-medium text-[#222222] md:hidden">Account verification</h1>
                   <p className="text-center text-sm font-normal leading-6 text-[#838187]">
-                    Your airspace awaits verification by our operation team. Your account is not verified. We verify the
-                    identity of our customers to assess potential risks, prevent fraud, and comply with legal and
+                    Your air rights awaits verification by our operation team. Your account is not verified. We verify
+                    the identity of our customers to assess potential risks, prevent fraud, and comply with legal and
                     regulatory requirements. Complete your KYC to expedite the process and ensure swift approval. Plus,
                     <span className="text-sm font-bold text-[#87878D]"> earn 10 SKY points </span> as a token of our
-                    appreciation! Don&apos;t delay - verify now and unlock the full potential of your airspace!
+                    appreciation! Don&apos;t delay - verify now and unlock the full potential of your air rights!
                   </p>
 
                   <button
@@ -121,13 +146,6 @@ const PortfolioListMobile = ({
                   >
                     Verify my identity Now
                   </button>
-                </div>
-                <div className="w-[50%]">
-                  <img
-                    src="/images/portfolio.png"
-                    alt="Verification Image"
-                    className="h-full w-full rounded-r-[30px] object-cover"
-                  />
                 </div>
               </div>
             )}
@@ -146,31 +164,15 @@ const PortfolioListMobile = ({
                   onCloseModal={onCloseModal}
                   setAirspaceList={setAirspaceList}
                   selectedAirspace={selectedAirspace}
-                  //@ts-ignore
                   requestDocument={airspace?.requestDocument}
                   setSelectedAirspace={setSelectedAirspace}
+                  createdAt={airspace.createdAt as Date}
                 />
               ))
             : <AirspacesEmptyMessage />}
           </div>
           <div className="flex w-full flex-col text-gray-600">
-            <div className="flex w-[5rem] items-center gap-2 self-end">
-              <button
-                onClick={handlePrevPage}
-                disabled={pageNumber === 1}
-                className={`${pageNumber === 1 ? "cursor-not-allowed" : "cursor-pointer"} rounded-lg border border-gray-200 p-1`}
-              >
-                <RxCaretLeft />
-              </button>
-              <div>{pageNumber}</div>
-              <button
-                onClick={handleNextPage}
-                disabled={airspaceList?.length < 9}
-                className={`${airspaceList?.length < 9 ? "cursor-not-allowed" : "cursor-pointer"} rounded-lg border border-gray-200 p-1`}
-              >
-                <RxCaretRight />
-              </button>
-            </div>
+            <Pagination align="center" defaultCurrent={1} itemRender={customItemRender} />
           </div>
         </div>
       }

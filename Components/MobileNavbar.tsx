@@ -117,21 +117,18 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
   }, [divRef]);
 
   return (
-    <div className=" w-full h-[70%] !z-[200]">
-      <div ref={divRef} className=" w-full h-[70%] fixed bottom-0">
-        <div className=" w-full h-full bg-white rounded-t-3xl overflow-y-scroll">
-          <div
-            onClick={() => setShowMobileNavbar(false)}
-            className="flex flex-col justify-center items-center gap-4"
-          >
-            <p className="mt-4 border-4 border-dark-grey w-[20%] rounded-md"></p>
-            <p className="font-medium text-xl">Menu</p>
+    <div className="!z-[200] h-[70%] w-full">
+      <div ref={divRef} className="fixed bottom-0 h-[70%] w-full">
+        <div className="h-full w-full overflow-y-scroll rounded-t-3xl bg-white">
+          <div onClick={() => setShowMobileNavbar(false)} className="flex flex-col items-center justify-center gap-4">
+            <p className="mt-4 w-[20%] rounded-md border-4 border-dark-grey"></p>
+            <p className="text-xl font-medium">Menu</p>
           </div>
           <div className="mt-4 flex flex-col gap-4 bg-white px-6 text-lg">
             <SidebarItem href={"/dashboard"} text={"Dashboard"}>
               <DashboardIcon isActive={false} />
             </SidebarItem>
-            <SidebarItem href={"/airspaces"} text={"Airspaces"}>
+            <SidebarItem href={"/airspaces"} text={"Air Rights"}>
               <EarthIconsidebar isActive={false} />
             </SidebarItem>
             <SidebarItem href={"/points"} text={"Points Program"}>
@@ -139,10 +136,10 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
             </SidebarItem>
             <div className="h-[1px] w-full bg-[#00000012]" />
             <p className="self-start px-[14.64px] font-normal tracking-[1%] text-[#5D7285]">MARKETPLACE</p>
-            <SidebarItem href={"/buy"} text={"Buy Airspace"}>
+            <SidebarItem href={"https://sky.trade/waitlist"} target="_blank" text={"Buy Air Rights"}>
               <MapIcon isActive={false} />
             </SidebarItem>
-            <SidebarItem href={"/rent"} text={"Rent Airspace"}>
+            <SidebarItem href={"/rent"} text={"Rent Air Rights"}>
               <DroneIcon isActive={false} />
             </SidebarItem>
             <SidebarItem href={"/portfolio"} text={"Portfolio"} numberOfUnseenNotifications={0}>
@@ -151,15 +148,11 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
             <SidebarItem href={"/funds"} text={"Funds"}>
               <WalletIcon isActive={false} />
             </SidebarItem>
-            <div className="bg-[#00000012] w-full h-[1px]" />
-            <SidebarItem  href={"/my-account"} text={"Account"}>
+            <div className="h-[1px] w-full bg-[#00000012]" />
+            <SidebarItem href={"/my-account"} text={"Account"}>
               <UserIcon />
             </SidebarItem>
-            <SidebarItem
-              href={"https://skytrade.tawk.help"}
-              target="_blank"
-              text={"Help Center"}
-            >
+            <SidebarItem href={"https://skytrade.tawk.help"} target="_blank" text={"Help Center"}>
               <HelpQuestionIcon isActive={false} color={undefined} />
             </SidebarItem>
             {user?.blockchainAddress && (

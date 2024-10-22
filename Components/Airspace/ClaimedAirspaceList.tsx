@@ -22,7 +22,7 @@ const MyMobileAirspacesPage = ({
             <ArrowLeftIcon />
           </div>
           <h1 className="text-2xl font-bold text-center flex-grow">
-            My Airspaces
+            My Air Rights
           </h1>
         </div>
 
@@ -37,7 +37,7 @@ const MyMobileAirspacesPage = ({
             onClick={() => setShowAirspacePage(false)}
             className="bg-[#0653EA] text-white p-3 rounded-lg w-[90%] mt-[6rem]"
           >
-            Claim Airspace
+            Claim Air Rights
           </button>
         </div>
       </div>

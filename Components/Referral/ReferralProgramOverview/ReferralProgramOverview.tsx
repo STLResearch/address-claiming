@@ -23,7 +23,7 @@ const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
         </p>
         <p className="text-[#87878D] text-[15px] font-normal">
           Invite your friends and neighbours to SkyTrade. If they register and
-          claim airspaces, you receive:
+          claim Air Rights, you receive:
         </p>
         <div className="text-[#4285F4] text-[15px] font-normal">
           <ul className="list-disc pl-5">
@@ -60,7 +60,7 @@ const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
           icon={<EarthIcon />}
           title={"Register & Claim"}
           text={
-            "Let them register and claim their airspaces using your referral link or code"
+            "Let them register and claim their air rights using your referral link or code"
           }
         />
         <HorizontalSeparatorLine />

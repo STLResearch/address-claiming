@@ -13,7 +13,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle }) => {
   const { isMobile } = useMobile();
 
   return (
-    <div className=" w-full z-30 flex flex-col">
+    <div className=" w-full z-30 h-[91px] flex flex-col">
       <div
         className="flex items-center justify-between py-[25.5px] md:pb-[23px] md:pt-[32px] md:pl-[39.71px] md:pr-[41px] text-[#222222] bg-white"
         style={

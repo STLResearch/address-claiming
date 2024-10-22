@@ -65,18 +65,18 @@ const Marketplace = () => {
               SkyMarket Hub
             </div>
             <p className="mx-[15px] mb-[27px] mt-[23px] text-center text-[15px] font-normal text-[#222222]">
-              Explore and Own Low-Altitude Airspaces, Your Gateway to Aerial Freedom.
+              Explore and Own Low-Altitude Air Rights, Your Gateway to Aerial Freedom.
             </p>
             <div className="flex h-full w-full flex-wrap gap-[11px]">
               <Item
-                title={"Buy Airspace"}
+                title={"Buy Air Rights"}
                 imageUrl={"/images/buy.jpg"}
                 link={"/buy"}
                 style={"bg-right"}
                 text={undefined}
               />
               <Item
-                title={"Rent Airspace"}
+                title={"Rent Air Rights"}
                 imageUrl={"/images/rent-airspace.jpg"}
                 link={"/rent"}
                 text={undefined}

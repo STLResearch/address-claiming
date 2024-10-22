@@ -123,7 +123,7 @@ export default function Home() {
                 points!
               </p>
               <p className="font-normal text-[16px] text-[#222222] text-center">
-                Claim Your Airspace and Start Earning Passive Income! 🚀
+                Claim Your Air Rights and Start Earning Passive Income! 🚀
               </p>
               <div className="text-[15px] text-light-grey font-normal my-[30px]">
                 <p>
@@ -228,7 +228,7 @@ export default function Home() {
                   height={24}
                   className=""
                 />
-                <p className="text-[#595959] mx-auto">Connect with Google</p>
+                <p className="text-[#595959] mx-auto text-[15px]">Connect with Google</p>
               </button>
               <p className="text-center text-sm text-[#87878D]">
                 By creating an account I agree with{" "}
