@@ -42,7 +42,7 @@ const RentSearchMobile: React.FC<RentSearchMobileProps> = ({
             <MagnifyingGlassIcon />
           </div>
         </div>
-        <div onClick={() => setIsFilterOpen(!isFilterOpen)} className="text-gray-300 cursor-not-allowed">
+        <div onClick={() => setIsFilterOpen(!isFilterOpen)} className="cursor-not-allowed text-gray-300">
           <GiSettingsKnobs />
         </div>
       </div>

@@ -166,14 +166,13 @@ const RentPreview: React.FC<RentPreviewProps> = ({
   const formattedTimeEnd = date.add(30, "minute").format("H:mm");
   const formattedTime = `${formattedTimeStart} - ${formattedTimeEnd}`;
 
-  const images = rentData?.images || []
+  const images = rentData?.images || [];
   let displayImages;
-  if(rentData){
+  if (rentData) {
     const imageUrl = getMapboxStaticImage(rentData.latitude, rentData.longitude);
-    if(rentData?.orderPhotoforGeneratedMap){
+    if (rentData?.orderPhotoforGeneratedMap) {
       displayImages = [...(images || []), imageUrl];
-    }
-    else{
+    } else {
       displayImages = [imageUrl, ...(images || [])];
     }
   }

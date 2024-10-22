@@ -1,0 +1,47 @@
+/* MarkerPopup.css */
+
+.marker-popup-hovered-class .mapboxgl-popup-close-button {
+  position: absolute;
+  top: 9px;
+  right: 11px;
+  font-size: x-large;
+}
+
+.marker-popup-hovered-class .mapboxgl-popup {
+  position: relative;
+  background-color: #ffffff !important;
+}
+
+.marker-popup-hovered-class .mapboxgl-popup-content {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 400 !important;
+  padding: 0px !important;
+  cursor: pointer;
+  width: 266px;
+}
+
+.marker-popup-hovered-class .mapboxgl-popup-tip {
+  display: none !important;
+}
+
+.marker-popup-hovered-class .mapboxgl-popup-content div {
+  margin: 0px !important;
+}
+
+.marker-popup-hovered-class .mapboxgl-popup-anchor-top > .mapboxgl-popup-content {
+  margin-top: 15px;
+  display: none;
+}
+
+.marker-popup-hovered-class .mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
+  display: none;
+}
+
+/* Mobile specific styles */
+.marker-popup-hovered-class.mobile .mapboxgl-popup-close-button {
+  display: block;
+}
+
+.marker-popup-hovered-class.mobile .mapboxgl-popup-content {
+  width: 321px;
+}

@@ -40,26 +40,21 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
     setRentData(item);
     setShowRentDetail(true);
   };
-  const columnCount = 2; 
+  const columnCount = 2;
 
   const rowCount = Math.ceil(registeredAddress.length / columnCount);
-  const getColumnWidth = () => 230; 
-  const getRowHeight = () => 250; 
+  const getColumnWidth = () => 230;
+  const getRowHeight = () => 250;
 
   const Cell = ({ columnIndex, rowIndex, style }) => {
     const itemIndex = rowIndex * columnCount + columnIndex;
     if (itemIndex >= registeredAddress.length) {
-      return null; 
+      return null;
     }
     const item = registeredAddress[itemIndex];
     return (
       <div style={style} className="p-2">
-        <RentCard
-          onClickRent={() => onClickRent(item)}
-          price={item.price}
-          title={item.title}
-          item={item}
-        />
+        <RentCard onClickRent={() => onClickRent(item)} price={item.price} title={item.title} item={item} />
       </div>
     );
   };
@@ -67,29 +62,27 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
   return (
     <div className="w-full">
       {loadingReg && (
-        <div className="mt-2 w-full flex justify-center">
+        <div className="mt-2 flex w-full justify-center">
           <BalanceLoader />
         </div>
       )}
-      {
-        ((!registeredAddress) || (registeredAddress && registeredAddress?.length === 0) && !loadingReg) &&
-        <div className="mt-2 w-full flex justify-center">no air rights for rent</div>
-        
-      }
+      {(!registeredAddress || (registeredAddress && registeredAddress?.length === 0 && !loadingReg)) && (
+        <div className="mt-2 flex w-full justify-center">no air rights for rent</div>
+      )}
 
       {regAdressShow && (
         <div
           ref={divRef}
           style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-          className="w-full mt-2 bg-white h-[480px]"
+          className="mt-2 h-[480px] w-full bg-white"
         >
           <Grid
             columnCount={columnCount}
             columnWidth={getColumnWidth}
-            height={440} 
+            height={440}
             rowCount={rowCount}
-            rowHeight={getRowHeight} 
-            width={470} 
+            rowHeight={getRowHeight}
+            width={470}
           >
             {Cell}
           </Grid>

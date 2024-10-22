@@ -1,5 +1,5 @@
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
-import { CategoryI, User, UserUSDWalletBalanceI } from "@/types";
+import { CategoryI, PropertyData, User, UserUSDWalletBalanceI } from "@/types";
 import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 
 interface UserState {
@@ -11,6 +11,17 @@ interface UserState {
   isWaitingScreenVisible: boolean;
   userUSDWalletBalance: UserUSDWalletBalanceI;
   activePortfolioTab: PortfolioTabEnum;
+  isTriggerRefresh: boolean;
+  userSolBalance: number,
+  activeFilters: number;
+  isCreateAuctionModalOpen: boolean;
+  airspaceList: PropertyData[];
+  selectedproperty: PropertyData[];
+  priceRange: number[];
+  endDate: string | null;
+  minSalePrice: number | null;
+  assetId: string;
+
 }
 
 const initialState: UserState = {
@@ -22,6 +33,16 @@ const initialState: UserState = {
   isWaitingScreenVisible: false,
   userUSDWalletBalance: { amount: "0", isLoading: true },
   activePortfolioTab: PortfolioTabEnum.VERIFIED,
+  isTriggerRefresh: false,
+  userSolBalance:0,
+  activeFilters: 0,
+  isCreateAuctionModalOpen: false,
+  airspaceList: [],
+  selectedproperty: [],
+  priceRange: [0, 0],
+  endDate: null,
+  minSalePrice: null,
+  assetId: "",
 };
 
 const userSlice: Slice<UserState> = createSlice({
@@ -57,6 +78,39 @@ const userSlice: Slice<UserState> = createSlice({
     setActivePortfolioTab: (state, action: PayloadAction<PortfolioTabEnum>) => {
       state.activePortfolioTab = action.payload;
     },
+    setIsTriggerRefresh: (state, action: PayloadAction<boolean>) => {
+      state.isTriggerRefresh = action.payload;
+    },
+    setUserSolBalance: (state, action: PayloadAction<number>) => {
+      state.userSolBalance = action.payload;
+    },
+    setEndDate: (state, action: PayloadAction<string | null>) => {
+      state.endDate = action.payload;
+    },
+    setMinSalePrice: (state, action: PayloadAction<number>) => {
+      state.minSalePrice = action.payload;
+    },
+    setAssetId: (state, action: PayloadAction<string>) => {
+      state.assetId = action.payload;
+    },
+
+    setPriceRange: (state, action: PayloadAction<number[]>) => {
+      state.priceRange = action.payload;
+    },
+    setActiveFilters: (state, action: PayloadAction<number>) => {
+      state.activeFilters = action.payload;
+    },
+
+    setIsCreateAuctionModalOpen: (state, action: PayloadAction<boolean>) => {
+      state.isCreateAuctionModalOpen = action.payload;
+    },
+
+    setAirspaceList: (state, action: PayloadAction<PropertyData[]>) => {
+      state.airspaceList = action.payload;
+    },
+    setSelectedproperty: (state, action: PayloadAction<PropertyData[]>) => {
+      state.selectedproperty = action.payload;
+    },
   },
 });
 
@@ -69,5 +123,15 @@ export const {
   setUser,
   setUserUSDWalletBalance,
   setActivePortfolioTab,
+  setIsTriggerRefresh,
+  setUserSolBalance,
+  setActiveFilters,
+  setIsCreateAuctionModalOpen,
+  setAirspaceList,
+  setSelectedproperty,
+  setPriceRange,
+  setEndDate,
+  setMinSalePrice,
+  setAssetId,
 } = userSlice.actions;
 export default userSlice.reducer;
