@@ -370,7 +370,7 @@ const Modal = ({ airspace, onCloseModal, isOffer, pageNumber = 0 }: ModalProps) 
             </div>
           )}
           <div>
-            <UploadVerifiedDocuments requestDocument={airspace.ßrequestDocument} />
+            <UploadVerifiedDocuments requestDocument={airspace?.requestDocument || []} />
           </div>
 
           {isOffer ?
