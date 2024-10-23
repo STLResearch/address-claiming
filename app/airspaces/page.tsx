@@ -1,4 +1,3 @@
-/* eslint-disable complexity */
 "use client";
 
 import useAuth from "../../hooks/useAuth";
@@ -43,6 +42,7 @@ import AirspaceRentalService from "@/services/AirspaceRentalService";
 import AirRightsEstimateService from "@/services/AirRightsEstimateService";
 import { createAirRightEstimateMarker } from "@/utils/maputils";
 import UserService from "@/services/UserService";
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
 interface Address {
   id: string;
@@ -761,17 +761,17 @@ const Airspaces: React.FC = () => {
 
                     {((isMobile && showMobileMap) ||
                       (isOpen && currentStep === 2 && isMobile)) && (
-                      <div
+                      <LoadingButton
                         onClick={() => {
                           setShowClaimModal(true);
                           setIsLoading(true);
                           handleSelectAddress(addresses[0].place_name, false);
                         }}
-                        className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
-                        style={{ maxWidth: "400px" }}
-                      >
-                        Claim Air Right
-                      </div>
+                        isLoading={false}
+                        color={""}
+                        className="max-w-[400px] mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer">
+                        Claim Air Rights
+                      </LoadingButton>
                     )}
                   </div>
                 </div>
