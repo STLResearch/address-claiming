@@ -110,29 +110,29 @@ const PortfolioList = ({
         className="flex min-w-[516px] flex-1 flex-col gap-[43px] rounded-[30px] bg-white px-[29px] py-[43px]"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
       >
-        <h2 className="text-center text-xl font-medium text-[#222222]">{title}</h2>
-        <div className="flex items-center gap-2">
+        <h2 className="text-center text-xl font-medium text-[#222222]">My Air Rights</h2>
+        <div className="flex w-full items-center justify-between gap-2 overflow-x-auto">
           <div
-            className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-8 py-2 transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-4 py-2 transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.VERIFIED)}
           >
-            Verified Air Rights
+            Verified
           </div>
           <div
-            className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-8 py-2 transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-4 py-2 transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
           >
-            Rented Air Rights
+            Rented
           </div>
           <div className="flex gap-10">
             <div
-              className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+              className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-4 py-2 text-base font-bold transition delay-75 ease-linear`}
               onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
             >
-              Pending Rented Air Rights
+              Pending Rented
             </div>
             <div
-              className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+              className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-4 py-2 text-base font-bold transition delay-75 ease-linear`}
               onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
             >
               Pending Verification
@@ -140,17 +140,17 @@ const PortfolioList = ({
           </div>
 
           <div
-            className={`${activeTab === PortfolioTabEnum.BIDS ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-8 py-2 transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.BIDS ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-4 py-2 transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.BIDS)}
           >
             Bids and Offers
           </div>
 
           <div
-            className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-8 py-2 transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4 border-[#6CA1F7]" : ""} cursor-pointer whitespace-nowrap px-4 py-2 transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
           >
-            Rejected Air Rights
+            Rejected
           </div>
         </div>
         {loading ?

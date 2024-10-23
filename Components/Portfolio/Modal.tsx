@@ -19,6 +19,7 @@ import Accordion from "../Buy/BidDetail/Accordion";
 import CustomTable from "../Buy/BidDetail/CustomTable";
 import Spinner from "../Spinner";
 import Image from "next/image";
+import { IoCloseSharp } from "react-icons/io5";
 
 interface ModalProps {
   airspace: any;
@@ -206,6 +207,7 @@ const Modal = ({ airspace, onCloseModal, isOffer, pageNumber = 0 }: ModalProps) 
 
   return (
     <Fragment>
+      <div className="fixed inset-0 z-40 bg-black opacity-50"></div>
       {airspace.type === "placedBid" || airspace.type === "receivedBid" ?
         <div className="fixed left-1/2 top-1/2 z-[500] flex h-full w-full -translate-x-1/2 -translate-y-1/2 flex-col gap-[15px] bg-white px-[29px] py-[30px] md:z-50 md:h-auto md:w-[689px] md:rounded-[30px]">
           <div
@@ -224,7 +226,7 @@ const Modal = ({ airspace, onCloseModal, isOffer, pageNumber = 0 }: ModalProps) 
               onClick={onCloseModal}
               className="absolute right-0 top-0 ml-auto hidden h-[15px] w-[15px] cursor-pointer md:block"
             >
-              <CloseIcon />
+              <IoCloseSharp className="h-4 w-4 text-black" />
             </div>
           </div>
 
@@ -341,7 +343,7 @@ const Modal = ({ airspace, onCloseModal, isOffer, pageNumber = 0 }: ModalProps) 
               onClick={onCloseModal}
               className="absolute right-0 top-0 ml-auto hidden h-[15px] w-[15px] cursor-pointer md:block"
             >
-              <CloseIcon />
+              <IoCloseSharp className="h-4 w-4 text-black" />
             </div>
           </div>
 
