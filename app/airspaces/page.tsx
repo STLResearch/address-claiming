@@ -342,7 +342,11 @@ const Airspaces: React.FC = () => {
   }, [flyToAddress, map]);
   useEffect(() => {
     const handlePin = async () => {
-      if (map && coordinates?.latitude !== "" && coordinates?.longitude !== "") {
+      if (
+        map &&
+        coordinates?.latitude !== "" &&
+        coordinates?.longitude !== ""
+      ) {
         const temp: mapboxgl.LngLatLike = {
           lng: Number(coordinates.longitude),
           lat: Number(coordinates?.latitude),
@@ -357,11 +361,14 @@ const Airspaces: React.FC = () => {
         })
           .setLngLat(temp)
           .addTo(map as mapboxgl.Map);
-        newMarker.on('dragend',  async () => {
+        newMarker.on("dragend", async () => {
           const lngLat = newMarker.getLngLat();
           const newLongitude = lngLat.lng;
           const newLatitude = lngLat.lat;
-          setCoordinates({longitude: newLongitude.toString(), latitude: newLatitude.toString()});
+          setCoordinates({
+            longitude: newLongitude.toString(),
+            latitude: newLatitude.toString(),
+          });
           const response = await fetch(
             `https://api.mapbox.com/geocoding/v5/mapbox.places/${newLongitude.toString()},${newLatitude.toString()}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`,
           );
@@ -375,8 +382,8 @@ const Airspaces: React.FC = () => {
         });
         setMarker(newMarker);
       }
-    }
-    handlePin()
+    };
+    handlePin();
   }, [map, coordinates.latitude, coordinates.longitude]);
 
   //Adds address for the new address
@@ -562,7 +569,7 @@ const Airspaces: React.FC = () => {
         weekDayRanges,
         orderPhotoforGeneratedMap,
         assessorParcelNumber,
-        images : images ,
+        images: images,
       };
       if (!rent) {
         errors.push(
@@ -636,8 +643,7 @@ const Airspaces: React.FC = () => {
         }
         const newMarker = new mapboxgl.Marker({
           color: "#3FB1CE",
-          draggable: true
-
+          draggable: true,
         })
           .setLngLat({ lng: longitude, lat: latitude })
           .addTo(map as mapboxgl.Map);
@@ -698,7 +704,13 @@ const Airspaces: React.FC = () => {
       },
     });
   };
-  
+
+  useEffect(() => {
+    if (isMobile) {
+      setShowMobileMap(true);
+    }
+  }, [isMobile]);
+
   return (
     <Fragment>
       <Head>
@@ -758,7 +770,7 @@ const Airspaces: React.FC = () => {
                         className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
                         style={{ maxWidth: "400px" }}
                       >
-                       Claim Air Right 
+                        Claim Air Right
                       </div>
                     )}
                   </div>
@@ -825,19 +837,19 @@ const Airspaces: React.FC = () => {
                     onCloseModal={() => {
                       setDontShowAddressOnInput(false);
                       removePubLicUserDetailsFromLocalStorageOnClose(
-                        "airSpaceData"
+                        "airSpaceData",
                       );
                       setShowClaimModal(false);
                       setIsLoading(false);
                       setData({ ...defaultData });
-                    } }
+                    }}
                     data={{ ...data, address }}
                     setData={setData}
                     onClaim={onClaim}
                     dontShowAddressOnInput={dontShowAddressOnInput}
-                    setDontShowAddressOnInput={setDontShowAddressOnInput} 
-                    setAddress={setAddress} 
-                     />
+                    setDontShowAddressOnInput={setDontShowAddressOnInput}
+                    setAddress={setAddress}
+                  />
                 )}
                 {(showSuccessPopUp || showFailurePopUp) && (
                   <SuccessModal
@@ -913,62 +925,22 @@ const Airspaces: React.FC = () => {
                 )}
               </div>
             )}
-            {(!showMobileMap || isOpen) && (
-              <div className="flex h-full w-full flex-col md:hidden">
-                <div
-                  onClick={() => setShowMobileMap(true)}
-                  className="flex w-full flex-col justify-between gap-[184px] bg-cover bg-center bg-no-repeat p-[17px]"
-                  style={{ backgroundImage: "url('/images/map-bg.png')" }}
-                >
-                  <div className="w-full rounded-[20px] bg-[#222222] p-[12px] text-center text-base font-normal text-white">
-                    Exciting times ahead!
-                    <br />
-                    Claim your air rights 🚀✨
+            {isMobile && showMobileMap && (
+              <div
+                onClick={() => setShowHowToModal(true)}
+                className="flex items-center fixed bottom-[160px] justify-center z-10 w-full"
+              >
+                <div className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white  mb-2 w-[288px] h-[50px]">
+                  <div className="h-[24px] w-[24px]">
+                    <HelpQuestionIcon color="white" isActive={false} />
                   </div>
-                  <div className="claim-step w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
-                    Claim your air rights
-                  </div>
-                </div>
-                <div className="flex flex-1 flex-col gap-[23px] px-[13px] py-[29px]">
-                  <div className="flex flex-1 items-center gap-[14px]">
-                    <Link
-                      href={"/airspaces"}
-                      className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
-                      style={{
-                        backgroundImage: "url('/images/airspace-preview.png')",
-                      }}
-                    >
-                      <p className="text-xl font-medium text-white">Air Rights</p>
-                    </Link>
-                    <Link
-                      href={"/portfolio"}
-                      className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
-                      style={{
-                        backgroundImage: "url('/images/portfolio.jpg')",
-                      }}
-                    >
-                      <p className="text-xl font-medium text-white">
-                        Portfolio
-                      </p>
-                    </Link>
-                  </div>
-
-                  <div
-                    onClick={() => setShowHowToModal(true)}
-                    className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
-                  >
-                    <div className="h-[24px] w-[24px]">
-                      <HelpQuestionIcon color="white" isActive={false} />
-                    </div>
-                    <p>How to Claim My Air Rights?</p>
-                  </div>
+                  <p>How to Claim My Air Rights?</p>
                 </div>
               </div>
             )}
+
             {showPopup && (
-              <VerificationPopup
-                onVerifyMyAccount={onVerifyMyAccount}
-              />
+              <VerificationPopup onVerifyMyAccount={onVerifyMyAccount} />
             )}
             <div className="hidden sm:block">
               <ZoomControllers map={map} />
