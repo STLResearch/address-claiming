@@ -57,7 +57,6 @@ const Airspaces: React.FC = () => {
   const { setIsOpen, currentStep, isOpen } = useTour();
   const [showMobileMap, setShowMobileMap] = useState<boolean>(isOpen);
   const [showHowToModal, setShowHowToModal] = useState<boolean>(false);
-  // Variables
   const [address, setAddress] = useState<string>("");
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [flyToAddress, setFlyToAddress] = useState<string>("");
