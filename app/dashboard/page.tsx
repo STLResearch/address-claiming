@@ -82,7 +82,7 @@ const Dashboard: FC = () => {
                     yours to seize! 🌟🚀
                   </p>
 
-                  <div className="flex flex-col md:flex-row justify-evenly gap-2">
+                  <div className="flex flex-col md:flex-row justify-evenly gap-6">
                     <div className="flex flex-col gap-2">
                       <div className="flex flex-col-reverse md:flex-col gap-[22px]">
                         <AvailableBalance />
@@ -93,7 +93,9 @@ const Dashboard: FC = () => {
                         />
                       </div>
                     </div>
+                    <div className="h-60 md:h-0 mb-20 md:my-0">
                     <ReferralProgram />
+                    </div>
                   </div>
                 </div>
                 <div className="md:overflow-y-scroll  md:overflow-x-hidden  md:min-h-screen md:w-1/2 m-0 ">

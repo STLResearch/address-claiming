@@ -3,7 +3,7 @@
 import useAuth from "../../hooks/useAuth";
 import { useMobile } from "../../hooks/useMobile";
 import PropertiesService from "../../services/PropertiesService";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import React, { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { toast } from "react-toastify";
@@ -25,11 +25,9 @@ import Explorer from "../../Components/Airspace/Explorer/Explorer";
 import Slider from "../../Components/Airspace/Slider";
 import SuccessPopUp from "../../Components/Airspace/SuccessPopUp";
 import FailurePopUp from "../../Components/Airspace/FailurePopUp";
-import Link from "next/link";
 import {
   ChevronRightIcon,
   HelpQuestionIcon,
-  LocationPointIcon,
 } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
@@ -44,6 +42,9 @@ import { createAirRightEstimateMarker } from "@/utils/maputils";
 import UserService from "@/services/UserService";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 import AirspaceDetails from "@/Components/Portfolio/AirspaceDetails";
+import { AddressItem } from "@/Components/Airspace/AddressItem";
+import { SelectedAirspace } from "@/Components/Airspace/SelectedAirspace";
+
 
 interface Address {
   id: string;
@@ -58,7 +59,6 @@ const Airspaces: React.FC = () => {
   const { setIsOpen, currentStep, isOpen } = useTour();
   const [showMobileMap, setShowMobileMap] = useState<boolean>(isOpen);
   const [showHowToModal, setShowHowToModal] = useState<boolean>(false);
-  // Variables
   const [address, setAddress] = useState<string>("");
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [flyToAddress, setFlyToAddress] = useState<string>("");
@@ -652,7 +652,11 @@ const Airspaces: React.FC = () => {
     }
   };
 
+  
+  const [selected, setSelected] = useState(false);
+
   const handleSetAddress = (value) => {
+    setSelected(false);
     setAddress(value);
     if (!showOptions) setShowOptions(true);
   };
@@ -735,51 +739,38 @@ const Airspaces: React.FC = () => {
             />
           )}
 
-          <div>
-            {isMobile && showOptions && addresses.length > 0 && (
-              <div className="w-full flex items-center justify-center bg-white pb-[18px]">
-                <div className=" p-[16px] w-[345px] flex flex-col items-center justify-center border border-blue-500 rounded-lg ">
-                  <div className="w-[301px]">
-                    {addresses.slice(0, 1).map((item: Address) => (
-                      <div
-                        key={item.id}
-                        onClick={() =>
-                          handleSelectAddress(item.place_name, true)
-                        }
-                        className="w-full text-left text-[#222222]"
-                      >
-                        <div className="flex items-center">
-                          <div className="w-[10%] h-6 mr-3">
-                            <LocationPointIcon />
-                          </div>
-                          <div className="w-[90%] text-[14px]">
-                            {item.place_name}
-                          </div>
-                        </div>
+          {isMobile && showOptions && addresses.length > 0 && (
+              <div className="w-full flex flex-col items-center justify-center bg-white pb-[18px]">
+                {selected ? (
+                  <SelectedAirspace
+                    onClaim={() => {
+                      setShowClaimModal(true);
+                      setIsLoading(true);
+                      handleSelectAddress(address, false);
+                    }}
+                    onClick={() => handleSelectAddress(address, true)}
+                    placeName={address}
+                  />
+                ) : (
+                  <div className="w-full flex items-center justify-center bg-white pb-[18px]">
+                    <div className="w-[90%]">
+                      <div className="w-full flex-col h-[250px] overflow-y-scroll bg-white rounded-lg mt-2 border-t-4 border-t-[#4285F4] rounded-t-[8px]">
+                        {addresses.map((item: Address) => (
+                          <AddressItem
+                            key={item.id}
+                            onClick={() => {
+                              setAddress(item.place_name);
+                              setSelected(true);
+                            }}
+                            placeName={item.place_name}
+                          />
+                        ))}
                       </div>
-                    ))}
-
-                    {((isMobile && showMobileMap) ||
-                      (isOpen && currentStep === 2 && isMobile)) && (
-                      <LoadingButton
-                        onClick={() => {
-                          setShowClaimModal(true);
-                          setIsLoading(true);
-                          handleSelectAddress(addresses[0].place_name, false);
-                        }}
-                        isLoading={false}
-                        color={""}
-                        className="max-w-[400px] mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
-                      >
-                        Claim Air Rights
-                      </LoadingButton>
-                    )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
-          </div>
-
           {showHowToModal && (
             <HowToModal
               goBack={() => setShowHowToModal(false)}
