@@ -207,6 +207,7 @@ const Airspaces: React.FC = () => {
           paint: {
             'line-color': '#0000FF',
             'line-width': 1,
+            'line-dasharray': [2, 2],
           },
         },
       ];
