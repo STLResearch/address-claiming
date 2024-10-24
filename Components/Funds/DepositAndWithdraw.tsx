@@ -328,7 +328,8 @@ const DepositAndWithdraw = ({
  
 
 
-  const handleDepositWithdraw = async () => {
+  const handleDepositWithdraw = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
 		console.log("start");
    // let recvieveATA=await createAssociatedTokenAccount()
     let userata=await getAssociatedTokenAddress(new PublicKey(USDC_ADDRESS),new PublicKey(user?.blockchainAddress as string))
@@ -420,25 +421,8 @@ const DepositAndWithdraw = ({
           {(showSuccessPopUp || showFailurePopUp) && <SuccessModal errorMessages={errorMessages} tx={txSig} isSuccess={showSuccessPopUp} closePopUp={() => {
                   showFailurePopUp ? setShowFailurePopUp(false) : setShowSuccessPopUp(false)
                 }} />}
-           <form className="max-w-sm mx-auto">
-            <div className="mb-5">
-              <label htmlFor="USDC" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">USDC ETH</label>
-              <input type="USDC" id="USDC" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"  />
-            </div>
-            <div className="mb-5">
-              <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">USDC SOl</label>
-              <input type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"  />
-            </div>
-            <div className="flex items-start mb-5">
-              <div className="flex items-center h-5">
-                <input id="remember" type="checkbox" value="" className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"  />
-              </div>
-              
-            </div>
-            <button onClick={(e)=>console.log(e)} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Submit</button>
-          </form>
           
-                  </div>)}
+          </div>)}
       </div>
       <div className="flex flex-col gap-6 w-full">
         <Accordion
@@ -633,9 +617,18 @@ const DepositAndWithdraw = ({
           <div className="flex items-center justify-between w-full ">
             <div className="flex flex-col items-start gap-[5px] flex-1">
              <ConnectKitButton /> 
-             <button onClick={handleDepositWithdraw} className="text-center text-black px-8 py-1 bg-gray-200 tracking-wider hover:bg-black hover:text-white rounded-xl">
+             {address && <form className="max-w-sm mx-auto">
+            <div className="mb-5">
+              <label htmlFor="USDC" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">USDC ETH</label>
+              <input type="USDC" id="USDC" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"  />
+            </div>
+            
+           
+            <button onClick={handleDepositWithdraw} className="text-center text-black px-8 py-1 bg-gray-200 tracking-wider hover:bg-black hover:text-white rounded-xl">
               Submit
              </button>
+          </form>}
+           
               
             </div>
             <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center ">
