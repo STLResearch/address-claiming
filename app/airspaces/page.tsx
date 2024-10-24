@@ -33,7 +33,7 @@ import {
 } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
-import { defaultData, StatusTypes } from "../../types";
+import { defaultData, PropertyData, StatusTypes } from "../../types";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PolygonTool from "../../Components/PolygonTool";
 import VerificationPopup from "@/Components/MyAccount/VerificationPopup";
@@ -43,6 +43,7 @@ import AirRightsEstimateService from "@/services/AirRightsEstimateService";
 import { createAirRightEstimateMarker } from "@/utils/maputils";
 import UserService from "@/services/UserService";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+import AirspaceDetails from "@/Components/Portfolio/airspaceDetails";
 
 interface Address {
   id: string;
@@ -137,10 +138,7 @@ const Airspaces: React.FC = () => {
           const airspaces = await getTotalAirspacesByUserAddress();
 
           if (airspaces && airspaces.previews) {
-            const retrievedAirspaces = airspaces.previews.map((item: any) => ({
-              address: item.address,
-              id: item?.id,
-            }));
+            const retrievedAirspaces = airspaces.previews
             if (retrievedAirspaces.length > 0) {
               setAirspaces(retrievedAirspaces);
               setTotalAirspace(airspaces.total);
@@ -711,6 +709,8 @@ const Airspaces: React.FC = () => {
     }
   }, [isMobile]);
 
+  const [selectedAirsSpace, setSelectedAirspace] = useState<PropertyData | null>(null);
+
   return (
     <Fragment>
       <Head>
@@ -769,7 +769,8 @@ const Airspaces: React.FC = () => {
                         }}
                         isLoading={false}
                         color={""}
-                        className="max-w-[400px] mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer">
+                        className="max-w-[400px] mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
+                      >
                         Claim Air Rights
                       </LoadingButton>
                     )}
@@ -790,6 +791,16 @@ const Airspaces: React.FC = () => {
             <MyMobileAirspacesPage
               setShowAirspacePage={setShowAirspacePage}
               airspaces={airspaces}
+              setSelectedAirsspace={setSelectedAirspace}
+            />
+          )}
+
+          {isMobile && selectedAirsSpace && (
+            <AirspaceDetails
+              airspace={selectedAirsSpace}
+              onCloseModal={() => {
+                setSelectedAirspace(null);
+              }}
             />
           )}
 
