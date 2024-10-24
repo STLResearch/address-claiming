@@ -21,7 +21,7 @@ import PropertiesService from "@/services/PropertiesService";
 import { PropertyData } from "@/types";
 
 interface airspaceDetailsProps {
-  airspace: PropertyData | null;
+  airspace: any;
   onCloseModal: () => void;
   isOffer?: boolean;
   pageNumber?: number;
@@ -32,7 +32,7 @@ const formatPriceRange = (range) => {
   return `$${min} - $${max}`;
 };
 const checkFacilities = (facilities) => {
-  const trueFacilities = [];
+  const trueFacilities: string[] = [];
 
   for (const [key, value] of Object.entries(facilities)) {
     if (value === true) {

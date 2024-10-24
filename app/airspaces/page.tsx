@@ -43,7 +43,7 @@ import AirRightsEstimateService from "@/services/AirRightsEstimateService";
 import { createAirRightEstimateMarker } from "@/utils/maputils";
 import UserService from "@/services/UserService";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
-import AirspaceDetails from "@/Components/Portfolio/airspaceDetails";
+import AirspaceDetails from "@/Components/Portfolio/AirspaceDetails";
 
 interface Address {
   id: string;
