@@ -29,7 +29,7 @@ import PropertiesService from "../../services/PropertiesService";
 
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [loadingAddresses, setLoadingAddresses] = useState<boolean>(false);
+  const [loadingAddresses, setLoadingAddresses] = useState<boolean>(true);
   const [loadingRegAddresses, setLoadingRegAddresses] =
     useState<boolean>(false);
   const [map, setMap] = useState<Map | null>(null);
@@ -39,6 +39,8 @@ const Rent = () => {
   );
   const [mapMove, setMapMove] = useState();
   const [address, setAddress] = useState<string>("");
+  const [showRestrictedAreas, setShowRestrictedAreas] =
+    useState<boolean>(false);
   const [addressData, setAddressData] = useState<
     | { mapbox_id: string; short_code: string; wikidata: string }
     | null
@@ -56,22 +58,90 @@ const Rent = () => {
   const [regAdressShow, setRegAdressShow] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const { findPropertiesByCoordinates } = PropertiesService();
-  // Define the shape of the data you're receiving
+
   interface Area {
-    type: string; // Type of the area, consider making this more specific if needed
+    type: string;
     message: string;
     region: {
-      type: "Polygon" | "MultiPolygon"; // Ensure valid GeoJSON geometry types
-      coordinates: number[][] | number[][][]; // Keep this flexible for now
+      type: "Polygon" | "MultiPolygon";
+      coordinates: number[][] | number[][][];
     };
   }
 
+  const determineGeoHash = (lng: number, lat: number): string => {
+    // UK coordinates range
+    if (lng >= -10 && lng <= 2 && lat >= 50 && lat <= 60) {
+      return "gcp"; // Example geoHash for the UK
+    }
+    // US coordinates range
+    if (lng >= -125 && lng <= -65 && lat >= 24 && lat <= 49) {
+      return "9yw"; // Example geoHash for the US
+    }
+
+    // Default: No valid geoHash found
+    return "";
+  };
+
   useEffect(() => {
-    if (map) return;
+    mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
+
+    const fetchRestrictedAreas = async (geoHash: string) => {
+      let restrictedAreas: Area[] = [];
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/restrictions?geoHash=${geoHash}`,
+        );
+        restrictedAreas = (await response.json()) as Area[];
+      } catch (error) {
+        Sentry.captureException(error);
+      }
+
+      const geoJsonData: FeatureCollection<
+        Polygon | MultiPolygon,
+        GeoJsonProperties
+      > = {
+        type: "FeatureCollection",
+        features: restrictedAreas.map(
+          (area): Feature<Polygon | MultiPolygon, GeoJsonProperties> => ({
+            type: "Feature",
+            properties: {
+              type: area.type,
+              message: area.message,
+            },
+            geometry: {
+              type: area.region.type as "Polygon" | "MultiPolygon",
+              coordinates: area.region.coordinates.map((coords) => {
+                return coords.map((coord) => coord as Position);
+              }) as Position[][] | Position[][][],
+            } as Polygon | MultiPolygon,
+          }),
+        ),
+      };
+
+      if (map?.getSource("restricted-areas")) {
+        (map.getSource("restricted-areas") as mapboxgl.GeoJSONSource).setData(
+          geoJsonData,
+        );
+      } else {
+        map?.addSource("restricted-areas", {
+          type: "geojson",
+          data: geoJsonData,
+        });
+
+        map?.addLayer({
+          id: "restricted-areas-layer",
+          type: "fill",
+          source: "restricted-areas",
+          layout: {},
+          paint: {
+            "fill-color": "#D20C0C",
+            "fill-opacity": 0.2,
+          },
+        });
+      }
+    };
 
     const createMap = () => {
-      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
-
       const newMap = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
@@ -83,79 +153,11 @@ const Rent = () => {
         newMap.resize();
       });
 
-      const fetchRestrictedAreas = async (geoHash: string) => {
-        let restrictedAreas: Area[] = [];
-        try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/restrictions?geoHash=${geoHash}`,
-          );
-          restrictedAreas = (await response.json()) as Area[];
-        } catch (error) {
-          Sentry.captureException(error);
-        }
-
-        const geoJsonData: FeatureCollection<
-          Polygon | MultiPolygon,
-          GeoJsonProperties
-        > = {
-          type: "FeatureCollection",
-          features: restrictedAreas.map(
-            (area): Feature<Polygon | MultiPolygon, GeoJsonProperties> => ({
-              type: "Feature",
-              properties: {
-                type: area.type,
-                message: area.message,
-              },
-              geometry: {
-                type: area.region.type as "Polygon" | "MultiPolygon",
-                coordinates: area.region.coordinates.map((coords) => {
-                  return coords.map((coord) => coord as Position);
-                }) as Position[][] | Position[][][],
-              } as Polygon | MultiPolygon,
-            }),
-          ),
-        };
-
-        if (newMap.getSource("restricted-areas")) {
-          (
-            newMap.getSource("restricted-areas") as mapboxgl.GeoJSONSource
-          ).setData(geoJsonData);
-        } else {
-          newMap.addSource("restricted-areas", {
-            type: "geojson",
-            data: geoJsonData,
-          });
-
-          newMap.addLayer({
-            id: "restricted-areas-layer",
-            type: "fill",
-            source: "restricted-areas",
-            layout: {},
-            paint: {
-              "fill-color": "#D20C0C",
-              "fill-opacity": 0.5,
-            },
-          });
-        }
-      };
-
-      const determineGeoHash = (lng: number, lat: number): string => {
-        // UK coordinates
-        if (lng >= -10 && lng <= 2 && lat >= 50 && lat <= 60) {
-          return "gcp";
-        }
-        // US coordinates
-        if (lng >= -125 && lng <= -65 && lat >= 24 && lat <= 49) {
-          return "9yw";
-        }
-        return "";
-      };
-
       newMap.on("load", async function () {
         const mapCenter = newMap.getCenter();
         const geoHash = determineGeoHash(mapCenter.lng, mapCenter.lat);
 
-        if (geoHash) {
+        if (geoHash && showRestrictedAreas) {
           await fetchRestrictedAreas(geoHash);
         }
 
@@ -172,7 +174,7 @@ const Rent = () => {
             const mapCenter = e.target.getCenter();
             const geoHash = determineGeoHash(mapCenter.lng, mapCenter.lat);
 
-            if (geoHash) {
+            if (geoHash && showRestrictedAreas) {
               await fetchRestrictedAreas(geoHash);
             }
 
@@ -229,8 +231,25 @@ const Rent = () => {
       setMap(newMap);
     };
 
-    createMap();
-  }, []);
+    if (map) {
+      const mapCenter = map.getCenter();
+      const geoHash = determineGeoHash(mapCenter.lng, mapCenter.lat);
+
+      if (map && showRestrictedAreas && geoHash) {
+        fetchRestrictedAreas(geoHash);
+      } else if (
+        !showRestrictedAreas &&
+        map.getLayer("restricted-areas-layer")
+      ) {
+        map.removeLayer("restricted-areas-layer");
+        if (map.getSource("restricted-areas")) {
+          map.removeSource("restricted-areas");
+        }
+      }
+    } else {
+      createMap();
+    }
+  }, [showRestrictedAreas]);
 
   useEffect(() => {
     if (registeredAddress.length > 0) {
@@ -293,7 +312,6 @@ const Rent = () => {
 
   useEffect(() => {
     const inintialRentDataString = localStorage.getItem("rentData");
-    // Check if the retrieved string is neither null nor the string "undefined"
     const parsedInitialRentData =
       inintialRentDataString && inintialRentDataString !== "undefined"
         ? JSON.parse(inintialRentDataString)
@@ -322,6 +340,17 @@ const Rent = () => {
           <div className="flex h-full w-full flex-col">
             <div className="hidden md:block">
               <PageHeader pageTitle={"Marketplace: Rent"} />
+            </div>
+            <div className="absolute top-24 right-4 flex items-center space-x-4 z-10">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={showRestrictedAreas}
+                  onChange={(e) => setShowRestrictedAreas(e.target.checked)}
+                  className="mr-2"
+                />
+                <label className="text-black">Show Restricted Areas</label>
+              </div>
             </div>
 
             {isMobile && (
@@ -393,7 +422,7 @@ const Rent = () => {
             <div className="hidden sm:block">
               <ZoomControllers map={map} />
             </div>
-          </div> 
+          </div>
         </div>
       }
     </Fragment>
