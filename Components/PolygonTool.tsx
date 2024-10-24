@@ -1,30 +1,37 @@
 import React, { useRef } from "react";
 import Image from "next/image";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import { Map } from "mapbox-gl";
 
 interface PolygonToolProps {
   drawTool: MapboxDraw;
   isDrawMode: boolean;
   setDrawMode: React.Dispatch<React.SetStateAction<boolean>>;
-  map: Map | null;
 }
 
 const PolygonTool = ({
   drawTool,
   isDrawMode,
   setDrawMode,
-  map,
 }: PolygonToolProps) => {
-  const ref = useRef(false);
 
   const deletePolygon = () => {
-    const selectedFeatures = drawTool.getSelectedIds();
-    if (selectedFeatures.length > 0) {
-      drawTool.delete(selectedFeatures);
+    const selectedFeatures = drawTool.current.getAll();
+    if (selectedFeatures.features.length > 0) {
+      drawTool.current.deleteAll();
       setDrawMode(false);
     }
   };
+
+  const toggleDraw = () => {
+    if(isDrawMode){
+      drawTool.current.changeMode('simple_select')
+      setDrawMode(false)
+    } else {
+      deletePolygon()
+      drawTool.current.changeMode('draw_polygon')
+      setDrawMode(true)
+    }
+  }
 
   return (
     <div className="hidden md:block">
@@ -36,16 +43,7 @@ const PolygonTool = ({
           <p className="text-sm font-normal">Location is not exact?</p>
           <button
             className={`px-2 py-2 rounded-lg ${isDrawMode && "bg-pure-blue"} hover:bg-pure-blue group `}
-            onClick={() => {
-              if (drawTool) {
-                if (!ref.current) {
-                  map?.addControl(drawTool);
-                  ref.current = true;
-                }
-                drawTool?.changeMode("draw_polygon");
-                setDrawMode(true);
-              }
-            }}
+            onClick={toggleDraw}
           >
             <div className="flex gap-2">
               <p

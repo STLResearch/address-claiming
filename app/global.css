@@ -3,17 +3,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'mapbox-gl/dist/mapbox-gl.css';
+@import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+
 * {
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
-
-.mapboxgl-canvas-container {
-
-  height: 100vh;
-
-}
-
 body {
   margin: 0;
   padding: 0;
