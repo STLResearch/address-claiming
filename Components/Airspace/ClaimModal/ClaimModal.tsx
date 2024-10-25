@@ -1,13 +1,7 @@
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import LoadingButton from "../../../Components/LoadingButton/LoadingButton";
 import useAuth from "../../../hooks/useAuth";
-import {
-  ArrowLeftIcon,
-  CloseIconBlack,
-  InfoIcon,
-  LocationPointIcon,
-  DropDownIcon,
-} from "../../../Components/Icons";
+import { ArrowLeftIcon, CloseIconBlack, InfoIcon, LocationPointIcon, DropDownIcon } from "../../../Components/Icons";
 import Link from "next/link";
 import VariableFeeRentalRangesSelect from "./RentalDetails/VariableFeeRentalRangesSelect";
 import TimeZoneSelect from "./RentalDetails/TimeZoneSelect";
@@ -62,8 +56,7 @@ export const ClaimModal = ({
     if (endOfDivRef.current && currentStep === 3) {
       const { scrollHeight, clientHeight } = endOfDivRef.current;
       const maxScrollTop = scrollHeight - clientHeight;
-      (endOfDivRef.current as any).scrollTop =
-        maxScrollTop > 0 ? maxScrollTop : 0;
+      (endOfDivRef.current as any).scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
     }
   }, [currentStep]);
 
@@ -85,9 +78,7 @@ export const ClaimModal = ({
   const { generatePublicFileUploadUrls } = S3UploadServices();
   const [stepsCounter, setStepCounter] = useState(1);
 
-  const [steps, setSteps] = useState<ClaimAirspaceSteps>(
-    ClaimAirspaceSteps.UNSELECTED,
-  );
+  const [steps, setSteps] = useState<ClaimAirspaceSteps>(ClaimAirspaceSteps.UNSELECTED);
   const isDisabled = data.hasZoningPermission === null;
 
   const handleClaim = async () => {
@@ -103,10 +94,7 @@ export const ClaimModal = ({
 
         if (params) {
           const uploadPromises = params.map(async (param, index) => {
-            const imageRes = await uploadImage(
-              param?.uploadUrl,
-              selectedFile[index],
-            );
+            const imageRes = await uploadImage(param?.uploadUrl, selectedFile[index]);
 
             if (!imageRes || imageRes?.data?.status !== "SUCCESS") {
               throw new Error("Failed to upload file");
@@ -170,14 +158,11 @@ export const ClaimModal = ({
     } else if (steps === ClaimAirspaceSteps.UPLOAD_IMAGE) {
       try {
         if (selectedFile.length > 5) {
-          toast.error(
-            "You can only upload up to 5 files. Please adjust your selection and try again!",
-          );
+          toast.error("You can only upload up to 5 files. Please adjust your selection and try again!");
           return;
         }
         setIsClaimLoading(true);
         await handleClaim();
-        setIsClaimLoading(false);
       } finally {
         setIsClaimLoading(false);
       }
@@ -192,56 +177,51 @@ export const ClaimModal = ({
   return (
     <div>
       <Backdrop />
-      <div className="claim-modal-step fixed left-0 top-1/2 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] rounded-t-3xl w-full md:w-[689px] max-h-[50dvh] md:max-h-[640px] h-[90%] md:h-auto z-[500] sm:z-[20000000000] flex flex-col gap-[15px] overflow-y-auto overflow-x-hidden">
-        <div className=" hidden md:block z-[100] h-[68px] sticky top-0 left-0 right-0 py-[20px] px-[29px] -mt-[1px] md:shadow-none bg-white ">
-          <div className="relative flex items-center gap-[20px] md:p-0 ">
+      <div className="claim-modal-step fixed left-0 top-1/2 z-[500] flex h-[90%] max-h-[50dvh] w-full flex-col gap-[15px] overflow-y-auto overflow-x-hidden rounded-t-3xl bg-white sm:z-[20000000000] md:left-1/2 md:top-1/2 md:h-auto md:max-h-[640px] md:w-[689px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[30px]">
+        <div className="sticky left-0 right-0 top-0 z-[100] -mt-[1px] hidden h-[68px] bg-white px-[29px] py-[20px] md:block md:shadow-none">
+          <div className="relative flex items-center gap-[20px] md:p-0">
             <div className="text-[14px] text-[#0653EA]">
               {stepsCounter}/{data.rent ? "4" : "3"}
             </div>
 
-            <div className="flex justify-center items-center w-[95%] gap-2 ">
-              <h2 className="text-[#222222] text-center font-medium text-xl">
-                {currentMode}
-              </h2>
+            <div className="flex w-[95%] items-center justify-center gap-2">
+              <h2 className="text-center text-xl font-medium text-[#222222]">{currentMode}</h2>
             </div>
 
             <div
               onClick={onCloseModal}
-              className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
+              className="absolute right-0 top-0 ml-auto hidden h-[15px] w-[15px] cursor-pointer md:block"
             >
               <CloseIconBlack />
             </div>
           </div>
         </div>
-        <div className="mt-3 md:mt-0 overflow-y-scroll">
+        <div className="mt-3 overflow-y-scroll md:mt-0">
           {isMobile && (
-            <div
-              onClick={onCloseModal}
-              className="flex flex-col items-center justify-center"
-            >
+            <div onClick={onCloseModal} className="flex flex-col items-center justify-center">
               <div className="flex flex-col items-center">
-                <div className="h-2.5 w-16 bg-[#D9D9D9] rounded-full mb-2"></div>
+                <div className="mb-2 h-2.5 w-16 rounded-full bg-[#D9D9D9]"></div>
                 <h1 className="text-lg font-semibold">Claim Air Rights</h1>
               </div>
             </div>
           )}
-          <div className="px-[29px] mt-4 md:mt-0">
+          <div className="mt-4 px-[29px] md:mt-0">
             {steps === ClaimAirspaceSteps.UNSELECTED && (
               <div>
                 <div
-                  className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
+                  className="flex items-center gap-[10px] rounded-lg px-[22px] py-4"
                   style={{ border: "1px solid #4285F4" }}
                 >
-                  <div className="w-6 h-6 flex items-center justify-center">
+                  <div className="flex h-6 w-6 items-center justify-center">
                     <LocationPointIcon />
                   </div>
-                  {dontShowAddressOnInput ? (
+                  {dontShowAddressOnInput ?
                     <input
                       value={data?.address}
                       onChange={(e) => {
                         setAddress(e.target.value);
                       }}
-                      className="text-[14px] outline-none text-[#222222] flex-1"
+                      className="flex-1 text-[14px] text-[#222222] outline-none"
                       style={{ border: "none" }}
                       type="text"
                       name="address"
@@ -249,10 +229,9 @@ export const ClaimModal = ({
                       autoComplete="off"
                       placeholder="Enter address"
                     />
-                  ) : (
-                    <input
+                  : <input
                       value={data?.address}
-                      className="text-[14px] outline-none text-[#222222] flex-1"
+                      className="flex-1 text-[14px] text-[#222222] outline-none"
                       style={{ border: "none" }}
                       type="text"
                       name="address"
@@ -260,19 +239,17 @@ export const ClaimModal = ({
                       autoComplete="off"
                       placeholder="Enter address"
                     />
-                  )}
+                  }
                 </div>
-                <div className="flex flex-col gap-[5px] mt-3 md:mt-4">
+                <div className="mt-3 flex flex-col gap-[5px] md:mt-4">
                   <label htmlFor="name">
                     Name of air rights<span className="text-[#E04F64]">*</span>
                   </label>
 
                   <input
                     value={data?.title}
-                    onChange={(e) =>
-                      setData((prev) => ({ ...prev, title: e.target.value }))
-                    }
-                    className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222] mt-0.5 md:mt-1"
+                    onChange={(e) => setData((prev) => ({ ...prev, title: e.target.value }))}
+                    className="mt-0.5 rounded-lg px-[22px] py-[16px] text-[14px] text-[#222222] outline-none md:mt-1"
                     style={{ border: "1px solid #87878D" }}
                     type="text"
                     name="name"
@@ -280,7 +257,7 @@ export const ClaimModal = ({
                     autoComplete="off"
                   />
                 </div>
-                <div className="flex flex-col gap-[5px] mt-3 md:mt-4">
+                <div className="mt-3 flex flex-col gap-[5px] md:mt-4">
                   <label htmlFor="apn">APN (Assessor Parcel Number)</label>
 
                   <input
@@ -291,7 +268,7 @@ export const ClaimModal = ({
                         assessorParcelNumber: e.target.value,
                       }))
                     }
-                    className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222] mt-0.5 md:mt-1"
+                    className="mt-0.5 rounded-lg px-[22px] py-[16px] text-[14px] text-[#222222] outline-none md:mt-1"
                     style={{ border: "1px solid #87878D" }}
                     type="text"
                     name="apn"
@@ -304,13 +281,9 @@ export const ClaimModal = ({
               </div>
             )}
 
-            {steps === ClaimAirspaceSteps.RENT && (
-              <RentalDetails data={data} setData={setData} />
-            )}
+            {steps === ClaimAirspaceSteps.RENT && <RentalDetails data={data} setData={setData} />}
 
-            {steps === ClaimAirspaceSteps.ZONING_PERMISSION && (
-              <ZoningPermission setData={setData} data={data} />
-            )}
+            {steps === ClaimAirspaceSteps.ZONING_PERMISSION && <ZoningPermission setData={setData} data={data} />}
 
             {steps === ClaimAirspaceSteps.UPLOAD_IMAGE && (
               <AirspacePhotoUpload
@@ -321,10 +294,10 @@ export const ClaimModal = ({
               />
             )}
 
-            <div className="  flex items-center md:justify-between gap-[20px] text-[14px]  my-8">
+            <div className="my-8 flex items-center gap-[20px] text-[14px] md:justify-between">
               <div
                 onClick={handleCancelButton}
-                className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer"
+                className="cursor-pointer rounded-[5px] px-[22px] py-[10px] text-[#0653EA]"
                 style={{ border: "1px solid #0653EA" }}
               >
                 {steps === ClaimAirspaceSteps.UNSELECTED ? "Cancel" : "Back"}
@@ -334,9 +307,9 @@ export const ClaimModal = ({
                 onClick={handleNextButton}
                 isLoading={isClaimLoading}
                 color="white"
-                className="Claim-airspacebtn2-step w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer flex justify-center"
+                className="Claim-airspacebtn2-step flex w-[75%] cursor-pointer justify-center rounded-[5px] bg-[#0653EA] px-[22px] py-[10px] text-white md:w-[25%]"
               >
-                <div className="flex justify-center items-center w-full">
+                <div className="flex w-full items-center justify-center">
                   {isClaimAirspace ? "Claim Air right" : "Next"}
                 </div>
               </LoadingButton>

@@ -77,7 +77,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({ onClose, data }
             }
           </div>
         : <div className="fixed bottom-0 left-0 z-50 flex h-full w-full items-end bg-black bg-opacity-50">
-            <div className="relative flex h-[685px] w-full flex-col justify-between rounded-t-[30px] bg-white p-8">
+            <div className="relative flex h-[685px] w-full flex-col justify-between overflow-y-scroll rounded-t-[30px] bg-white p-8">
               <div onClick={onClose} className="absolute right-[1rem] top-[1rem] cursor-pointer">
                 <IoClose className="h-4 w-4" />
               </div>
@@ -85,9 +85,9 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({ onClose, data }
               <div className="text-center">Create Auction</div>
               <div className="flex justify-between">
                 {" "}
-                <div>Select the Airspace you would like to auction</div>
+                <div className="py-2">Select Air Right to auction</div>
                 {airspaces.length > 0 && (
-                  <div className="text-black">
+                  <div className="flex items-center gap-1 text-black">
                     <button
                       disabled={pageNumber === 1}
                       onClick={handlePrevPage}
@@ -112,7 +112,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({ onClose, data }
                   <Spinner />
                   <span className="animate-pulse">Fetching Verified Airspaces...</span>
                 </div>
-              : <>
+              : <div className="max-h-4/5 thin-scrollbar mb-24 overflow-y-scroll">
                   {airspaces && airspaces.length > 0 ?
                     <div className="thin-scrollbar flex flex-col gap-3">
                       {airspaces?.length > 0 &&
@@ -132,10 +132,12 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({ onClose, data }
                       You must have at least one verified airspace to create an auction
                     </div>
                   }
-                </>
+                </div>
               }
 
-              <Button label="Add Properties to Auction" onClick={handleAddProperties} />
+              <div className="absolute bottom-[80px] mx-auto w-10/12">
+                <Button label="Add Properties to Auction" onClick={handleAddProperties} />
+              </div>
             </div>
           </div>
         }

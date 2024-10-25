@@ -11,7 +11,7 @@ export const useMobile = () => {
     setWindowWidth(global.window.innerWidth);
   }, [global]);
 
-  const isMobile = windowWidth < 768;
+  const isMobile = windowWidth < 1027;
 
   const handleResize = () => setWindowWidth(window.innerWidth);
 
