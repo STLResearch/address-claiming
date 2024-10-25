@@ -1,13 +1,15 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
+import tokenMessengerAbi from '../../helpers/eth/abis/cctp/TokenMessenger.json'
+import usdcAbi from '../../helpers/eth/abis/Usdc.json'
 import { getPriorityFeeIx } from "@/hooks/utils";
 import { Web3authContext } from "@/providers/web3authProvider";
 import {
   getAssociatedTokenAddress,
   getAccount,
   createAssociatedTokenAccountInstruction,
-  createTransferInstruction,
+  createTransferInstruction, createAssociatedTokenAccount,
 } from "@solana/spl-token";
 import {
   Connection,
@@ -37,7 +39,19 @@ import StripeService from "@/services/StripeService";
 import Backdrop from "../Backdrop";
 import Spinner from "../Spinner";
 import Link from "next/link";
-import LoadingButton from "../LoadingButton/LoadingButton";
+import LoadingButton from "../LoadingButton/LoadingButton";import { approveTxVals, burnTxVals, checkAttestation,  msgBytes } from "@/helpers/eth";
+import { recieveSol } from "@/helpers/solana_anchor/recieveMessage";
+import SuccessModal from "../Airspace/SuccessModalSwap";
+import { ConnectKitButton } from "connectkit";
+import { useAccount, useConnect, useWaitForTransactionReceipt, useWriteContract, UseWriteContractParameters } from "wagmi";
+import { SerializedTransactionReturnType, WriteContractReturnType } from "viem";
+import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
+import Web3 from "web3";
+import { ETH_TESTNET_RPC } from "@/helpers/eth/eth_const";
+import { sendTransaction } from "@wagmi/core";
+import { config } from "../Web3AuthProvider";
+import { USDC_ADDRESS } from "@/helpers/solana_anchor/sol_const";
+
 const defaultPaymentMethod = {
   icon: "",
   name: "",
@@ -50,6 +64,11 @@ const DepositAndWithdraw = ({
   setTokenBalance,
   tokenBalance,
 }: DepositAndWithdrawProps) => {
+  const [showSuccessPopUp, setShowSuccessPopUp] = useState<boolean>(false);
+  const [showFailurePopUp, setShowFailurePopUp] = useState<boolean>(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
+  const [txSig,setTxSig]= useState("")
   const router = useRouter();
   const { user } = useAuth();
   const { createStripe } = StripeService();
@@ -62,14 +81,10 @@ const DepositAndWithdraw = ({
 
   const [selectedMethod, setSelectedMethod] = useState(defaultPaymentMethod);
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
-  const [showLIFI, setShowLIFI] = useState(false);
-  const [LIFITransactionType, setLIFITransactionType] = useState<
-    TRANSACTION_TYPE.DEPOSIT | TRANSACTION_TYPE.WITHDRAW
-  >(TRANSACTION_TYPE.DEPOSIT);
-
-  const [showOnramp, setShowOnramp] = useState<boolean>(false);
-  const [clientSecret, setClientSecret] = useState<string>("");
-  const [stripeLoading, setStripeLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false)
+ 
+ //onst { data:burnTxHash,error:BurnTxError,isSuccess:isBurnTxSuccess,writeContractAsync:burnTx } = useWriteContract()
+  const {address}=useAccount()
 
   const notifySuccess = () => {
     toast.success("Success !. Your funds have been withdrawn successfully");
@@ -310,10 +325,85 @@ const DepositAndWithdraw = ({
     }
   }
 
+ 
+
+
+  const handleDepositWithdraw = async () => {
+		console.log("start");
+   // let recvieveATA=await createAssociatedTokenAccount()
+    let userata=await getAssociatedTokenAddress(new PublicKey(USDC_ADDRESS),new PublicKey(user?.blockchainAddress as string))
+    console.log('userata',userata.toString())
+    setIsLoading(true);
+		let ans1 = await approveTxVals(address as string,userata.toString());
+		const approveResult = await sendTransaction(config, {
+			data: ans1.data as `0x${string}`,
+			to: ans1.to as `0x${string}`,
+		});
+		console.log(approveResult);
+		let approveTxreciept = await waitForTransaction(approveResult);
+		console.log({ approveTxreciept });
+		console.log("middle1");
+		let ans2 = await burnTxVals(address as string,userata.toString());
+		const burnResult = await sendTransaction(config, {
+			data: ans2.data as `0x${string}`,
+			to: ans2.to as `0x${string}`,
+		});
+		console.log(burnResult);
+		let burnTxreciept = await waitForTransaction(burnResult);
+		console.log({ burnTxreciept });
+		console.log("middle2");
+		let ans3 = await msgBytes(burnResult);
+		console.log({ ans3 });
+		console.log("middle3");
+		let { messageBytes, attestationSignature}=await checkAttestation(
+			ans3.messageBytes as string,
+			ans3.messageHash as string
+		);
+    // let tempAs="0x202dc0ba08a670a66d51f7cd549666df5c61d3112df2a614d3c1097d404326665298f9a420c0ec5557279f71756c1d05e92c5f93fbb7ef2fd38fe6e16f5261891b945bd46f81193b5c6bd6ccad7a739cdaa5d0703cc685886b315fa7dfe059242c7f2673bf3fa0bba9f0a62bc023642bbc557e1653f153948e01bd9f90dc8080fc1c"
+    // let tempmb="0x000000000000000000000005000000000004038d0000000000000000000000009f3b8679c73c2fef8b59b4f3444d4e156fb70aa5a65fc943419a5ad590042fd67c9791fd015acf53a54cc823edb8ff81b9ed722e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238f70b88104c0d098f26f36e579ac48946a2d153c87cf0cb647b143f6eab19ec980000000000000000000000000000000000000000000000000000000000000001000000000000000000000000193e11d9848c74642d55aa22e61b914f8ff11510"
+
+
+    let _txsig=await recieveSol(messageBytes as string, attestationSignature as string,provider,user?.blockchainAddress as string,userata)
+    if(_txsig){
+      
+      setTxSig(_txsig)
+      setIsLoading(false)
+      
+      setShowSuccessPopUp(true)
+    }
+    console.log("end")
+
+		console.log("end");
+	};
+	const waitForTransaction = async (txHash: any) => {
+		let web3 = new Web3(ETH_TESTNET_RPC);
+		let transactionReceipt = await web3.eth
+			.getTransactionReceipt(txHash)
+			.catch((err) => {
+				console.log("tx pending");
+			});
+		console.log({ transactionReceipt });
+		while (
+			transactionReceipt == undefined ||
+			transactionReceipt.status.toString() === "FALSE"
+		) {
+			console.log("here");
+			transactionReceipt = await web3.eth
+				.getTransactionReceipt(txHash)
+				.catch((err) => {
+					console.log("tx pending");
+				});
+			await new Promise((r) => setTimeout(r, 4000));
+		}
+		return transactionReceipt;
+	};
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
   return (
     <div className="flex flex-col gap-[15px] items-center w-full bg-white rounded-[30px] p-8 sm:shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)]">
       <div className="flex gap-4 justify-between w-full">
-        {["Deposit", "Withdraw"].map((text, index) => (
+        {["Deposit", "Withdraw","Swap"].map((text, index) => (
           <div
             key={index}
             onClick={() => togglePaymentMethod(index)}
@@ -323,8 +413,32 @@ const DepositAndWithdraw = ({
           </div>
         ))}
       </div>
-      <div className="flex text-[#838187] text-[14px] w-full">
-        <p>Choose your payment method</p>
+      <div className="flex flex-col text-[#838187] text-[14px] w-full">
+        {activeSection!=2 && (<p>Choose your payment method</p>)}
+        
+        {activeSection==2 && (<div className="h-full w-full  bg-gray-200">
+          {(showSuccessPopUp || showFailurePopUp) && <SuccessModal errorMessages={errorMessages} tx={txSig} isSuccess={showSuccessPopUp} closePopUp={() => {
+                  showFailurePopUp ? setShowFailurePopUp(false) : setShowSuccessPopUp(false)
+                }} />}
+           <form className="max-w-sm mx-auto">
+            <div className="mb-5">
+              <label htmlFor="USDC" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">USDC ETH</label>
+              <input type="USDC" id="USDC" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"  />
+            </div>
+            <div className="mb-5">
+              <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">USDC SOl</label>
+              <input type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"  />
+            </div>
+            <div className="flex items-start mb-5">
+              <div className="flex items-center h-5">
+                <input id="remember" type="checkbox" value="" className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"  />
+              </div>
+              
+            </div>
+            <button onClick={(e)=>console.log(e)} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Submit</button>
+          </form>
+          
+                  </div>)}
       </div>
       <div className="flex flex-col gap-6 w-full">
         <Accordion
@@ -486,171 +600,123 @@ const DepositAndWithdraw = ({
               )}
             </div>
           </div>
-          <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg mt-4">
-            <input
-              className="text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[20px] focus:outline-none"
-              type="text"
-              name="walletId"
-              id="walletId"
-              value={walletId}
-              disabled
-            />
-            <CopyToClipboard text={walletId} onCopy={copyTextHandler}>
-              <div className="flex items-center text-[#0653EA] text-[14px] cursor-pointer pl-[4px] pr-[18px]">
-                <div className="relative">
-                  {isCopyTooltipVisible && <Tooltip isCopied={copy} />}
-                  <div
-                    onMouseEnter={() => setIsCopyTooltipVisible(true)}
-                    onMouseLeave={() => setIsCopyTooltipVisible(false)}
-                  >
-                    <CopyIcon />
-                  </div>
-                </div>
-              </div>
-            </CopyToClipboard>
-          </div>
-          <hr className="sm:hidden border border-black border-opacity-20 h-[1px] w-full" />
-          <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4">
-            <div className="w-6 h-6">
-              <WarningIcon />
-            </div>
-            <div className="text-[#222222] sm:text-[14px] font-normal w-[341px]">
-              <div>
-                To complete your deposit, please use your crypto wallet to
-                deposit USDC to the following address:
-                <br />
-                <div className="w-full">
-                  <p
-                    className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
-                    style={{ color: "#0653EA" }}
-                  >
-                    {walletId}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4">
-            <div className="w-6 h-6">
-              <WarningIcon />
-            </div>
-            <div className="text-[#222222] text-[14px] font-normal w-full">
-              Scan the QR Code with your Wallet. You can use Phantom Wallet,
-              Solflare, Exodus, Atomic Wallet, Coinbase Wallet, or Metamask
-              Span. Ensure the wallet ID is correct to avoid loss of funds.
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Widthdraw */}
-      {activeSection === 1 && (
-        <div>
-          {selectedMethod.name === "Native" && (
-            <div>
-              <div className="mt-2">
-                <label
-                  htmlFor="walletId"
-                  className="text-[14px] font-normal text-[#838187]"
-                >
-                  Amount
-                </label>
-                <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-{#87878D}">
-                  <label
-                    htmlFor="usdc"
-                    className=" text-[14px] font-normal text-[#838187]"
-                  >
-                    $
-                  </label>
-
-                  <input
-                    type="text"
-                    value={amount}
-                    name="amount"
-                    onChange={handleAmountInputChanged}
-                    id="amount"
-                    //   Min={0}
-                    className="appearance-none outline-none border-none flex-1 pl-[0.5rem] "
-                  />
-                </div>
-              </div>
-              <div className="mt-2 ">
-                <label
-                  htmlFor="walletId"
-                  className="text-[14px] font-normal text-[#838187]"
-                >
-                  Your Wallet ID
-                </label>
-                <input
+          <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg">
+              <input
+                  className=" text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[20px] focus:outline-none"
                   type="text"
                   name="walletId"
                   id="walletId"
-                  value={recipientWalletAddress}
-                  onChange={(e) => setRecipientWalletAddress(e.target.value)}
-                  className="w-full rounded-lg py-[16px] px-[22px] text-[#838187] text-[14px] font-normal outline-none border border-{#87878D}"
+                  value={walletId}
+                  disabled
                 />
-              </div>
+                <CopyToClipboard text={walletId} onCopy={copyTextHandler}>
+                  <div className="flex items-center text-[#0653EA] text-[14px] cursor-pointer pl-[4px] pr-[18px]">
+                    <div className="relative">
+                      {isCopyTooltipVisible && <Tooltip isCopied={copy}/> }
+                      <div onMouseEnter={()=>setIsCopyTooltipVisible(true)} onMouseLeave={()=>setIsCopyTooltipVisible(false)}>
+                        <CopyIcon />
+                      </div>
+                    </div>
+                  </div>
+                </CopyToClipboard>
+            </div>
+                <hr className=" sm:hidden border border-black border-opacity-20 h-[1px]  w-full"/>
+          {selectedMethod.name == "Stripe" && (
+            <div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg">
+              COMING SOON{" "}
             </div>
           )}
-          <div>
-            <>
-              {selectedMethod.name === "Stripe" ||
-              selectedMethod.name === "Ramp" ||
-              selectedMethod.name === "Native" ||
-              selectedMethod.name === "LI.FI" ? (
-                <LoadingButton
-                  isLoading={false}
-                  className="w-full h-[39px] py-[16px] bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg text-[15px] mt-4"
-                  onClick={handleWithdraw}
-                >
-                  Withdraw
-                </LoadingButton>
-              ) : null}
-            </>
-          </div>
-
-          <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4 ">
-            <div className="w-6 h-6">
-              <WarningIcon />
+        </>
+      )}
+      {(activeSection === 0 && selectedMethod.name=="Swap") && (
+        <>
+          <div className="flex items-center justify-between w-full ">
+            <div className="flex flex-col items-start gap-[5px] flex-1">
+             <ConnectKitButton /> 
+             <button onClick={handleDepositWithdraw} className="text-white w-full h-full bg-black">
+              test button
+             </button>
+              
             </div>
-            <p className="text-[#222222] sm:text-[14px] font-normal w-full ">
-              Funds may be irrecoverable if you enter an incorrect wallet ID. It
-              is crucial to ensure the accuracy of the provided ID to avoid any
-              loss.
-            </p>
+            <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center ">
+             
+            </div>
+            
           </div>
-        </div>
+          <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg">
+             
+                
+            </div>
+                <hr className=" sm:hidden border border-black border-opacity-20 h-[1px]  w-full"/>
+          
+        </>
       )}
 
-      {showLIFI && (
-        <div>
-          <Backdrop />
-          <LiFiComponent
-            transactionType={LIFITransactionType}
-            walletAddress={walletAddress}
-            onClose={() => setShowLIFI(false)}
-          />
-        </div>
+      {activeSection === 1 && (
+        <>
+          {selectedMethod.name == "Stripe" ? (
+            <div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg">
+              COMING SOON{" "}
+            </div>
+          ) : (
+            <button
+              disabled={isLoading}
+              className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg"
+              onClick={handleWithdraw}
+            >
+              withdraw
+            </button>
+          )}
+        </>
       )}
-      {stripeLoading ? (
-        <div>
-          {" "}
-          <Backdrop />
-          <Spinner />
-        </div>
-      ) : (
-        showOnramp && (
-          <div>
-            <Backdrop />
-            <StripeOnrampComponent
-              clientSecret={clientSecret}
-              setClientSecret={setClientSecret}
-              setShowOnramp={setShowOnramp}
-              showOnramp={showOnramp}
-            />
+      {activeSection === 0 && (
+      <>
+      <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] ">
+      <div className="w-6 h-6">
+        <WarningIcon />
+      </div>
+      <div className="text-[#222222] sm:text-[14px] font-normal w-full ">
+        {
+          selectedMethod.name == "Stripe" ? (
+            <p>
+              Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of the provided ID to avoid any loss.
+            </p>
+          ):
+          <div >
+              To complete your deposit, please use your crypto wallet to deposit
+              USDC to the following address:
+            <br/>
+            <div className="w-full">
+              <p 
+                className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
+                style={{ color: "#0653EA" }}
+              >
+                {walletId}  
+              </p>
+            </div>
           </div>
-        )
-      )}
+        }
+
+      </div>
+    </div>
+      {
+        selectedMethod.name == "Native" &&
+    <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
+      <div className="w-6 h-6">
+        <WarningIcon />
+      </div>
+      <div className="text-[#222222] text-[14px] font-normal w-full">
+        Scan the QR Code with your Wallet, you can use Phantom Wallet,
+        Solflare, Exodus, Atomic Wallet, Coinbase Wallet, Metamask Span. Note
+        that funds may be irrecoverable if you enter an incorrect wallet ID.
+        It is crucial to ensure the accuracy of the provided ID to avoid any
+        loss.
+      </div>
+    </div>
+      }
+      </>
+    )}
+
     </div>
   );
 };

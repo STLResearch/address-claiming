@@ -1,6 +1,18 @@
 module.exports = {
   output: "export",
   trailingSlash: false,
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback.fs = false;
+      
+      // FIX this
+      // Disable minimize to make it work with Candy Machine template
+      // minimization brakes Public Key names
+      config.optimization.minimize = false;
+    }
+    config.resolve.fallback = { fs: false, net: false, tls: false };
+    return config;
+  },
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -27,7 +39,7 @@ module.exports = {
 };
 
 // Injected content via Sentry wizard below
-
+/* 
 const { withSentryConfig } = require("@sentry/nextjs");
 
 module.exports = withSentryConfig(
@@ -68,3 +80,4 @@ module.exports = withSentryConfig(
     automaticVercelMonitors: true,
   }
 );
+ */

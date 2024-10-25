@@ -18,8 +18,10 @@ import "react-toastify/dist/ReactToastify.css";
 import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
 import { OnboardingTour } from "../Components/Tours";
-import NotificationBanner from "@/Components/NotificationBanner";
-import TawkMessengerComponent from "@/Components/TawkMessenger";
+import { Web3Provider } from "@/Components/Web3AuthProvider";
+
+
+
 
 export const metadata: Metadata = {
   title: {
@@ -72,6 +74,7 @@ export default function RootLayout({
           <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
           {/* <Provider store={store}> */}
           <Web3authProvider>
+            <Web3Provider>
             <SidebarProvider>
               <ToastContainer style={{ width: "500px" }} />
               <div id="backdrop-root"></div>
@@ -93,6 +96,7 @@ export default function RootLayout({
             </SidebarProvider>
             <CookieConsent />
             <TawkMessengerComponent />
+            </Web3Provider>
           </Web3authProvider>
           {/* </Provider> */}
         </>
