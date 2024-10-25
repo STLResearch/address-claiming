@@ -85,7 +85,7 @@ const PortfolioItemMobile = ({
 
   return (
     <div>
-      {showModal && <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} />}
+      {showModal && <Modal airspace={selectedAirspace} onCloseModal={() => {onCloseModal(); setShowModal(false)}} />}
       {showCancelModal && (
         <CancelClaimModal
           airspace={selectedAirspace}
