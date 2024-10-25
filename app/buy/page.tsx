@@ -116,8 +116,8 @@ const Buy = () => {
 
   const handleOpenBidPreview = () => {
     if (currentUserBid && auctionDetailData) {
-      if (currentUserBid < 0.01 * auctionDetailData?.currentPrice) {
-        return toast.info("Your bid must be at least 1% more than the highest bid");
+      if (currentUserBid < 0.1 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice) {
+        return toast.info("Your bid must be at least 10% more than the highest bid");
       }
       setShowBidPreview(true);
       setShowBidDetail(false);

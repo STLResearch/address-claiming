@@ -158,8 +158,8 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                     <span className="text-[#E04F64]">*</span>
                   </div>
                   <span className="hidden text-right text-gray-500 sm:block">
-                    Your bid must be at least 1% more than the highest bid{" "}
-                    {`(>= $${auctionDetailData && 0.01 * auctionDetailData?.currentPrice})`}
+                    Your bid must be at least 10% more than the highest bid{" "}
+                    {`(>= $${auctionDetailData && 0.1 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice})`}
                   </span>
                 </div>
                 <div

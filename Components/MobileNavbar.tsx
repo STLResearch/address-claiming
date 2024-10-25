@@ -136,7 +136,7 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
             </SidebarItem>
             <div className="h-[1px] w-full bg-[#00000012]" />
             <p className="self-start px-[14.64px] font-normal tracking-[1%] text-[#5D7285]">MARKETPLACE</p>
-            <SidebarItem href={"https://sky.trade/waitlist"} target="_blank" text={"Buy Air Rights"}>
+            <SidebarItem href={"/buy"} text={"Buy Air Rights"}>
               <MapIcon isActive={false} />
             </SidebarItem>
             <SidebarItem href={"/rent"} text={"Rent Air Rights"}>
