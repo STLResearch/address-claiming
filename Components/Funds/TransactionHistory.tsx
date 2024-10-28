@@ -226,12 +226,12 @@ const TransactionHistory = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5 flex-grow">
+    <div className="flex max-lg:w-full flex-col gap-5 flex-grow">
       <div className="md:flex sm:flex-col md:flex-row justify-start sm:justify-between items-center">
-        <p className="flex font-medium text-xl pt-[14px] md:px-0 px-2 pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
+        <p className="flex font-medium text-xl pt-[14px] md:px-0 pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
           Transaction History
         </p>
-        <div className="flex md:px-0 px-2 justify-end items-center md:w-full ">
+        <div className="flex md:px-0 justify-end items-center md:w-full ">
           <div className="relative w-[272px]">
             <input
               type="text"
@@ -246,7 +246,7 @@ const TransactionHistory = () => {
             </div>
           </div>
 
-          <div className="ml-5">
+          <div className="md:ml-5 ml-2">
             <div
               className="flex justify-center items-center w-12 h-12 cursor-pointer  bg-[#0653EA] text-center font-medium p-1 rounded-[8px] py-4"
               onClick={handleReset}
@@ -262,13 +262,15 @@ const TransactionHistory = () => {
         className={`flex justify-center overflow-y-auto md:overflow-y-hidden fund-table-scrollbar h-auto md:h-`}
         style={{ direction: `${isMobile ? "rtl" : "ltr"}` }}
       >
-        <div style={{ direction: "ltr" }} className="w-[89%] sm:w-[100%]">
+        <div style={{ direction: "ltr" }} className="w-[100%]">
           <div className="overflow-x-auto md:overflow-x-hidden fund-table-scrollbar">
             <table className="w-[100%] fund-table">
               <thead className="sticky top-0 bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
                 <tr className="w-full">
                   <th className="text-start py-5 px-5">Date</th>
-                  <th className="text-start py-5 px-5">Transaction Id</th>
+                  <th className="text-start py-5 px-5 truncate">
+                    Transaction Id
+                  </th>
                   <th className="text-start py-5 px-5">Type</th>
                   <th className="text-start py-5 px-5">Amount</th>
                   <th className="py-5 px-5 text-start">Status</th>
@@ -276,7 +278,7 @@ const TransactionHistory = () => {
               </thead>
               <tbody>{renderTransactionRows()}</tbody>
             </table>
-            <div className="flex items-center justify-end mt-8 w-[94%]">
+            <div className="flex items-center justify-end my-8 w-[94%]">
               <div className="mx-auto flex gap-[11.71px]">
                 <div className={` text-[#87878D] text-base font-normal`}>
                   {isLoading && "Loading transaction history..."}

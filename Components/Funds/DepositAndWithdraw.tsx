@@ -311,7 +311,7 @@ const DepositAndWithdraw = ({
   }
 
   return (
-    <div className="flex flex-col gap-[15px] items-center w-full bg-white rounded-[30px] p-8 sm:shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)]">
+    <div className="flex flex-col gap-[15px] items-center w-full bg-white rounded-[30px] md:p-8 sm:shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)]">
       <div className="flex gap-4 justify-between w-full">
         {["Deposit", "Withdraw"].map((text, index) => (
           <div
