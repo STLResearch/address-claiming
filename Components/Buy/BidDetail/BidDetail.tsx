@@ -67,15 +67,11 @@ const BidDetails: React.FC<BidDetailsProps> = ({
   const imageUrl = getMapboxStaticImage(latitude, longitude);
 
   const getMinBid = () => {
-    if (auctionDetailData && auctionDetailData.currentPrice === auctionDetailData?.initialPrice) {
-      return auctionDetailData?.initialPrice;
-    }
-
     if (auctionDetailData && auctionDetailData.currentPrice > 0) {
       return 0.1 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice;
     }
 
-    return auctionDetailData && 0.1 * auctionDetailData?.initialPrice + auctionDetailData?.initialPrice;
+    return auctionDetailData?.initialPrice;
   };
 
   useEffect(() => {
