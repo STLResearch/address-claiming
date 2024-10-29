@@ -98,7 +98,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
 
   return (
     <div className="fixed inset-0 bottom-[74px] z-50 flex items-start justify-center bg-[#294B63] bg-opacity-50 pt-32 backdrop-blur-[2px] sm:bottom-0">
-      <div className="thin-scrollbar short-scrollbar fixed bottom-0 z-[500] flex h-[560px] w-full flex-col gap-[15px] overflow-x-auto overflow-y-auto rounded-t-[30px] bg-white sm:left-1/2 sm:top-1/2 sm:z-50 sm:-translate-x-1/2 sm:-translate-y-1/2 md:h-[640px] md:w-[689px] md:rounded-[30px] md:shadow-md">
+      <div className="thin-scrollbar short-scrollbar fixed bottom-0 z-[500] flex w-full flex-col gap-[15px] overflow-x-auto overflow-y-auto rounded-t-[30px] bg-white sm:left-1/2 sm:top-1/2 sm:z-50 sm:-translate-x-1/2 sm:-translate-y-1/2 md:h-[640px] md:w-[689px] md:rounded-[30px] md:shadow-md">
         {/* {isMobile && (
           <div onClick={onCloseModal} className="mt-4 flex flex-col items-center justify-end md:mt-0">
             <div className="flex w-[90%] items-center justify-center">
@@ -152,15 +152,15 @@ const BidDetails: React.FC<BidDetailsProps> = ({
             </div>
           : <>
               <div>
-                <div className="flex w-full justify-between pb-[5px]">
+                <div className="flex w-full justify-between gap-8 pb-[5px] text-sm sm:text-base">
                   <div className="flex">
-                    <p className="text-[14px] leading-[21px] text-[#838187]">Your Bid</p>
+                    <p className="whitespace-nowrap leading-[21px] text-[#838187]">Your Bid</p>
                     <span className="text-[#E04F64]">*</span>
                   </div>
-                  <small className="text-gray-500">
-                    Your bid must be at least 1% more than the highest bid{" "}
-                    {`(>= $${auctionDetailData && 0.01 * auctionDetailData?.currentPrice})`}
-                  </small>
+                  <span className="hidden text-right text-gray-500 sm:block">
+                    Your bid must be at least 10% more than the highest bid{" "}
+                    {`(>= $${auctionDetailData && 0.1 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice})`}
+                  </span>
                 </div>
                 <div
                   className="flex h-[46px] w-full items-center rounded-lg px-[22px] py-[14px] text-[#232F4A]"
@@ -178,6 +178,10 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                     className="flex-1 appearance-none border-none text-[14px] leading-[21px] outline-none"
                   />
                 </div>
+                <span className="w-full text-right text-xs text-gray-500 sm:hidden">
+                  Your bid must be at least 1% more than the highest bid{" "}
+                  {`(>= $${auctionDetailData && 0.01 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice})`}
+                </span>
               </div>
               <div className="w-full rounded-lg bg-[#0653EA] text-white">
                 <button

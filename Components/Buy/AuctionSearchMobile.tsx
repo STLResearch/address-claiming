@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import { setActiveFilters, setIsCreateAuctionModalOpen } from "@/redux/slices/userSlice";
 import { shallowEqual } from "react-redux";
+import { useMobile } from "@/hooks/useMobile";
 
 interface AuctionSearchMobileProps {
   searchTerm: string;
@@ -21,6 +22,7 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({ searchTerm, s
   const [priceRange, setPriceRange] = useState([0, 0]);
   const [pricePerSqFt, setPricePerSqFt] = useState([0, 0]);
   const [searchValue, setSearchValue] = useState("");
+  const { isMobile } = useMobile();
 
   const { activeFilters, isCreateAuctionModalOpen } = useAppSelector((state) => {
     const { activeFilters, isCreateAuctionModalOpen } = state.userReducer;
@@ -42,46 +44,52 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({ searchTerm, s
     setSearchTerm(searchValue);
   };
 
-  return (
-    <div className="fixed left-0 top-0 z-20 w-full bg-white p-4 text-center shadow-md md:hidden">
-      <div className="flex items-center justify-between gap-2">
-        <div className="text-[20px] leading-[30px] text-light-black">Buy</div>
-        <div className="flex items-center justify-between overflow-hidden rounded-lg border p-2">
-          <input
-            placeholder="Search auctions..."
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onKeyDown={(e) => (e.key === "Enter" ? handleSearchAuctions() : "")}
-            className="min-w-[200px] text-[14px] focus:outline-none"
-          />
+  if (isMobile)
+    return (
+      <div className="fixed left-0 top-0 z-20 w-full bg-white p-4 text-center shadow-md">
+        <div className="flex items-center justify-between gap-2">
+          <div className="text-[20px] leading-[30px] text-light-black">Buy</div>
+          <div className="flex items-center justify-between overflow-hidden rounded-lg border p-2">
+            <input
+              placeholder="Search auctions..."
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={(e) => (e.key === "Enter" ? handleSearchAuctions() : "")}
+              className="min-w-[200px] text-[14px] focus:outline-none"
+            />
 
-          <div className="h-4 w-4" onClick={handleSearchAuctions}>
-            <MagnifyingGlassIcon />
+            <div className="h-4 w-4" onClick={handleSearchAuctions}>
+              <MagnifyingGlassIcon />
+            </div>
+          </div>
+          <div onClick={() => setIsFilterOpen(!isFilterOpen)}>
+            <GiSettingsKnobs />
+          </div>
+          <div onClick={() => dispatch(setIsCreateAuctionModalOpen(true))} className="rounded-lg bg-dark-blue p-2">
+            <FiPlus className="text-white" />
           </div>
         </div>
-        <div onClick={() => setIsFilterOpen(!isFilterOpen)}>
-          <GiSettingsKnobs />
-        </div>
-        <div onClick={() => dispatch(setIsCreateAuctionModalOpen(true))} className="rounded-lg bg-dark-blue p-2">
-          <FiPlus className="text-white" />
-        </div>
+
+        {isFilterOpen && (
+          <div className="flex w-full flex-col gap-4 bg-white p-4">
+            <FilterTab
+              title="Total Price Range"
+              range={priceRange}
+              setRange={(value: number[]) => setPriceRange(value)}
+            />
+
+            <button
+              onClick={handleSetActiveFilters}
+              className="w-full rounded-lg bg-dark-blue py-2 text-base text-white"
+            >
+              Save Filter
+            </button>
+          </div>
+        )}
       </div>
+    );
 
-      {isFilterOpen && (
-        <div className="flex w-full flex-col gap-4 bg-white p-4">
-          <FilterTab
-            title="Total Price Range"
-            range={priceRange}
-            setRange={(value: number[]) => setPriceRange(value)}
-          />
-
-          <button onClick={handleSetActiveFilters} className="w-full rounded-lg bg-dark-blue py-2 text-base text-white">
-            Save Filter
-          </button>
-        </div>
-      )}
-    </div>
-  );
+  return <div></div>;
 };
 
 export default AuctionSearchMobile;

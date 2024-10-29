@@ -1,4 +1,3 @@
-
 import Service from "./Service";
 
 const MarketplaceService = () => {
@@ -6,7 +5,7 @@ const MarketplaceService = () => {
 
   const getAuctionableProperties = async (
     callerAddress: string | undefined,
-    page?: number
+    page?: number,
   ) => {
     try {
       if (!callerAddress) return [];
@@ -28,7 +27,7 @@ const MarketplaceService = () => {
     limit: number = 10,
     min_price = 0,
     max_price = 9999999999999,
-    filter: string = "ONGOING"
+    filter: string = "ONGOING",
   ) => {
     try {
       const response = await getRequest({
@@ -67,7 +66,7 @@ const MarketplaceService = () => {
   const searchAuctions = async (
     search_text: string | undefined,
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ) => {
     try {
       const response = await getRequest({
@@ -97,7 +96,7 @@ const MarketplaceService = () => {
         postData,
       });
 
-      return response;
+      return response?.data;
     } catch (error) {
       console.error(error);
 
