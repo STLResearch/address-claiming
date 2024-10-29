@@ -70,7 +70,8 @@ const BidDetails: React.FC<BidDetailsProps> = ({
     if (auctionDetailData && auctionDetailData.currentPrice > 0) {
       return 0.1 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice;
     }
-    return auctionDetailData && 0.1 * auctionDetailData?.initialPrice + auctionDetailData?.initialPrice;
+
+    return auctionDetailData?.initialPrice;
   };
 
   useEffect(() => {
@@ -78,30 +79,6 @@ const BidDetails: React.FC<BidDetailsProps> = ({
   }, []);
 
   const isAuctionComplete = endDate ? new Date() > endDate : false;
-
-  const airspaceHistoryMockData = [
-    {
-      price: "Rental",
-      date: "15 december 2023",
-      from: "bcndkl,spuifijdczvè”yçh",
-    },
-    {
-      price: "Rental",
-      date: "5 december 2023",
-      from: "bvqnx,,qzidjcn-’bfszdxd",
-    },
-    {
-      price: "Sell",
-      date: "29 november 2023",
-      from: "adncjdjf, chzjneofjiochui",
-    },
-  ];
-  const images = [
-    { image_url: "/images/imagetest1.jpg" },
-    { image_url: "/images/imagetest2.jpg" },
-    { image_url: "/images/imagetest3.jpg" },
-  ];
-  images[0] = { image_url: imageUrl };
 
   return (
     <div className="fixed inset-0 bottom-[74px] z-50 flex items-start justify-center bg-[#294B63] bg-opacity-50 pt-32 backdrop-blur-[2px] sm:bottom-0">
@@ -172,7 +149,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                   </div>
                   <span className="hidden text-right text-gray-500 sm:block">
                     <span className="text-[#E04F64]">*</span>You cannot bid lower than
-                    {`$${getMinBid()}`}
+                    {` $${getMinBid()}`}
                   </span>
                 </div>
                 <div
