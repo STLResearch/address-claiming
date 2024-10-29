@@ -34,6 +34,9 @@ const AuctionItem: React.FC<AuctionItemProps> = ({ data, onSelectItem, onUpdateI
       };
     });
 
+  const [localMinSalePrice, setLocalMinSalePrice] = useState<number | null>(minSalePrice || null);
+  const [localEndDate, setLocalEndDate] = useState<any>(endDate || null);
+
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -50,14 +53,15 @@ const AuctionItem: React.FC<AuctionItemProps> = ({ data, onSelectItem, onUpdateI
 
   const handleMinSalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setMinSalePrice(e.target.value));
+    const price = parseFloat(e.target.value) || 0;
+    setLocalMinSalePrice(price);
     onUpdateItem(data?.propertyId || null, parseFloat(e.target.value) || 0, convertDate(endDate));
   };
 
   const handleEndDateChange = (date: Date | null) => {
     const dateResult = convertDate(date);
-
+    setLocalEndDate(date);
     dispatch(setEndDate(date));
-
     onUpdateItem(data?.propertyId || null, minSalePrice || 0, convertDate(date));
   };
 
@@ -94,7 +98,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({ data, onSelectItem, onUpdateI
               <span className="pr-1">$</span>
               <input
                 className="h-[49px] focus:outline-none"
-                value={minSalePrice as number}
+                value={localMinSalePrice as number}
                 onChange={handleMinSalePriceChange}
               />
             </div>
@@ -111,7 +115,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({ data, onSelectItem, onUpdateI
               <DatePicker
                 id="datetime"
                 //@ts-ignore
-                selected={endDate}
+                selected={localEndDate}
                 onChange={handleEndDateChange}
                 showTimeSelect
                 timeFormat="HH:mm"

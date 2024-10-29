@@ -139,7 +139,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
               <h1 className="text-right text-[14px] font-bold text-[#050505]">{timeLeft ?? "N/A"}</h1>
             </div>
           </div>
-          {isAuctionComplete ?
+          {/* {isAuctionComplete ?
             <div className="flex flex-col gap-[10px] rounded-lg bg-[#f9f9f9] px-[15px] py-[10px]">
               {auctionDetailData && auctionDetailData.AuctionBid.length > 0 ?
                 <div>
@@ -150,70 +150,70 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 </p>
               }
             </div>
-          : <>
-              <div>
-                <div className="flex w-full justify-between gap-8 pb-[5px] text-sm sm:text-base">
-                  <div className="flex">
-                    <p className="whitespace-nowrap leading-[21px] text-[#838187]">Your Bid</p>
-                    <span className="text-[#E04F64]">*</span>
-                  </div>
-                  <span className="hidden text-right text-gray-500 sm:block">
-                    Your bid must be at least 10% more than the highest bid{" "}
-                    {`(>= $${auctionDetailData && 0.1 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice})`}
-                  </span>
-                </div>
-                <div
-                  className="flex h-[46px] w-full items-center rounded-lg px-[22px] py-[14px] text-[#232F4A]"
-                  style={{ border: "1px solid #87878D" }}
-                >
-                  <label className="pr-2 text-[14px] font-normal leading-[21px]">$</label>
-                  <input
-                    type="text"
-                    name="currentBid"
-                    id="currentBid"
-                    placeholder=" Place your bid here"
-                    value={currentUserBid ?? ""}
-                    required
-                    onChange={handleCurrentBidInputChanged}
-                    className="flex-1 appearance-none border-none text-[14px] leading-[21px] outline-none"
-                  />
-                </div>
-                <span className="w-full text-right text-xs text-gray-500 sm:hidden">
-                  Your bid must be at least 1% more than the highest bid{" "}
-                  {`(>= $${auctionDetailData && 0.01 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice})`}
-                </span>
+          : <> */}
+          <div>
+            <div className="flex w-full justify-between gap-8 pb-[5px] text-sm sm:text-base">
+              <div className="flex">
+                <p className="whitespace-nowrap leading-[21px] text-[#838187]">Your Bid</p>
+                <span className="text-[#E04F64]">*</span>
               </div>
-              <div className="w-full rounded-lg bg-[#0653EA] text-white">
-                <button
-                  disabled={!currentUserBid}
-                  className={`h-[42px] w-full ${currentUserBid ? "cursor-pointer" : "cursor-not-allowed"}`}
-                  onClick={onPlaceBid}
-                >
-                  Place Bid
-                </button>
-              </div>
-              <hr />
+              <span className="hidden text-right text-gray-500 sm:block">
+                <span className="text-[#E04F64]">*</span>You cannot bid lower than
+                {` $${auctionDetailData && 0.1 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice}`}
+              </span>
+            </div>
+            <div
+              className="flex h-[46px] w-full items-center rounded-lg px-[22px] py-[14px] text-[#232F4A]"
+              style={{ border: "1px solid #87878D" }}
+            >
+              <label className="pr-2 text-[14px] font-normal leading-[21px]">$</label>
+              <input
+                type="text"
+                name="currentBid"
+                id="currentBid"
+                placeholder=" Place your bid here"
+                value={currentUserBid ?? ""}
+                required
+                onChange={handleCurrentBidInputChanged}
+                className="flex-1 appearance-none border-none text-[14px] leading-[21px] outline-none"
+              />
+            </div>
+            <span className="w-full text-right text-xs text-gray-500 sm:hidden">
+              <span className="text-[#E04F64]">*</span> You cannot bid lower than
+              {` $${auctionDetailData && 0.01 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice}`}
+            </span>
+          </div>
+          <div className="w-full rounded-lg bg-[#0653EA] text-white">
+            <button
+              disabled={!currentUserBid}
+              className={`h-[42px] w-full ${currentUserBid ? "cursor-pointer" : "cursor-not-allowed"}`}
+              onClick={onPlaceBid}
+            >
+              Place Bid
+            </button>
+          </div>
+          <hr />
 
-              {auctionDetailData && auctionDetailData.layer.property.propertyStatusId !== 1 && (
-                <p className="pt-1 text-sm text-gray-500">
-                  Note: By placing a bid,{" "}
-                  <span className="font-bold text-black">
-                    10% of your bid ($
-                    {0.1 * (currentUserBid || 0)})
-                  </span>{" "}
-                  will be held, and if you win, you must pay the remaining amount within 7 days or forfeit the deposit.
-                </p>
-              )}
+          {auctionDetailData && auctionDetailData.layer.property.propertyStatusId !== 1 && (
+            <p className="pt-1 text-sm text-gray-500">
+              Note: By placing a bid,{" "}
+              <span className="font-bold text-black">
+                10% of your bid ($
+                {0.1 * (currentUserBid || 0)})
+              </span>{" "}
+              will be held, and if you win, you must pay the remaining amount within 7 days or forfeit the deposit.
+            </p>
+          )}
 
-              <div className="opacity-60">
-                <Accordion
-                  title={(auctionDetailData && `Previous Bids (${auctionDetailData.AuctionBid.length})`) || ""}
-                  content={<CustomTable header={["Price($)", "From"]} auctionBids={auctionDetailData?.AuctionBid} />}
-                />
-              </div>
-              <hr />
-            </>
-          }
+          <div className="opacity-60">
+            <Accordion
+              title={(auctionDetailData && `Previous Bids (${auctionDetailData.AuctionBid.length})`) || ""}
+              content={<CustomTable header={["Price($)", "From"]} auctionBids={auctionDetailData?.AuctionBid} />}
+            />
+          </div>
+          <hr />
+          {/* </>
+          } */}
         </div>
       </div>
     </div>

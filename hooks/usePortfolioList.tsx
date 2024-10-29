@@ -26,8 +26,13 @@ const usePortfolioList = () => {
   const { user } = useAuth();
   const { web3auth } = useContext(Web3authContext);
 
-  const { getPropertiesByUserAddress, getUnverifiedAirspaces, getRetrievePendingRentalAirspace, getRejectedAirspaces } =
-    AirspaceRentalService();
+  const {
+    getPropertiesByUserAddress,
+    getUnverifiedAirspaces,
+    getRetrievePendingRentalAirspace,
+    getRejectedAirspaces,
+    getBidsAndOffers,
+  } = AirspaceRentalService();
 
   const refetchRef = useRef(false);
 
@@ -54,6 +59,12 @@ const usePortfolioList = () => {
           const airspaceResp = await getRetrievePendingRentalAirspace(pageNumber, 10);
           if (airspaceResp && airspaceResp.items) {
             airspaces = airspaceResp.items;
+          }
+        } else if (activeTab === PortfolioTabEnum.BIDS) {
+          const airspaceResp = await getBidsAndOffers(user?.blockchainAddress);
+
+          if (airspaceResp) {
+            airspaces = airspaceResp;
           }
         } else {
           const airspaceResp = await getRejectedAirspaces(pageNumber, 10);
