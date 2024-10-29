@@ -67,10 +67,13 @@ const MarketplaceService = () => {
     search_text: string | undefined,
     page: number = 1,
     limit: number = 10,
+    min_price = 0,
+    max_price = 9999999999999,
+
   ) => {
     try {
       const response = await getRequest({
-        uri: `/private/auction-house/search-auctions?search_text=${search_text}&page=${page}&limit=${limit}`,
+        uri: `/private/auction-house/search-auctions?search_text=${search_text}&page=${page}&limit=${limit}&min_price=${min_price}&max_price=${max_price}`,
       });
       return response?.data;
     } catch (error) {

@@ -97,6 +97,13 @@ const PortfolioListMobile = ({
         >
           Pending Rented Air Rights
         </div>
+
+        <div
+          className={`${activeTab === PortfolioTabEnum.BIDS ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-6 py-2.5 text-base font-bold transition delay-75 ease-linear`}
+          onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
+        >
+          Bids And Offers
+        </div>
         <div
           className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} flex cursor-pointer whitespace-nowrap px-6 py-2.5 text-base font-bold transition delay-75 ease-linear`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
@@ -153,7 +160,7 @@ const PortfolioListMobile = ({
               airspaceList.map((airspace, index) => (
                 <PortfolioItemMobile
                   activeTab={activeTab}
-                  airspaceName={airspace?.address}
+                  airspace={airspace}
                   key={index}
                   tags={[true, false, false, false]}
                   type={airspace?.type}
@@ -164,7 +171,6 @@ const PortfolioListMobile = ({
                   onCloseModal={onCloseModal}
                   setAirspaceList={setAirspaceList}
                   selectedAirspace={selectedAirspace}
-                  requestDocument={airspace?.requestDocument}
                   setSelectedAirspace={setSelectedAirspace}
                   createdAt={airspace.createdAt as Date}
                 />

@@ -239,7 +239,7 @@ const Sidebar = () => {
           {!isCollapsed && (
             <p className="self-start px-[14.64px] font-normal tracking-[1%] text-[#5D7285]">MARKETPLACE</p>
           )}
-          <SidebarItem href={"/buy"} text={"Buy Airspace"}>
+          <SidebarItem href={"/buy"} text={"Buy Air Rights"}>
             <MapIcon isActive={false} />
           </SidebarItem>
           <SidebarItem href={"/rent"} text={"Rent Air Rights"}>

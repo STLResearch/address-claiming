@@ -29,7 +29,7 @@ const useFetchAuctions = (initialPage: number = 1, limit: number = 10, searchPar
       ) {
         response = await getAuctions(page, limit);
       } else {
-        response = await searchAuctions(searchParam, page, limit);
+        response = await searchAuctions(searchParam, page, limit, priceRange[0], priceRange[1]);
       }
 
       const newData = response;
