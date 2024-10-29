@@ -142,7 +142,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
               </h1>
             </div>
             <div className="flex flex-col gap-[2px]">
-              <p className="text-[14px] leading-[26px] text-[#727272]">Starting Bid:</p>
+              <p className="text-[14px] leading-[26px] text-[#727272]">Starting Bid</p>
               <h1 className="text-[14px] font-bold leading-[26px] text-[#050505]">
                 ${auctionDetailData?.initialPrice}
               </h1>
@@ -172,7 +172,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                   </div>
                   <span className="hidden text-right text-gray-500 sm:block">
                     <span className="text-[#E04F64]">*</span>You cannot bid lower than
-                    {` $${getMinBid()}`}
+                    {`$${getMinBid()}`}
                   </span>
                 </div>
                 <div
