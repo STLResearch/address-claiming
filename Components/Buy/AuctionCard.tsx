@@ -74,7 +74,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ data, handleShowBidDetail }) 
           className={`${timeLeft.toLowerCase() === "time's up!" ? "bg-gray-300" : "bg-[#0653EA]"} flex h-[31px] w-full items-center rounded-lg`}
         >
           <button
-            // disabled={timeLeft.toLowerCase() === "time's up!"}
+            disabled={timeLeft.toLowerCase() === "time's up!"}
             onClick={() => handleShowBidDetail(data)}
             className="w-full text-[14px] leading-[21px] text-white"
           >
