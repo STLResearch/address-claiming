@@ -6,10 +6,12 @@ import { PropertyData } from "@/types";
 interface Props {
   setShowAirspacePage: React.Dispatch<React.SetStateAction<boolean>>;
   airspaces: PropertyData[];
+  setSelectedAirsspace: React.Dispatch<React.SetStateAction<PropertyData>>
 }
 const MyMobileAirspacesPage = ({
   setShowAirspacePage,
   airspaces = [],
+  setSelectedAirsspace,
 }: Props) => {
   return (
     <div
@@ -31,7 +33,7 @@ const MyMobileAirspacesPage = ({
           {airspaces.length === 0 ? (
             <AirSpaceEmptyList />
           ) : (
-            <AirspacesList airspaces={airspaces} />
+            <AirspacesList airspaces={airspaces} handleSelectedAirspace={(space) => setSelectedAirsspace(space)}/>
           )}
           <button
             onClick={() => setShowAirspacePage(false)}

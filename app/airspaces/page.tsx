@@ -1,10 +1,17 @@
+/* eslint-disable complexity */
 "use client";
 
 import useAuth from "../../hooks/useAuth";
 import { useMobile } from "../../hooks/useMobile";
 import PropertiesService from "../../services/PropertiesService";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { Fragment, useEffect, useLayoutEffect, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import React, {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import mapboxgl from "mapbox-gl";
 import { toast } from "react-toastify";
 import {
@@ -25,15 +32,10 @@ import Explorer from "../../Components/Airspace/Explorer/Explorer";
 import Slider from "../../Components/Airspace/Slider";
 import SuccessPopUp from "../../Components/Airspace/SuccessPopUp";
 import FailurePopUp from "../../Components/Airspace/FailurePopUp";
-import Link from "next/link";
-import {
-  ChevronRightIcon,
-  HelpQuestionIcon,
-  LocationPointIcon,
-} from "../../Components/Icons";
+import { ChevronRightIcon, HelpQuestionIcon } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
-import { defaultData, StatusTypes } from "../../types";
+import { defaultData, PropertyData, StatusTypes } from "../../types";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PolygonTool from "../../Components/PolygonTool";
 import VerificationPopup from "@/Components/MyAccount/VerificationPopup";
@@ -41,6 +43,13 @@ import MyMobileAirspacesPage from "@/Components/Airspace/ClaimedAirspaceList";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import AirRightsEstimateService from "@/services/AirRightsEstimateService";
 import { createAirRightEstimateMarker } from "@/utils/maputils";
+import UserService from "@/services/UserService";
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+import AirspaceDetails from "@/Components/Portfolio/AirspaceDetails";
+import { AddressItem } from "@/Components/Airspace/AddressItem";
+import { SelectedAirspace } from "@/Components/Airspace/SelectedAirspace";
+import "mapbox-gl/dist/mapbox-gl.css";
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 
 interface Address {
   id: string;
@@ -55,7 +64,6 @@ const Airspaces: React.FC = () => {
   const { setIsOpen, currentStep, isOpen } = useTour();
   const [showMobileMap, setShowMobileMap] = useState<boolean>(isOpen);
   const [showHowToModal, setShowHowToModal] = useState<boolean>(false);
-  // Variables
   const [address, setAddress] = useState<string>("");
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [flyToAddress, setFlyToAddress] = useState<string>("");
@@ -111,7 +119,6 @@ const Airspaces: React.FC = () => {
   const pathname = usePathname();
 
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [drawTool, setDrawTool] = useState(null);
   const [isDrawMode, setIsDrawMode] = useState(false);
   const [dontShowAddressOnInput, setDontShowAddressOnInput] = useState(false);
   const [showAirspacePage, setShowAirspacePage] = useState(false);
@@ -126,6 +133,7 @@ const Airspaces: React.FC = () => {
 
   const { getAirRightEstimates } = AirRightsEstimateService();
   const { getTotalAirspacesByUserAddress } = AirspaceRentalService();
+  const draw: any = useRef(null);
 
   useEffect(() => {
     if (!user) return;
@@ -135,10 +143,7 @@ const Airspaces: React.FC = () => {
           const airspaces = await getTotalAirspacesByUserAddress();
 
           if (airspaces && airspaces.previews) {
-            const retrievedAirspaces = airspaces.previews.map((item: any) => ({
-              address: item.address,
-              id: item?.id,
-            }));
+            const retrievedAirspaces = airspaces.previews;
             if (retrievedAirspaces.length > 0) {
               setAirspaces(retrievedAirspaces);
               setTotalAirspace(airspaces.total);
@@ -181,16 +186,38 @@ const Airspaces: React.FC = () => {
         ],
         // AttributionControl: false
       });
-
-      const draw = new MapboxDraw({
-        displayControlsDefault: false,
-        controls: {
-          polygon: true,
-          trash: true,
+      const customDrawStyles = [
+        {
+          id: 'gl-draw-polygon-fill',
+          type: 'fill',
+          filter: ['==', '$type', 'Polygon'],
+          paint: {
+            'fill-color': '#0000FF',
+            'fill-opacity': 0.5,
+          },
         },
-        defaultMode: "draw_polygon",
+        {
+          id: 'gl-draw-polygon-stroke',
+          type: 'line',
+          filter: ['==', '$type', 'Polygon'],
+          layout: {
+            'line-cap': 'round',
+            'line-join': 'round',
+          },
+          paint: {
+            'line-color': '#0000FF',
+            'line-width': 1,
+            'line-dasharray': [2, 2],
+          },
+        },
+      ];
+
+      draw.current = new MapboxDraw({
+        displayControlsDefault: false,
+        styles: customDrawStyles
       });
-      setDrawTool(draw);
+
+      newMap.addControl(draw.current);
 
       newMap.on("render", function () {
         newMap.resize();
@@ -220,7 +247,7 @@ const Airspaces: React.FC = () => {
       const handleCoordinates = async (e) => {
         setIsDrawMode(true);
         setIsLoading(true);
-        const drawnFeatures = draw.getAll();
+        const drawnFeatures = draw.current?.getAll();
         if (drawnFeatures.features.length > 0) {
           const coordinates =
             drawnFeatures.features[0].geometry.coordinates[0][0];
@@ -340,14 +367,18 @@ const Airspaces: React.FC = () => {
   }, [flyToAddress, map]);
   useEffect(() => {
     const handlePin = async () => {
-      if (map && coordinates?.latitude !== "" && coordinates?.longitude !== "") {
+      if (
+        map &&
+        coordinates?.latitude !== "" &&
+        coordinates?.longitude !== ""
+      ) {
         const temp: mapboxgl.LngLatLike = {
           lng: Number(coordinates.longitude),
           lat: Number(coordinates?.latitude),
         };
         if (marker) {
-          marker.remove();
-          setMarker(null);
+          marker.setLngLat(temp).addTo(map as mapboxgl.Map);
+          return
         }
         const newMarker = new mapboxgl.Marker({
           color: "#3FB1CE",
@@ -355,11 +386,14 @@ const Airspaces: React.FC = () => {
         })
           .setLngLat(temp)
           .addTo(map as mapboxgl.Map);
-        newMarker.on('dragend',  async () => {
+        newMarker.on("dragend", async () => {
           const lngLat = newMarker.getLngLat();
           const newLongitude = lngLat.lng;
           const newLatitude = lngLat.lat;
-          setCoordinates({longitude: newLongitude.toString(), latitude: newLatitude.toString()});
+          setCoordinates({
+            longitude: newLongitude.toString(),
+            latitude: newLatitude.toString(),
+          });
           const response = await fetch(
             `https://api.mapbox.com/geocoding/v5/mapbox.places/${newLongitude.toString()},${newLatitude.toString()}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`,
           );
@@ -373,8 +407,8 @@ const Airspaces: React.FC = () => {
         });
         setMarker(newMarker);
       }
-    }
-    handlePin()
+    };
+    handlePin();
   }, [map, coordinates.latitude, coordinates.longitude]);
 
   //Adds address for the new address
@@ -560,7 +594,7 @@ const Airspaces: React.FC = () => {
         weekDayRanges,
         orderPhotoforGeneratedMap,
         assessorParcelNumber,
-        images : images ,
+        images: images,
       };
       if (!rent) {
         errors.push(
@@ -634,8 +668,7 @@ const Airspaces: React.FC = () => {
         }
         const newMarker = new mapboxgl.Marker({
           color: "#3FB1CE",
-          draggable: true
-
+          draggable: true,
         })
           .setLngLat({ lng: longitude, lat: latitude })
           .addTo(map as mapboxgl.Map);
@@ -646,7 +679,11 @@ const Airspaces: React.FC = () => {
     }
   };
 
+  
+  const [selected, setSelected] = useState(false);
+
   const handleSetAddress = (value) => {
+    setSelected(false);
     setAddress(value);
     if (!showOptions) setShowOptions(true);
   };
@@ -673,8 +710,39 @@ const Airspaces: React.FC = () => {
     airRightEstimateMarkers.forEach((m) => m.remove());
     setAirRightEstimateMarkers([]);
   };
+  const { getUser } = UserService();
+  const { signIn } = useAuth();
 
-  const router = useRouter();
+  const onVerifyMyAccount = async () => {
+    setIsLoading(true);
+    // @ts-ignore
+    // eslint-disable-next-line no-undef
+    const client = await new Persona.Client({
+      templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
+      referenceId: user?.id.toString(),
+      environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
+      onReady: () => {
+        setIsLoading(false);
+        client.open();
+      },
+      onComplete: async () => {
+        const responseData = await getUser();
+        if (!responseData.error) {
+          signIn({ user: responseData.data });
+        }
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (isMobile) {
+      setShowMobileMap(true);
+    }
+  }, [isMobile]);
+
+  const [selectedAirsSpace, setSelectedAirspace] =
+    useState<PropertyData | null>(null);
+
   return (
     <Fragment>
       <Head>
@@ -699,50 +767,38 @@ const Airspaces: React.FC = () => {
             />
           )}
 
-          <div>
-            {isMobile && showOptions && addresses.length > 0 && (
-              <div className="w-full flex items-center justify-center bg-white pb-[18px]">
-                <div className=" p-[16px] w-[345px] flex flex-col items-center justify-center border border-blue-500 rounded-lg ">
-                  <div className="w-[301px]">
-                    {addresses.slice(0, 1).map((item: Address) => (
-                      <div
-                        key={item.id}
-                        onClick={() =>
-                          handleSelectAddress(item.place_name, true)
-                        }
-                        className="w-full text-left text-[#222222]"
-                      >
-                        <div className="flex items-center">
-                          <div className="w-[10%] h-6 mr-3">
-                            <LocationPointIcon />
-                          </div>
-                          <div className="w-[90%] text-[14px]">
-                            {item.place_name}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-
-                    {((isMobile && showMobileMap) ||
-                      (isOpen && currentStep === 2 && isMobile)) && (
-                      <div
-                        onClick={() => {
-                          setShowClaimModal(true);
-                          setIsLoading(true);
-                          handleSelectAddress(addresses[0].place_name, false);
-                        }}
-                        className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
-                        style={{ maxWidth: "400px" }}
-                      >
-                       Claim Air Right 
-                      </div>
-                    )}
+          {isMobile && showOptions && addresses.length > 0 && (
+            <div className="w-full flex flex-col items-center justify-center bg-white pb-[18px]">
+              {selected ? (
+                <SelectedAirspace
+                  onClaim={() => {
+                    setShowClaimModal(true);
+                    setIsLoading(true);
+                    handleSelectAddress(address, false);
+                  }}
+                  onClick={() => handleSelectAddress(address, true)}
+                  placeName={address}
+                />
+              ) : (
+                <div className="w-full flex items-center justify-center bg-white pb-[18px]">
+                  <div className="w-[90%]">
+                    <div className="w-full flex-col h-[250px] overflow-y-scroll bg-white rounded-lg mt-2 border-t-4 border-t-[#4285F4] rounded-t-[8px]">
+                      {addresses.map((item: Address) => (
+                        <AddressItem
+                          key={item.id}
+                          onClick={() => {
+                            setAddress(item.place_name);
+                            setSelected(true);
+                          }}
+                          placeName={item.place_name}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-
+              )}
+            </div>
+          )}
           {showHowToModal && (
             <HowToModal
               goBack={() => setShowHowToModal(false)}
@@ -754,6 +810,16 @@ const Airspaces: React.FC = () => {
             <MyMobileAirspacesPage
               setShowAirspacePage={setShowAirspacePage}
               airspaces={airspaces}
+              setSelectedAirsspace={setSelectedAirspace}
+            />
+          )}
+
+          {isMobile && selectedAirsSpace && (
+            <AirspaceDetails
+              airspace={selectedAirsSpace}
+              onCloseModal={() => {
+                setSelectedAirspace(null);
+              }}
             />
           )}
 
@@ -801,19 +867,19 @@ const Airspaces: React.FC = () => {
                     onCloseModal={() => {
                       setDontShowAddressOnInput(false);
                       removePubLicUserDetailsFromLocalStorageOnClose(
-                        "airSpaceData"
+                        "airSpaceData",
                       );
                       setShowClaimModal(false);
                       setIsLoading(false);
                       setData({ ...defaultData });
-                    } }
+                    }}
                     data={{ ...data, address }}
                     setData={setData}
                     onClaim={onClaim}
                     dontShowAddressOnInput={dontShowAddressOnInput}
-                    setDontShowAddressOnInput={setDontShowAddressOnInput} 
-                    setAddress={setAddress} 
-                     />
+                    setDontShowAddressOnInput={setDontShowAddressOnInput}
+                    setAddress={setAddress}
+                  />
                 )}
                 {(showSuccessPopUp || showFailurePopUp) && (
                   <SuccessModal
@@ -859,11 +925,10 @@ const Airspaces: React.FC = () => {
                     errorMessages={errorMessages}
                   />
                 )}
-                {!showSuccessPopUp && !isMobile && (
+                {!showSuccessPopUp && !isMobile && address && (
                   <div>
                     <PolygonTool
-                      drawTool={drawTool}
-                      map={map}
+                      drawTool={draw}
                       isDrawMode={isDrawMode}
                       setDrawMode={setIsDrawMode}
                     />
@@ -889,62 +954,22 @@ const Airspaces: React.FC = () => {
                 )}
               </div>
             )}
-            {(!showMobileMap || isOpen) && (
-              <div className="flex h-full w-full flex-col md:hidden">
-                <div
-                  onClick={() => setShowMobileMap(true)}
-                  className="flex w-full flex-col justify-between gap-[184px] bg-cover bg-center bg-no-repeat p-[17px]"
-                  style={{ backgroundImage: "url('/images/map-bg.png')" }}
-                >
-                  <div className="w-full rounded-[20px] bg-[#222222] p-[12px] text-center text-base font-normal text-white">
-                    Exciting times ahead!
-                    <br />
-                    Claim your air rights 🚀✨
+            {isMobile && showMobileMap && (
+              <div
+                onClick={() => setShowHowToModal(true)}
+                className="flex items-center fixed bottom-[160px] justify-center z-10 w-full"
+              >
+                <div className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white  mb-2 w-[288px] h-[50px]">
+                  <div className="h-[24px] w-[24px]">
+                    <HelpQuestionIcon color="white" isActive={false} />
                   </div>
-                  <div className="claim-step w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
-                    Claim your air rights
-                  </div>
-                </div>
-                <div className="flex flex-1 flex-col gap-[23px] px-[13px] py-[29px]">
-                  <div className="flex flex-1 items-center gap-[14px]">
-                    <Link
-                      href={"/airspaces"}
-                      className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
-                      style={{
-                        backgroundImage: "url('/images/airspace-preview.png')",
-                      }}
-                    >
-                      <p className="text-xl font-medium text-white">Air Rights</p>
-                    </Link>
-                    <Link
-                      href={"/portfolio"}
-                      className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
-                      style={{
-                        backgroundImage: "url('/images/portfolio.jpg')",
-                      }}
-                    >
-                      <p className="text-xl font-medium text-white">
-                        Portfolio
-                      </p>
-                    </Link>
-                  </div>
-
-                  <div
-                    onClick={() => setShowHowToModal(true)}
-                    className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
-                  >
-                    <div className="h-[24px] w-[24px]">
-                      <HelpQuestionIcon color="white" isActive={false} />
-                    </div>
-                    <p>How to Claim My Air Rights?</p>
-                  </div>
+                  <p>How to Claim My Air Rights?</p>
                 </div>
               </div>
             )}
+
             {showPopup && (
-              <VerificationPopup
-                onVerifyMyAccount={() => router.push("/my-account")}
-              />
+              <VerificationPopup onVerifyMyAccount={onVerifyMyAccount} />
             )}
             <div className="hidden sm:block">
               <ZoomControllers map={map} />

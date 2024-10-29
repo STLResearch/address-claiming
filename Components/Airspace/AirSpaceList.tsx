@@ -4,9 +4,10 @@ import { PropertyData } from "@/types";
 
 interface MyAirspacesProps {
   airspaces: PropertyData[];
+  handleSelectedAirspace: (a: PropertyData) => void
 }
 
-const AirspacesList: FC<MyAirspacesProps> = ({ airspaces = [] }) => {
+const AirspacesList: FC<MyAirspacesProps> = ({ airspaces = [], handleSelectedAirspace }) => {
   const [visibleItems, setVisibleItems] = useState(5);
   const handleSeeMore = () => {
     setVisibleItems((prev) => prev + 5);
@@ -17,6 +18,7 @@ const AirspacesList: FC<MyAirspacesProps> = ({ airspaces = [] }) => {
       {airspaces.slice(0, visibleItems).map((airspace, index) => (
         <div
           key={index}
+          onClick={() => handleSelectedAirspace(airspace)}
           className="w-full flex items-center justify-center  bg-white  border-b-2 "
         >
           <div className="flex items-center justify-between  gap-8 w-[375px] h-[54px] px-4 bg-white ">
