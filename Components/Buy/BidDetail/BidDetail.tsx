@@ -66,6 +66,13 @@ const BidDetails: React.FC<BidDetailsProps> = ({
   const { latitude, longitude, title } = auctionDetailData?.layer?.property || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
 
+  const getMinBid = () => {
+    if (auctionDetailData && auctionDetailData.currentPrice > 0) {
+      return 0.1 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice;
+    } else {
+      return auctionDetailData && 0.1 * auctionDetailData?.initialPrice + auctionDetailData?.initialPrice;
+    }
+  };
   useEffect(() => {
     setCurrentUserBid(null);
   }, []);
@@ -135,6 +142,12 @@ const BidDetails: React.FC<BidDetailsProps> = ({
               </h1>
             </div>
             <div className="flex flex-col gap-[2px]">
+              <p className="text-[14px] leading-[26px] text-[#727272]">Starting Bid:</p>
+              <h1 className="text-[14px] font-bold leading-[26px] text-[#050505]">
+                ${auctionDetailData?.initialPrice}
+              </h1>
+            </div>
+            <div className="flex flex-col gap-[2px]">
               <p className="text-[14px] text-[#727272]">Time left</p>
               <h1 className="text-right text-[14px] font-bold text-[#050505]">{timeLeft ?? "N/A"}</h1>
             </div>
@@ -159,7 +172,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                   </div>
                   <span className="hidden text-right text-gray-500 sm:block">
                     <span className="text-[#E04F64]">*</span>You cannot bid lower than
-                    {` $${auctionDetailData && 0.1 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice}`}
+                    {` $${getMinBid()}`}
                   </span>
                 </div>
                 <div
@@ -180,7 +193,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 </div>
                 <span className="w-full text-right text-xs text-gray-500 sm:hidden">
                   <span className="text-[#E04F64]">*</span> You cannot bid lower than
-                  {` $${auctionDetailData && 0.01 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice}`}
+                  {` $${getMinBid()}`}
                 </span>
               </div>
               <div className="w-full rounded-lg bg-[#0653EA] text-white">
