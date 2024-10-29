@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { GoStack } from "react-icons/go";
 import { BsLightning } from "react-icons/bs";

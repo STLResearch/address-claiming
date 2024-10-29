@@ -69,10 +69,10 @@ const BidDetails: React.FC<BidDetailsProps> = ({
   const getMinBid = () => {
     if (auctionDetailData && auctionDetailData.currentPrice > 0) {
       return 0.1 * auctionDetailData?.currentPrice + auctionDetailData?.currentPrice;
-    } else {
-      return auctionDetailData && 0.1 * auctionDetailData?.initialPrice + auctionDetailData?.initialPrice;
     }
+    return auctionDetailData && 0.1 * auctionDetailData?.initialPrice + auctionDetailData?.initialPrice;
   };
+
   useEffect(() => {
     setCurrentUserBid(null);
   }, []);
