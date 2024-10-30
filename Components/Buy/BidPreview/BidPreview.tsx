@@ -147,12 +147,15 @@ const BidPreview: React.FC<BidPreviewProps> = ({
   const { latitude, longitude, title } =
     auctionDetailData?.layer?.property || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
-  const images = [
-    { image_url: "/images/imagetest1.jpg" },
-    { image_url: "/images/imagetest2.jpg" },
-    { image_url: "/images/imagetest3.jpg" },
-  ];
-  images[0] = { image_url: imageUrl };
+ 
+  const images = auctionDetailData?.layer?.property?.images || []
+  let displayImages;  
+  if(auctionDetailData?.layer?.property?.orderPhotoforGeneratedMap){
+    displayImages = [...(images || []), imageUrl];
+  }
+  else{
+    displayImages = [imageUrl, ...(images || [])];
+  }
 
   return (
     <div className="fixed inset-0 bottom-[74px] z-50 flex items-start justify-center bg-[#294B63] bg-opacity-50 pt-32 backdrop-blur-[2px] sm:bottom-0">
@@ -196,12 +199,8 @@ const BidPreview: React.FC<BidPreviewProps> = ({
           <div className="mt-[15px] flex flex-col gap-y-[15px] text-[14px] leading-[21px] text-light-black">
             <div className="relative h-[130px]">
               <div className="relative h-[130px] w-full">
-                <Image
-                  src={imageUrl}
-                  alt={`Map at ${latitude}, ${longitude}`}
-                  layout="fill"
-                  objectFit="cover"
-                />
+                
+              <Carousel images={displayImages} />
               </div>
             </div>
           </div>

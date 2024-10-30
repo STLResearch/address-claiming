@@ -18,12 +18,15 @@ const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction, setShowBidDetail, se
     setShowBidDetail(true);
     setAuctionDetailData(item);
   };
-  const images = [
-    { image_url: "/images/imagetest1.jpg" },
-    { image_url: "/images/imagetest2.jpg" },
-    { image_url: "/images/imagetest3.jpg" },
-  ];
-  images[0] = { image_url: imageUrl };
+  const images = auction?.layer?.property?.images || []
+  let displayImages;  
+ 
+  if(auction?.layer?.property?.orderPhotoforGeneratedMap){
+    displayImages = [...(images || []), imageUrl];
+  }
+  else{
+    displayImages = [imageUrl, ...(images || [])];
+  }
 
   return (
     <div
@@ -32,7 +35,7 @@ const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction, setShowBidDetail, se
       }
     >
       <div className={"relative h-[151px] w-1/2 rounded-xl sm:w-[266px]"}>
-        <Carousel images={images} />
+        <Carousel images={displayImages} />
       </div>
       <div className={"flex h-[151px] w-1/2 flex-col justify-between sm:w-[266px]"}>
         <div>
