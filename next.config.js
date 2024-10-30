@@ -1,18 +1,11 @@
 module.exports = {
-  output: "export",
-  trailingSlash: false,
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback.fs = false;
-      
-      // FIX this
-      // Disable minimize to make it work with Candy Machine template
-      // minimization brakes Public Key names
-      config.optimization.minimize = false;
-    }
+  webpack: (config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     return config;
   },
+  output: "export",
+  trailingSlash: false,
+
   images: {
     unoptimized: true,
     remotePatterns: [

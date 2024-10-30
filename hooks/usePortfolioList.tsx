@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import useAuth from "@/hooks/useAuth";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import { PropertyData } from "@/types";
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers/web3Provider";
 import { useAppDispatch } from "@/redux/store";
 import { setActivePortfolioTab } from "@/redux/slices/userSlice";
 

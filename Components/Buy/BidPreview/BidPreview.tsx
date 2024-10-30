@@ -7,7 +7,7 @@ import useAuth from "@/hooks/useAuth";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";
 import { executeTransaction } from "@/utils/rent/transactionExecutor";
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers/web3Provider";
 import { AuctionDataI } from "@/types";
 import MarketplaceService from "@/services/MarketplaceService";
 import { getMapboxStaticImage } from "@/utils/marketPlaceUtils";
@@ -26,9 +26,7 @@ interface BidPreviewProps {
   currentUserBid: number | null;
   setCurrentUserBid: (number: number | null) => void;
   onClose: () => void;
-  setBidResponseStatus: React.Dispatch<
-    React.SetStateAction<"SUCCESS" | "FAIL">
-  >;
+  setBidResponseStatus: React.Dispatch<React.SetStateAction<"SUCCESS" | "FAIL">>;
 }
 const BidPreview: React.FC<BidPreviewProps> = ({
   setTxHash,
@@ -64,13 +62,13 @@ const BidPreview: React.FC<BidPreviewProps> = ({
 
     if (userSolBalance === 0) {
       return toast.info(
-        "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue",
+        "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
       );
     }
 
     if (parseFloat(userUSDWalletBalance.amount) === 0) {
       return toast.info(
-        "You don't have sufficient funds to perform this operation, please top up your wallet with some USD to continue",
+        "You don't have sufficient funds to perform this operation, please top up your wallet with some USD to continue"
       );
     }
 
@@ -85,11 +83,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
         toast.error("Your bid should be higher than the highest bid");
         setIsLoading(false);
         return;
-      } else if (
-        currentUserBid &&
-        auctionDetailData &&
-        currentUserBid < auctionDetailData?.initialPrice
-      ) {
+      } else if (currentUserBid && auctionDetailData && currentUserBid < auctionDetailData?.initialPrice) {
         toast.error("Your bid should be higher or equal to the starting bid");
         setIsLoading(false);
         return;
@@ -100,9 +94,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
       const auction = auctionDetailData?.pdaAddress.toString();
       const response: any = await createBid(postData, auction, currentUserBid);
       if (response && response.tx[0]) {
-        const transaction1 = VersionedTransaction.deserialize(
-          new Uint8Array(Buffer.from(response.tx[0], "base64")),
-        );
+        const transaction1 = VersionedTransaction.deserialize(new Uint8Array(Buffer.from(response.tx[0], "base64")));
 
         const tx1 = await executeTransaction(transaction1, provider);
 
@@ -144,8 +136,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
       setIsLoading(false);
     }
   };
-  const { latitude, longitude, title } =
-    auctionDetailData?.layer?.property || {};
+  const { latitude, longitude, title } = auctionDetailData?.layer?.property || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
   const images = [
     { image_url: "/images/imagetest1.jpg" },
@@ -168,15 +159,10 @@ const BidPreview: React.FC<BidPreviewProps> = ({
             )} */}
             <div className="mt-[21px] flex w-full items-center">
               <div className="flex w-full justify-center">
-                <h2 className="text-center text-xl font-medium text-[#222222]">
-                  Bid Preview
-                </h2>
+                <h2 className="text-center text-xl font-medium text-[#222222]">Bid Preview</h2>
               </div>
               {!isMobile && (
-                <button
-                  onClick={onClose}
-                  className="flex h-[15px] w-[15px] cursor-pointer items-center justify-end"
-                >
+                <button onClick={onClose} className="flex h-[15px] w-[15px] cursor-pointer items-center justify-end">
                   <CloseIcon />
                 </button>
               )}
@@ -196,12 +182,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
           <div className="mt-[15px] flex flex-col gap-y-[15px] text-[14px] leading-[21px] text-light-black">
             <div className="relative h-[130px]">
               <div className="relative h-[130px] w-full">
-                <Image
-                  src={imageUrl}
-                  alt={`Map at ${latitude}, ${longitude}`}
-                  layout="fill"
-                  objectFit="cover"
-                />
+                <Image src={imageUrl} alt={`Map at ${latitude}, ${longitude}`} layout="fill" objectFit="cover" />
               </div>
             </div>
           </div>
@@ -209,37 +190,27 @@ const BidPreview: React.FC<BidPreviewProps> = ({
             <div className="mt-[15px] flex flex-col gap-y-[15px] truncate text-[14px] leading-[21px] text-light-black">
               <div className="flex">
                 <div>Owner:</div>
-                <div className="truncate pl-[15px] text-light-grey">
-                  {auctionDetailData?.seller}
-                </div>
+                <div className="truncate pl-[15px] text-light-grey">{auctionDetailData?.seller}</div>
               </div>
               <div className="flex">
                 <div>Expiration Date:</div>
-                <div className="pl-[15px] text-light-grey">
-                  {formatDate(auctionDetailData?.endDate)}
-                </div>
+                <div className="pl-[15px] text-light-grey">{formatDate(auctionDetailData?.endDate)}</div>
               </div>
               <div className="flex">
                 <div>Starting Bid:</div>
-                <div className="pl-[15px] text-light-grey">
-                  $ {auctionDetailData?.initialPrice}
-                </div>
+                <div className="pl-[15px] text-light-grey">$ {auctionDetailData?.initialPrice}</div>
               </div>
 
               <div className="flex">
                 <div>Highest Bid:</div>
-                <div className="pl-[15px] text-light-grey">
-                  $ {auctionDetailData?.currentPrice}
-                </div>
+                <div className="pl-[15px] text-light-grey">$ {auctionDetailData?.currentPrice}</div>
               </div>
             </div>
             {!isMobile && (
               <div className="flex items-end">
                 <div className="text-light-black">
                   <div className="text-[14px] leading-[21px]">Your Bid</div>
-                  <div className="text-2xl font-bold leading-9">
-                    &#36; {currentUserBid}
-                  </div>
+                  <div className="text-2xl font-bold leading-9">&#36; {currentUserBid}</div>
                 </div>
               </div>
             )}
@@ -250,23 +221,20 @@ const BidPreview: React.FC<BidPreviewProps> = ({
           className={`px-[29px] py-[10px] ${isMobile ? "shadow-[0_0px_4.2px_0px_rgba(0,0,0,0.25)]" : "shadow-none"} flex touch-manipulation items-center justify-between gap-[20px] text-[14px]`}
         >
           <div className="w-1/2">
-            {isMobile ? (
+            {isMobile ?
               <div>
                 <div className="text-light-black">
                   <div className="text-[14px] leading-[21px]">Your Bid</div>
-                  <div className="text-2xl font-bold leading-9">
-                    &#36; {currentUserBid}
-                  </div>
+                  <div className="text-2xl font-bold leading-9">&#36; {currentUserBid}</div>
                 </div>
               </div>
-            ) : (
-              <div
+            : <div
                 onClick={onClose}
                 className="w-full cursor-pointer touch-manipulation rounded-[5px] border border-[#0653EA] py-[10px] text-center text-[#0653EA]"
               >
                 Cancel
               </div>
-            )}
+            }
           </div>
 
           <LoadingButton

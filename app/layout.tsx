@@ -9,7 +9,7 @@ import CookieConsent from "../Components/CookieConsent";
 import { msclaritConfig } from "../hooks/msclaritConfig";
 
 import { SidebarProvider } from "../hooks/sidebarContext";
-import { Web3authProvider } from "../providers/web3authProvider";
+import { Web3authProvider } from "../providers/web3Provider";
 import { ToastContainer } from "react-toastify";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -19,9 +19,8 @@ import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
 import { OnboardingTour } from "../Components/Tours";
 import { Web3Provider } from "@/Components/Web3AuthProvider";
-
-
-
+import NotificationBanner from "@/Components/NotificationBanner";
+import TawkMessengerComponent from "@/Components/TawkMessenger";
 
 export const metadata: Metadata = {
   title: {
@@ -39,20 +38,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link
-          href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
-          rel="stylesheet"
-        />
-        <link
-          rel="icon"
-          href="/favicon-1.ico"
-          sizes="any"
-          type="image/x-icon"
-        />
-        <link
-          href="https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css"
-          rel="stylesheet"
-        />
+        <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
+        <link rel="icon" href="/favicon-1.ico" sizes="any" type="image/x-icon" />
+        <link href="https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css" rel="stylesheet" />
       </head>
       <body>
         <div id="backdrop-root"></div>
@@ -75,27 +63,27 @@ export default function RootLayout({
           {/* <Provider store={store}> */}
           <Web3authProvider>
             <Web3Provider>
-            <SidebarProvider>
-              <ToastContainer style={{ width: "500px" }} />
-              <div id="backdrop-root"></div>
-              <div id="modal-root"></div>
+              <SidebarProvider>
+                <ToastContainer style={{ width: "500px" }} />
+                <div id="backdrop-root"></div>
+                <div id="modal-root"></div>
 
-              <NextTopLoader
-                color="#2299DD"
-                initialPosition={0.08}
-                crawlSpeed={200}
-                height={3}
-                crawl={true}
-                showSpinner={false}
-                easing="ease"
-                speed={300}
-                shadow="0 0 10px #2299DD,0 0 5px #2299DD"
-              />
-              <NotificationBanner />
-              <OnboardingTour>{children}</OnboardingTour>
-            </SidebarProvider>
-            <CookieConsent />
-            <TawkMessengerComponent />
+                <NextTopLoader
+                  color="#2299DD"
+                  initialPosition={0.08}
+                  crawlSpeed={200}
+                  height={3}
+                  crawl={true}
+                  showSpinner={false}
+                  easing="ease"
+                  speed={300}
+                  shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+                />
+                <NotificationBanner />
+                <OnboardingTour>{children}</OnboardingTour>
+              </SidebarProvider>
+              <CookieConsent />
+              <TawkMessengerComponent />
             </Web3Provider>
           </Web3authProvider>
           {/* </Provider> */}

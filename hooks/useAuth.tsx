@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useDispatch, shallowEqual } from "react-redux";
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers/web3Provider";
 import { useRouter } from "next/navigation";
 import publicAccessRoutes from "@/helpers/publicAccessRoutes";
 import { User } from "@/types";
@@ -55,10 +55,7 @@ const useAuth = () => {
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
-  const setAndClearOtherPublicRouteData = (
-    localStorageKey: string,
-    data: any,
-  ) => {
+  const setAndClearOtherPublicRouteData = (localStorageKey: string, data: any) => {
     for (const route of publicAccessRoutes) {
       if (route.localStorageKey !== localStorageKey) {
         localStorage.removeItem(route.localStorageKey);
@@ -85,7 +82,7 @@ const useAuth = () => {
 
     router.push("/auth");
     toast.success(
-      "Congratulation!!! To ensure your your actions are saved and recognized, register now with SkyTrade.",
+      "Congratulation!!! To ensure your your actions are saved and recognized, register now with SkyTrade."
     );
     return true;
   };

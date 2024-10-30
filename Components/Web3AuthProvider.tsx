@@ -1,9 +1,10 @@
-"use client"
+"use client";
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { mainnet,sepolia } from "wagmi/chains";
+import { base, sepolia, optimism } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import { injected } from "wagmi/connectors";
+import { metadata } from "@/app/layout";
 
 export const config = createConfig(
   getDefaultConfig({
@@ -12,23 +13,21 @@ export const config = createConfig(
 
     transports: {
       // RPC URL for each chain
-      [sepolia.id]: http(
-        `https://eth-sepolia.g.alchemy.com/v2/Pfjofe7M4pb82Po5XfF0KHUEp5g_Kv6z`,
-      ),
+      [sepolia.id]: http(process.env.NEXT_PUBLIC_ETH_TESTNET_RPC),
     },
     connectors: [injected()],
 
     // Required API Keys
-    walletConnectProjectId: "eca919b068b66b9b66591ef783be6c76",
+    walletConnectProjectId: process.env.NEXT_PUBLIC_ETH_WALLETCONNECTPROJECTID as string,
 
     // Required App Info
-    appName: "Your App Name",
+    appName: "Sky Trade",
 
     // Optional App Info
-    appDescription: "Your App Description",
-    appUrl: "https://family.co", // your app's url
-    appIcon: "https://family.co/logo.png", // your app's icon, no bigger than 1024x1024px (max. 1MB)
-  }),
+    appDescription: "The Ultimate Air Right Hub",
+    appUrl: "https://sky.trade", // your app's url
+    appIcon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdCEKx1asjzXgyTsBb7mKtDgnktfvqyDHccw&s", // your app's icon, no bigger than 1024x1024px (max. 1MB)
+  })
 );
 
 const queryClient = new QueryClient();

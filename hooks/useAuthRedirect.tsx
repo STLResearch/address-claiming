@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { SolanaWallet } from "@web3auth/solana-provider";
 
 import useAuth from "@/hooks/useAuth";
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers/web3Provider";
 import UserService from "@/services/UserService";
 import { useRouter } from "next/navigation";
 import { setCategory } from "@/redux/slices/userSlice";
@@ -68,7 +68,6 @@ const useAuthRedirect = () => {
 
     handleUserAuthentication();
   }, [web3auth?.status, provider]);
-
 
   return { isRedirecting };
 };
