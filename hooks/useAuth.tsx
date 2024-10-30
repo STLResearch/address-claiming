@@ -12,6 +12,7 @@ const useAuth = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [web3authStatus, setWeb3authStatus] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const { web3auth, setProvider } = useContext(Web3authContext);
 
   const { userData } = useAppSelector((state: any) => {
@@ -36,6 +37,17 @@ const useAuth = () => {
     };
     initStatus();
   }, [web3auth?.status]);
+
+  useEffect(() => {
+    const initStatus = async () => {
+      if (web3authStatus && userData) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+    initStatus();
+  }, [web3authStatus, userData?.blockchainAddress]);
 
   const signIn = ({ user }: { user: User }) => {
     if (user) dispatch(setUser(user));
@@ -94,6 +106,7 @@ const useAuth = () => {
     signIn,
     signOut,
     updateProfile,
+    isLoggedIn,
     user: userData,
     web3authStatus,
     customRedirect,
