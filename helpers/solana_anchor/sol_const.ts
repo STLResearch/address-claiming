@@ -6,5 +6,5 @@ export const REMOTE_DOMAIN=process.env.NEXT_PUBLIC_REMOTE_DOMAIN // Avax by defa
 // export const  ATTESTATION_HEX= '0x7b2255a2665d6986ee61730fc85b79ca6c1f313ea96a22ad570e9b3eacbe56486c9f86548c6bce4ffc5fb8371954c1c4ef029402c5163b978cec9ab9a65750911c22c507fe3b0e1cada799da8c77af8cb3316fae75bc90c96b41fbbadda38507964f1e5fb28e51a05364fcfedcd2f1aa09e5f49409f463d7d5f5141316a932c7981c'// Insert attestation as hex here
  // Shared env vars
 export const ANCHOR_PROVIDER_URL=process.env.NEXT_PUBLIC_ANCHOR_PROVIDER_URL
-export const USDC_ADDRESS=process.env.NEXT_PUBLIC_USDC_ADDRESS // USDCSOL devnet address
+export const USDC_ADDRESS=process.env.NEXT_PUBLIC_USDC_ADDRESS as string // USDCSOL devnet address
  
