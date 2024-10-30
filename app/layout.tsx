@@ -9,7 +9,7 @@ import CookieConsent from "../Components/CookieConsent";
 import { msclaritConfig } from "../hooks/msclaritConfig";
 
 import { SidebarProvider } from "../hooks/sidebarContext";
-import { Web3authProvider } from "../providers/web3Provider";
+import { Web3authProvider } from "../providers/web3AuthProvider";
 import { ToastContainer } from "react-toastify";
 
 import "react-datepicker/dist/react-datepicker.css";

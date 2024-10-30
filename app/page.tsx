@@ -3,7 +3,7 @@
 import { useEffect, useContext, Fragment, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Spinner from "@/Components/Spinner";
-import { Web3authContext } from "@/providers/web3Provider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useInitAuth from "@/hooks/useInitAuth";
 import { useAppSelector } from "@/redux/store";

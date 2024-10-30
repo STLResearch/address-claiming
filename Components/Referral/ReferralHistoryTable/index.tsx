@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { HistoryArrowIcon } from "../../Icons";
-import { Web3authContext } from "@/providers/web3Provider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import ReferralCodeService from "@/services/ReferralCodeService";
 import { useMobile } from "@/hooks/useMobile";
 

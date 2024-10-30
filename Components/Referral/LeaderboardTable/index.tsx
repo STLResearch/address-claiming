@@ -2,7 +2,7 @@ import { ArrowRightIcon } from "@/Components/Icons";
 import { BalanceLoader } from "@/Components/Wrapped";
 import useAuth from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
-import { Web3authContext } from "@/providers/web3Provider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import RewardService from "@/services/reward";
 import { CurrentPeriodPointsI, LeaderboardPeriodSummaryI } from "@/services/reward/types";
 import { useRouter } from "next/navigation";

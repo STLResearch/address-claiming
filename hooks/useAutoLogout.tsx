@@ -1,4 +1,4 @@
-import { Web3authContext } from "@/providers/web3Provider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import { useEffect, useContext } from "react";
 import useAuth from "./useAuth";
 import publicAccessRoutes from "@/helpers/publicAccessRoutes";

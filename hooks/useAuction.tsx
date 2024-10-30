@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import useAuth from "@/hooks/useAuth";
 import { PropertyData } from "@/types";
-import { Web3authContext } from "@/providers/web3Provider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setAirspaceList, setAssetId, setIsTriggerRefresh, setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";

@@ -4,7 +4,7 @@ import useAuth from "@/hooks/useAuth";
 import tokenMessengerAbi from "../../helpers/eth/abis/cctp/TokenMessenger.json";
 import usdcAbi from "../../helpers/eth/abis/Usdc.json";
 import { getPriorityFeeIx } from "@/hooks/utils";
-import { Web3authContext } from "@/providers/web3Provider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import {
   getAssociatedTokenAddress,
   getAccount,

@@ -1,6 +1,6 @@
 import { CloseIcon, CloseIconBlack, LocationPointIcon, ArrowLeftIcon } from "@/Components/Icons";
 import useAuth from "@/hooks/useAuth";
-import { Web3authContext } from "@/providers/web3Provider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import { Connection, VersionedTransaction, PublicKey } from "@solana/web3.js";
 import React, { useContext, useEffect, useState } from "react";

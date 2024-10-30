@@ -9,7 +9,7 @@ import useInitAuth from "@/hooks/useInitAuth";
 import useAuth from "@/hooks/useAuth";
 
 import EmailInput from "./EmailInput";
-import { Web3authContext } from "@/providers/web3Provider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import LoadingButton from "../LoadingButton/LoadingButton";
 import Sidebar from "../Shared/Sidebar";

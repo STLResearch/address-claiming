@@ -4,7 +4,7 @@ import { useMobile } from "@/hooks/useMobile";
 import { Connection, PublicKey } from "@solana/web3.js";
 import moment from "moment";
 import Link from "next/link";
-import { Web3authContext } from "@/providers/web3Provider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import useAuth from "@/hooks/useAuth";
 import { formatNumber } from "@/utils";
 

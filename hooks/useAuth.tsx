@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useDispatch, shallowEqual } from "react-redux";
-import { Web3authContext } from "@/providers/web3Provider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import { useRouter } from "next/navigation";
 import publicAccessRoutes from "@/helpers/publicAccessRoutes";
 import { User } from "@/types";
