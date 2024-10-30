@@ -11,7 +11,7 @@ interface PropsI {
 }
 
 const SuccessModal = ({ closePopUp, isSuccess, errorMessages, tx }: PropsI) => {
-  console.log(tx);
+
   let href = getTransactionLink(tx);
   const router = useRouter();
   const handleButtonClick = () => {

@@ -320,35 +320,32 @@ const DepositAndWithdraw = ({
 
   const handleDepositWithdraw = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    console.log("start");
+    
     // let recvieveATA=await createAssociatedTokenAccount()
     let userata = await getAssociatedTokenAddress(
       new PublicKey(USDC_ADDRESS as string),
       new PublicKey(user?.blockchainAddress as string)
     );
-    console.log("userata", userata.toString());
+   
     setIsLoading(true);
     let ans1 = await approveTxVals(address as string, userata.toString(), usdcFormAmount);
     const approveResult = await sendTransaction(config, {
       data: ans1.data as `0x${string}`,
       to: ans1.to as `0x${string}`,
     });
-    console.log(approveResult);
+    
     let approveTxreciept = await waitForTransaction(approveResult);
-    console.log({ approveTxreciept });
-    console.log("middle1");
+  
     let ans2 = await burnTxVals(address as string, userata.toString(), usdcFormAmount);
     const burnResult = await sendTransaction(config, {
       data: ans2.data as `0x${string}`,
       to: ans2.to as `0x${string}`,
     });
-    console.log(burnResult);
+    
     let burnTxreciept = await waitForTransaction(burnResult);
-    console.log({ burnTxreciept });
-    console.log("middle2");
+   
     let ans3 = await msgBytes(burnResult);
-    console.log({ ans3 });
-    console.log("middle3");
+    
     let { messageBytes, attestationSignature } = await checkAttestation(
       ans3.messageBytes as string,
       ans3.messageHash as string
@@ -367,18 +364,16 @@ const DepositAndWithdraw = ({
 
       setShowSuccessPopUp(true);
     }
-    console.log("end");
-
-    console.log("end");
+   
   };
   const waitForTransaction = async (txHash: any) => {
     let web3 = new Web3(process.env.NEXT_PUBLIC_ETH_TESTNET_RPC);
     let transactionReceipt = await web3.eth.getTransactionReceipt(txHash).catch((err) => {
       console.log("tx pending");
     });
-    console.log({ transactionReceipt });
+   
     while (transactionReceipt == undefined || transactionReceipt.status.toString() === "FALSE") {
-      console.log("here");
+     
       transactionReceipt = await web3.eth.getTransactionReceipt(txHash).catch((err) => {
         console.log("tx pending");
       });

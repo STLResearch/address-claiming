@@ -131,7 +131,6 @@ export const recieveSol = async (messageBytes:string, attestationSignature:strin
   const serializedTx = signedTx.serialize();
         let sig=await sendAndConfirmRawTransaction(connection,serializedTx).catch(e=>console.log("error send tx",e))
     
-    console.log("\n\nreceiveMessage Tx: ", sig);
     return sig
 }
 

@@ -25,17 +25,8 @@ const ETH_TOKEN_MESSENGER_CONTRACT_ADDRESS =
 console.log(process.env.NEXT_PUBLIC_ETH_TESTNET_RPC)
 export const approveTxVals = async (address: string,userata:string,usdcAmount:number) => {
 	
-console.log({ans:process.env.NEXT_PUBLIC_ETH_TESTNET_RPC})
-console.log({ans2:process.env.NEXT_PUBLIC_ETH_TOKEN_MESSENGER_CONTRACT_ADDRESS})
-console.log({ans3:process.env.NEXT_PUBLIC_USDC_ETH_CONTRACT_ADDRESS})
-console.log({ans4:address})
-const web3 = new Web3(process.env.NEXT_PUBLIC_ETH_TESTNET_RPC);
-const ETH_TOKEN_MESSENGER_CONTRACT_ADDRESS =
-		process.env.NEXT_PUBLIC_ETH_TOKEN_MESSENGER_CONTRACT_ADDRESS;
-	const USDC_ETH_CONTRACT_ADDRESS =
-		process.env.NEXT_PUBLIC_USDC_ETH_CONTRACT_ADDRESS;
 
-console.log()
+
 	//web3.eth.accounts.wallet.add(ethSigner);
 
 	// Testnet Contract Addresses
@@ -56,7 +47,6 @@ console.log()
 		.approve(ETH_TOKEN_MESSENGER_CONTRACT_ADDRESS, usdcAmount)
 		.populateTransaction();
 	let approveTxData = { to: approveTx.to, data: approveTx.data };
-	console.log({ approveTxData });
 
 	return approveTxData;
 };
@@ -119,8 +109,6 @@ export const msgBytes = async (txhash: string) => {
 	)[0];
 	const messageHash = web3.utils.keccak256(messageBytes as string);
 
-	console.log(`MessageBytes: ${messageBytes}`); //
-	console.log(`MessageHash: ${messageHash}`); //
 	return { messageBytes, messageHash };
 };
 
@@ -134,7 +122,7 @@ export const checkAttestation = async (
 			`https://iris-api-sandbox.circle.com/attestations/${messageHash}`
 		);
 		attestationResponse = await response.json();
-		console.log({ attestationResponse });
+		
 		await new Promise((r) => setTimeout(r, 2000));
 	}
 
