@@ -1,6 +1,11 @@
 module.exports = {
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false, net: false, tls: false };
+    return config;
+  },
   output: "export",
   trailingSlash: false,
+
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -27,7 +32,7 @@ module.exports = {
 };
 
 // Injected content via Sentry wizard below
-
+/* 
 const { withSentryConfig } = require("@sentry/nextjs");
 
 module.exports = withSentryConfig(
@@ -68,3 +73,4 @@ module.exports = withSentryConfig(
     automaticVercelMonitors: true,
   }
 );
+ */

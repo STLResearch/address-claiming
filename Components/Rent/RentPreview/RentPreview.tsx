@@ -1,6 +1,6 @@
 import { CloseIcon, CloseIconBlack, LocationPointIcon, ArrowLeftIcon } from "@/Components/Icons";
 import useAuth from "@/hooks/useAuth";
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import { Connection, VersionedTransaction, PublicKey } from "@solana/web3.js";
 import React, { useContext, useEffect, useState } from "react";
@@ -82,7 +82,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
           return;
         }
         const nonceAccount = await createNonceIx(connection, new PublicKey(nonceAccountEntry.publicKey));
-        
+
         const postData = {
           callerAddress: user?.blockchainAddress,
           startTime: startDate.toISOString(),
@@ -92,10 +92,10 @@ const RentPreview: React.FC<RentPreviewProps> = ({
           nonceAccountEntry,
         };
         let createMintResponse;
-        try{
-           createMintResponse = await createMintRentalToken({ postData });
-        }catch(error){
-          console.error(error)
+        try {
+          createMintResponse = await createMintRentalToken({ postData });
+        } catch (error) {
+          console.error(error);
           toast.error("some thing went wrong!");
           return;
         }
@@ -114,7 +114,7 @@ const RentPreview: React.FC<RentPreviewProps> = ({
           landAssetIds: [rentData?.layers[0].tokenId],
           startTime: startDate.toISOString(),
           endTime: endDate.toISOString(),
-        };  
+        };
 
         const executionResponse = await executeMintRentalToken({
           postData: { ...postExecuteMintData },

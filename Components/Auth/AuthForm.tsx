@@ -9,7 +9,7 @@ import useInitAuth from "@/hooks/useInitAuth";
 import useAuth from "@/hooks/useAuth";
 
 import EmailInput from "./EmailInput";
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import LoadingButton from "../LoadingButton/LoadingButton";
 import Sidebar from "../Shared/Sidebar";
@@ -22,12 +22,7 @@ interface AuthFormProps {
   setIsNewsletterChecked: (value: boolean) => void;
 }
 
-const AuthForm: FC<AuthFormProps> = ({
-  isLogin,
-  setIsLogin,
-  isNewsletterChecked,
-  setIsNewsletterChecked,
-}) => {
+const AuthForm: FC<AuthFormProps> = ({ isLogin, setIsLogin, isNewsletterChecked, setIsNewsletterChecked }) => {
   const [emailValid, setEmailValid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -88,10 +83,10 @@ const AuthForm: FC<AuthFormProps> = ({
   };
 
   return (
-    <div className="bg-[#F6FAFF]  max-sm:bg-[white]  md:w-full md:h-full  w-screen h-screen flex items-center justify-center mx-auto">
+    <div className="mx-auto flex h-screen w-screen items-center justify-center bg-[#F6FAFF] max-sm:bg-[white] md:h-full md:w-full">
       {isMobile && <Sidebar />}
       <form
-        className=" w-full md:w-[449px]  flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] justify-center m-auto"
+        className="m-auto flex w-full flex-col items-center justify-center gap-[15px] bg-white px-[30px] py-[40px] md:w-[449px]"
         id="login"
         name="login"
         onSubmit={(e) => {
@@ -99,30 +94,16 @@ const AuthForm: FC<AuthFormProps> = ({
           loginUser(true);
         }}
       >
-        <Image
-          src={"/images/logo-1.svg"}
-          alt="Company's logo"
-          width={199}
-          height={77}
-        />
+        <Image src={"/images/logo-1.svg"} alt="Company's logo" width={199} height={77} />
 
-        <p className="mt-[25px] text-xl font-medium text-light-black">
-          Welcome{isLogin && " back"} to SkyTrade
-        </p>
-        <p className="text-base text-light-black">
-          {isLogin ? "Login" : "Register"}
-        </p>
+        <p className="mt-[25px] text-xl font-medium text-light-black">Welcome{isLogin && " back"} to SkyTrade</p>
+        <p className="text-base text-light-black">{isLogin ? "Login" : "Register"}</p>
         {isLogin && (
           <p className="text-center text-sm text-light-grey">
-            Sign in effortlessly using the authentication method you chose
-            during sign up.
+            Sign in effortlessly using the authentication method you chose during sign up.
           </p>
         )}
-        <EmailInput
-          emailRef={emailRef}
-          emailValid={emailValid}
-          setEmailValid={setEmailValid}
-        />
+        <EmailInput emailRef={emailRef} emailValid={emailValid} setEmailValid={setEmailValid} />
         {!isLogin && (
           <label className="flex w-full gap-[11px] text-[14px] text-[#87878D]">
             <input
@@ -141,34 +122,25 @@ const AuthForm: FC<AuthFormProps> = ({
           type="button"
           onClick={() => loginUser(true)}
           isLoading={isLoading}
-          className="w-full flex justify-center rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600"
+          className="flex w-full justify-center rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600"
         >
           Get started
         </LoadingButton>
         <div className="relative flex w-full items-center gap-[15px] text-center align-middle text-[#00000033]">
-          <div
-            style={{ width: "100%", height: "1px", background: "#00000033" }}
-          />
+          <div style={{ width: "100%", height: "1px", background: "#00000033" }} />
           <p className="text-sm">or</p>
-          <div
-            style={{ width: "100%", height: "1px", background: "#00000033" }}
-          />
+          <div style={{ width: "100%", height: "1px", background: "#00000033" }} />
         </div>
         <LoadingButton
           color={""}
           type="button"
           onClick={() => loginUser(false)}
           isLoading={isLoading}
-          className="w-full flex justify-center"
+          className="flex w-full justify-center"
         >
-          <div className="flex w-full items-center justify-between rounded-lg py-4 pl-[18px] pr-[42px] transition-all duration-500 ease-in-out hover:bg-bleach-blue border border-[#595959]">
-            <Image
-              src="/images/google-logo.png"
-              alt="Google's logo"
-              width={24}
-              height={24}
-            />
-            <p className="mx-auto text-[#595959] text-[15px]">Connect with Google</p>
+          <div className="flex w-full items-center justify-between rounded-lg border border-[#595959] py-4 pl-[18px] pr-[42px] transition-all duration-500 ease-in-out hover:bg-bleach-blue">
+            <Image src="/images/google-logo.png" alt="Google's logo" width={24} height={24} />
+            <p className="mx-auto text-[15px] text-[#595959]">Connect with Google</p>
           </div>
         </LoadingButton>
         <LoadingButton
@@ -176,40 +148,25 @@ const AuthForm: FC<AuthFormProps> = ({
           type="button"
           onClick={() => loginUser(false)}
           isLoading={isLoading}
-          className="flex w-full items-center justify-center rounded-lg py-4 pl-[18px] text-[#595959] transition-all duration-500 ease-in-out hover:bg-bleach-blue border border-[#595959] text-[15px]"
+          className="flex w-full items-center justify-center rounded-lg border border-[#595959] py-4 pl-[18px] text-[15px] text-[#595959] transition-all duration-500 ease-in-out hover:bg-bleach-blue"
         >
           More Options
         </LoadingButton>
         <p className="text-center text-sm text-[#87878D]">
           By creating an account I agree with{" "}
-          <Link
-            target="_blank"
-            href="https://docs.sky.trade/terms.pdf"
-            className="cursor-pointer text-[#0653EA]"
-          >
+          <Link target="_blank" href="https://docs.sky.trade/terms.pdf" className="cursor-pointer text-[#0653EA]">
             Terms and Conditions
           </Link>{" "}
           and{" "}
-          <Link
-            target="_blank"
-            href="https://docs.sky.trade/privacy.pdf"
-            className="cursor-pointer text-[#0653EA]"
-          >
+          <Link target="_blank" href="https://docs.sky.trade/privacy.pdf" className="cursor-pointer text-[#0653EA]">
             Privacy Policy
           </Link>{" "}
           agreement
         </p>
-        <div
-          style={{ width: "100%", height: "1px", background: "#00000033" }}
-        />
-        <p
-          onClick={handleSwitchingBetweenLoginAndRegister}
-          className="text-[#87878D] mb-20 "
-        >
+        <div style={{ width: "100%", height: "1px", background: "#00000033" }} />
+        <p onClick={handleSwitchingBetweenLoginAndRegister} className="mb-20 text-[#87878D]">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <span className="cursor-pointer font-bold text-[#0653EA]">
-            {isLogin ? "Register" : "Login"}
-          </span>
+          <span className="cursor-pointer font-bold text-[#0653EA]">{isLogin ? "Register" : "Login"}</span>
         </p>
       </form>
     </div>

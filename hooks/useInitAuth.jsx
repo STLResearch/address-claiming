@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 
 import { Web3AuthNoModal } from "@web3auth/no-modal";
 import { SolanaPrivateKeyProvider } from "@web3auth/solana-provider";

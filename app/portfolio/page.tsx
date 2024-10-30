@@ -10,7 +10,7 @@ import Sidebar from "@/Components/Shared/Sidebar";
 import { useSearchParams } from "next/navigation";
 import PropertiesService from "@/services/PropertiesService";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 
 const Portfolio = () => {
   const [selectedAirspace, setSelectedAirspace] = useState(null);

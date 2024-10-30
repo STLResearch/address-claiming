@@ -1,4 +1,4 @@
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import { setIsTriggerRefresh } from "@/redux/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import MarketplaceService from "@/services/MarketplaceService";

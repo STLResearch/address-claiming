@@ -10,6 +10,9 @@ const supportedMethods = [
     icon: "/images/bank-note-arrow.svg",
     name: "Native",
   },
+  { icon: "/images/bank-note-arrow.svg",
+    name: "Swap"
+  },
   {
     icon: "/images/ramp.svg",
     name: "Ramp",

@@ -1,32 +1,24 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
+import tokenMessengerAbi from "../../helpers/eth/abis/cctp/TokenMessenger.json";
+import usdcAbi from "../../helpers/eth/abis/Usdc.json";
 import { getPriorityFeeIx } from "@/hooks/utils";
-import { Web3authContext } from "@/providers/web3authProvider";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 import {
   getAssociatedTokenAddress,
   getAccount,
   createAssociatedTokenAccountInstruction,
   createTransferInstruction,
+  createAssociatedTokenAccount,
 } from "@solana/spl-token";
-import {
-  Connection,
-  PublicKey,
-  Transaction,
-  LAMPORTS_PER_SOL,
-  TransactionInstruction,
-} from "@solana/web3.js";
+import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL, TransactionInstruction } from "@solana/web3.js";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { useQRCode } from "next-qrcode";
 import { toast } from "react-toastify";
 import { Tooltip, CopyIcon, WarningIcon, QuestionMarkIcon } from "../Icons";
 import Accordion from "./Accordion";
-import {
-  DepositAndWithdrawProps,
-  Web3authContextType,
-  ConnectionConfig,
-  PaymentMethod,
-} from "../../types";
+import { DepositAndWithdrawProps, Web3authContextType, ConnectionConfig, PaymentMethod } from "../../types";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk";
 import { LiFiComponent, TRANSACTION_TYPE } from "./LifiComponent";
@@ -38,6 +30,24 @@ import Backdrop from "../Backdrop";
 import Spinner from "../Spinner";
 import Link from "next/link";
 import LoadingButton from "../LoadingButton/LoadingButton";
+import { approveTxVals, burnTxVals, checkAttestation, msgBytes } from "@/helpers/eth";
+import { recieveSol } from "@/helpers/solana_anchor/recieveMessage";
+import SuccessModal from "../Airspace/SuccessModalSwap";
+import { ConnectKitButton } from "connectkit";
+import {
+  useAccount,
+  useConnect,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+  UseWriteContractParameters,
+} from "wagmi";
+import { SerializedTransactionReturnType, WriteContractReturnType } from "viem";
+import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
+import Web3 from "web3";
+import { sendTransaction } from "@wagmi/core";
+import { config } from "../Web3AuthProvider";
+import { USDC_ADDRESS } from "@/helpers/solana_anchor/sol_const";
+
 const defaultPaymentMethod = {
   icon: "",
   name: "",
@@ -50,6 +60,14 @@ const DepositAndWithdraw = ({
   setTokenBalance,
   tokenBalance,
 }: DepositAndWithdrawProps) => {
+  const [showSuccessPopUp, setShowSuccessPopUp] = useState<boolean>(false);
+  const [showFailurePopUp, setShowFailurePopUp] = useState<boolean>(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [showLIFI, setShowLIFI] = useState(false);
+  const [LIFITransactionType, setLIFITransactionType] = useState<TRANSACTION_TYPE.DEPOSIT | TRANSACTION_TYPE.WITHDRAW>(
+    TRANSACTION_TYPE.DEPOSIT
+  );
+  const [txSig, setTxSig] = useState("");
   const router = useRouter();
   const { user } = useAuth();
   const { createStripe } = StripeService();
@@ -62,14 +80,14 @@ const DepositAndWithdraw = ({
 
   const [selectedMethod, setSelectedMethod] = useState(defaultPaymentMethod);
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
-  const [showLIFI, setShowLIFI] = useState(false);
-  const [LIFITransactionType, setLIFITransactionType] = useState<
-    TRANSACTION_TYPE.DEPOSIT | TRANSACTION_TYPE.WITHDRAW
-  >(TRANSACTION_TYPE.DEPOSIT);
-
+  const [isClient, setIsClient] = useState(false);
   const [showOnramp, setShowOnramp] = useState<boolean>(false);
   const [clientSecret, setClientSecret] = useState<string>("");
   const [stripeLoading, setStripeLoading] = useState(false);
+
+  const [usdcFormAmount, setUsdcFormAmount] = useState(0);
+  //onst { data:burnTxHash,error:BurnTxError,isSuccess:isBurnTxSuccess,writeContractAsync:burnTx } = useWriteContract()
+  const { address } = useAccount();
 
   const notifySuccess = () => {
     toast.success("Success !. Your funds have been withdrawn successfully");
@@ -90,10 +108,7 @@ const DepositAndWithdraw = ({
     if (!amount) return;
     if (!user) return;
     try {
-      if (
-        activeSection === 1 &&
-        parseFloat(tokenBalance.toString()) <= parseFloat(amount || "0")
-      ) {
+      if (activeSection === 1 && parseFloat(tokenBalance.toString()) <= parseFloat(amount || "0")) {
         toast.error("You do not have enough funds");
 
         return;
@@ -110,9 +125,7 @@ const DepositAndWithdraw = ({
       });
 
       const connection = new Connection(connectionConfig.rpcTarget);
-      const solbalance = await connection.getBalance(
-        new PublicKey(accounts[0]),
-      );
+      const solbalance = await connection.getBalance(new PublicKey(accounts[0]));
 
       if (activeSection === 1 && parseFloat(solbalance.toString()) === 0) {
         toast.error("You do not have enough SOL");
@@ -120,23 +133,21 @@ const DepositAndWithdraw = ({
         return;
       }
 
-      const mintAccount: string = process.env
-        .NEXT_PUBLIC_MINT_ADDRESS as string;
+      const mintAccount: string = process.env.NEXT_PUBLIC_MINT_ADDRESS as string;
       const tx = new Transaction();
 
       const recipientUSDCAddr = await getAssociatedTokenAddress(
         new PublicKey(mintAccount),
-        new PublicKey(recipientWalletAddress),
+        new PublicKey(recipientWalletAddress)
       );
 
       const senderUSDCAddr = await getAssociatedTokenAddress(
         new PublicKey(mintAccount),
-        new PublicKey(user?.blockchainAddress),
+        new PublicKey(user?.blockchainAddress)
       );
       const ix: TransactionInstruction[] = [];
 
-      const priorityIx: TransactionInstruction =
-        await getPriorityFeeIx(connection);
+      const priorityIx: TransactionInstruction = await getPriorityFeeIx(connection);
 
       ix.push(priorityIx);
 
@@ -150,7 +161,7 @@ const DepositAndWithdraw = ({
             new PublicKey(user?.blockchainAddress),
             recipientUSDCAddr,
             new PublicKey(recipientWalletAddress),
-            new PublicKey(mintAccount),
+            new PublicKey(mintAccount)
           );
 
           addRentFee = true;
@@ -163,7 +174,7 @@ const DepositAndWithdraw = ({
         senderUSDCAddr,
         recipientUSDCAddr,
         new PublicKey(user?.blockchainAddress),
-        parseFloat(amount || "0") * Math.pow(10, 6),
+        parseFloat(amount || "0") * Math.pow(10, 6)
       );
 
       ix.push(transferIx);
@@ -181,14 +192,11 @@ const DepositAndWithdraw = ({
         if (!estimatedGas) return;
 
         if (addRentFee) {
-          estimatedGas +=
-            Number(process.env.NEXT_PUBLIC_ATA_RENT_FEE) * LAMPORTS_PER_SOL;
+          estimatedGas += Number(process.env.NEXT_PUBLIC_ATA_RENT_FEE) * LAMPORTS_PER_SOL;
         }
 
         if (solbalance < estimatedGas) {
-          toast.error(
-            `At least ${estimatedGas / LAMPORTS_PER_SOL} SOL required as gas fee`,
-          );
+          toast.error(`At least ${estimatedGas / LAMPORTS_PER_SOL} SOL required as gas fee`);
           setIsLoading(false);
           return;
         }
@@ -271,7 +279,7 @@ const DepositAndWithdraw = ({
       productsAvailed: "BUY",
       onSuccess: (orderData) => {
         toast.success(
-          `Deposited ${orderData?.status?.cryptoAmount} ${orderData?.status?.cryptoCurrency} to ${orderData?.status?.walletAddress} successfully! `,
+          `Deposited ${orderData?.status?.cryptoAmount} ${orderData?.status?.cryptoCurrency} to ${orderData?.status?.walletAddress} successfully! `
         );
       },
       onFailure: () => {
@@ -310,60 +318,164 @@ const DepositAndWithdraw = ({
     }
   }
 
+  const handleDepositWithdraw = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    
+    // let recvieveATA=await createAssociatedTokenAccount()
+    let userata = await getAssociatedTokenAddress(
+      new PublicKey(USDC_ADDRESS as string),
+      new PublicKey(user?.blockchainAddress as string)
+    );
+   
+    setIsLoading(true);
+    let ans1 = await approveTxVals(address as string, userata.toString(), usdcFormAmount);
+    const approveResult = await sendTransaction(config, {
+      data: ans1.data as `0x${string}`,
+      to: ans1.to as `0x${string}`,
+    });
+    
+    let approveTxreciept = await waitForTransaction(approveResult);
+  
+    let ans2 = await burnTxVals(address as string, userata.toString(), usdcFormAmount);
+    const burnResult = await sendTransaction(config, {
+      data: ans2.data as `0x${string}`,
+      to: ans2.to as `0x${string}`,
+    });
+    
+    let burnTxreciept = await waitForTransaction(burnResult);
+   
+    let ans3 = await msgBytes(burnResult);
+    
+    let { messageBytes, attestationSignature } = await checkAttestation(
+      ans3.messageBytes as string,
+      ans3.messageHash as string
+    );
+
+    let _txsig = await recieveSol(
+      messageBytes as string,
+      attestationSignature as string,
+      provider,
+      user?.blockchainAddress as string,
+      userata
+    );
+    if (_txsig) {
+      setTxSig(_txsig);
+      setIsLoading(false);
+
+      setShowSuccessPopUp(true);
+    }
+   
+  };
+  const waitForTransaction = async (txHash: any) => {
+    let web3 = new Web3(process.env.NEXT_PUBLIC_ETH_TESTNET_RPC);
+    let transactionReceipt = await web3.eth.getTransactionReceipt(txHash).catch((err) => {
+      console.log("tx pending");
+    });
+   
+    while (transactionReceipt == undefined || transactionReceipt.status.toString() === "FALSE") {
+     
+      transactionReceipt = await web3.eth.getTransactionReceipt(txHash).catch((err) => {
+        console.log("tx pending");
+      });
+      await new Promise((r) => setTimeout(r, 4000));
+    }
+    return transactionReceipt;
+  };
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   return (
-    <div className="flex flex-col gap-[15px] items-center w-full bg-white rounded-[30px] p-8 sm:shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)]">
-      <div className="flex gap-4 justify-between w-full">
+    <div className="sm:shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)] flex w-full flex-col items-center gap-[15px] rounded-[30px] bg-white p-8">
+      <div className="flex w-full justify-between gap-4">
         {["Deposit", "Withdraw"].map((text, index) => (
           <div
             key={index}
             onClick={() => togglePaymentMethod(index)}
-            className={`${activeSection === index ? "bg-[#222222] text-base text-white" : "bg-[#2222221A] text-[15px] text-[#222222]"} rounded-[30px] p-[10px] text-center cursor-pointer w-full`}
+            className={`${activeSection === index ? "bg-[#222222] text-base text-white" : "bg-[#2222221A] text-[15px] text-[#222222]"} w-full cursor-pointer rounded-[30px] p-[10px] text-center`}
           >
             {text}
           </div>
         ))}
       </div>
-      <div className="flex text-[#838187] text-[14px] w-full">
+      <div className="flex w-full text-[14px] text-[#838187]">
         <p>Choose your payment method</p>
       </div>
-      <div className="flex flex-col gap-6 w-full">
-        <Accordion
-          selectedMethod={selectedMethod}
-          setSelectedMethod={handleSelection}
-          activeSection={activeSection}
+      {(showSuccessPopUp || showFailurePopUp) && (
+        <SuccessModal
+          errorMessages={errorMessages}
+          tx={txSig}
+          isSuccess={showSuccessPopUp}
+          closePopUp={() => {
+            showFailurePopUp ? setShowFailurePopUp(false) : setShowSuccessPopUp(false);
+          }}
         />
+      )}
+      <div className="flex w-full flex-col gap-6">
+        <Accordion selectedMethod={selectedMethod} setSelectedMethod={handleSelection} activeSection={activeSection} />
         {activeSection === 0 && !selectedMethod.name && (
           <div>
             <LoadingButton
               isLoading={false}
-              className="w-full h-[39px] py-[16px] bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg text-[15px]"
+              className="flex h-[39px] w-full cursor-pointer items-center justify-center rounded-lg bg-[#0653EA] py-[16px] text-[15px] text-white"
               onClick={""}
             >
               Deposit
             </LoadingButton>
-            <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4 ">
-              <div className="w-6 h-6">
+            <div className="mt-4 flex items-center gap-[15px] bg-[#F2F2F2] p-[15px]">
+              <div className="h-6 w-6">
                 <WarningIcon />
               </div>
-              <p className="text-[#222222] sm:text-[14px] font-normal w-full">
-                Funds may be irrecoverable if you enter an incorrect wallet ID.
-                It is crucial to ensure the accuracy of the provided ID to avoid
-                any loss.
+              <p className="w-full font-normal text-[#222222] sm:text-[14px]">
+                Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of
+                the provided ID to avoid any loss.
               </p>
             </div>
             <Link
               target="_blank"
               href="https://help.sky.trade/article/how-to-buy-usdc-on-the-solana-network-a-simple-guide"
             >
-              <div className="flex items-center gap-[5px] mt-4 ">
-                <div className="w-6 h-6">
+              <div className="mt-4 flex items-center gap-[5px]">
+                <div className="h-6 w-6">
                   <QuestionMarkIcon />
                 </div>
-                <p className="text-[#0000FF] text-[14px]">
-                  Simple Guide to Buy USDC on the Solana Network
-                </p>
+                <p className="text-[14px] text-[#0000FF]">Simple Guide to Buy USDC on the Solana Network</p>
               </div>
             </Link>
+          </div>
+        )}
+        {activeSection === 0 && selectedMethod.name == "Swap" && (
+          <div>
+            <div className="flex w-full items-center justify-between">
+              <div className="flex flex-1 flex-col items-start gap-[5px]">
+                <ConnectKitButton />
+                {address && (
+                  <form className="mx-auto max-w-sm">
+                    <div className="mb-5">
+                      <label htmlFor="USDC" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                        USDC ETH
+                      </label>
+                      <input
+                        type="number"
+                        id="USDC"
+                        onChange={(e) => {
+                          setUsdcFormAmount(parseFloat(e.target.value));
+                        }}
+                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+                    <button
+                      onClick={handleDepositWithdraw}
+                      className="rounded-xl bg-gray-200 px-8 py-1 text-center tracking-wider text-black hover:bg-black hover:text-white"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                )}
+              </div>
+              <div className="h-[72px] w-[72px] bg-cover bg-center bg-no-repeat"></div>
+            </div>
+            <div className="flex w-full justify-between rounded-lg bg-[#DFF1FF]"></div>
+            <hr className="h-[1px] w-full border border-black border-opacity-20 sm:hidden" />
           </div>
         )}
 
@@ -373,16 +485,13 @@ const DepositAndWithdraw = ({
           selectedMethod.name === "Transak") &&
           activeSection === 0 && (
             <div>
-              <div className="flex items-center justify-between w-full">
-                <div className="flex flex-col items-start gap-[5px] flex-1">
-                  <label
-                    htmlFor="walletId"
-                    className="text-[14px] font-normal text-[#838187]"
-                  >
+              <div className="flex w-full items-center justify-between">
+                <div className="flex flex-1 flex-col items-start gap-[5px]">
+                  <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">
                     Deposit Wallet ID
                   </label>
                 </div>
-                <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center">
+                <div className="h-[72px] w-[72px] bg-cover bg-center bg-no-repeat">
                   {walletId && (
                     <SVG
                       text={walletId}
@@ -398,9 +507,9 @@ const DepositAndWithdraw = ({
                   )}
                 </div>
               </div>
-              <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg mt-4">
+              <div className="mt-4 flex w-full justify-between rounded-lg bg-[#DFF1FF]">
                 <input
-                  className="text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[20px] focus:outline-none"
+                  className="w-full rounded-lg py-[14px] pl-[20px] text-[10px] text-[#222222] focus:outline-none sm:text-[13px]"
                   type="text"
                   name="walletId"
                   id="walletId"
@@ -408,7 +517,7 @@ const DepositAndWithdraw = ({
                   disabled
                 />
                 <CopyToClipboard text={walletId} onCopy={copyTextHandler}>
-                  <div className="flex items-center text-[#0653EA] text-[14px] cursor-pointer pl-[4px] pr-[18px]">
+                  <div className="flex cursor-pointer items-center pl-[4px] pr-[18px] text-[14px] text-[#0653EA]">
                     <div className="relative">
                       {isCopyTooltipVisible && <Tooltip isCopied={copy} />}
                       <div
@@ -421,20 +530,19 @@ const DepositAndWithdraw = ({
                   </div>
                 </CopyToClipboard>
               </div>
-              <hr className="sm:hidden border border-black border-opacity-20 h-[1px] w-full" />
-              <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4">
-                <div className="w-6 h-6">
+              <hr className="h-[1px] w-full border border-black border-opacity-20 sm:hidden" />
+              <div className="mt-4 flex items-center gap-[15px] bg-[#F2F2F2] p-[15px]">
+                <div className="h-6 w-6">
                   <WarningIcon />
                 </div>
-                <div className="text-[#222222] sm:text-[14px] font-normal w-[341px]">
+                <div className="w-[341px] font-normal text-[#222222] sm:text-[14px]">
                   <div>
-                    Funds may be irrecoverable if you enter an incorrect wallet
-                    ID. It is crucial to ensure the accuracy of the provided ID
-                    to avoid any loss.
+                    Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy
+                    of the provided ID to avoid any loss.
                     <br />
                     <div className="w-full">
                       <p
-                        className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
+                        className="w-[250px] break-words text-[10px] sm:w-full sm:text-[13px]"
                         style={{ color: "#0653EA" }}
                       >
                         {walletId}
@@ -447,13 +555,11 @@ const DepositAndWithdraw = ({
                 target="_blank"
                 href="https://help.sky.trade/article/how-to-buy-usdc-on-the-solana-network-a-simple-guide"
               >
-                <div className="flex items-center gap-[5px] mt-4 ">
-                  <div className="w-6 h-6">
+                <div className="mt-4 flex items-center gap-[5px]">
+                  <div className="h-6 w-6">
                     <QuestionMarkIcon />
                   </div>
-                  <p className="text-[#0000FF] text-[14px]">
-                    Simple Guide to Buy USDC on the Solana Network
-                  </p>
+                  <p className="text-[14px] text-[#0000FF]">Simple Guide to Buy USDC on the Solana Network</p>
                 </div>
               </Link>
             </div>
@@ -461,16 +567,13 @@ const DepositAndWithdraw = ({
       </div>
       {selectedMethod.name === "Native" && activeSection === 0 && (
         <div>
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col items-start gap-[5px] flex-1">
-              <label
-                htmlFor="walletId"
-                className="text-[14px] font-normal text-[#838187]"
-              >
+          <div className="flex w-full items-center justify-between">
+            <div className="flex flex-1 flex-col items-start gap-[5px]">
+              <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">
                 Deposit Wallet ID
               </label>
             </div>
-            <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center">
+            <div className="h-[72px] w-[72px] bg-cover bg-center bg-no-repeat">
               {walletId && (
                 <SVG
                   text={walletId}
@@ -486,9 +589,9 @@ const DepositAndWithdraw = ({
               )}
             </div>
           </div>
-          <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg mt-4">
+          <div className="mt-4 flex w-full justify-between rounded-lg bg-[#DFF1FF]">
             <input
-              className="text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[20px] focus:outline-none"
+              className="w-full rounded-lg py-[14px] pl-[20px] text-[10px] text-[#222222] focus:outline-none sm:text-[13px]"
               type="text"
               name="walletId"
               id="walletId"
@@ -496,7 +599,7 @@ const DepositAndWithdraw = ({
               disabled
             />
             <CopyToClipboard text={walletId} onCopy={copyTextHandler}>
-              <div className="flex items-center text-[#0653EA] text-[14px] cursor-pointer pl-[4px] pr-[18px]">
+              <div className="flex cursor-pointer items-center pl-[4px] pr-[18px] text-[14px] text-[#0653EA]">
                 <div className="relative">
                   {isCopyTooltipVisible && <Tooltip isCopied={copy} />}
                   <div
@@ -509,19 +612,18 @@ const DepositAndWithdraw = ({
               </div>
             </CopyToClipboard>
           </div>
-          <hr className="sm:hidden border border-black border-opacity-20 h-[1px] w-full" />
-          <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4">
-            <div className="w-6 h-6">
+          <hr className="h-[1px] w-full border border-black border-opacity-20 sm:hidden" />
+          <div className="mt-4 flex items-center gap-[15px] bg-[#F2F2F2] p-[15px]">
+            <div className="h-6 w-6">
               <WarningIcon />
             </div>
-            <div className="text-[#222222] sm:text-[14px] font-normal w-[341px]">
+            <div className="w-[341px] font-normal text-[#222222] sm:text-[14px]">
               <div>
-                To complete your deposit, please use your crypto wallet to
-                deposit USDC to the following address:
+                To complete your deposit, please use your crypto wallet to deposit USDC to the following address:
                 <br />
                 <div className="w-full">
                   <p
-                    className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
+                    className="w-[250px] break-words text-[10px] sm:w-full sm:text-[13px]"
                     style={{ color: "#0653EA" }}
                   >
                     {walletId}
@@ -530,14 +632,13 @@ const DepositAndWithdraw = ({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4">
-            <div className="w-6 h-6">
+          <div className="mt-4 flex items-center gap-[15px] bg-[#F2F2F2] p-[15px]">
+            <div className="h-6 w-6">
               <WarningIcon />
             </div>
-            <div className="text-[#222222] text-[14px] font-normal w-full">
-              Scan the QR Code with your Wallet. You can use Phantom Wallet,
-              Solflare, Exodus, Atomic Wallet, Coinbase Wallet, or Metamask
-              Span. Ensure the wallet ID is correct to avoid loss of funds.
+            <div className="w-full text-[14px] font-normal text-[#222222]">
+              Scan the QR Code with your Wallet. You can use Phantom Wallet, Solflare, Exodus, Atomic Wallet, Coinbase
+              Wallet, or Metamask Span. Ensure the wallet ID is correct to avoid loss of funds.
             </div>
           </div>
         </div>
@@ -549,17 +650,11 @@ const DepositAndWithdraw = ({
           {selectedMethod.name === "Native" && (
             <div>
               <div className="mt-2">
-                <label
-                  htmlFor="walletId"
-                  className="text-[14px] font-normal text-[#838187]"
-                >
+                <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">
                   Amount
                 </label>
-                <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-{#87878D}">
-                  <label
-                    htmlFor="usdc"
-                    className=" text-[14px] font-normal text-[#838187]"
-                  >
+                <div className="border-{#87878D} flex w-full items-center rounded-lg border px-[22px] py-[16px] text-[14px] font-normal text-[#87878D]">
+                  <label htmlFor="usdc" className="text-[14px] font-normal text-[#838187]">
                     $
                   </label>
 
@@ -570,15 +665,12 @@ const DepositAndWithdraw = ({
                     onChange={handleAmountInputChanged}
                     id="amount"
                     //   Min={0}
-                    className="appearance-none outline-none border-none flex-1 pl-[0.5rem] "
+                    className="flex-1 appearance-none border-none pl-[0.5rem] outline-none"
                   />
                 </div>
               </div>
-              <div className="mt-2 ">
-                <label
-                  htmlFor="walletId"
-                  className="text-[14px] font-normal text-[#838187]"
-                >
+              <div className="mt-2">
+                <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">
                   Your Wallet ID
                 </label>
                 <input
@@ -587,36 +679,37 @@ const DepositAndWithdraw = ({
                   id="walletId"
                   value={recipientWalletAddress}
                   onChange={(e) => setRecipientWalletAddress(e.target.value)}
-                  className="w-full rounded-lg py-[16px] px-[22px] text-[#838187] text-[14px] font-normal outline-none border border-{#87878D}"
+                  className="border-{#87878D} w-full rounded-lg border px-[22px] py-[16px] text-[14px] font-normal text-[#838187] outline-none"
                 />
               </div>
             </div>
           )}
           <div>
             <>
-              {selectedMethod.name === "Stripe" ||
-              selectedMethod.name === "Ramp" ||
-              selectedMethod.name === "Native" ||
-              selectedMethod.name === "LI.FI" ? (
+              {(
+                selectedMethod.name === "Stripe" ||
+                selectedMethod.name === "Ramp" ||
+                selectedMethod.name === "Native" ||
+                selectedMethod.name === "LI.FI"
+              ) ?
                 <LoadingButton
                   isLoading={false}
-                  className="w-full h-[39px] py-[16px] bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg text-[15px] mt-4"
+                  className="mt-4 flex h-[39px] w-full cursor-pointer items-center justify-center rounded-lg bg-[#0653EA] py-[16px] text-[15px] text-white"
                   onClick={handleWithdraw}
                 >
                   Withdraw
                 </LoadingButton>
-              ) : null}
+              : null}
             </>
           </div>
 
-          <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4 ">
-            <div className="w-6 h-6">
+          <div className="mt-4 flex items-center gap-[15px] bg-[#F2F2F2] p-[15px]">
+            <div className="h-6 w-6">
               <WarningIcon />
             </div>
-            <p className="text-[#222222] sm:text-[14px] font-normal w-full ">
-              Funds may be irrecoverable if you enter an incorrect wallet ID. It
-              is crucial to ensure the accuracy of the provided ID to avoid any
-              loss.
+            <p className="w-full font-normal text-[#222222] sm:text-[14px]">
+              Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of
+              the provided ID to avoid any loss.
             </p>
           </div>
         </div>
@@ -632,14 +725,13 @@ const DepositAndWithdraw = ({
           />
         </div>
       )}
-      {stripeLoading ? (
+      {stripeLoading ?
         <div>
           {" "}
           <Backdrop />
           <Spinner />
         </div>
-      ) : (
-        showOnramp && (
+      : showOnramp && (
           <div>
             <Backdrop />
             <StripeOnrampComponent
@@ -650,7 +742,7 @@ const DepositAndWithdraw = ({
             />
           </div>
         )
-      )}
+      }
     </div>
   );
 };

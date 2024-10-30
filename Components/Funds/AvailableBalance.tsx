@@ -1,3 +1,4 @@
+
 import React, { useContext, useEffect, useState } from "react";
 
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
@@ -7,8 +8,9 @@ import { Web3authContextType } from "../../types";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 import useAuth from "@/hooks/useAuth";
-import { Web3authContext } from "@/providers/web3authProvider";
+
 import { fetchBalance, fetchsolbalance } from "@/utils/fetchBalance";
+import { Web3authContext } from "@/providers/web3AuthProvider";
 
 const AvailableBalance = () => {
   const [solbalance, setSolBalance] = useState<number>(0);
