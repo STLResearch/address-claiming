@@ -7,10 +7,12 @@ import Button from "../Shared/Button";
 import { toast } from "react-toastify";
 import BetaUserService from "@/services/BetaUserService";
 import UserService from "@/services/UserService";
+import useAuth from "@/hooks/useAuth";
 
 const ComingSoon = () => {
   const { subscribeNewsLetters } = UserService();
   const { joinWaitlist } = BetaUserService();
+  const { isLoggedIn } = useAuth();
 
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isJoiningWaitlist, setIsJoiningWaitlist] = useState(false);
@@ -18,6 +20,12 @@ const ComingSoon = () => {
   const handleJoinWaitlist = async () => {
     setIsJoiningWaitlist(true);
     try {
+      if (!isLoggedIn) {
+        toast.error(
+          "You need to login to enable this feature"
+        );
+        return;
+      }
       const response = await joinWaitlist();
       if (response && response.id) {
         toast.success(
@@ -35,6 +43,12 @@ const ComingSoon = () => {
   const handleSubscribe = async () => {
     setIsSubscribing(true);
     try {
+      if (!isLoggedIn) {
+        toast.error(
+          "You need to login to enable this feature"
+        );
+        return;
+      }
       const response = await subscribeNewsLetters();
 
       if (response && response.id) {
