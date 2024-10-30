@@ -26,6 +26,14 @@ const supportedMethods = [
     icon: "/images/transak.svg",
     name: "Transak",
   },
+  {
+    icon: "",
+    name: "Wormhole bridge",
+  },
+  {
+    icon: "",
+    name: "Mayan bridge",
+  }
 ];
 
 const Accordion = ({

@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
+import { createRoot } from 'react-dom/client';
 import useAuth from "@/hooks/useAuth";
 import { getPriorityFeeIx } from "@/hooks/utils";
 import { Web3authContext } from "@/providers/web3authProvider";
@@ -21,6 +22,8 @@ import { useQRCode } from "next-qrcode";
 import { toast } from "react-toastify";
 import { Tooltip, CopyIcon, WarningIcon, QuestionMarkIcon } from "../Icons";
 import Accordion from "./Accordion";
+import WormholeComponent from "./WormholeComponent";
+import MayanSwapWidget from "./MayanSwapWidget";
 import {
   DepositAndWithdrawProps,
   Web3authContextType,
@@ -52,7 +55,7 @@ const DepositAndWithdraw = ({
   const router = useRouter();
   const { user } = useAuth();
   const { createStripe } = StripeService();
-  const { provider } = useContext(Web3authContext) as Web3authContextType;
+  const { web3auth, provider } = useContext(Web3authContext) as Web3authContextType;
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [amount, setAmount] = useState<string>("");
@@ -287,6 +290,26 @@ const DepositAndWithdraw = ({
     else if (method.name === "LI.FI") {
       setLIFITransactionType(TRANSACTION_TYPE.DEPOSIT);
       setShowLIFI(true);
+    }
+    else if (method.name === "Wormhole bridge") {
+      try {
+        const container = document.getElementById('WormholeContainer');
+        const root = createRoot(container!);
+        root.render(<WormholeComponent root={root} />);
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
+    else if (method.name === "Mayan bridge") {
+      try {
+        const container = document.getElementById('MayanContainer');
+        const root = createRoot(container!);
+        root.render(<MayanSwapWidget root={root} />);
+      }
+      catch (error) {
+        console.log(error);
+      }
     }
   };
   const walletAddress = user?.blockchainAddress;
