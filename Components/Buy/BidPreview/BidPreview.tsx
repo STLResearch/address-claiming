@@ -64,7 +64,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
 
     if (userSolBalance === 0) {
       return toast.info(
-        "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue",
+        " You don't have sufficient funds to perform this operation, please top up your wallet with some funds to continue",
       );
     }
 

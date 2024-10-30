@@ -93,7 +93,7 @@ const AvailableBalance = () => {
         ) : (
           <>
             <p className="text-3xl text-[#4285F4] font-medium">
-              ${userUSDWalletBalance.amount}
+              ${Number(userUSDWalletBalance.amount).toFixed(2)}
             </p>
             <div className="flex">
               <p className=" text-sml text-[#838187] font-normal leading-[21px]">
