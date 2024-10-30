@@ -96,6 +96,7 @@ const PortfolioList = ({
   };
   return (
     <>
+    <div className="w-full flex justify-center">
       {selectedAirspace !== null && <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} />}
 
       {showCancelModal && (
@@ -107,49 +108,49 @@ const PortfolioList = ({
         />
       )}
       <div
-        className="flex min-w-[516px] flex-1 flex-col gap-[43px] rounded-[30px] bg-white px-[29px] py-[43px]"
+        className="flex  w-[900px] flex-1 flex-col gap-[43px] rounded-[30px] bg-white px-[29px] py-[43px]"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
       >
         <h2 className="text-center text-xl font-medium text-[#222222]">My Air Rights</h2>
         <div
           style={{ scrollbarWidth: "none", scrollbarColor: "none" }}
-          className="flex w-full items-center gap-2 overflow-x-auto"
+          className="flex  w-full  items-center gap-[40px] overflow-x-auto no-scrollbar border-b-[1px] border-[#D5DCEB]"
         >
           <div
-            className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-6 py-2 text-base font-bold transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.VERIFIED)}
           >
             Verified
           </div>
           <div
-            className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-6 py-2 text-base font-bold transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
           >
             Rented
           </div>
 
           <div
-            className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-6 py-2 text-base font-bold transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
           >
             Pending Rented Air Rights
           </div>
           <div
-            className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-6 py-2 text-base font-bold transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
           >
             Pending Verification
           </div>
 
           <div
-            className={`${activeTab === PortfolioTabEnum.BIDS ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.BIDS ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-6 py-2 text-base font-bold transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.BIDS)}
           >
             Bids and Offers
           </div>
 
           <div
-            className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-8 py-2 text-base font-bold transition delay-75 ease-linear`}
+            className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} cursor-pointer whitespace-nowrap px-6 py-2 text-base font-bold transition delay-75 ease-linear`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
           >
             Rejected
@@ -213,6 +214,7 @@ const PortfolioList = ({
             </div>
           </>
         }
+      </div>
       </div>
     </>
   );
