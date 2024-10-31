@@ -497,6 +497,8 @@ export type AuctionDataI = {
       isActive: boolean;
       isPropertyRewardClaimed: boolean;
       vertexes?: [];
+      images?:string[];
+      orderPhotoforGeneratedMap?:boolean;
     };
   };
 };

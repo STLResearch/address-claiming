@@ -18,34 +18,50 @@ export const handleMouseEvent = (
   const placeholder = document.createElement("div");
   const root = createRoot(placeholder);
   root.render(el);
+
+    const removeExistingPopup = (className) => {
+      const existingPopup = document.querySelector(`.${className}`);
+        if (existingPopup) {
+          existingPopup.remove(); 
+        }
+      };
   if (!isMobile) {
     markerElement.addEventListener("mouseenter", () => {
-      const elementToRemove = document.querySelector(".marker-popup-hovered-class");
-      if (!elementToRemove) {
-        new mapboxgl.Popup({
-          closeOnClick: false,
-          offset: [0, -20],
-          className: "marker-popup-hovered-class",
-        })
-          .setLngLat(marker.getLngLat())
-          .setDOMContent(placeholder)
-          .addTo(map);
-      }
+      removeExistingPopup("marker-popup-hovered-class");
+
+
+      const popup = new mapboxgl.Popup({
+        closeOnClick: false,
+        offset: [0, -20],
+        className: "marker-popup-hovered-class",
+      })
+        .setLngLat(marker.getLngLat())
+        .setDOMContent(placeholder)
+        .addTo(map);
+
+      popup.on('close', () => {
+        removeExistingPopup("marker-popup-hovered-class");
+      });
     });
   } else {
     markerElement.addEventListener("touchend", (e) => {
-      const elementToRemove = document.querySelector(".marker-popup-hovered-class.mobile");
-      if (elementToRemove) elementToRemove.remove();
-      if (!elementToRemove) {
-        new mapboxgl.Popup({
-          closeOnClick: false,
-          offset: [0, -20],
-          className: "marker-popup-hovered-class mobile",
-        })
-          .setLngLat(marker.getLngLat())
-          .setDOMContent(placeholder)
-          .addTo(map);
-      }
+
+      e.preventDefault(); 
+
+      removeExistingPopup("marker-popup-hovered-class.mobile");
+
+      const popup = new mapboxgl.Popup({
+        closeOnClick: false,
+        offset: [0, -20],
+        className: "marker-popup-hovered-class mobile",
+      })
+        .setLngLat(marker.getLngLat())
+        .setDOMContent(placeholder)
+        .addTo(map);
+
+      popup.on('close', () => {
+        removeExistingPopup("marker-popup-hovered-class.mobile");
+      });
     });
   }
 };
