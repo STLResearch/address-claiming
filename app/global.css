@@ -173,6 +173,10 @@ button {
 .fund-table tbody tr:nth-child(odd) {
   background-color: #FFFFFF;
 }
+.fund-table-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
 .react-international-phone-input-container .react-international-phone-input {
   border: none !important;
   margin-left: 10px !important;
