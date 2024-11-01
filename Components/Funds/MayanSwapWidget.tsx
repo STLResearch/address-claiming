@@ -51,10 +51,13 @@ const widgetConfig: MayanWidgetConfigType = {
         uri: 'https://sky.trade/',
     },
     rpcs: {
-        solana: process.env.NEXT_PUBLIC_RPC_TARGET,
-        ethereum: 'https://sepolia.infura.io/v3/060fcd8bc2ae459c99523251e06536b3',
+        solana: 'https://chaotic-ancient-frost.solana-mainnet.quiknode.pro/0f052870cbf3bf62091915980033f2a6225680a1',
+        polygon: 'https://polygon-mainnet.infura.io/v3/060fcd8bc2ae459c99523251e06536b3',
     },
+    sourceChains: ['polygon'],
+    destinationChains: ['solana']
 }
+
 const MayanSwapWidget = ({ root }: { root: Root }) => {
     const closeBox = () => {
         root.unmount();
