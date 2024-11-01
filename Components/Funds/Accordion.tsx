@@ -27,7 +27,7 @@ const supportedMethods = [
     name: "Transak",
   },
   {
-    icon: "",
+    icon: "/images/wormhole-logo.svg",
     name: "Wormhole bridge",
   },
   {
