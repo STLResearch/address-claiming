@@ -28,11 +28,7 @@ const supportedMethods = [
   },
   {
     icon: "/images/wormhole-logo.svg",
-    name: "Wormhole bridge",
-  },
-  {
-    icon: "",
-    name: "Mayan bridge",
+    name: "MayanSwap (via Wormhole)",
   }
 ];
 

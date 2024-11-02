@@ -291,6 +291,7 @@ const DepositAndWithdraw = ({
       setLIFITransactionType(TRANSACTION_TYPE.DEPOSIT);
       setShowLIFI(true);
     }
+    /*
     else if (method.name === "Wormhole bridge") {
       try {
         const container = document.getElementById('WormholeContainer');
@@ -301,7 +302,8 @@ const DepositAndWithdraw = ({
         console.log(error);
       }
     }
-    else if (method.name === "Mayan bridge") {
+    */
+    else if (method.name === "MayanSwap (via Wormhole)") {
       try {
         const container = document.getElementById('MayanContainer');
         const root = createRoot(container!);
