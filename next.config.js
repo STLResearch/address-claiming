@@ -1,4 +1,11 @@
 module.exports = {
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
+  reactStrictMode: true,
+  eslint: {
+      ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: [
       {
