@@ -13,7 +13,7 @@ const ReferralProgramItem: FC<ReferralProgramItemProps> = ({ icon, title, text }
       className="flex flex-1 flex-col items-center gap-[7.85px] rounded-[30px] bg-white py-[15px] text-center md:px-[38px]"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
-      <div>
+      <div className="float" style={{ borderRadius: "50%" }}>
         <Link href={"/points"}>{icon}</Link>
       </div>
       <p className="font-semibold text-[#4285F4]">{title}</p>
