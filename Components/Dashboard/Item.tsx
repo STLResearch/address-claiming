@@ -19,7 +19,7 @@ const Item: FC<ItemProps> = ({ children, title, icon, linkText, href, style }) =
       <div className="flex items-center justify-between">
         <p className="text-xl font-medium text-[#222222]">{title} </p>
         <Link href={href}>
-          <div className="h-10 w-10">{icon}</div>
+          <div className="float" style={{borderRadius: "50%"}}>{icon}</div>
         </Link>
       </div>
       {children}

@@ -75,18 +75,16 @@ const Dashboard: FC = () => {
                   </p>
 
                   <div className="flex flex-col justify-evenly gap-6">
-                    <div className="flex flex-col gap-2">
-                      <div className="mx-auto flex flex-col-reverse gap-[22px] md:flex-col">
+                    <div className=" mt-4 flex flex-col gap-2">
+                      <div className="mx-auto mb-20 flex flex-col gap-[22px] md:flex-col">
                         <AvailableBalance />
                         <MyAirspaces
                           airspaces={airspaces}
                           totalAirspace={totalAirspace}
                           isLoading={isLoadingAirspace}
                         />
-                      </div>
-                    </div>
-                    <div className="mx-auto mb-20 h-60 md:my-0 md:h-0">
                       <ReferralProgram />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -125,7 +123,7 @@ const Dashboard: FC = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="mt-10 flex items-center justify-center rounded-lg bg-[#0653EA] px-[96px] py-[16px] text-[15px] font-normal text-white">
+                    <div className="float mt-10 flex items-center justify-center rounded-lg bg-[#0653EA] px-[96px] py-[16px] text-[15px] font-normal text-white">
                       Claim Air Rights
                     </div>
                   </Link>
