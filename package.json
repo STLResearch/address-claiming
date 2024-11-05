@@ -44,7 +44,6 @@
     "@web3auth/openlogin-adapter": "^8.4.0",
     "@web3auth/sign-in-with-web3": "^3.1.0",
     "@web3auth/solana-provider": "^8.4.0",
-    "@wormhole-foundation/wormhole-connect": "^1.1.2",
     "autoprefixer": "10.4.14",
     "axios": "^1.6.7",
     "bs58": "^5.0.0",
