@@ -22,7 +22,6 @@ import { useQRCode } from "next-qrcode";
 import { toast } from "react-toastify";
 import { Tooltip, CopyIcon, WarningIcon, QuestionMarkIcon } from "../Icons";
 import Accordion from "./Accordion";
-import WormholeComponent from "./WormholeComponent";
 import MayanSwapWidget from "./MayanSwapWidget";
 import {
   DepositAndWithdrawProps,
@@ -291,18 +290,6 @@ const DepositAndWithdraw = ({
       setLIFITransactionType(TRANSACTION_TYPE.DEPOSIT);
       setShowLIFI(true);
     }
-    /*
-    else if (method.name === "Wormhole bridge") {
-      try {
-        const container = document.getElementById('WormholeContainer');
-        const root = createRoot(container!);
-        root.render(<WormholeComponent root={root} />);
-      }
-      catch (error) {
-        console.log(error);
-      }
-    }
-    */
     else if (method.name === "MayanSwap (via Wormhole)") {
       try {
         const container = document.getElementById('MayanContainer');

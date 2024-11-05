@@ -38,7 +38,6 @@ const Funds = () => {
               <div
                 className={`${isMobile ? "w-full flex flex-col gap-5 items-center sm:items-start" : "flex flex-col gap-5 items-center sm:items-start"}`}
               >
-                <div id='WormholeContainer'></div>
                 <div id='MayanContainer'></div>
                 <AvailableBalance />
                 <DepositAndWithdraw
