@@ -6,6 +6,7 @@ import axios from "axios";
 import base58 from "bs58";
 import { toast } from "react-toastify";
 import * as Sentry from "@sentry/nextjs";
+import RESPONSE_ERRORS from "@/utils/errors";
 
 interface RequestI {
   uri: string;
@@ -18,12 +19,7 @@ const TIMEOUT = 300000;
 const CUSTOM_ERROR_MESSAGE = "An Error occured! Please try again later.";
 
 const Service = () => {
-  const { provider } = useContext(Web3authContext);
-
-  const isLocalhostUrl = (url: string): boolean => {
-    const localhostRegex = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/.*)?$/;
-    return localhostRegex.test(url);
-  };
+  const { provider, web3auth } = useContext(Web3authContext);
 
   const getRequestUrl = (uri: string): string => {
     const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
@@ -38,25 +34,24 @@ const Service = () => {
       return;
     }
     if (!suppressErrorReporting && error.response) {
-      const backendError =
-        error.response.data.errorMesagge || error.response.data.data.message;
+      const backendError = error.response.data.errorMesagge || error.response.data.data.message;
 
-      if (backendError && backendError !== "UNAUTHORIZED") {
-        toast.error(backendError);
-      } else {
-        toast.error(CUSTOM_ERROR_MESSAGE);
+      if (backendError !== "USER_NOT_FOUND") {
+        const customBackendError =
+          RESPONSE_ERRORS[backendError] || backendError;
+
+        if (customBackendError) {
+          toast.error(customBackendError);
+        } else {
+          toast.error(CUSTOM_ERROR_MESSAGE);
+        }
       }
     }
     Sentry.captureException(error);
+    return error;
   };
 
-  const createHeader = async ({
-    isPublic,
-    uri,
-  }: {
-    uri: string;
-    isPublic?: boolean;
-  }) => {
+  const createHeader = async ({ isPublic, uri }: { uri: string; isPublic?: boolean }) => {
     try {
       let newHeader = {};
 
@@ -84,13 +79,15 @@ const Service = () => {
 
         const signature = base58.encode(result);
 
+        const userInformation = await web3auth.getUserInfo();
+
         newHeader = {
           "Content-Type": "application/json",
           sign: signature,
-          // Support localhost
           sign_issue_at: message.payload.issuedAt,
           sign_nonce: message.payload.nonce,
           sign_address: accounts[0],
+          email_address: userInformation.email,
         };
       } else {
         newHeader = {
@@ -107,11 +104,7 @@ const Service = () => {
     }
   };
 
-  const getRequest = async ({
-    uri,
-    isPublic,
-    suppressErrorReporting,
-  }: RequestI) => {
+  const getRequest = async ({ uri, isPublic, suppressErrorReporting }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 
@@ -123,16 +116,11 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
 
-  const postRequest = async ({
-    uri,
-    postData,
-    isPublic,
-    suppressErrorReporting,
-  }: RequestI) => {
+  const postRequest = async ({ uri, postData, isPublic, suppressErrorReporting }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 
@@ -146,16 +134,11 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
 
-  const patchRequest = async ({
-    uri,
-    postData,
-    isPublic,
-    suppressErrorReporting,
-  }: RequestI) => {
+  const patchRequest = async ({ uri, postData, isPublic, suppressErrorReporting }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 
@@ -169,16 +152,11 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
 
-  const deleteRequest = async ({
-    uri,
-    postData,
-    isPublic,
-    suppressErrorReporting,
-  }: RequestI) => {
+  const deleteRequest = async ({ uri, postData, isPublic, suppressErrorReporting }: RequestI) => {
     try {
       const headers = await createHeader({ isPublic, uri });
 
@@ -192,7 +170,7 @@ const Service = () => {
         headers,
       });
     } catch (error) {
-      toastError(error, suppressErrorReporting);
+      return toastError(error, suppressErrorReporting);
     }
   };
   return { getRequest, postRequest, patchRequest, deleteRequest };
