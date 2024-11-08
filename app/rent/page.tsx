@@ -194,7 +194,7 @@ const Rent = () => {
         }
       });
     }
-  };
+  }; 
   useEffect(() => {
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
     const newMap = new mapboxgl.Map({
