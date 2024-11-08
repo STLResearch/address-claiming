@@ -15,7 +15,7 @@ const ClaimAirspaceHeader: React.FC<ClaimAirspaceHeaderProps> = ({
       </div>
       <div className="flex justify-center items-center w-[95%] gap-2 ">
         <h2 className="text-[#222222] text-center font-medium text-xl">
-          Claim Airspace
+          Claim Air Rights
         </h2>
         <div className="hidden md:block w-[20px] h-[20px] ">
           <InfoIcon />

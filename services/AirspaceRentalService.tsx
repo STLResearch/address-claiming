@@ -3,14 +3,10 @@ import Service from "./Service";
 const AirspaceRentalService = () => {
   const { getRequest, postRequest } = Service();
 
-  const getPropertiesByUserAddress = async (
-    type: string,
-    limit: string | number,
-    afterAssetId?: string,
-  ) => {
+  const getPropertiesByUserAddress = async (type: string, limit: string | number, afterAssetId?: string) => {
     try {
       const response = await getRequest({
-        uri: `/private/airspace-rental/retrieve-tokens?type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`,
+        uri: `/private/properties/user-verified-properties?type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`,
       });
       if (!response) {
         return [];
@@ -34,10 +30,23 @@ const AirspaceRentalService = () => {
     }
   };
 
-  const getRetrievePendingRentalAirspace = async (
-    page: string | number,
-    limit: string | number,
-  ) => {
+  const getBidsAndOffers = async (callerAddress) => {
+    try {
+      if (!callerAddress) return [];
+      const response = await getRequest({
+        uri: `/private/auction-house/get-user-bids`,
+      });
+      if (!response) {
+        return [];
+      }
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  const getRetrievePendingRentalAirspace = async (page: string | number, limit: string | number) => {
     try {
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-pending-rental-airspace?limit=${limit}&page=${page || "1"}`,
@@ -52,10 +61,7 @@ const AirspaceRentalService = () => {
     }
   };
 
-  const getUnverifiedAirspaces = async (
-    page: string | number,
-    limit: string | number,
-  ) => {
+  const getUnverifiedAirspaces = async (page: string | number, limit: string | number) => {
     try {
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-unverified-airspace?limit=${limit}&page=${page || "1"}`,
@@ -70,10 +76,7 @@ const AirspaceRentalService = () => {
     }
   };
 
-  const getRejectedAirspaces = async (
-    page: string | number,
-    limit: string | number,
-  ) => {
+  const getRejectedAirspaces = async (page: string | number, limit: string | number) => {
     try {
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-rejected-airspace?limit=${limit}&page=${page || "1"}`,
@@ -147,6 +150,7 @@ const AirspaceRentalService = () => {
     getTotalAirspacesByUserAddress,
     getSingleAsset,
     getRetrievePendingRentalAirspace,
+    getBidsAndOffers,
   };
 };
 

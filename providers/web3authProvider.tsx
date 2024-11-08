@@ -30,18 +30,14 @@ interface Web3authProviderProps {
 
 // Const persistor = persistStore(store);
 
-export const Web3authProvider: React.FC<Web3authProviderProps> = ({
-  children,
-}) => {
+export const Web3authProvider: React.FC<Web3authProviderProps> = ({ children }) => {
   const [web3auth, setWeb3auth] = useState<any>(null);
   const [provider, setProvider] = useState<any>(null);
 
   return (
     <Provider store={store}>
       {/* <PersistGate loading={null} persistor={persistor}> */}
-      <Web3authContext.Provider
-        value={{ web3auth, setWeb3auth, provider, setProvider }}
-      >
+      <Web3authContext.Provider value={{ web3auth, setWeb3auth, provider, setProvider }}>
         {children}
       </Web3authContext.Provider>
       {/* </PersistGate> */}

@@ -1,4 +1,5 @@
 const RESPONSE_ERRORS = {
+
     USER_MISMATCH:
       "A wallet already exists for this email address. Kindly sign in with the same method used previously.",
     USER_NOT_FOUND: "User account do not exist",

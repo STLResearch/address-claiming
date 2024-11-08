@@ -1,5 +1,8 @@
 module.exports = {
+  output: "export",
+  trailingSlash: false,
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -12,6 +15,12 @@ module.exports = {
         hostname: "maps.locationiq.com",
         port: "",
         pathname: "/v3/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images-dev.sky.trade",
+        port: "",
+        pathname: "/images/**",
       },
     ],
   },
@@ -57,5 +66,5 @@ module.exports = withSentryConfig(
     // https://docs.sentry.io/product/crons/
     // https://vercel.com/docs/cron-jobs
     automaticVercelMonitors: true,
-  },
+  }
 );

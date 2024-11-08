@@ -19,10 +19,10 @@ const MobileMapSection = ({
             <div className="w-full rounded-[20px] bg-[#222222] p-[12px] text-center text-base font-normal text-white">
               Exciting times ahead!
               <br />
-              Claim your airspace 🚀✨
+              Claim your air rights 🚀✨
             </div>
             <div className="w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
-              Claim your airspace
+              Claim your air rights
             </div>
           </div>
           <div className="flex flex-1 flex-col gap-[23px] px-[13px] py-[29px]">
@@ -34,7 +34,7 @@ const MobileMapSection = ({
                   backgroundImage: "url('/images/airspace-preview.png')",
                 }}
               >
-                <p className="text-xl font-medium text-white">Airspace</p>
+                <p className="text-xl font-medium text-white">Air Rights</p>
               </Link>
               <Link
                 href={"/portfolio"}
@@ -54,7 +54,7 @@ const MobileMapSection = ({
               <div className="h-[24px] w-[24px]">
                 <HelpQuestionIcon color="white" isActive={undefined} />
               </div>
-              <p>How to Claim My Airspace?</p>
+              <p>How to Claim My Air Rights?</p>
             </div>
           </div>
         </div>

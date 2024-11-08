@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { MagnifyingGlassIcon , RefreshIconTransaction } from "../../Components/Icons";
+import {
+  MagnifyingGlassIcon,
+  RefreshIconTransaction,
+} from "../../Components/Icons";
 import { useMobile } from "@/hooks/useMobile";
 import { Connection, PublicKey } from "@solana/web3.js";
 import moment from "moment";
@@ -34,9 +37,8 @@ const TransactionHistory = () => {
     [],
   );
   const [searchQuery, setSearchQuery] = useState("");
-  const[refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
-
 
   useEffect(() => {
     (async () => {
@@ -146,7 +148,7 @@ const TransactionHistory = () => {
         setIsLoading(false);
       }
     })();
-  }, [web3auth?.status, pageNumber, user?.blockchainAddress, isNext,refresh]);
+  }, [web3auth?.status, pageNumber, user?.blockchainAddress, isNext, refresh]);
 
   const handleNextPage = () => {
     if (transactionList?.length < limit - 1) return;
@@ -224,37 +226,35 @@ const TransactionHistory = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5 flex-1 min-w-[89%] sm:min-w-[600px]">
+    <div className="flex max-lg:w-full flex-col gap-5 flex-grow">
       <div className="md:flex sm:flex-col md:flex-row justify-start sm:justify-between items-center">
-        <p className="flex font-medium text-xl pt-[14px] md:px-0 px-2 pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
+        <p className="flex font-medium text-xl pt-[14px] md:px-0 pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
           Transaction History
         </p>
-        <div className="flex md:px-0 px-2 justify-end items-center md:w-full ">
-          <div
-            className="relative bg-white p-[1px] rounded-lg border border-[#87878D]"
-          >
+        <div className="flex md:px-0 justify-end items-center md:w-full ">
+          <div className="relative w-[272px]">
             <input
               type="text"
               name="searchTransactions"
               id="searchTransactions"
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Transactions"
-              className="outline-none w-full pr-[20px] h-[49px] px-[22px] md:py-[16px] py-3"
+              className="w-full h-[48px] px-[16px] pr-[40px] text-[14px] text-[#222222] border border-[#D1D5DB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0653EA] transition-shadow duration-200"
             />
-            <div className=" w-[17px] cursor-pointer h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
+            <div className="w-[17px] h-[17px] absolute right-[16px] top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer">
               <MagnifyingGlassIcon />
             </div>
           </div>
-          <div className="ml-5">
-          <div
-            className="flex justify-center items-center w-12 h-12 cursor-pointer  bg-[#0653EA] text-center font-medium p-1 rounded-[8px] py-4"
-            onClick={handleReset}
-          >
-            <div className={isSpinning ? "spin w-6 h-6" : "w-6 h-6"}
+
+          <div className="md:ml-5 ml-2">
+            <div
+              className="flex justify-center items-center w-12 h-12 cursor-pointer  bg-[#0653EA] text-center font-medium p-1 rounded-[8px] py-4"
+              onClick={handleReset}
             >
-            <RefreshIconTransaction color={'white'}/>
+              <div className={isSpinning ? "spin w-6 h-6" : "w-6 h-6"}>
+                <RefreshIconTransaction color={"white"} />
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </div>
@@ -262,13 +262,15 @@ const TransactionHistory = () => {
         className={`flex justify-center overflow-y-auto md:overflow-y-hidden fund-table-scrollbar h-auto md:h-`}
         style={{ direction: `${isMobile ? "rtl" : "ltr"}` }}
       >
-        <div style={{ direction: "ltr" }} className="w-[89%] sm:w-[100%]">
+        <div style={{ direction: "ltr" }} className="w-[100%]">
           <div className="overflow-x-auto md:overflow-x-hidden fund-table-scrollbar">
             <table className="w-[100%] fund-table">
               <thead className="sticky top-0 bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
                 <tr className="w-full">
                   <th className="text-start py-5 px-5">Date</th>
-                  <th className="text-start py-5 px-5">Transaction Id</th>
+                  <th className="text-start py-5 px-5 truncate">
+                    Transaction Id
+                  </th>
                   <th className="text-start py-5 px-5">Type</th>
                   <th className="text-start py-5 px-5">Amount</th>
                   <th className="py-5 px-5 text-start">Status</th>
@@ -276,7 +278,7 @@ const TransactionHistory = () => {
               </thead>
               <tbody>{renderTransactionRows()}</tbody>
             </table>
-            <div className="flex items-center justify-end mt-8 w-[94%]">
+            <div className="flex items-center justify-end my-8 w-[94%]">
               <div className="mx-auto flex gap-[11.71px]">
                 <div className={` text-[#87878D] text-base font-normal`}>
                   {isLoading && "Loading transaction history..."}

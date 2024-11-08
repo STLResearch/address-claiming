@@ -45,7 +45,7 @@ const Explorer = ({
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
       <div className="flex items-center gap-[5px]">
-        <p className="text-xl font-medium text-[#222222]">Claim Airspace</p>
+        <p className="text-xl font-medium text-[#222222]">Claim Air Rights</p>
         <div
           onClick={() => setIsInfoVisible((prev) => !prev)}
           className="relative flex h-[20px] w-[20px] items-center justify-center"
@@ -61,7 +61,7 @@ const Explorer = ({
         </div>
       </div>
       <p className="  text-[15px] font-normal text-[#222222] break-words">
-        Ready to claim your airspace? No registered airspace yet, but exciting
+        Ready to claim your air rights? No registered air rights yet, but exciting
         times ahead!
       </p>
       <div
@@ -75,7 +75,7 @@ const Explorer = ({
           type="text"
           name="searchAirspaces"
           id="searchAirspaces"
-          placeholder="Search Airspaces"
+          placeholder="Search Air Rights"
           className="w-full pr-[20px] outline-none"
         />
         <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
@@ -112,14 +112,14 @@ const Explorer = ({
         <div>
           {isLoadingEstimates && (
             <p className="text-[15px] text-light-black animate-pulse">
-              Estimating Airspace Value...
+              Estimating Air Right Value...
             </p>
           )}
 
           {!isLoadingEstimates && !mainEstimate && (
             <>
               <p className="my-4 text-[20px] text-center font-medium">
-                My Airspaces
+                My Air Rights
               </p>
 
               <p className="  text-[15px] font-normal text-[#222222]">
@@ -159,7 +159,7 @@ const Explorer = ({
               onClick={onClaimAirspace}
               className="Claim-airspacebtn-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
             >
-              Claim Airspace
+              Claim Air Rights
             </div>
 
             {!isLoadingEstimates && mainEstimate && (

@@ -63,7 +63,7 @@ const AvailableBalance = () => {
 
   return (
     <div
-      className="relative bg-white flex items-center px-[20px] sm:px-[32px] py-[37px] rounded-[30px] justify-between w-[89%] sm:w-[468px]"
+      className="relative bg-white flex items-center px-[20px] sm:px-[32px] py-[37px] rounded-[30px] w-full justify-between"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
       <div className="flex flex-col justify-between w-full h-full ">
@@ -93,7 +93,7 @@ const AvailableBalance = () => {
         ) : (
           <>
             <p className="text-3xl text-[#4285F4] font-medium">
-              ${userUSDWalletBalance.amount}
+              ${Number(userUSDWalletBalance.amount).toFixed(2)}
             </p>
             <div className="flex">
               <p className=" text-sml text-[#838187] font-normal leading-[21px]">

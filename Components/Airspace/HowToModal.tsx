@@ -16,9 +16,9 @@ const stepsData = [
     description: "Easily adjust the location pin if Google Maps is off.",
   },
   {
-    title: "Claim Airspace",
+    title: "Claim Air Rights",
     description:
-      "Click the 'Claim Airspace' button to confirm your airspace address. Your Airspace is saved. Modify your details anytime.",
+      "Click the 'Claim Air Rights' button to confirm your air rights address. Your Air Rights is saved. Modify your details anytime.",
   },
   {
     title: "Checking the details",
@@ -56,7 +56,7 @@ const HowToModal = ({ goBack, handleOpenAirspaceMap }: PropsI) => {
             <EarthIcon isActive={true} />
           </div>
           <p className="px-[30px] text-center text-[15px] text-[#222222]">
-            Ready to claim your airspace? No registered airspace yet, but
+            Ready to claim your air rights? No registered air rights yet, but
             exciting times ahead! 🚀✨
           </p>
           <div
@@ -69,7 +69,7 @@ const HowToModal = ({ goBack, handleOpenAirspaceMap }: PropsI) => {
       )}
       {section === 1 && (
         <div className="flex flex-col items-center justify-center gap-[15px] px-[60px] text-center text-[#222222]">
-          <p className="text-[20px] font-medium">How to Claim My Airspace?</p>
+          <p className="text-[20px] font-medium">How to Claim My Air Rights?</p>
           <div className="flex flex-col items-center flex-start py-[30px] text-left">
             {stepsData.map((step, index) => (
               <Step
@@ -89,7 +89,7 @@ const HowToModal = ({ goBack, handleOpenAirspaceMap }: PropsI) => {
             onClick={handleOpenAirspaceMap}
             className="w-full cursor-pointer rounded-[8px] bg-[#0653EA] py-[16px] text-center text-white"
           >
-            Claim Airspace
+            Claim Air Rights
           </div>
         </div>
       )}

@@ -31,21 +31,24 @@ const PreviousUploadedDocuments = () => {
                 We requested your {formatTextToReadable(document.description)}
               </p>
             </div>
-            <div className="md:w-[60%] w-full flex flex-col md:flex-row justify-end items-center gap-8">
+            <div className="md:w-[60%] w-full flex flex-col md:flex-row md:flex-wrap justify-end items-center gap-8 mt-3 sm:mt-0">
+            {document.previewUrl && document.previewUrl?.length > 0 && document.previewUrl?.map((url, urlIndex) => (
               <Link
+              key={urlIndex} 
                 target="_blank"
-                href={document.previewUrl}
+                href={document?.previewUrl[urlIndex]}
                 className="cursor-pointer"
               >
                 <div className="w-52 px-4 py-4 flex justify-start items-center border rounded-md gap-4">
                   <FileIcon />
                   <div>
                     <p className="text-[#1F7DFD] text-xs">
-                      {formatTextToReadable(document.description)}
+                      {formatTextToReadable(`${document.description}-${urlIndex+1}`)}
                     </p>
                   </div>
                 </div>
               </Link>
+              ))}
             </div>
           </div>
         ))}

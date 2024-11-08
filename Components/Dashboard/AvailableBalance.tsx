@@ -12,22 +12,15 @@ const AvailableBalance: FC = () => {
   });
 
   return (
-    <Item
-      title={"Available Balance"}
-      icon={<WalletIcon />}
-      linkText={"View funds"}
-      href={"/funds"}
-      style="h-fit"
-    >
-      {userUSDWalletBalance.isLoading ? (
+    <Item title={"Available Balance"} icon={<WalletIcon />} linkText={"View funds"} href={"/funds"} style="h-fit">
+      {userUSDWalletBalance.isLoading ?
         <BalanceLoader />
-      ) : (
-        <div className="flex items-center justify-between">
-          <p className="absolute bottom-[12px] left-[26px] text-3xl text-[#4285F4] font-medium">
+      : <div className="flex items-center justify-between">
+          <p className="absolute bottom-[12px] left-[26px] text-3xl font-medium text-[#4285F4]">
             ${userUSDWalletBalance.amount}
           </p>
         </div>
-      )}
+      }
     </Item>
   );
 };
