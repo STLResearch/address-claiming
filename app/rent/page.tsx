@@ -384,7 +384,7 @@ const Rent = () => {
           setLoadingAddresses(false);
         }
       } catch (error) {
-        console.error(error);
+        Sentry.captureException(error);
         //SetLoadingAddresses(false);
       }
     }, 500);
