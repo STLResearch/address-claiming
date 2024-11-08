@@ -1,12 +1,10 @@
-'use client'
 import { BiconomyV2AccountInitData, BridgingTypes, buildBridgingOperations, buildItx, buildMultichainReadonlyClient, buildRpcInfo, buildTokenMapping, deployment, initKlaster, klasterNodeHost, KlasterSDK, loadBiconomyV2Account, prepareStrategy, UnifiedBalanceResult } from "klaster-sdk";
 import { useEffect, useState } from "react";
 import { createWalletClient, custom, http, formatUnits, parseUnits, WalletClient, ParseAccount } from "viem";
-import { arbitrum, base, optimism, polygon, bsc, avalanche } from "viem/chains";
-import { LiFiBrigePlugin } from "@/services/LiFiBridgePlugin";
-import { Root } from "react-dom/client";
+import { arbitrum, base, optimism, polygon } from "viem/chains";
+import Image from "next/image";
 
-const KlasterComponent = ({ root }: { root: Root }) => {
+const KlasterComponent = () => {
     const [address, setAddress] = useState<`0x${string}`>('0x');
     const [klasterSdk, setKlasterSdk] = useState<KlasterSDK<BiconomyV2AccountInitData>>();
     const [unifiedBalance, setUnifiedBalance] = useState<UnifiedBalanceResult>();
@@ -14,9 +12,16 @@ const KlasterComponent = ({ root }: { root: Root }) => {
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [walletClient, setWalletClient] = useState<WalletClient>();
     const [bridgeToChain, setBridgeToChain] = useState<'polygon' | 'arbitrum' | 'base' | 'optimism'>('base');
+    const [isCopied, setIsCopied] = useState(false);
 
-    const closeBox = () => {
-        root.unmount();
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(address);
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy address:', err);
+        }
     };
 
     const mcClient = buildMultichainReadonlyClient([
@@ -45,7 +50,6 @@ const KlasterComponent = ({ root }: { root: Root }) => {
         });
         await getBalances(klaster);
         setKlasterSdk(klaster);
-        setKlasterIsConnected(true);
     }
 
     const getBalances = async (klaster: KlasterSDK<BiconomyV2AccountInitData>) => {
@@ -74,171 +78,192 @@ const KlasterComponent = ({ root }: { root: Root }) => {
         }
     }
 
-    const bridgeAllUsdcToChain = async () => {
-        try {
-            if (klasterSdk && unifiedBalance && walletClient) {
-                const chainToId = {
-                    "polygon": polygon.id,
-                    "arbitrum": arbitrum.id,
-                    "base": base.id,
-                    "optimism": optimism.id,
-                };
-                const bridgingOps = await prepareStrategy({
-                    tokenMapping: mcUSDC,
-                    client: mcClient,
-                    amount: unifiedBalance.balance - parseUnits("0.2", 6),
-                    account: klasterSdk.account,
-                    destinationChainId: chainToId[bridgeToChain],
-                    unifiedBalance: unifiedBalance
-                })
-                const usdcAddress = mcUSDC.find(item => { return item.chainId == chainToId[bridgeToChain] })?.address;
-                const bridge = await bridgingOps.encode(LiFiBrigePlugin);
-                console.log("Hi")
-                const iTx = buildItx({
-                    operations: bridge.steps,
-                    nodeFeeOperation: {
-                        token: usdcAddress ? usdcAddress : '0x',
-                        chainId: polygon.id
-                    }
-                })
-                const quote = await klasterSdk.getQuote(iTx);
-                const signed = await walletClient.signMessage({
-                    message: {
-                        raw: quote.itxHash,
-                    },
-                    account: address,
-                });
-                const result = await klasterSdk.execute(quote, signed);
-                console.log('Transaction executed successfully! Hash: ', result.itxHash);
-            }
-            else {
-                if (!klasterSdk)
-                    console.error('Error: klasterSdk is undefined.')
-                if (!unifiedBalance)
-                    console.error('Error: unifiedBalance is undefined.')
-                if (!walletClient)
-                    console.error('Error: walletClient is undefined.')
-            }
-        }
-        catch (error) {
-            console.error('Error bridging tokens: ', error);
-        }
+    const getImagePath = (chain: 'polygon' | 'arbitrum' | 'base' | 'optimism'): string => {
+        if (chain == 'polygon') return "images/polygon-matic-logo.svg"
+        if (chain == 'arbitrum') return "images/arbitrum-arb-logo.svg"
+        if (chain == 'base') return "images/base.svg"
+        if (chain == 'optimism') return "images/optimism-ethereum-op-logo.svg"
+        return ''
+
     }
 
-    const connectWallet = async () => {
-        if ((window as any).ethereum) {
-            try {
-                await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
-                const client = createWalletClient({
-                    transport: custom((window as any).ethereum),
-                });
-                setWalletClient(client);
-                await configureKlaster(client);
-                console.log('Wallet connected successfully!');
-            } catch (error) {
-                console.error('Error connecting to Metamask:', error);
+    useEffect(() => {
+        const connectWallet = async () => {
+            if ((window as any).ethereum) {
+                try {
+                    await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
+                    const client = createWalletClient({
+                        transport: custom((window as any).ethereum),
+                    });
+                    setWalletClient(client);
+                    await configureKlaster(client);
+                    console.log('Wallet connected successfully!');
+                } catch (error) {
+                    console.error('Error connecting to Metamask:', error);
+                }
+            } else {
+                alert('Please install MetaMask!');
             }
-        } else {
-            alert('Please install MetaMask!');
-        }
-    };
+        };
+        connectWallet();
+    }, []);
 
     const toggleDropdown = () => {
         setDropdownVisible(!dropdownVisible);
     };
 
     return (
-        <div style={{
-            position: 'fixed',
-            top: '55%',
-            left: '40%',
-            transform: 'translate(-50%, -50%)',
-            width: 'fit-content',
-            height: '500px',
-            backgroundColor: '#E8E8E8',
-            zIndex: 1000,
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            padding: '20px',
-            borderRadius: '8px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            overflow: 'hidden',
-        }}>
-            <button
-                onClick={
-                    closeBox
-                }
-                style={{
-                    position: 'absolute',
-                    top: '5px',
-                    right: '5px',
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '20px',
-                    cursor: 'pointer',
-                    zIndex: 1100,
-                }}
-            >
-                &times;
-            </button>
-            <div
-                style={{
-                    overflowY: 'auto',
-                    maxHeight: '90%',
-                    width: '100%',
-                    padding: '10px 0',
-                }}
-            >
-                <div style={{
-                    marginTop: '10px',
-                    borderRadius: '10px',
-                    zIndex: 1200,
-                }}>
-                    <div style={{ padding: '20px', maxWidth: '300px', margin: '0 auto' }}>
-                        {!klasterIsConnected ? (
-                            <button onClick={connectWallet} style={{ padding: '10px', fontSize: '16px' }}>
-                                Login with MetaMask
-                            </button>
-                        ) : (
-                            <div>
-                                <div>
-                                    <span style={{ fontWeight: 'bold' }}>Address: </span>
-                                    {`${address.slice(0, 6)}...${address.slice(-4)}`}
-                                </div>
-                                <div>
-                                    <span style={{ fontWeight: 'bold' }}>Balance: </span>
-                                    {formatUnits(unifiedBalance ? unifiedBalance.balance : BigInt(0), 6)} USDC
-                                    <button
-                                        onClick={toggleDropdown}
+        <div style={{ marginTop: '10px', borderRadius: '10px', zIndex: 1200 }}>
+            <div style={{ padding: '20px', maxWidth: '350px', margin: '0 auto' }}>
+                <div>
+                    <div
+                        style={{
+                            marginBottom: '15px',
+                            backgroundColor: '#82B9E6',
+                            padding: '10px',
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s',
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                        }}
+                        onClick={handleCopy}
+                        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4FA7D9')}
+                        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#82B9E6')}
+                    >
+                        <span style={{ fontWeight: 'bold', color: '#FFFFFF', marginRight: '8px' }}>
+                            Address:
+                        </span>
+                        <span style={{ color: '#FFFFFF' }}>
+                            {`${address.slice(0, 6)}...${address.slice(-4)}`}
+                        </span>
+                        {isCopied && (
+                            <span
+                                style={{
+                                    marginLeft: '10px',
+                                    fontSize: '14px',
+                                    color: '#FFFFFF',
+                                }}
+                            >
+                                Copied!
+                            </span>
+                        )}
+                    </div>
+                    <div
+                        style={{
+                            marginBottom: '15px',
+                            backgroundColor: '#82B9E6',
+                            padding: '10px',
+                            borderRadius: '8px',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s',
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                            color: '#FFFFFF'
+                        }}
+                        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4FA7D9')}
+                        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#82B9E6')}
+                    >
+                        <span style={{ fontWeight: 'bold', color: '#FFFFFF', marginRight: '8px' }}>Balance: </span>
+                        {parseFloat(formatUnits(unifiedBalance ? unifiedBalance.balance : BigInt(0), 6)).toFixed(2)} USDC
+                        <button
+                            onClick={toggleDropdown}
+                            style={{
+                                marginLeft: '70px',
+                                cursor: 'pointer',
+                                background: '#E0F7FF',
+                                border: 'none',
+                                borderRadius: '5px',
+                                fontSize: '18px',
+                                padding: '5px',
+                                color: '#0077CC',
+                                transition: 'background-color 0.3s',
+                            }}
+                            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#CDEBFF')}
+                            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#E0F7FF')}
+                        >
+                            ⬇️
+                        </button>
+                        {dropdownVisible && (
+                            <div
+                                style={{
+                                    marginTop: '10px',
+                                    borderRadius: '10px',
+                                    backgroundColor: '#FFFFFF',
+                                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                                    padding: '10px',
+                                }}
+                            >
+                                {['Polygon', 'Base', 'Optimism', 'Arbitrum'].map((chain: any) => (
+                                    <div
+                                        key={chain}
                                         style={{
-                                            marginLeft: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            padding: '10px',
+                                            borderBottom: '1px solid #F0F0F0',
                                             cursor: 'pointer',
-                                            background: 'none',
-                                            border: 'none',
-                                            fontSize: '16px',
+                                            transition: 'background-color 0.3s',
                                         }}
+                                        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#F5F5F5')}
+                                        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
                                     >
-                                        ⬇️
-                                    </button>
-                                    {dropdownVisible && (
-                                        <div style={{ border: '1px solid #ccc', padding: '5px', marginTop: '5px' }}>
-                                            <p>{formatUnits(getChainBalance('polygon'), 6)}</p>
-                                            <p>{formatUnits(getChainBalance('base'), 6)}</p>
-                                            <p>{formatUnits(getChainBalance('optimism'), 6)}</p>
-                                            <p>{formatUnits(getChainBalance('arbitrum'), 6)}</p>
+                                        <div
+                                            style={{
+                                                width: '30px',
+                                                height: '30px',
+                                                borderRadius: '50%',
+                                                marginRight: '10px',
+                                            }}
+                                        >
+                                            <Image src={getImagePath(chain.toLowerCase())} alt={''} />
                                         </div>
-                                    )}
-                                </div>
-                                <div>
-                                    <button
-                                        onClick={bridgeAllUsdcToChain}
-                                    >
-                                        Bridge to Base
-                                    </button>
-                                </div>
+                                        <p style={{ margin: 0, fontWeight: 'bold', color: '#333' }}>
+                                            {chain}: {parseFloat(formatUnits(getChainBalance(chain.toLowerCase()), 6)).toFixed(2)} USDC
+                                        </p>
+                                    </div>
+                                ))}
                             </div>
                         )}
+                    </div>
+                    <div
+                        style={{
+                            marginTop: '30px',
+                            display: 'flex',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <button
+                            disabled
+                            style={{
+                                width: '245px',
+                                padding: '12px 20px',
+                                fontSize: '16px',
+                                backgroundColor: '#E0F7FF',
+                                border: 'none',
+                                borderRadius: '8px',
+                                color: '#0077CC',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                transition: 'background-color 0.3s, transform 0.2s, color 0.3s',
+                            }}
+                            onMouseOver={(e) => {
+                                if (e.currentTarget.disabled) {
+                                    e.currentTarget.style.backgroundColor = '#FFD7D7';
+                                    e.currentTarget.style.color = '#FF4D4D';
+                                    e.currentTarget.textContent = 'Coming Soon!';
+                                }
+                            }}
+                            onMouseOut={(e) => {
+                                if (e.currentTarget.disabled) {
+                                    e.currentTarget.style.backgroundColor = '#E0F7FF';
+                                    e.currentTarget.style.color = '#0077CC';
+                                    e.currentTarget.textContent = 'Bridge USDC via Klaster';
+                                }
+                            }}
+                        >
+                            Bridge USDC via Klaster
+                        </button>
                     </div>
                 </div>
             </div>

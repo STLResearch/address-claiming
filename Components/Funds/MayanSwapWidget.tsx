@@ -1,4 +1,3 @@
-import { Root } from 'react-dom/client';
 import { Colors } from 'react-select';
 import Script from "next/script";
 
@@ -58,65 +57,15 @@ const widgetConfig: MayanWidgetConfigType = {
     destinationChains: ['solana']
 }
 
-const MayanSwapWidget = ({ root }: { root: Root }) => {
-    const closeBox = () => {
-        root.unmount();
-    };
+const MayanSwapWidget = () => {
 
     const handleLoadMayanWidget = () => {
         window.MayanSwap.init('swap_widget', widgetConfig);
     };
 
     return (
-        <div style={{
-            position: 'fixed',
-            top: '55%',
-            left: '40%',
-            transform: 'translate(-50%, -50%)',
-            width: 'fit-content',
-            height: '500px',
-            backgroundColor: '#E8E8E8',
-            zIndex: 1000,
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            padding: '20px',
-            borderRadius: '8px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            overflow: 'hidden',
-        }}>
-            <button
-                onClick={closeBox}
-                style={{
-                    position: 'absolute',
-                    top: '5px',
-                    right: '5px',
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '20px',
-                    cursor: 'pointer',
-                    zIndex: 1100,
-                }}
-            >
-                &times;
-            </button>
-            <div
-                style={{
-                    overflowY: 'auto',
-                    maxHeight: '90%',
-                    width: '100%',
-                    padding: '10px 0',
-                }}
-            >
-                <div style={{
-                    marginTop: '10px',
-                    borderRadius: '10px',
-                    zIndex: 1200,
-                }}>
-                    <div id="swap_widget" />
-                </div>
-            </div>
-
+        <div>
+            <div id="swap_widget" />
             <Script
                 src="https://cdn.mayan.finance/mayan_widget_v_1_2_3_nowc.js"
                 integrity="sha256-bJh3N4pFRH9XtG0u2icxu+PUsyPKGguVp5wmTKVsw3g="

@@ -33,12 +33,12 @@ import CopyToClipboard from "react-copy-to-clipboard";
 import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk";
 import { LiFiComponent, TRANSACTION_TYPE } from "./LifiComponent";
 import { initializeTransak } from "@/utils/transak";
-
 import StripeOnrampComponent from "./Stripe/StripeComponent";
 import StripeService from "@/services/StripeService";
 import Backdrop from "../Backdrop";
 import Spinner from "../Spinner";
 import Link from "next/link";
+import MayanComponent from "./MayanComponent";
 const defaultPaymentMethod = {
   icon: "/images/bank-note-arrow.svg",
   name: "Native",
@@ -294,7 +294,7 @@ const DepositAndWithdraw = ({
       try {
         const container = document.getElementById('MayanContainer');
         const root = createRoot(container!);
-        root.render(<MayanSwapWidget root={root} />);
+        root.render(<MayanComponent root={root} />);
       }
       catch (error) {
         console.log(error);
