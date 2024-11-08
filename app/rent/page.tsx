@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useState, useEffect, SetStateAction } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import {
@@ -21,7 +21,7 @@ import { useMobile } from "@/hooks/useMobile";
 import Head from "next/head";
 import ZoomControllers from "@/Components/ZoomControllers";
 import ExplorerMobile from "@/Components/Rent/Explorer/ExplorerMobile";
-import RentModal from "@/Components/Rent/RentModal/RentModal";
+import RentDetail from "@/Components/Rent/RentDetail/RentDetail";
 import { goToAddress } from "@/utils/apiUtils/apiFunctions";
 import { Coordinates, PropertyData } from "@/types";
 import Sidebar from "@/Components/Shared/Sidebar";
@@ -31,6 +31,10 @@ import { RestrictedAreaResponseI } from "@/services/restriction/type";
 import RestrictedAreaInfo from "@/Components/RestrictedAreaInfo";
 import axios from "axios";
 import MapButtons from "@/Components/MapButtons";
+import RentPreview from "@/Components/Rent/RentPreview/RentPreview";
+import dayjs from "dayjs";
+import { handleMouseEvent } from "@/utils/eventHandlerUtils/eventHandlers";
+import RentSearchMobile from "@/Components/Rent/Explorer/RentSearchMobile";
 
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -42,11 +46,15 @@ const Rent = () => {
   const [registeredAddress, setRegisteredAddress] = useState<PropertyData[]>(
     [],
   );
-  const [mapMove, setMapMove] = useState();
   const [address, setAddress] = useState<string>("");
   const [showRestrictedAreas, setShowRestrictedAreas] =
     useState<boolean>(false);
   const [showRestrictedAreasInfo, setShowRestrictedAreasInfo] = useState(false);
+  const defaultValueDate = dayjs()
+  .add(1, "h")
+  .set("minute", 30)
+  .startOf("minute");
+  const [date, setDate] = useState(defaultValueDate);
   const [addressData, setAddressData] = useState<
     | { mapbox_id: string; short_code: string; wikidata: string }
     | null
@@ -59,10 +67,12 @@ const Rent = () => {
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [marker, setMarker] = useState<Marker | null | undefined>();
   const [rentData, setRentData] = useState<PropertyData | undefined>();
-  const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
+  const [showRentDetail, setShowRentDetail] = useState<boolean>(false);
+  const [showRentPreview, setShowRentPreview] = useState<boolean>(false);
   const { user } = useAuth();
   const [regAdressShow, setRegAdressShow] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
+  const [responseData, setResponseData] = useState<PropertyData[]>([]);
   const { findPropertiesByCoordinates } = PropertiesService();
   const { getRestrictedAreas } = RestrictionService();
   const [clickCount, setClickCount] = useState(1);
@@ -208,6 +218,7 @@ const Rent = () => {
       const mapCenter = newMap.getCenter();
       const geoHash = determineGeoHash(mapCenter.lng, mapCenter.lat);
 
+
       if (geoHash && showRestrictedAreas) {
         await fetchRestrictedAreas(geoHash);
       }
@@ -229,6 +240,7 @@ const Rent = () => {
             await fetchRestrictedAreas(geoHash);
           }
 
+
           const responseData = await findPropertiesByCoordinates({
             postData: {
               minLongitude: crds._sw.lng,
@@ -237,6 +249,7 @@ const Rent = () => {
               maxLatitude: crds._ne.lat,
             },
           });
+
 
           let formattedProperties = [];
           if (responseData) {
@@ -250,8 +263,12 @@ const Rent = () => {
             });
           }
 
+
+          markers.forEach((marker) => marker.remove());
+          setMarkers([]); 
           setRegisteredAddress(formattedProperties);
           setLoadingRegAddresses(false);
+
 
           if (responseData.length > 0) {
             for (let i = 0; i < responseData.length; i++) {
@@ -277,6 +294,7 @@ const Rent = () => {
             }
           }
         }, 3000);
+
       });
     });
 
@@ -350,6 +368,7 @@ const Rent = () => {
     updateMarkersAndRestrictedAreas();
   }, [map, showRestrictedAreas]);
 
+
   useEffect(() => {
     if (registeredAddress.length > 0) {
       setRegAdressShow(true);
@@ -394,15 +413,7 @@ const Rent = () => {
 
   useEffect(() => {
     if (!flyToAddress) return;
-    goToAddress(
-      flyToAddress,
-      setCoordinates,
-      setAddressData,
-      setIsLoading,
-      setMarker,
-      map,
-      marker,
-    );
+    goToAddress(flyToAddress, setCoordinates, setAddressData, setIsLoading, setMarker, map, marker);
   }, [flyToAddress, map]);
 
   useEffect(() => {
@@ -411,10 +422,12 @@ const Rent = () => {
 
   useEffect(() => {
     const inintialRentDataString = localStorage.getItem("rentData");
+
     const parsedInitialRentData =
       inintialRentDataString && inintialRentDataString !== "undefined"
         ? JSON.parse(inintialRentDataString)
         : null;
+
     if (parsedInitialRentData && parsedInitialRentData?.address?.length > 2) {
       setRentData(parsedInitialRentData);
       setFlyToAddress(parsedInitialRentData.address);
@@ -426,10 +439,6 @@ const Rent = () => {
 
   return (
     <Fragment>
-      <Head>
-        <title>SkyTrade - Marketplace : Rent</title>
-      </Head>
-
       {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
       {
@@ -452,25 +461,10 @@ const Rent = () => {
 
             {isMobile && (
               <ExplorerMobile
-                loadingReg={loadingRegAddresses}
-                loading={loadingAddresses}
-                address={address}
-                setAddress={setAddress}
-                addresses={addresses}
-                showOptions={showOptions}
-                regAdressShow={regAdressShow}
                 registeredAddress={registeredAddress}
-                map={map}
-                marker={marker}
-                setMarker={setMarker}
-                setShowClaimModal={setShowClaimModal}
-                rentData={rentData}
+                setShowRentDetail={setShowRentDetail}
                 setRentData={setRentData}
-                setFlyToAddress={setFlyToAddress}
                 setShowOptions={setShowOptions}
-                setLoadingRegAddresses={setLoadingRegAddresses}
-                setRegisteredAddress={setRegisteredAddress}
-                setRegAdressShow={setRegAdressShow}
               />
             )}
             <RestrictedAreaInfo
@@ -488,13 +482,20 @@ const Rent = () => {
                 className={"!absolute !left-0 !top-0 !m-0 !h-screen !w-screen"}
                 id="map"
               />
+              <RentSearchMobile
+                address={address}
+                setAddress={setAddress}
+                addresses={addresses}
+                setFlyToAddress={setFlyToAddress}
+                setShowOptions={setShowOptions}
+                showOptions={showOptions}
+                
+              />
 
               {!isMobile && (
                 <div className="flex items-start justify-start">
                   <Explorer
-                    setLoadingRegAddresses={setLoadingRegAddresses}
                     loadingReg={loadingRegAddresses}
-                    setRegisteredAddress={setRegisteredAddress}
                     loading={loadingAddresses}
                     address={address}
                     setAddress={setAddress}
@@ -502,27 +503,35 @@ const Rent = () => {
                     showOptions={showOptions}
                     regAdressShow={regAdressShow}
                     registeredAddress={registeredAddress}
-                    map={map}
-                    marker={marker}
-                    setMarker={setMarker}
-                    setShowClaimModal={setShowClaimModal}
-                    rentData={rentData}
+                    setShowRentDetail={setShowRentDetail}
                     setRentData={setRentData}
                     setFlyToAddress={setFlyToAddress}
                     setShowOptions={setShowOptions}
                   />
                 </div>
               )}
-              {showClaimModal && (
-                <RentModal
-                  setShowClaimModal={setShowClaimModal}
+              {showRentDetail && (
+                <RentDetail
+                date={date}
+                setDate={setDate}
+                setShowRentPreview={setShowRentPreview}
+                setShowRentDetail={setShowRentDetail}
+                  rentData={rentData}
+                  isLoading={isLoading}
+                />
+              )}
+              {showRentPreview && (
+                <RentPreview
+                date={date}
+                  setShowRentPreview={setShowRentPreview}
+                  setShowRentDetail={setShowRentDetail}
                   rentData={rentData}
                   setIsLoading={setIsLoading}
                   isLoading={isLoading}
                 />
               )}
             </section>
-            <div className="hidden sm:block">
+            <div className="hidden md:block">
               <ZoomControllers map={map} />
             </div>
           </div>

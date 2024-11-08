@@ -33,10 +33,10 @@ const Funds = () => {
         <Sidebar />
         <div className="w-full h-full flex flex-col">
           <PageHeader pageTitle={"Funds"} />
-          <section className="relative  w-full h-full py-6 md:py-[37px]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll sm:pl-[68.82px] sm:pr-[55px]">
-            <div className="flex sm:gap-[50px] flex-wrap justify-center">
+          <section className="relative  w-full h-[calc(100%-91px)]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll">
+            <div className={`${isMobile ? "flex w-full flex-wrap p-8 gap-10 justify-center" : "flex w-full p-8 gap-10"}`}>
               <div
-                className={`${isMobile ? "w-full flex flex-col gap-5 items-center sm:items-start" : "flex flex-col gap-5 items-center sm:items-start"}`}
+                className={`${isMobile ? "w-full flex flex-col gap-5 items-center sm:items-start" : "flex flex-col gap-5 sm:w-[468px] items-center sm:items-start"}`}
               >
                 <AvailableBalance />
                 <DepositAndWithdraw
@@ -47,7 +47,11 @@ const Funds = () => {
                   tokenBalance={parseFloat(userUSDWalletBalance.amount)}
                 />
               </div>
+              <div
+                className={` w-full  sm:w-auto sm:flex sm:flex-grow `}
+              >
               <TransactionHistory />
+              </div>
             </div>
           </section>
         </div>

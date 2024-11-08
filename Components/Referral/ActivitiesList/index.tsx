@@ -17,12 +17,12 @@ const ActivitiesList: React.FC<ActivitiesListProps> = ({ onBack }) => {
     },
     {
       description:
-        "Claim your airspace (full claim/verified airspace). This is per every unique claimed airspace. KYC completed is a precondition for this allocation.",
+        "Claim your air rights (full claim/verified air rights). This is per every unique claimed air rights. KYC completed is a precondition for this allocation.",
       points: "100 SKY points",
     },
     {
       description:
-        "For claimed airspace which is fully validated done by the referred account.",
+        "For claimed air rights which is fully validated done by the referred account.",
       points:
         "100 SKY points to you and 100 SKY points to your friend (this is part of the points allocation 2) + 10% bonus on the referred income stream from air-right rental",
     },
@@ -37,7 +37,7 @@ const ActivitiesList: React.FC<ActivitiesListProps> = ({ onBack }) => {
     },
     {
       description:
-        "Claim or refer 1 airspace in a specific area:  New York: Manhattan & Boroughs Texas: Garland, Murphy, Plano, Richardson, Mesquite, Dallas, Rowlett, Colony, College Station Florida: Clermont, New Port Richey, Valrico, Winter Haven, Tampa, Brandon, Riverview, Seffner Arizona: Phoenix, Glendale, Peoria Arkansas: Farmington, Bentonville, Rogers, Pea Ridge Virginia: Virginia Beach Utah: Lindon, Herriman North Carolina: Raeford Boosting: SKY points eg x 3",
+        "Claim or refer 1 air rights in a specific area:  New York: Manhattan & Boroughs Texas: Garland, Murphy, Plano, Richardson, Mesquite, Dallas, Rowlett, Colony, College Station Florida: Clermont, New Port Richey, Valrico, Winter Haven, Tampa, Brandon, Riverview, Seffner Arizona: Phoenix, Glendale, Peoria Arkansas: Farmington, Bentonville, Rogers, Pea Ridge Virginia: Virginia Beach Utah: Lindon, Herriman North Carolina: Raeford Boosting: SKY points eg x 3",
       points: "5 SKY points/drone",
     },
     {

@@ -27,14 +27,14 @@ const Account = () => {
 
   useEffect(() => {
     (async () => {
-      let data = user;
-      const responseData = await getUser();
-      if (responseData) {
-        data = responseData;
-        signIn({ user: responseData });
+      let userData = user;
+      const { error, data } = await getUser();
+      if (!error) {
+        userData = data;
+        signIn({ user: data });
       }
-      if (data) {
-        setNewUserDetail({ ...data });
+      if (userData) {
+        setNewUserDetail({ ...userData });
       }
     })();
   }, [user?.KYCStatusId, user?.name, user?.phoneNumber, web3authStatus]);
@@ -100,9 +100,9 @@ const Account = () => {
       },
       onComplete: async () => {
         const responseData = await getUser();
-        if (responseData) {
-          setNewUserDetail({ ...responseData });
-          signIn({ user: responseData });
+        if (!responseData.error) {
+          setNewUserDetail({ ...responseData.data });
+          signIn({ user: responseData.data });
         }
       },
     });
@@ -110,21 +110,17 @@ const Account = () => {
 
   return (
     <Fragment>
-      {isLoading &&
-        createPortal(<Backdrop />, document.getElementById("backdrop-root")!)}
-      {isLoading &&
-        createPortal(<Spinner />, document.getElementById("backdrop-root")!)}
+      {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root")!)}
+      {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root")!)}
 
-      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
+      <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F6FAFF]">
         <Sidebar />
-        <div className="w-full h-full flex flex-col">
+        <div className="flex h-full w-full flex-col">
           <PageHeader pageTitle={"Account"} />
-          <section className="relative w-full h-full flex flex-col py-[29px] px-[21px] md:pl-[54.82px] md:pr-[47px] gap-[29px] md:mb-0 mb-[78.22px] overflow-y-auto">
+          <section className="relative flex h-full w-full flex-col gap-[29px] overflow-y-auto px-[21px] pb-32 pt-12 md:mb-0 md:pl-[54.82px] md:pr-[47px]">
             <div className="flex flex-col gap-[15px]">
-              <h2 className="text-[#222222] font-normal text-xl">My Profile</h2>
-              <p className="text-[#87878D] font-normal text-base">
-                Update your account settings
-              </p>
+              <h2 className="text-xl font-normal text-[#222222]">My Profile</h2>
+              <p className="text-base font-normal text-[#87878D]">Update your account settings</p>
             </div>
             {newUserDetail && (
               <>

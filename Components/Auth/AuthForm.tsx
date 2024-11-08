@@ -138,6 +138,7 @@ const AuthForm: FC<AuthFormProps> = ({
         )}
         <LoadingButton
           color={""}
+          type="button"
           onClick={() => loginUser(true)}
           isLoading={isLoading}
           className="w-full flex justify-center rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600"
@@ -155,6 +156,7 @@ const AuthForm: FC<AuthFormProps> = ({
         </div>
         <LoadingButton
           color={""}
+          type="button"
           onClick={() => loginUser(false)}
           isLoading={isLoading}
           className="w-full flex justify-center"
@@ -166,14 +168,15 @@ const AuthForm: FC<AuthFormProps> = ({
               width={24}
               height={24}
             />
-            <p className="mx-auto text-[#595959]">Connect with Google</p>
+            <p className="mx-auto text-[#595959] text-[15px]">Connect with Google</p>
           </div>
         </LoadingButton>
         <LoadingButton
           color={""}
+          type="button"
           onClick={() => loginUser(false)}
           isLoading={isLoading}
-          className="flex w-full items-center justify-center rounded-lg py-4 pl-[18px] text-[#595959] transition-all duration-500 ease-in-out hover:bg-bleach-blue border border-[#595959]"
+          className="flex w-full items-center justify-center rounded-lg py-4 pl-[18px] text-[#595959] transition-all duration-500 ease-in-out hover:bg-bleach-blue border border-[#595959] text-[15px]"
         >
           More Options
         </LoadingButton>

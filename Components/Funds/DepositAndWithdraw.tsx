@@ -37,9 +37,10 @@ import StripeService from "@/services/StripeService";
 import Backdrop from "../Backdrop";
 import Spinner from "../Spinner";
 import Link from "next/link";
+import LoadingButton from "../LoadingButton/LoadingButton";
 const defaultPaymentMethod = {
-  icon: "/images/bank-note-arrow.svg",
-  name: "Native",
+  icon: "",
+  name: "",
 };
 
 const DepositAndWithdraw = ({
@@ -310,8 +311,8 @@ const DepositAndWithdraw = ({
   }
 
   return (
-    <div className="flex flex-col gap-[15px] items-center w-[89%] sm:w-[468px] bg-white rounded-[30px] py-[30px] sm:px-[29px] sm:shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)]">
-      <div className="flex gap-[5px] w-full">
+    <div className="flex flex-col gap-[15px] items-center w-full bg-white rounded-[30px] md:p-8 sm:shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)]">
+      <div className="flex gap-4 justify-between w-full">
         {["Deposit", "Withdraw"].map((text, index) => (
           <div
             key={index}
@@ -325,73 +326,141 @@ const DepositAndWithdraw = ({
       <div className="flex text-[#838187] text-[14px] w-full">
         <p>Choose your payment method</p>
       </div>
-      <div className="flex flex-col gap-[5px] w-full">
-        {activeSection === 0 && (
-          <Accordion
-            selectedMethod={selectedMethod}
-            setSelectedMethod={handleSelection}
-            activeSection={activeSection}
-          />
-        )}
-        {activeSection === 1 && (
-          <div className="flex flex-col gap-[5px]">
-            <Accordion
-              selectedMethod={selectedMethod}
-              setSelectedMethod={setSelectedMethod}
-              activeSection={activeSection}
-            />
-            {selectedMethod.name === "Native" && (
-              <div>
-                <div className="mt-2">
-                  <label
-                    htmlFor="walletId"
-                    className="text-[14px] font-normal text-[#838187]"
-                  >
-                    Amount
-                  </label>
-                  <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-{#87878D}">
-                    <label
-                      htmlFor="usdc"
-                      className=" text-[14px] font-normal text-[#838187]"
-                    >
-                      $
-                    </label>
-
-                    <input
-                      type="text"
-                      value={amount}
-                      name="amount"
-                      onChange={handleAmountInputChanged}
-                      id="amount"
-                      //   Min={0}
-                      className="appearance-none outline-none border-none flex-1 pl-[0.5rem] "
-                    />
-                  </div>
-                </div>
-                <div className="mt-2 ">
-                  <label
-                    htmlFor="walletId"
-                    className="text-[14px] font-normal text-[#838187]"
-                  >
-                    Your Wallet ID
-                  </label>
-                  <input
-                    type="text"
-                    name="walletId"
-                    id="walletId"
-                    value={recipientWalletAddress}
-                    onChange={(e) => setRecipientWalletAddress(e.target.value)}
-                    className="w-full rounded-lg py-[16px] px-[22px] text-[#838187] text-[14px] font-normal outline-none border border-{#87878D}"
-                  />
-                </div>
+      <div className="flex flex-col gap-6 w-full">
+        <Accordion
+          selectedMethod={selectedMethod}
+          setSelectedMethod={handleSelection}
+          activeSection={activeSection}
+        />
+        {activeSection === 0 && !selectedMethod.name && (
+          <div>
+            <LoadingButton
+              isLoading={false}
+              className="w-full h-[39px] py-[16px] bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg text-[15px]"
+              onClick={""}
+            >
+              Deposit
+            </LoadingButton>
+            <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4 ">
+              <div className="w-6 h-6">
+                <WarningIcon />
               </div>
-            )}
+              <p className="text-[#222222] sm:text-[14px] font-normal w-full">
+                Funds may be irrecoverable if you enter an incorrect wallet ID.
+                It is crucial to ensure the accuracy of the provided ID to avoid
+                any loss.
+              </p>
+            </div>
+            <Link
+              target="_blank"
+              href="https://help.sky.trade/article/how-to-buy-usdc-on-the-solana-network-a-simple-guide"
+            >
+              <div className="flex items-center gap-[5px] mt-4 ">
+                <div className="w-6 h-6">
+                  <QuestionMarkIcon />
+                </div>
+                <p className="text-[#0000FF] text-[14px]">
+                  Simple Guide to Buy USDC on the Solana Network
+                </p>
+              </div>
+            </Link>
           </div>
         )}
-      </div>
 
-      {activeSection === 0 && (
-        <>
+        {(selectedMethod.name === "Stripe" ||
+          selectedMethod.name === "Ramp" ||
+          selectedMethod.name === "LI.FI" ||
+          selectedMethod.name === "Transak") &&
+          activeSection === 0 && (
+            <div>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex flex-col items-start gap-[5px] flex-1">
+                  <label
+                    htmlFor="walletId"
+                    className="text-[14px] font-normal text-[#838187]"
+                  >
+                    Deposit Wallet ID
+                  </label>
+                </div>
+                <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center">
+                  {walletId && (
+                    <SVG
+                      text={walletId}
+                      options={{
+                        margin: 2,
+                        width: 72,
+                        color: {
+                          dark: "#000000",
+                          light: "#FFFFFF",
+                        },
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg mt-4">
+                <input
+                  className="text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[20px] focus:outline-none"
+                  type="text"
+                  name="walletId"
+                  id="walletId"
+                  value={walletId}
+                  disabled
+                />
+                <CopyToClipboard text={walletId} onCopy={copyTextHandler}>
+                  <div className="flex items-center text-[#0653EA] text-[14px] cursor-pointer pl-[4px] pr-[18px]">
+                    <div className="relative">
+                      {isCopyTooltipVisible && <Tooltip isCopied={copy} />}
+                      <div
+                        onMouseEnter={() => setIsCopyTooltipVisible(true)}
+                        onMouseLeave={() => setIsCopyTooltipVisible(false)}
+                      >
+                        <CopyIcon />
+                      </div>
+                    </div>
+                  </div>
+                </CopyToClipboard>
+              </div>
+              <hr className="sm:hidden border border-black border-opacity-20 h-[1px] w-full" />
+              <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4">
+                <div className="w-6 h-6">
+                  <WarningIcon />
+                </div>
+                <div className="text-[#222222] sm:text-[14px] font-normal w-[341px]">
+                  <div>
+                    Funds may be irrecoverable if you enter an incorrect wallet
+                    ID. It is crucial to ensure the accuracy of the provided ID
+                    to avoid any loss.
+                    <br />
+                    <div className="w-full">
+                      <p
+                        className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
+                        style={{ color: "#0653EA" }}
+                      >
+                        {walletId}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <Link
+                target="_blank"
+                href="https://help.sky.trade/article/how-to-buy-usdc-on-the-solana-network-a-simple-guide"
+              >
+                <div className="flex items-center gap-[5px] mt-4 ">
+                  <div className="w-6 h-6">
+                    <QuestionMarkIcon />
+                  </div>
+                  <p className="text-[#0000FF] text-[14px]">
+                    Simple Guide to Buy USDC on the Solana Network
+                  </p>
+                </div>
+              </Link>
+            </div>
+          )}
+      </div>
+      {selectedMethod.name === "Native" && activeSection === 0 && (
+        <div>
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-col items-start gap-[5px] flex-1">
               <label
@@ -417,9 +486,9 @@ const DepositAndWithdraw = ({
               )}
             </div>
           </div>
-          <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg">
+          <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg mt-4">
             <input
-              className=" text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[20px] focus:outline-none"
+              className="text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[20px] focus:outline-none"
               type="text"
               name="walletId"
               id="walletId"
@@ -440,88 +509,118 @@ const DepositAndWithdraw = ({
               </div>
             </CopyToClipboard>
           </div>
-          <hr className=" sm:hidden border border-black border-opacity-20 h-[1px]  w-full" />
-        </>
-      )}
-
-      {activeSection === 1 && (
-        <>
-          {selectedMethod.name === "Stripe" ? (
-            <div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg">
-              COMING SOON{" "}
-            </div>
-          ) : (
-            <button
-              disabled={isLoading}
-              className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg"
-              onClick={handleWithdraw}
-            >
-              withdraw
-            </button>
-          )}
-        </>
-      )}
-      {activeSection === 0 && (
-        <>
-          <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] ">
+          <hr className="sm:hidden border border-black border-opacity-20 h-[1px] w-full" />
+          <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4">
             <div className="w-6 h-6">
               <WarningIcon />
             </div>
-            <div className="text-[#222222] sm:text-[14px] font-normal w-full ">
-              {selectedMethod.name === "Stripe" ? (
-                <p>
-                  Funds may be irrecoverable if you enter an incorrect wallet
-                  ID. It is crucial to ensure the accuracy of the provided ID to
-                  avoid any loss.
-                </p>
-              ) : (
-                <div>
-                  To complete your deposit, please use your crypto wallet to
-                  deposit USDC to the following address:
-                  <br />
-                  <div className="w-full">
-                    <p
-                      className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
-                      style={{ color: "#0653EA" }}
-                    >
-                      {walletId}
-                    </p>
-                  </div>
+            <div className="text-[#222222] sm:text-[14px] font-normal w-[341px]">
+              <div>
+                To complete your deposit, please use your crypto wallet to
+                deposit USDC to the following address:
+                <br />
+                <div className="w-full">
+                  <p
+                    className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
+                    style={{ color: "#0653EA" }}
+                  >
+                    {walletId}
+                  </p>
                 </div>
-              )}
+              </div>
             </div>
           </div>
+          <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4">
+            <div className="w-6 h-6">
+              <WarningIcon />
+            </div>
+            <div className="text-[#222222] text-[14px] font-normal w-full">
+              Scan the QR Code with your Wallet. You can use Phantom Wallet,
+              Solflare, Exodus, Atomic Wallet, Coinbase Wallet, or Metamask
+              Span. Ensure the wallet ID is correct to avoid loss of funds.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Widthdraw */}
+      {activeSection === 1 && (
+        <div>
           {selectedMethod.name === "Native" && (
-            <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
-              <div className="w-6 h-6">
-                <WarningIcon />
+            <div>
+              <div className="mt-2">
+                <label
+                  htmlFor="walletId"
+                  className="text-[14px] font-normal text-[#838187]"
+                >
+                  Amount
+                </label>
+                <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-{#87878D}">
+                  <label
+                    htmlFor="usdc"
+                    className=" text-[14px] font-normal text-[#838187]"
+                  >
+                    $
+                  </label>
+
+                  <input
+                    type="text"
+                    value={amount}
+                    name="amount"
+                    onChange={handleAmountInputChanged}
+                    id="amount"
+                    //   Min={0}
+                    className="appearance-none outline-none border-none flex-1 pl-[0.5rem] "
+                  />
+                </div>
               </div>
-              <div className="text-[#222222] text-[14px] font-normal w-full">
-                Scan the QR Code with your Wallet, you can use Phantom Wallet,
-                Solflare, Exodus, Atomic Wallet, Coinbase Wallet, Metamask Span.
-                Note that funds may be irrecoverable if you enter an incorrect
-                wallet ID. It is crucial to ensure the accuracy of the provided
-                ID to avoid any loss.
+              <div className="mt-2 ">
+                <label
+                  htmlFor="walletId"
+                  className="text-[14px] font-normal text-[#838187]"
+                >
+                  Your Wallet ID
+                </label>
+                <input
+                  type="text"
+                  name="walletId"
+                  id="walletId"
+                  value={recipientWalletAddress}
+                  onChange={(e) => setRecipientWalletAddress(e.target.value)}
+                  className="w-full rounded-lg py-[16px] px-[22px] text-[#838187] text-[14px] font-normal outline-none border border-{#87878D}"
+                />
               </div>
             </div>
           )}
-        </>
-      )}
-      {
-        <Link
-          target="_blank"
-          href="https://help.sky.trade/article/how-to-buy-usdc-on-the-solana-network-a-simple-guide"
-        >
-          <div className="flex items-center gap-[5px]">
+          <div>
+            <>
+              {selectedMethod.name === "Stripe" ||
+              selectedMethod.name === "Ramp" ||
+              selectedMethod.name === "Native" ||
+              selectedMethod.name === "LI.FI" ? (
+                <LoadingButton
+                  isLoading={false}
+                  className="w-full h-[39px] py-[16px] bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg text-[15px] mt-4"
+                  onClick={handleWithdraw}
+                >
+                  Withdraw
+                </LoadingButton>
+              ) : null}
+            </>
+          </div>
+
+          <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] mt-4 ">
             <div className="w-6 h-6">
-              <QuestionMarkIcon />
+              <WarningIcon />
             </div>
-            <p className="text-[#0000FF] text-base ">
-              Simple Guide to Buy USDC on the Solana Network
+            <p className="text-[#222222] sm:text-[14px] font-normal w-full ">
+              Funds may be irrecoverable if you enter an incorrect wallet ID. It
+              is crucial to ensure the accuracy of the provided ID to avoid any
+              loss.
             </p>
           </div>
-        </Link>
-      }
+        </div>
+      )}
 
       {showLIFI && (
         <div>

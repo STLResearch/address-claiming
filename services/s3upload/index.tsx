@@ -1,18 +1,38 @@
 import Service from "../Service";
-import { GeneratePublicFileUploadUrlParams } from "./types";
-
+import {
+  GeneratePublicFileUploadUrlParams,
+  GeneratePrivateFileUploadUrlParams,
+  GeneratePrivateFileUploadUrlResponse,
+  GeneratePublicFileUploadUrlResponse,
+} from "./types";
 
 const S3UploadServices = () => {
   const { postRequest } = Service();
 
-  const generatePublicFileUploadUrl = async ({
-    fileType,
-    requestId,
-  }: GeneratePublicFileUploadUrlParams) => {
+  const generatePublicFileUploadUrls = async (
+    postData: GeneratePublicFileUploadUrlParams,
+  ): Promise<GeneratePublicFileUploadUrlResponse[] | void> => {
     try {
-      if (!fileType || !requestId) return;
+      if (!postData.referenceId || postData.contentTypes.length === 0) return;
       const response = await postRequest({
-        uri: `/private/s3Upload/generate-public-file-upload-url?contentType=${fileType}&requestId=${requestId}`,
+        uri: `/private/s3Upload/generate-public-file-upload-url`,
+        postData,
+      });
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  };
+
+  const generatePrivateFileUploadUrls = async (
+    postData: GeneratePrivateFileUploadUrlParams,
+  ): Promise<GeneratePrivateFileUploadUrlResponse[] | void> => {
+    try {
+      if (!postData.requestId || postData.contentTypes.length === 0) return;
+      const response = await postRequest({
+        uri: `/private/s3Upload/generate-private-file-upload-url`,
+        postData,
       });
       return response?.data;
     } catch (error) {
@@ -22,7 +42,8 @@ const S3UploadServices = () => {
   };
 
   return {
-    generatePublicFileUploadUrl,
+    generatePublicFileUploadUrls,
+    generatePrivateFileUploadUrls,
   };
 };
 

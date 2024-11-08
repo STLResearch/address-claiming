@@ -3,17 +3,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'mapbox-gl/dist/mapbox-gl.css';
+@import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+
 * {
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
-
-.mapboxgl-canvas-container {
-
-  height: 100vh;
-
-}
-
 body {
   margin: 0;
   padding: 0;
@@ -177,6 +173,10 @@ button {
 .fund-table tbody tr:nth-child(odd) {
   background-color: #FFFFFF;
 }
+.fund-table-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
 .react-international-phone-input-container .react-international-phone-input {
   border: none !important;
   margin-left: 10px !important;
@@ -221,4 +221,19 @@ button {
   right:4px !important;
   width: 22px !important;
   height: 22px !important;
+}
+.history-table-scrollbar {
+  overflow-x: scroll; 
+  scrollbar-width: thin; 
+  scrollbar-color: #888 #f1f1f1;
+}
+.history-table-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.history-table-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.ant-pagination-item-active {
+  border-style: none !important;
 }

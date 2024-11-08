@@ -30,7 +30,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
       {isMobile ? (
         <div>
           <div
-            className="relative w-[230px] h-[49px] rounded-lg bg-white px-[22px] py-[10px]"
+            className="relative w-full h-[49px] rounded-lg bg-white px-[22px] py-[10px]"
             style={{ border: "1px solid #87878D" }}
           >
             <input
@@ -38,9 +38,9 @@ const SearchInput: React.FC<SearchInputProps> = ({
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               type="text"
-              name="searchAirspaces"
-              id="searchAirspaces"
-              placeholder="Search Airspaces"
+              name="searchAirRights"
+              id="searchAirRights"
+              placeholder="Search Air Rights"
               className="w-full pr-[20px] outline-none text-sm"
             />
             <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
@@ -59,15 +59,16 @@ const SearchInput: React.FC<SearchInputProps> = ({
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               type="text"
-              name="searchAirspaces"
-              id="searchAirspaces"
-              placeholder="Search Airspaces"
+              name="searchAirRights"
+              id="searchAirRights"
+              placeholder="Search Air Rights"
               className="outline-none w-full pr-[20px]"
             />
             <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
               <MagnifyingGlassIcon />
             </div>
           </div>
+          {showOptions &&
           <div className="overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white">
             {loading ? (
               <div className="pt-8 flex justify-center items-center">
@@ -79,14 +80,12 @@ const SearchInput: React.FC<SearchInputProps> = ({
                   <div
                     key={item.id}
                     data-value={item.place_name}
-                    onClick={() =>
-                      handleSelectAddress(
-                        item.place_name,
-                        setAddress,
-                        setFlyToAddress,
-                        setShowOptions,
-                      )
-                    }
+                    onClick={() => handleSelectAddress(
+                      item.place_name,
+                      setAddress,
+                      setFlyToAddress,
+                      setShowOptions,
+                    )}
                     className="w-full p-5 text-left text-[#222222]  "
                     style={{
                       borderTop: "0.2px solid #222222",
@@ -98,6 +97,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
               })
             )}
           </div>
+          }
         </div>
       )}
     </div>

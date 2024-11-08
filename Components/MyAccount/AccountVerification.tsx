@@ -54,7 +54,7 @@ const AccountVerification = ({
         >
           <div className="md:w-[50%]  p-6  flex flex-col justify-center items-center md:gap-6 gap-4">
             <h1 className="text-xl font-medium text-[#222222]  text-center">
-              🚀 Attention Airspace Owner!
+              🚀 Attention Air Rights Owner!
             </h1>
             <h1 className="text-xl font-medium text-[#222222] block md:hidden">
               Account verification
@@ -69,7 +69,7 @@ const AccountVerification = ({
                 earn 10 SKY points{" "}
               </span>{" "}
               as a token of our appreciation! Don&apos;t delay - verify now and
-              unlock the full potential of your airspace!
+              unlock the full potential of your air rights!
             </p>
             <button
               onClick={onVerifyMyAccount}

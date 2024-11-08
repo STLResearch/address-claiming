@@ -15,7 +15,7 @@ export function formatTextToReadable(text: string) {
   );
 }
 
-export const isValidFileType = (fileName: string) => {
+export const isValidFileType = (file: File) => {
   const allowedExtensions = [
     ".jpg",
     ".jpeg",
@@ -35,22 +35,15 @@ export const isValidFileType = (fileName: string) => {
     ".ppt",
     ".pptx",
   ];
-  const fileExtension = fileName.toLowerCase().slice(fileName.lastIndexOf("."));
+  const fileExtension = file.type;
   return allowedExtensions.includes(fileExtension);
 };
 
-export const uploadImage = async (
-  response: { uploadUrl: { uploadUrl: string } },
-  file: File,
-) => {
-  const url = response?.uploadUrl?.uploadUrl;
-
-  const formData = new FormData();
-  formData.append("file", file);
+export const uploadImage = async (uploadUrl: string, file: File) => {
 
   try {
-    const result = await axios.put(url, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+    const result = await axios.put(uploadUrl, file, {
+      headers: { "Content-Type": file.type },
     });
     return {
       data: {

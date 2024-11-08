@@ -1,5 +1,9 @@
 const publicAccessRoutes = [
   {
+    localStorageKey: "buyData",
+    redirectTo: "/buy",
+  },
+  {
     localStorageKey: "airSpaceData",
     redirectTo: "/airspaces",
   },

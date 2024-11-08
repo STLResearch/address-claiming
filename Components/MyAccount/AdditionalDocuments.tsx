@@ -15,6 +15,7 @@ import {
 import LoadingButton from "../LoadingButton/LoadingButton";
 import { RequestDocumentStatus } from "@/types";
 import S3UploadServices from "@/services/s3upload";
+import ACCEPTED_FILE_TYPES from "@/utils/portfolio/fileTypes";
 
 interface PopupProps {
   showPopup: boolean;
@@ -38,7 +39,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
   const { getUser } = UserService();
 
   const { updateDocument } = DocumentUploadServices();
-  const { generatePublicFileUploadUrl } = S3UploadServices();
+  const { generatePrivateFileUploadUrls } = S3UploadServices();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -50,15 +51,22 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
 
   const onDrop = (acceptedFiles: File[]) => {
     const isValid = acceptedFiles.every((file) => isFileSizeValid(file));
-
     if (isValid) {
-      setSelectedFiles(acceptedFiles);
+      setSelectedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
     } else {
       toast.error("File size must be less than 20MB!");
     }
   };
+  const removeFile = (file: File) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((f) => f !== file));
+  };
 
-  const { getRootProps } = useDropzone({ onDrop, multiple: false });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: true,
+    accept: ACCEPTED_FILE_TYPES,
+    maxFiles: 5,
+  });
 
   if (!showPopup) return null;
 
@@ -72,47 +80,61 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
       toast.error("Please upload a file before submitting!");
       return;
     }
-
-    if (!isValidFileType(selectedFiles[0].name)) {
-      toast.error("Invalid file type!");
+    if (selectedFiles.length > 5) {
+      toast.error(
+        "You can only upload up to 5 files. Please adjust your selection and try again!",
+      );
       return;
     }
 
     setLoading(true);
 
     try {
-      const generatedRes = await generatePublicFileUploadUrl({
-        fileType: selectedFiles[0]?.type,
+      const contentTypes = selectedFiles.map((file) => file.type);
+      const imageList: string[] = [];
+
+      const params = await generatePrivateFileUploadUrls({
+        contentTypes,
         requestId: requestDocument.id,
       });
 
-      if (!generatedRes?.uploadUrl?.uploadUrl || !generatedRes?.key) {
-        throw new Error("Failed to upload file ");
+      if (!params) {
+        toast.error("Failed to upload file ");
       }
 
-      const imageRes = await uploadImage(generatedRes, selectedFiles[0]);
-      if ((imageRes && imageRes?.data?.status !== "SUCCESS") || !imageRes) {
-        throw new Error("Failed to upload file ");
+      if (params) {
+        const uploadPromises = params.map(async (param, index) => {
+          const imageRes = await uploadImage(
+            param.uploadUrl,
+            selectedFiles[index],
+          );
+
+          if (!imageRes || imageRes?.data?.status !== "SUCCESS") {
+            throw new Error("Failed to upload file to S3");
+          }
+          imageList.push(param.key);
+        });
+        await Promise.all(uploadPromises);
       }
 
-      const path = generatedRes.key.toString();
       const updateResponse = await updateDocument({
-        path,
+        paths: imageList,
         requestId: Number(requestDocument.id),
       });
+
       if (!updateResponse) {
         throw new Error("Failed to upload file ");
       }
 
       setShowSuccessToast(true);
-      setUploadedDoc((prev) => [...prev, selectedFiles[0]]);
+      setUploadedDoc((prevFiles) => [...prevFiles, ...selectedFiles]);
       setTimeout(() => setShowSuccessToast(false), 5000);
       setShowAdditionalDoc(true);
       closePopup();
       setShowUnderReviewDoc(true);
       const responseData = await getUser();
-      if (responseData?.id) {
-        signIn({ user: responseData });
+      if (!responseData.error) {
+        signIn({ user: responseData.data });
       }
     } catch (error) {
       console.error("Error during upload:", error);
@@ -162,24 +184,42 @@ const AdditionalDocuments: React.FC<PopupProps> = ({
           </>
         )}
         <div
-          {...(getRootProps() as DropzoneRootProps)}
+          {...getRootProps({
+            className: `dropzone ${isDragActive ? "active" : ""}`,
+          })}
           className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500"
         >
+          <input {...getInputProps()} />
+
           {isMobile ? (
             <p className="text-base font-medium text-[#87878D]">
-              {selectedFiles[0]
-                ? selectedFiles[0].name
-                : "click to upload Document"}
+              &quot;click to upload Document&quot;
             </p>
           ) : (
             <p className="text-base font-medium text-[#87878D]">
-              {selectedFiles[0]
-                ? selectedFiles[0].name
-                : "Drag here or click to upload"}
+              &quot;Drag here or click to upload&quot;
             </p>
           )}
         </div>
 
+        <div className="w-[300px] sm:w-auto ">
+          {selectedFiles?.length > 0 &&
+            selectedFiles.map((selectedFile, index) => (
+              <div key={index} className="flex justify-between items-center">
+                <div className="w-[40%] sm:w-auto truncate" key={index}>
+                  {selectedFile.name}
+                </div>
+                <div className="w-[40%] sm:w-auto flex justify-end">
+                  <button
+                    onClick={() => removeFile(selectedFile)}
+                    className="text-red-400 sm:mr-3 m-0"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+        </div>
         <LoadingButton
           onClick={handleClick}
           isLoading={loading}
